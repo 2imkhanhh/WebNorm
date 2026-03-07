@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brand Design Agency</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar navbar-expand-lg">
+        <div class="navbar-inner">
+            <a href="#" class="nav-link-item">About us</a>
+            <a href="#" class="nav-link-item">Work</a>
+            <a href="#" class="navbar-logo">
+                <img src="assets/images/logo.png" alt="Logo" />
+            </a>
+            <a href="#" class="nav-link-item">Blog</a>
+            <div class="nav-contact-group">
+                <a href="#" class="nav-link-item">Contact</a>
+                <a href="#" class="nav-link-item lang-toggle" id="langToggle">VN</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="container-fluid px-4 px-md-5 h-100">
+            <div class="row h-100 align-items-end">
+
+                <div class="col-auto hero-tagline">
+                    <p>Brand Design Agency</p>
+                    <p>Based In Vietnam</p>
+                    <p>Culture Your Brand</p>
+                </div>
+
+                <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
+                    <img src="assets/images/banner.png" alt="Banner" class="hero-img" />
+                </div>
+
+                <div class="col-auto hero-ctas d-flex gap-5">
+                    <a href="#" class="cta-btn">XEM DỰ ÁN</a>
+                    <a href="#" class="cta-btn">LIÊN HỆ</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="big-bottom-text">
+            <div class="d-flex justify-content-between">
+                <span class="stagger-word" data-word-index="0">NHẬN DIỆN</span>
+                <span class="stagger-word" data-word-index="1">CHIẾN LƯỢC</span>
+            </div>
+            <div class="text-center">
+                <span class="stagger-word" data-word-index="2">VĂN HOÁ</span>
+            </div>
+        </div>
+
+    </section>
+
+    <script>
+        // Lang toggle
+        const langToggle = document.getElementById('langToggle');
+        langToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
+        });
+
+        // Banner hover
+        const bannerImg = document.querySelector('.hero-img');
+        const banners = [
+            'assets/images/banner.png',
+            'assets/images/banner2.png',
+            'assets/images/banner3.png',
+        ];
+        let currentIndex = 0;
+        let intervalId = null;
+
+        bannerImg.addEventListener('mouseenter', () => {
+            intervalId = setInterval(() => {
+                currentIndex = (currentIndex + 1) % banners.length;
+                bannerImg.src = banners[currentIndex];
+            }, 400);
+        });
+        bannerImg.addEventListener('mouseleave', () => {
+            clearInterval(intervalId);
+            intervalId = null;
+        });
+
+        // =====================
+        // STAGGER PER CHARACTER
+        // =====================
+        function splitIntoChars(el) {
+            const text = el.textContent;
+            const wordIndex = parseInt(el.dataset.wordIndex);
+            // Stagger between words: 0ms, 80ms, 160ms
+            const wordDelay = wordIndex * 80;
+
+            el.innerHTML = '';
+            el.style.display = 'inline-block';
+            // overflow hidden per word to clip chars dropping in
+            el.style.overflow = 'visible';
+
+            [...text].forEach((char, i) => {
+                const wrapper = document.createElement('span');
+                wrapper.className = 'char-clip';
+
+                const inner = document.createElement('span');
+                inner.className = 'stagger-char';
+                inner.textContent = char === ' ' ? '\u00A0' : char;
+                inner.style.animationDelay = `${wordDelay + i * 60}ms`;
+
+                wrapper.appendChild(inner);
+                el.appendChild(wrapper);
+            });
+        }
+
+        const staggerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    staggerObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0,
+            rootMargin: "0px 0px 50px 0px"
+        });
+
+        document.querySelectorAll('.stagger-word').forEach(el => {
+            splitIntoChars(el);
+            staggerObserver.observe(el);
+        });
+    </script>
+</body>
+
+</html>

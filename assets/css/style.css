@@ -1,0 +1,322 @@
+@font-face {
+  font-family: 'AeonikPro';
+  src: url('../font/AeonikPro-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AeonikPro';
+  src: url('../font/AeonikPro-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AeonikPro';
+  src: url('../font/AeonikPro-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'AeonikPro';
+  src: url('../font/AeonikPro-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: 'AeonikPro', sans-serif;
+  font-weight: 400;
+}
+
+body {
+  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 70%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =====================
+   NAVBAR
+   ===================== */
+nav.navbar {
+  background: transparent !important;
+  padding: 20px 0 !important;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+.navbar-inner {
+  width: 100%;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 40px;
+  flex-wrap: nowrap;
+}
+
+.nav-link-item {
+  font-size: 15px;
+  font-weight: 500;
+  color: #111111 !important;
+  letter-spacing: 0.01em;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar-logo img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+.nav-contact-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lang-toggle {
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* =====================
+   HERO SECTION
+   ===================== */
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section .container-fluid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 28px;
+}
+
+.hero-section .row {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  position: relative;
+}
+
+/* Tagline */
+.hero-tagline {
+  padding-bottom: 130px;
+  min-width: 160px;
+  margin-left: -30px;
+}
+
+.hero-tagline p {
+  font-size: 15px;
+  font-weight: 400;
+  color: #757575;
+  line-height: 0.2;
+}
+
+/* Hero image */
+.hero-image-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0;
+}
+
+.hero-img {
+  width: 65vw;
+  max-width: 1200px;
+  min-width: 480px;
+  object-fit: contain;
+  display: block;
+  margin-top: 5%;
+  margin-bottom: 15%;
+  margin-right: -3%;
+  animation: floatUp 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* CTAs */
+.hero-ctas {
+  padding-bottom: 130px;
+  min-width: 160px;
+  justify-content: flex-end;
+  margin-right: -20px;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'AeonikPro', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: opacity 0.22s;
+  white-space: nowrap;
+}
+
+/* =====================
+   BIG BOTTOM TEXT
+   ===================== */
+.big-bottom-text {
+  width: 100%;
+  margin-top: -120px;
+  padding: 0 25px 120px 25px;
+  position: relative;
+  z-index: 10;
+}
+
+.big-bottom-text span {
+  font-family: 'AeonikPro', sans-serif;
+  font-weight: 500;
+  font-size: 8vw;
+  color: #111111;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+/* =====================
+   STAGGER PER CHARACTER
+   ===================== */
+
+/* Each word is a flex container so chars sit side by side */
+.stagger-word {
+  display: inline-flex !important;
+  overflow: hidden; /* clips chars while they travel up */
+  padding-bottom: 0.05em; /* prevent descender clip */
+}
+
+/* Clip wrapper per char — overflow hidden here is the mask */
+.char-clip {
+  display: inline-block;
+  overflow: hidden;
+  /* tiny extra height so nothing clips at the top of the drop */
+  padding-top: 0.12em;
+  margin-top: -0.12em;
+  vertical-align: bottom;
+}
+
+.stagger-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(110%) rotate(4deg);
+  animation-name: none;
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 0.65s;
+}
+
+.stagger-word.animate .stagger-char {
+  animation-name: charDropIn;
+}
+
+@keyframes charDropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(110%) rotate(4deg);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar-inner {
+    padding: 0 20px;
+  }
+
+  .hero-img {
+    max-width: 90vw;
+  }
+
+  .hero-tagline p {
+    font-size: 11px;
+  }
+
+  .cta-btn {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section .row {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding-top: 12px;
+  }
+
+  .hero-tagline,
+  .hero-ctas {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    min-width: unset;
+  }
+
+  .hero-tagline {
+    order: 2;
+    padding-bottom: 10px;
+  }
+
+  .hero-image-wrap {
+    order: 1;
+  }
+
+  .hero-ctas {
+    order: 3;
+    padding-bottom: 10px;
+  }
+}
