@@ -11,7 +11,6 @@
 
 <body>
 
-    <!-- NAVBAR -->
     <header class="navbar navbar-expand-lg">
         <div class="navbar-inner">
             <a href="#" class="nav-link-item">About us</a>
@@ -27,7 +26,6 @@
         </div>
     </header>
 
-    <!-- HERO SECTION -->
     <section class="hero-section">
         <div class="container-fluid px-4 px-md-5 h-100">
             <div class="row h-100 align-items-end">
@@ -64,10 +62,41 @@
 
     <section class="intro-section">
         <div class="container-fluid px-4 px-md-5">
-            <p class="reveal-text">
-                Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng
-                kinh doanh.
-            </p>
+            <div class="reveal-wrapper">
+                <p class="reveal-text">
+                    Chúng tôi giúp doanh nghiệp <span class="highlight-gray">xây dựng</span> bản sắc thương hiệu rõ
+                    ràng, nhất quán và phù hợp với định hướng kinh doanh.
+                </p>
+            </div>
+
+            <div class="row align-items-start" style="margin-top: 150px; margin-bottom: 100px;">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <img src="assets/images/main-feature.png" alt="Main Content" class="w-100 d-block">
+                </div>
+
+                <div class="col-md-3"></div>
+            </div>
+
+            <div class="row align-items-start content-footer" style="margin-bottom: 200px;">
+
+                <div class="col-md-3">
+                    <span class="label-side">• Về chúng tôi</span>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="desc-text m-0">
+                        Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về
+                        chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn
+                        tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.
+                    </p>
+                </div>
+
+                <div class="col-md-3 text-end">
+                    <a href="#" class="link-more">ĐỌC THÊM</a>
+                </div>
+
+            </div>
         </div>
     </section>
 
@@ -106,12 +135,10 @@
         function splitIntoChars(el) {
             const text = el.textContent;
             const wordIndex = parseInt(el.dataset.wordIndex);
-            // Stagger between words: 0ms, 80ms, 160ms
             const wordDelay = wordIndex * 80;
 
             el.innerHTML = '';
             el.style.display = 'inline-block';
-            // overflow hidden per word to clip chars dropping in
             el.style.overflow = 'visible';
 
             [...text].forEach((char, i) => {
@@ -136,7 +163,7 @@
                 }
             });
         }, {
-            threshold: 0.1,
+            threshold: 0.4,
             rootMargin: "0px 0px 0px 0px"
         });
 
@@ -152,36 +179,50 @@
             const words = text.split(/\s+/);
             revealTextEl.innerHTML = '';
 
-            words.forEach((word, index) => {
-                const span = document.createElement('span');
-                span.classList.add('reveal-word');
-                span.textContent = word;
-                revealTextEl.appendChild(span);
-                if (index < words.length - 1) {
-                    revealTextEl.appendChild(document.createTextNode(' '));
+            const charEls = [];
+
+            words.forEach((word, wIndex) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.style.display = 'inline-block';
+                wordSpan.style.whiteSpace = 'nowrap';
+
+                [...word].forEach((char) => {
+                    const charSpan = document.createElement('span');
+                    charSpan.classList.add('reveal-char');
+                    charSpan.textContent = char;
+                    wordSpan.appendChild(charSpan);
+                    charEls.push(charSpan);
+                });
+
+                revealTextEl.appendChild(wordSpan);
+
+                if (wIndex < words.length - 1) {
+                    const space = document.createElement('span');
+                    space.innerHTML = '&nbsp;';
+                    space.style.display = 'inline-block';
+                    space.style.width = '0.25em';
+                    revealTextEl.appendChild(space);
                 }
             });
 
-            const wordEls = revealTextEl.querySelectorAll('.reveal-word');
-
-            function updateWords() {
+            function updateChars() {
                 const rect = revealTextEl.getBoundingClientRect();
                 const windowH = window.innerHeight;
 
-                // Trigger khi 10% element lọt vào viewport từ dưới
-                const triggerPoint = windowH * 0.9;
+                // Bắt đầu: khi 10% element xuất hiện ở đáy viewport
+                const triggerStart = windowH - (rect.height * 0.1);
+                // Kết thúc: khi element đã scroll lên được 30% chiều cao của nó
+                const triggerEnd = windowH - (rect.height * 2.9);
 
-                // Nếu element chưa vào viewport
-                if (rect.top > triggerPoint) {
-                    wordEls.forEach(el => el.classList.remove('lit'));
+                if (rect.top > triggerStart) {
+                    charEls.forEach(el => el.classList.remove('lit'));
                     return;
                 }
 
-                // Tính progress từ lúc trigger đến khi element lên hết
-                const progress = Math.min(Math.max((triggerPoint - rect.top) / (triggerPoint + rect.height), 0), 1);
-                const litCount = Math.round(progress * wordEls.length);
+                const progress = Math.min(Math.max((triggerStart - rect.top) / (triggerStart - triggerEnd), 0), 1);
+                const litCount = Math.round(progress * charEls.length);
 
-                wordEls.forEach((el, i) => {
+                charEls.forEach((el, i) => {
                     if (i < litCount) {
                         el.classList.add('lit');
                     } else {
@@ -190,9 +231,9 @@
                 });
             }
 
-            window.addEventListener('scroll', updateWords, { passive: true });
-            window.addEventListener('resize', updateWords, { passive: true });
-            updateWords();
+            window.addEventListener('scroll', updateChars, { passive: true });
+            window.addEventListener('resize', updateChars, { passive: true });
+            updateChars();
         }
     </script>
 </body>
