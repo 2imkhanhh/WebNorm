@@ -62,6 +62,15 @@
 
     </section>
 
+    <section class="intro-section">
+        <div class="container-fluid px-4 px-md-5">
+            <p class="reveal-text">
+                Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng
+                kinh doanh.
+            </p>
+        </div>
+    </section>
+
     <script>
         // Lang toggle
         const langToggle = document.getElementById('langToggle');
@@ -127,14 +136,64 @@
                 }
             });
         }, {
-            threshold: 0,
-            rootMargin: "0px 0px 50px 0px"
+            threshold: 0.1,
+            rootMargin: "0px 0px 0px 0px"
         });
 
         document.querySelectorAll('.stagger-word').forEach(el => {
             splitIntoChars(el);
             staggerObserver.observe(el);
         });
+
+        const revealTextEl = document.querySelector('.reveal-text');
+
+        if (revealTextEl) {
+            const text = revealTextEl.textContent.trim();
+            const words = text.split(/\s+/);
+            revealTextEl.innerHTML = '';
+
+            words.forEach((word, index) => {
+                const span = document.createElement('span');
+                span.classList.add('reveal-word');
+                span.textContent = word;
+                revealTextEl.appendChild(span);
+                if (index < words.length - 1) {
+                    revealTextEl.appendChild(document.createTextNode(' '));
+                }
+            });
+
+            const wordEls = revealTextEl.querySelectorAll('.reveal-word');
+
+            function updateWords() {
+                const rect = revealTextEl.getBoundingClientRect();
+                const windowH = window.innerHeight;
+
+                // Trigger khi 10% element lọt vào viewport từ dưới
+                const triggerPoint = windowH * 0.9;
+
+                // Nếu element chưa vào viewport
+                if (rect.top > triggerPoint) {
+                    wordEls.forEach(el => el.classList.remove('lit'));
+                    return;
+                }
+
+                // Tính progress từ lúc trigger đến khi element lên hết
+                const progress = Math.min(Math.max((triggerPoint - rect.top) / (triggerPoint + rect.height), 0), 1);
+                const litCount = Math.round(progress * wordEls.length);
+
+                wordEls.forEach((el, i) => {
+                    if (i < litCount) {
+                        el.classList.add('lit');
+                    } else {
+                        el.classList.remove('lit');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateWords, { passive: true });
+            window.addEventListener('resize', updateWords, { passive: true });
+            updateWords();
+        }
     </script>
 </body>
 

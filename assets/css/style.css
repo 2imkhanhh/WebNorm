@@ -41,7 +41,7 @@ body {
 }
 
 body {
-  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 70%);
+  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 40%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -173,6 +173,7 @@ nav.navbar {
     opacity: 0;
     transform: translateY(40px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -208,7 +209,7 @@ nav.navbar {
 .big-bottom-text {
   width: 100%;
   margin-top: -120px;
-  padding: 0 25px 120px 25px;
+  padding: 0 25px 110px 25px;
   position: relative;
   z-index: 10;
 }
@@ -216,10 +217,10 @@ nav.navbar {
 .big-bottom-text span {
   font-family: 'AeonikPro', sans-serif;
   font-weight: 500;
-  font-size: 8vw;
+  font-size: 7.5vw;
   color: #111111;
   line-height: 1.2;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.02em;
 }
 
 /* =====================
@@ -229,14 +230,16 @@ nav.navbar {
 /* Each word is a flex container so chars sit side by side */
 .stagger-word {
   display: inline-flex !important;
-  overflow: hidden; /* clips chars while they travel up */
-  padding-bottom: 0.05em; /* prevent descender clip */
+  overflow: hidden;
+  /* clips chars while they travel up */
+  padding-bottom: 0.05em;
+  /* prevent descender clip */
 }
 
 /* Clip wrapper per char — overflow hidden here is the mask */
 .char-clip {
   display: inline-block;
-  overflow: hidden;
+  overflow: visible;
   /* tiny extra height so nothing clips at the top of the drop */
   padding-top: 0.12em;
   margin-top: -0.12em;
@@ -262,13 +265,44 @@ nav.navbar {
     opacity: 0;
     transform: translateY(110%) rotate(4deg);
   }
+
   60% {
     opacity: 1;
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) rotate(0deg);
   }
+}
+
+.intro-section {
+  padding: 50px 0;
+  background-color: #fafafa;
+  min-height: 100vh;
+}
+
+.reveal-text {
+  width: 75%;
+  font-size: 3.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  background: none;
+  color: #BDBDBD;
+  text-align: left;
+  letter-spacing: -0.02em;
+  word-spacing: -0.5em;
+}
+
+.reveal-word {
+  display: inline-block;
+  color: #BDBDBD;
+  transition: color 0.4s ease;
+  margin-right: 0.25em;
+}
+
+.reveal-word.lit {
+  color: #111111;
 }
 
 /* RESPONSIVE */
