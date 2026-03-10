@@ -23,7 +23,6 @@
                 <a href="#" class="nav-link-item">Contact</a>
                 <a href="#" class="nav-link-item lang-toggle" id="langToggle">VN</a>
             </div>
-            <!-- Hamburger: only visible on mobile/tablet -->
             <button class="nav-hamburger" aria-label="Menu">
                 <span></span>
                 <span></span>
@@ -32,7 +31,6 @@
         </div>
     </header>
 
-    <!-- Mobile menu overlay -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-inner">
             <a href="#" class="mobile-menu-item">About us</a>
@@ -94,9 +92,11 @@
             <div class="row align-items-start" style="margin-top: 150px; margin-bottom: 100px;">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
-                    <img src="assets/images/main-feature.png" alt="Main Content" class="w-100 d-block">
+                    <video class="w-100 d-block" autoplay loop muted playsinline>
+                        <source src="assets/images/main-feature.MP4" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ thẻ video.
+                    </video>
                 </div>
-
                 <div class="col-md-3"></div>
             </div>
 
@@ -133,7 +133,6 @@
             document.body.style.overflow = isOpen ? 'hidden' : '';
         });
 
-        // Close menu when a link is clicked
         document.querySelectorAll('.mobile-menu-item').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.remove('open');
@@ -142,7 +141,6 @@
             });
         });
 
-        // Lang toggle (mobile)
         const langToggleMobile = document.getElementById('langToggleMobile');
         langToggleMobile.addEventListener('click', function (e) {
             e.preventDefault();
@@ -151,7 +149,6 @@
             langToggle.textContent = newLang;
         });
 
-        // Lang toggle
         const langToggle = document.getElementById('langToggle');
         langToggle.addEventListener('click', function (e) {
             e.preventDefault();
@@ -179,9 +176,7 @@
             intervalId = null;
         });
 
-        // =====================
         // STAGGER PER CHARACTER
-        // =====================
         function splitIntoChars(el) {
             const text = el.textContent;
             const wordIndex = parseInt(el.dataset.wordIndex);
@@ -222,6 +217,9 @@
             staggerObserver.observe(el);
         });
 
+        // =====================
+        // REVEAL TEXT
+        // =====================
         const revealTextEl = document.querySelector('.reveal-text');
 
         if (revealTextEl) {
@@ -256,32 +254,43 @@
             });
 
             function updateChars() {
-                const rect = revealTextEl.getBoundingClientRect();
                 const windowH = window.innerHeight;
+                const scrollY = window.scrollY || window.pageYOffset;
+                const rect = revealTextEl.getBoundingClientRect();
+                const elemAbsTop = rect.top + scrollY;
 
-                const triggerStart = windowH - (rect.height * 0.1);
-                const triggerEnd = windowH - (rect.height * 2.9);
+                const rawStart = elemAbsTop - windowH + (windowH * 0.15);
 
-                if (rect.top > triggerStart) {
+                const animEnd = elemAbsTop + (windowH * -0.1);
+
+                const animStart = Math.min(rawStart, animEnd - 50);
+
+                const clampedStart = Math.max(animStart, 0);
+
+                if (scrollY <= clampedStart) {
                     charEls.forEach(el => el.classList.remove('lit'));
                     return;
                 }
 
-                const progress = Math.min(Math.max((triggerStart - rect.top) / (triggerStart - triggerEnd), 0), 1);
+                if (scrollY >= animEnd) {
+                    charEls.forEach(el => el.classList.add('lit'));
+                    return;
+                }
+
+                const progress = (scrollY - clampedStart) / (animEnd - clampedStart);
                 const litCount = Math.round(progress * charEls.length);
 
                 charEls.forEach((el, i) => {
-                    if (i < litCount) {
-                        el.classList.add('lit');
-                    } else {
-                        el.classList.remove('lit');
-                    }
+                    el.classList.toggle('lit', i < litCount);
                 });
             }
 
             window.addEventListener('scroll', updateChars, { passive: true });
             window.addEventListener('resize', updateChars, { passive: true });
-            updateChars();
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(updateChars);
+            });
         }
     </script>
 </body>
