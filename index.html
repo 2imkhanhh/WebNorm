@@ -13,48 +13,41 @@
 
     <header class="navbar navbar-expand-lg">
         <div class="navbar-inner">
-            <!-- Desktop: left links -->
-            <div class="nav-left desktop-only">
-                <a href="#" class="nav-link-item">About us</a>
-                <a href="#" class="nav-link-item">Work</a>
-            </div>
-
-            <!-- Logo always centered on mobile, left-ish on desktop -->
+            <a href="#" class="nav-link-item">About us</a>
+            <a href="#" class="nav-link-item">Work</a>
             <a href="#" class="navbar-logo">
                 <img src="assets/images/logo.png" alt="Logo" />
             </a>
-
-            <!-- Desktop: right links -->
-            <div class="nav-right desktop-only">
-                <a href="#" class="nav-link-item">Blog</a>
+            <a href="#" class="nav-link-item">Blog</a>
+            <div class="nav-contact-group">
                 <a href="#" class="nav-link-item">Contact</a>
                 <a href="#" class="nav-link-item lang-toggle" id="langToggle">VN</a>
             </div>
-
-            <!-- Mobile: hamburger -->
-            <button class="hamburger mobile-only" id="hamburgerBtn" aria-label="Menu">
+            <!-- Hamburger: only visible on mobile/tablet -->
+            <button class="nav-hamburger" aria-label="Menu">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
         </div>
-
-        <!-- Mobile menu overlay -->
-        <div class="mobile-menu" id="mobileMenu">
-            <a href="#" class="mobile-nav-link">About us</a>
-            <a href="#" class="mobile-nav-link">Work</a>
-            <a href="#" class="mobile-nav-link">Blog</a>
-            <a href="#" class="mobile-nav-link">Contact</a>
-            <a href="#" class="mobile-nav-link lang-toggle" id="langToggleMobile">VN</a>
-        </div>
     </header>
+
+    <!-- Mobile menu overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-inner">
+            <a href="#" class="mobile-menu-item">About us</a>
+            <a href="#" class="mobile-menu-item">Work</a>
+            <a href="#" class="mobile-menu-item">Blog</a>
+            <a href="#" class="mobile-menu-item">Contact</a>
+            <a href="#" class="mobile-menu-item mobile-menu-lang" id="langToggleMobile">VN</a>
+        </div>
+    </div>
 
     <section class="hero-section">
         <div class="container-fluid px-4 px-md-5 h-100">
             <div class="row h-100 align-items-end">
 
-                <!-- Desktop tagline -->
-                <div class="col-auto hero-tagline desktop-only">
+                <div class="col-auto hero-tagline">
                     <p>Brand Design Agency</p>
                     <p>Based In Vietnam</p>
                     <p>Culture Your Brand</p>
@@ -64,8 +57,7 @@
                     <img src="assets/images/banner.png" alt="Banner" class="hero-img" />
                 </div>
 
-                <!-- Desktop CTAs -->
-                <div class="col-auto hero-ctas desktop-only d-flex gap-5">
+                <div class="col-auto hero-ctas d-flex gap-5">
                     <a href="#" class="cta-btn">XEM DỰ ÁN</a>
                     <a href="#" class="cta-btn">LIÊN HỆ</a>
                 </div>
@@ -83,12 +75,6 @@
             </div>
         </div>
 
-        <!-- Mobile CTAs below big text -->
-        <div class="mobile-ctas mobile-only">
-            <a href="#" class="cta-btn">XEM DỰ ÁN</a>
-            <a href="#" class="cta-btn">LIÊN HỆ</a>
-        </div>
-
     </section>
 
     <section class="intro-section">
@@ -103,10 +89,9 @@
             <div class="row align-items-start" style="margin-top: 150px; margin-bottom: 100px;">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
-                    <video class="w-100 d-block" autoplay loop muted playsinline>
-                        <source src="assets/images/main-feature.MP4" type="video/mp4">
-                    </video>
+                    <img src="assets/images/main-feature.png" alt="Main Content" class="w-100 d-block">
                 </div>
+
                 <div class="col-md-3"></div>
             </div>
 
@@ -133,28 +118,39 @@
     </section>
 
     <script>
-        // Lang toggle (desktop)
-        const langToggle = document.getElementById('langToggle');
-        langToggle.addEventListener('click', function (e) {
-            e.preventDefault();
-            this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
+        // Hamburger toggle
+        const hamburger = document.querySelector('.nav-hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            const isOpen = mobileMenu.classList.toggle('open');
+            hamburger.classList.toggle('active', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.mobile-menu-item').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                hamburger.classList.remove('active');
+                document.body.style.overflow = '';
+            });
         });
 
         // Lang toggle (mobile)
         const langToggleMobile = document.getElementById('langToggleMobile');
         langToggleMobile.addEventListener('click', function (e) {
             e.preventDefault();
-            const cur = this.textContent.trim();
-            this.textContent = cur === 'VN' ? 'EN' : 'VN';
-            langToggle.textContent = cur === 'VN' ? 'EN' : 'VN';
+            const newLang = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
+            this.textContent = newLang;
+            langToggle.textContent = newLang;
         });
 
-        // Hamburger
-        const hamburgerBtn = document.getElementById('hamburgerBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        hamburgerBtn.addEventListener('click', () => {
-            hamburgerBtn.classList.toggle('open');
-            mobileMenu.classList.toggle('open');
+        // Lang toggle
+        const langToggle = document.getElementById('langToggle');
+        langToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
         });
 
         // Banner hover
