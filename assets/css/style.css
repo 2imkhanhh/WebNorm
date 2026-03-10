@@ -128,7 +128,7 @@ nav.navbar {
 .nav-hamburger.active {
   position: fixed;
   top: 18px;
-  right: 10px;
+  right: 20px;
 }
 
 .nav-hamburger span {
@@ -256,6 +256,24 @@ nav.navbar {
   color: #111111;
   line-height: 1.2;
   letter-spacing: -0.02em;
+}
+
+/* =====================
+   BIG BOTTOM TEXT ROWS
+   ===================== */
+/* Desktop: row1 = both words spread left/right on one line, row2 = centered */
+.bbt-row {
+  width: 100%;
+}
+
+.bbt-row--1 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bbt-row--2 {
+  display: flex;
+  justify-content: center;
 }
 
 /* =====================
@@ -476,16 +494,16 @@ nav.navbar {
   .hero-image-wrap {
     order: 1;
     width: 100%;
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center;
+    align-items: center; */
     padding: 0;
   }
 
   .hero-img {
-    width: 85vw;
-    max-width: 85vw;
+    width: 80vw;
+    max-width: 80vw;
     min-width: unset;
-    margin: 80px 0 0 0;
+    margin: 100px 0 0 0;
     display: block;
   }
 
@@ -497,6 +515,24 @@ nav.navbar {
   .big-bottom-text span {
     font-size: 9.5vw;
     line-height: 1.15;
+  }
+
+  /* Row 1: NHẬN DIỆN left only; Row 2: CHIẾN LƯỢC right only; Row 3: VĂN HOÁ center */
+  .bbt-row--1 {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .bbt-row--1 .stagger-word:first-child {
+    align-self: flex-start;
+  }
+
+  .bbt-row--1 .stagger-word:last-child {
+    align-self: flex-end;
+  }
+
+  .bbt-row--2 {
+    justify-content: center;
   }
 
   .hero-tagline {
@@ -571,8 +607,8 @@ nav.navbar {
   .hero-image-wrap {
     order: 1;
     width: 100%;
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center;
+    align-items: center; */
     padding: 0;
   }
 
@@ -580,7 +616,7 @@ nav.navbar {
     width: 85vw;
     max-width: 85vw;
     min-width: unset;
-    margin: 80px 0 0 0;
+    margin: 100px 0 0 0;
     display: block;
   }
 
@@ -592,6 +628,24 @@ nav.navbar {
   .big-bottom-text span {
     font-size: 11.5vw;
     line-height: 1.15;
+  }
+
+  /* Row 1: NHẬN DIỆN left only; Row 2: CHIẾN LƯỢC right only; Row 3: VĂN HOÁ center */
+  .bbt-row--1 {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .bbt-row--1 .stagger-word:first-child {
+    align-self: flex-start;
+  }
+
+  .bbt-row--1 .stagger-word:last-child {
+    align-self: flex-end;
+  }
+
+  .bbt-row--2 {
+    justify-content: center;
   }
 
   .hero-tagline {
