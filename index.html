@@ -13,16 +13,39 @@
 
     <header class="navbar navbar-expand-lg">
         <div class="navbar-inner">
-            <a href="#" class="nav-link-item">About us</a>
-            <a href="#" class="nav-link-item">Work</a>
+            <!-- Desktop: left links -->
+            <div class="nav-left desktop-only">
+                <a href="#" class="nav-link-item">About us</a>
+                <a href="#" class="nav-link-item">Work</a>
+            </div>
+
+            <!-- Logo always centered on mobile, left-ish on desktop -->
             <a href="#" class="navbar-logo">
                 <img src="assets/images/logo.png" alt="Logo" />
             </a>
-            <a href="#" class="nav-link-item">Blog</a>
-            <div class="nav-contact-group">
+
+            <!-- Desktop: right links -->
+            <div class="nav-right desktop-only">
+                <a href="#" class="nav-link-item">Blog</a>
                 <a href="#" class="nav-link-item">Contact</a>
                 <a href="#" class="nav-link-item lang-toggle" id="langToggle">VN</a>
             </div>
+
+            <!-- Mobile: hamburger -->
+            <button class="hamburger mobile-only" id="hamburgerBtn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <!-- Mobile menu overlay -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#" class="mobile-nav-link">About us</a>
+            <a href="#" class="mobile-nav-link">Work</a>
+            <a href="#" class="mobile-nav-link">Blog</a>
+            <a href="#" class="mobile-nav-link">Contact</a>
+            <a href="#" class="mobile-nav-link lang-toggle" id="langToggleMobile">VN</a>
         </div>
     </header>
 
@@ -30,7 +53,8 @@
         <div class="container-fluid px-4 px-md-5 h-100">
             <div class="row h-100 align-items-end">
 
-                <div class="col-auto hero-tagline">
+                <!-- Desktop tagline -->
+                <div class="col-auto hero-tagline desktop-only">
                     <p>Brand Design Agency</p>
                     <p>Based In Vietnam</p>
                     <p>Culture Your Brand</p>
@@ -40,7 +64,8 @@
                     <img src="assets/images/banner.png" alt="Banner" class="hero-img" />
                 </div>
 
-                <div class="col-auto hero-ctas d-flex gap-5">
+                <!-- Desktop CTAs -->
+                <div class="col-auto hero-ctas desktop-only d-flex gap-5">
                     <a href="#" class="cta-btn">XEM DỰ ÁN</a>
                     <a href="#" class="cta-btn">LIÊN HỆ</a>
                 </div>
@@ -58,6 +83,12 @@
             </div>
         </div>
 
+        <!-- Mobile CTAs below big text -->
+        <div class="mobile-ctas mobile-only">
+            <a href="#" class="cta-btn">XEM DỰ ÁN</a>
+            <a href="#" class="cta-btn">LIÊN HỆ</a>
+        </div>
+
     </section>
 
     <section class="intro-section">
@@ -72,9 +103,10 @@
             <div class="row align-items-start" style="margin-top: 150px; margin-bottom: 100px;">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
-                    <img src="assets/images/main-feature.png" alt="Main Content" class="w-100 d-block">
+                    <video class="w-100 d-block" autoplay loop muted playsinline>
+                        <source src="assets/images/main-feature.MP4" type="video/mp4">
+                    </video>
                 </div>
-
                 <div class="col-md-3"></div>
             </div>
 
@@ -101,11 +133,28 @@
     </section>
 
     <script>
-        // Lang toggle
+        // Lang toggle (desktop)
         const langToggle = document.getElementById('langToggle');
         langToggle.addEventListener('click', function (e) {
             e.preventDefault();
             this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
+        });
+
+        // Lang toggle (mobile)
+        const langToggleMobile = document.getElementById('langToggleMobile');
+        langToggleMobile.addEventListener('click', function (e) {
+            e.preventDefault();
+            const cur = this.textContent.trim();
+            this.textContent = cur === 'VN' ? 'EN' : 'VN';
+            langToggle.textContent = cur === 'VN' ? 'EN' : 'VN';
+        });
+
+        // Hamburger
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
         });
 
         // Banner hover
@@ -209,9 +258,7 @@
                 const rect = revealTextEl.getBoundingClientRect();
                 const windowH = window.innerHeight;
 
-                // Bắt đầu: khi 10% element xuất hiện ở đáy viewport
                 const triggerStart = windowH - (rect.height * 0.1);
-                // Kết thúc: khi element đã scroll lên được 30% chiều cao của nó
                 const triggerEnd = windowH - (rect.height * 2.9);
 
                 if (rect.top > triggerStart) {
