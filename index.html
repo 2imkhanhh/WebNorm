@@ -15,7 +15,7 @@
         <div class="navbar-inner">
             <a href="#" class="nav-link-item">About us</a>
             <a href="#" class="nav-link-item">Work</a>
-            <a href="#" class="navbar-logo">
+            <a href="index.html" class="navbar-logo">
                 <img src="assets/images/logo.png" alt="Logo" />
             </a>
             <a href="#" class="nav-link-item">Blog</a>
@@ -124,10 +124,10 @@
 
     <section class="project-showcase" id="projectShowcase">
         <div class="ps-sticky-wrap">
-            
+
             <!-- <div class="ps-label-top">• Dịch vụ</div> -->
             <div class="ps-label-bottom">
-                <a href="#">XEM TẤT CẢ DỰ ÁN</a>
+                <a href="#" class="ps-view-all">XEM TẤT CẢ DỰ ÁN</a>
             </div>
 
             <div class="container-fluid px-4 px-md-5 w-100 ps-main-content">
@@ -136,12 +136,13 @@
                     <div class="col-md-3 p-0 ps-left">
                         <div class="ps-counter">
                             <span class="ps-num-current" id="psCurrent">01</span>
-                            <span class="ps-num-total" id="psTotal">/...</span> </div>
+                            <span class="ps-num-total" id="psTotal">/...</span>
+                        </div>
                     </div>
 
                     <div class="col-md-6 p-0 ps-center">
                         <span class="ps-tag-left">Nhận diện</span>
-                        
+
                         <div class="ps-image-viewport">
                             <div class="ps-image-track" id="psTrack">
                                 <div class="ps-project-item">
@@ -398,7 +399,7 @@
                 if (index >= totalProjects) index = totalProjects - 1;
 
                 // --- CẬP NHẬT GIAO DIỆN ---
-                
+
                 // A. Trượt khối ảnh lên trên
                 track.style.transform = `translateY(-${index * 100}%)`;
 

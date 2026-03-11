@@ -41,7 +41,7 @@ body {
 }
 
 body {
-  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 20%);
+  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 8%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -397,12 +397,14 @@ header.navbar {
 }
 
 .cta-btn:hover,
-.link-more:hover {
+.link-more:hover,
+.ps-view-all:hover {
   transform: translateX(-8px);
 }
 
 .cta-btn::after,
-.link-more::after {
+.link-more::after,
+.ps-view-all::after {
   content: '';
   display: inline-block;
   width: 18px;
@@ -423,7 +425,8 @@ header.navbar {
 }
 
 .cta-btn:hover::after,
-.link-more:hover::after {
+.link-more:hover::after,
+.ps-view-all:hover::after {
   opacity: 1;
   transform: translateX(0);
 }
@@ -545,6 +548,16 @@ header.navbar {
   bottom: 8%;
 }
 
+.ps-view-all {
+  display: inline-flex;
+  align-items: center;
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 500;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .ps-label-bottom a {
   color: #ffffff;
   text-decoration: underline;
@@ -605,9 +618,9 @@ header.navbar {
 .ps-tag-right { right: -30px; }
 
 .ps-image-viewport {
-  width: 85%; 
+  width: 100%; 
   max-width: unset; 
-  aspect-ratio: 4 / 3; 
+  aspect-ratio: 16 / 9; 
   overflow: hidden; 
   position: relative;
   border-radius: 8px;
@@ -630,7 +643,7 @@ header.navbar {
 .ps-project-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; 
   display: block;
 }
 
@@ -638,7 +651,7 @@ header.navbar {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
   background: #ffffff;
   color: #111111;
   padding: 12px 28px;
@@ -646,7 +659,12 @@ header.navbar {
   font-size: 13px;
   font-weight: 500;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+}
+
+.ps-btn-view:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .ps-project-item:hover .ps-btn-view {
