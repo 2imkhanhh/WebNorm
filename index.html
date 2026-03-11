@@ -368,12 +368,15 @@
         const showcase = document.getElementById('projectShowcase');
         const track = document.getElementById('psTrack');
         const listItems = document.querySelectorAll('#psList li');
+        const projectItems = document.querySelectorAll('.ps-project-item');
+
+        // Các phần tử chữ cần tạo track cuộn (Slot Machine)
         const currentElem = document.getElementById('psCurrent');
         const totalElem = document.getElementById('psTotal');
-        const projectItems = document.querySelectorAll('.ps-project-item');
-        
         const tagLeftElem = document.querySelector('.ps-tag-left');
         const tagRightElem = document.querySelector('.ps-tag-right');
+        const mobileTitleElem = document.getElementById('psMobileTitle');
+        const mobileTagsElem = document.getElementById('psMobileTags');
 
         if (showcase && track && projectItems.length > 0) {
             const totalProjects = listItems.length;
@@ -385,7 +388,15 @@
             track.style.display = 'block'; 
             track.style.position = 'relative';
 
+            // Mảng lưu trữ các đoạn text sẽ trượt
+            const numTexts = [];
+            const leftTags = [];
+            const rightTags = [];
+            const mobileTitles = [];
+            const mobileTagsList = [];
+
             projectItems.forEach((item, index) => {
+                // Setup vị trí cho ảnh
                 item.style.position = 'absolute';
                 item.style.top = '0';
                 item.style.left = '0';
@@ -395,7 +406,63 @@
                 item.style.transition = 'none'; 
                 item.style.willChange = 'transform'; 
                 item.style.transform = index === 0 ? 'translate3d(0, 0%, 0)' : 'translate3d(0, 100%, 0)';
+
+                // Gom dữ liệu chữ từ các project
+                numTexts.push(String(index + 1).padStart(2, '0'));
+                mobileTitles.push(item.getAttribute('data-title') || '');
+                
+                const tagsData = item.getAttribute('data-tags') || '';
+                mobileTagsList.push(tagsData);
+                
+                // Tách text bằng dấu gạch ngang '-'
+                const splitTags = tagsData.split('-');
+                if (splitTags.length >= 2) {
+                    leftTags.push(splitTags[0].trim());
+                    rightTags.push(splitTags[1].trim());
+                } else {
+                    leftTags.push(tagsData.trim());
+                    rightTags.push('');
+                }
             });
+
+            // Hàm bọc text thành băng chuyền (Slot Machine container)
+            function createTextTrack(container, texts, heightEm, align = 'left') {
+                if (!container) return null;
+                container.innerHTML = '';
+                container.style.overflow = 'hidden'; // Giấu phần text thừa
+                container.style.height = heightEm;
+                container.style.verticalAlign = 'bottom';
+                
+                // THÊM 2 DÒNG NÀY ĐỂ MỞ RỘNG KHUNG, CHỐNG CẮT MẤT ĐUÔI CHỮ
+                container.style.paddingRight = '0.05em'; 
+                container.style.minWidth = 'max-content';
+
+                const trackDiv = document.createElement('div');
+                trackDiv.style.willChange = 'transform';
+                trackDiv.style.transition = 'none';
+
+                texts.forEach(txt => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.textContent = txt;
+                    itemDiv.style.height = heightEm;
+                    itemDiv.style.lineHeight = heightEm; // Căn giữa chữ
+                    itemDiv.style.whiteSpace = 'nowrap';
+                    itemDiv.style.textAlign = align;
+                    trackDiv.appendChild(itemDiv);
+                });
+
+                container.appendChild(trackDiv);
+                return { elem: trackDiv, count: texts.length };
+            }
+
+            // Khởi tạo các băng chuyền text với chiều cao phù hợp với CSS cũ
+            const textTracks = [
+                createTextTrack(currentElem, numTexts, '0.8em', 'left'),
+                createTextTrack(tagLeftElem, leftTags, '1.2em', 'left'),
+                createTextTrack(tagRightElem, rightTags, '1.2em', 'right'),
+                createTextTrack(mobileTitleElem, mobileTitles, '1.2em', 'left'),
+                createTextTrack(mobileTagsElem, mobileTagsList, '1.2em', 'left')
+            ].filter(t => t !== null);
 
             // Biến dùng cho nội suy mượt (Lerp)
             let targetProgress = 0;   
@@ -407,18 +474,23 @@
             function renderSmooth() {
                 currentProgress += (targetProgress - currentProgress) * 0.08;
 
+                // Di chuyển Ảnh 1:1
                 projectItems.forEach((item, i) => {
                     let yPercent = Math.max(0, Math.min(100, (i - currentProgress) * 100));
-                    
                     if (Math.abs(yPercent - 0) < 0.1) yPercent = 0;
                     if (Math.abs(yPercent - 100) < 0.1) yPercent = 100;
-                    
                     item.style.transform = `translate3d(0, ${yPercent}%, 0)`;
+                });
+
+                // Di chuyển các băng chuyền Chữ & Số y hệt như Ảnh
+                textTracks.forEach(trackObj => {
+                    const percentY = -(currentProgress * 100 / trackObj.count);
+                    trackObj.elem.style.transform = `translate3d(0, ${percentY}%, 0)`;
                 });
 
                 requestAnimationFrame(renderSmooth);
             }
-            requestAnimationFrame(renderSmooth);
+            requestAnimationFrame(renderSmooth); // Kích hoạt render
 
             window.addEventListener('scroll', () => {
                 const showcaseTop = showcase.offsetTop;
@@ -433,12 +505,10 @@
 
                 targetProgress = scrolledInside / windowHeight;
 
-                // 3. Cập nhật Text, Sidebar và Tag 2 bên
+                // 3. Cập nhật trạng thái "Sáng lên" cho danh sách Sidebar (bên phải)
                 let activeIndex = Math.round(targetProgress);
                 if (activeIndex < 0) activeIndex = 0;
                 if (activeIndex >= totalProjects) activeIndex = totalProjects - 1;
-
-                currentElem.textContent = String(activeIndex + 1).padStart(2, '0');
 
                 listItems.forEach((li, i) => {
                     if (i === activeIndex) {
@@ -448,31 +518,7 @@
                     }
                 });
 
-                const mobileTitle = document.getElementById('psMobileTitle');
-                const mobileTags = document.getElementById('psMobileTags');
-                const currentProjectItem = projectItems[activeIndex];
-                
-                if (mobileTitle && mobileTags && currentProjectItem) {
-                    const tagsData = currentProjectItem.getAttribute('data-tags');
-                    
-                    // Cập nhật cho Mobile
-                    mobileTitle.textContent = currentProjectItem.getAttribute('data-title');
-                    mobileTags.textContent = tagsData;
-
-                    // Tách chuỗi để cập nhật cho 2 chữ Trái/Phải trên Desktop
-                    if (tagLeftElem && tagRightElem && tagsData) {
-                        const splitTags = tagsData.split('-'); // Cắt chuỗi ở dấu gạch ngang
-                        if (splitTags.length >= 2) {
-                            tagLeftElem.textContent = splitTags[0].trim();
-                            tagRightElem.textContent = splitTags[1].trim();
-                        } else {
-                            tagLeftElem.textContent = tagsData.trim();
-                            tagRightElem.textContent = '';
-                        }
-                    }
-                }
-
-                // 4. Auto-Snap
+                // 4. Auto-Snap (Tự hút cực nhạy)
                 clearTimeout(snapTimeout);
                 
                 if (scrollY >= showcaseTop && scrollY <= showcaseTop + maxScroll) {
