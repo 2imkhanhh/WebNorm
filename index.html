@@ -122,6 +122,74 @@
         </div>
     </section>
 
+    <section class="project-showcase" id="projectShowcase">
+        <div class="ps-sticky-wrap">
+            
+            <!-- <div class="ps-label-top">• Dịch vụ</div> -->
+            <div class="ps-label-bottom">
+                <a href="#">XEM TẤT CẢ DỰ ÁN</a>
+            </div>
+
+            <div class="container-fluid px-4 px-md-5 w-100 ps-main-content">
+                <div class="row align-items-center w-100 m-0">
+
+                    <div class="col-md-3 p-0 ps-left">
+                        <div class="ps-counter">
+                            <span class="ps-num-current" id="psCurrent">01</span>
+                            <span class="ps-num-total" id="psTotal">/...</span> </div>
+                    </div>
+
+                    <div class="col-md-6 p-0 ps-center">
+                        <span class="ps-tag-left">Nhận diện</span>
+                        
+                        <div class="ps-image-viewport">
+                            <div class="ps-image-track" id="psTrack">
+                                <div class="ps-project-item">
+                                    <img src="assets/images/project1.png" alt="Project 1">
+                                    <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
+                                </div>
+                                <div class="ps-project-item">
+                                    <img src="assets/images/project2.png" alt="Project 2">
+                                    <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
+                                </div>
+                                <div class="ps-project-item">
+                                    <img src="assets/images/project3.png" alt="Project 3">
+                                    <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
+                                </div>
+                                <div class="ps-project-item">
+                                    <img src="assets/images/project4.png" alt="Project 4">
+                                    <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
+                                </div>
+                                <div class="ps-project-item">
+                                    <img src="assets/images/project5.png" alt="Project 5">
+                                    <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
+                                </div>
+                                <div class="ps-project-item">
+                                    <img src="assets/images/project6.png" alt="Project 6">
+                                    <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <span class="ps-tag-right">Công nghệ</span>
+                    </div>
+
+                    <div class="col-md-3 p-0 ps-right">
+                        <ul class="ps-project-list" id="psList">
+                            <li class="active">Tiên Phong</li>
+                            <li>Myan decor</li>
+                            <li>Nem.A</li>
+                            <li>Đông Hồ</li>
+                            <li>NHSKTTQGVN</li>
+                            <li>Gotrail</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script>
         // Hamburger toggle
         const hamburger = document.querySelector('.nav-hamburger');
@@ -291,6 +359,61 @@
             requestAnimationFrame(() => {
                 requestAnimationFrame(updateChars);
             });
+        }
+
+        // =====================
+        // PROJECT SHOWCASE SCROLL LOGIC
+        // =====================
+        const showcase = document.getElementById('projectShowcase');
+        const track = document.getElementById('psTrack');
+        const listItems = document.querySelectorAll('#psList li');
+        const currentElem = document.getElementById('psCurrent');
+        const totalElem = document.getElementById('psTotal');
+
+        if (showcase && track) {
+            // 1. Tự động đếm số lượng thẻ <li> để tính tổng số dự án
+            const totalProjects = listItems.length;
+
+            // Đổ dữ liệu ra màn hình, ví dụ: "/04"
+            totalElem.textContent = '/' + String(totalProjects).padStart(2, '0');
+
+            // Set chiều cao cho cả section: Mỗi dự án tương ứng với 1 lần cuộn hết 1 màn hình
+            showcase.style.height = `${totalProjects * 100}vh`;
+
+            // 2. Lắng nghe sự kiện cuộn trang
+            window.addEventListener('scroll', () => {
+                const showcaseTop = showcase.offsetTop;
+                const scrollY = window.scrollY;
+
+                // Tính toán xem người dùng đã cuộn được bao xa KỂ TỪ KHI chạm vào section này
+                let scrolledInside = scrollY - showcaseTop;
+                if (scrolledInside < 0) scrolledInside = 0;
+
+                // Cứ cuộn hết 1 chiều cao màn hình (windowHeight) là nhảy 1 index
+                const windowHeight = window.innerHeight;
+                let index = Math.floor(scrolledInside / windowHeight);
+
+                // Khóa giới hạn (clamp) để index không bị vượt quá số lượng dự án
+                if (index < 0) index = 0;
+                if (index >= totalProjects) index = totalProjects - 1;
+
+                // --- CẬP NHẬT GIAO DIỆN ---
+                
+                // A. Trượt khối ảnh lên trên
+                track.style.transform = `translateY(-${index * 100}%)`;
+
+                // B. Thay đổi số thứ tự siêu to khổng lồ
+                currentElem.textContent = String(index + 1).padStart(2, '0');
+
+                // C. Bật sáng tên dự án đang active ở danh sách bên phải
+                listItems.forEach((li, i) => {
+                    if (i === index) {
+                        li.classList.add('active');
+                    } else {
+                        li.classList.remove('active');
+                    }
+                });
+            }, { passive: true });
         }
     </script>
 </body>

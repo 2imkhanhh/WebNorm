@@ -55,12 +55,16 @@ a {
 /* =====================
    NAVBAR
    ===================== */
-nav.navbar {
+header.navbar {
   background: transparent !important;
   padding: 20px 0 !important;
-  position: relative;
-  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  z-index: 999;
+  mix-blend-mode: difference;
+  pointer-events: none;
 }
 
 .navbar-inner {
@@ -70,12 +74,13 @@ nav.navbar {
   justify-content: space-between !important;
   padding: 10px 40px;
   flex-wrap: nowrap;
+  pointer-events: auto;
 }
 
 .nav-link-item {
   font-size: 15px;
   font-weight: 500;
-  color: #111111 !important;
+  color: #ECEE7D !important; 
   letter-spacing: 0.01em;
   transition: opacity 0.2s;
   white-space: nowrap;
@@ -92,6 +97,7 @@ nav.navbar {
   height: 26px;
   width: auto;
   display: block;
+  filter: invert(88%) sepia(21%) saturate(983%) hue-rotate(22deg) brightness(102%) contrast(87%);
 }
 
 .nav-contact-group {
@@ -105,9 +111,9 @@ nav.navbar {
   font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 2px;
+  color: #ECEE7D !important; 
 }
 
-/* Hamburger — HIDDEN on desktop */
 .nav-hamburger {
   display: none;
   flex-direction: column;
@@ -124,7 +130,6 @@ nav.navbar {
   flex-shrink: 0;
 }
 
-/* When menu open, pin X button top-right above overlay */
 .nav-hamburger.active {
   position: fixed;
   top: 18px;
@@ -135,7 +140,7 @@ nav.navbar {
   display: block;
   width: 22px;
   height: 2.5px;
-  background: #111;
+  background: #ECEE7D; 
   border-radius: 2px;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s;
   transform-origin: center;
@@ -207,7 +212,7 @@ nav.navbar {
   min-width: 480px;
   object-fit: contain;
   display: block;
-  margin-top: 5%;
+  margin-top: 15%;
   margin-bottom: 15%;
   margin-right: -3%;
   animation: floatUp 1s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -505,6 +510,174 @@ nav.navbar {
   margin-top: 16px;
 }
 
+/* =====================
+   PROJECT SHOWCASE SECTION
+   ===================== */
+.project-showcase {
+  background-color: #000000; 
+  color: #ffffff;
+  position: relative;
+}
+
+.ps-sticky-wrap {
+  position: sticky;
+  top: 0;
+  height: 100vh; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ps-label-top, .ps-label-bottom {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+}
+
+/* .ps-label-top {
+  top: 8%;
+  color: #757575;
+} */
+
+.ps-label-bottom {
+  bottom: 8%;
+}
+
+.ps-label-bottom a {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.ps-main-content {
+  position: relative;
+  z-index: 2;
+}
+
+.ps-main-content .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ps-left, .ps-right { flex: 1; }
+
+.ps-counter {
+  display: flex;
+  align-items: flex-end;
+}
+
+.ps-num-current {
+  font-size: 12vw; 
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ps-num-total {
+  font-size: 2.5vw;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 0;
+  margin-left: 5px;
+}
+
+.ps-center {
+  flex: 2;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  max-width: 1200px;
+}
+
+.ps-tag-left, .ps-tag-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #ffffff;
+  z-index: 3;
+}
+.ps-tag-left { left: -30px; }
+.ps-tag-right { right: -30px; }
+
+.ps-image-viewport {
+  width: 85%; 
+  max-width: unset; 
+  aspect-ratio: 4 / 3; 
+  overflow: hidden; 
+  position: relative;
+  border-radius: 8px;
+}
+
+.ps-image-track {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); 
+}
+
+.ps-project-item {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.ps-project-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ps-btn-view {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  color: #111111;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.ps-project-item:hover .ps-btn-view {
+  opacity: 1;
+}
+
+.ps-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ps-project-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: right;
+}
+
+.ps-project-list li {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #555555;
+  margin-bottom: 12px;
+  transition: color 0.4s ease;
+}
+
+.ps-project-list li.active {
+  font-weight: 700;
+  color: #ffffff;
+}
+
 @media (max-width: 1024px) and (min-width: 769px) {
   .mobile-menu {
     display: block;
@@ -770,18 +943,39 @@ nav.navbar {
 }
 
 @keyframes mobileFadeInLeft {
-    from { opacity: 0; transform: translateX(-50px); }
-    to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes mobileFadeInRight {
-    from { opacity: 0; transform: translateX(50px); }
-    to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes mobileFadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* @media (max-width: 576px) {
