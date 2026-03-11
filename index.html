@@ -148,11 +148,11 @@
                                     <img src="assets/images/project1.png" alt="Project 1">
                                     <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
                                 </div>
-                                <div class="ps-project-item" data-title="Myan decor" data-tags="Nhận diện - Công nghệ">
+                                <div class="ps-project-item" data-title="Myan decor" data-tags="Đổi mới - Sáng tạo">
                                     <img src="assets/images/project2.png" alt="Project 2">
                                     <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
                                 </div>
-                                <div class="ps-project-item" data-title="Nem.A" data-tags="Nhận diện - Công nghệ">
+                                <div class="ps-project-item" data-title="Nem.A" data-tags="Chiến lược - Bền vững">
                                     <img src="assets/images/project3.png" alt="Project 3">
                                     <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
                                 </div>
@@ -160,11 +160,11 @@
                                     <img src="assets/images/project4.png" alt="Project 4">
                                     <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
                                 </div>
-                                <div class="ps-project-item" data-title="NHSKTTQGVN" data-tags="Nhận diện - Công nghệ">
+                                <div class="ps-project-item" data-title="NHSKTTQGVN" data-tags="Đẹp trai - Xinh gái">
                                     <img src="assets/images/project5.png" alt="Project 5">
                                     <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
                                 </div>
-                                <div class="ps-project-item" data-title="Gotrail" data-tags="Nhận diện - Công nghệ">
+                                <div class="ps-project-item" data-title="Gotrail" data-tags="Hải Yến - Dư Ngọc">
                                     <img src="assets/images/project6.png" alt="Project 6">
                                     <a href="#" class="ps-btn-view">XEM DỰ ÁN &rarr;</a>
                                 </div>
@@ -172,7 +172,7 @@
                         </div>
 
                         <span class="ps-tag-right d-none d-md-block">Công nghệ</span>
-                        
+
                         <div class="ps-mobile-info d-block d-md-none w-100 mt-3">
                             <h3 class="ps-mobile-title" id="psMobileTitle">Tiên Phong</h3>
                             <p class="ps-mobile-tags" id="psMobileTags">Nhận diện - Công nghệ</p>
@@ -290,9 +290,7 @@
             staggerObserver.observe(el);
         });
 
-        // =====================
         // REVEAL TEXT
-        // =====================
         const revealTextEl = document.querySelector('.reveal-text');
 
         if (revealTextEl) {
@@ -366,91 +364,157 @@
             });
         }
 
-        // =====================
         // PROJECT SHOWCASE SCROLL LOGIC
-        // =====================
         const showcase = document.getElementById('projectShowcase');
         const track = document.getElementById('psTrack');
         const listItems = document.querySelectorAll('#psList li');
         const currentElem = document.getElementById('psCurrent');
         const totalElem = document.getElementById('psTotal');
+        const projectItems = document.querySelectorAll('.ps-project-item');
+        
+        const tagLeftElem = document.querySelector('.ps-tag-left');
+        const tagRightElem = document.querySelector('.ps-tag-right');
 
-        if (showcase && track) {
-            // 1. Tự động đếm số lượng thẻ <li> để tính tổng số dự án
+        if (showcase && track && projectItems.length > 0) {
             const totalProjects = listItems.length;
 
-            // Đổ dữ liệu ra màn hình, ví dụ: "/04"
             totalElem.textContent = '/' + String(totalProjects).padStart(2, '0');
-
-            // Set chiều cao cho cả section: Mỗi dự án tương ứng với 1 lần cuộn hết 1 màn hình
             showcase.style.height = `${totalProjects * 100}vh`;
 
-            // 2. Lắng nghe sự kiện cuộn trang
+            // 1. Setup CSS đè ảnh
+            track.style.display = 'block'; 
+            track.style.position = 'relative';
+
+            projectItems.forEach((item, index) => {
+                item.style.position = 'absolute';
+                item.style.top = '0';
+                item.style.left = '0';
+                item.style.width = '100%';
+                item.style.height = '100%';
+                item.style.zIndex = index + 1;
+                item.style.transition = 'none'; 
+                item.style.willChange = 'transform'; 
+                item.style.transform = index === 0 ? 'translate3d(0, 0%, 0)' : 'translate3d(0, 100%, 0)';
+            });
+
+            // Biến dùng cho nội suy mượt (Lerp)
+            let targetProgress = 0;   
+            let currentProgress = 0;  
+            let snapTimeout;
+            let lastStableIndex = 0;
+
+            // 2. Vòng lặp Render mượt mà (60FPS)
+            function renderSmooth() {
+                currentProgress += (targetProgress - currentProgress) * 0.08;
+
+                projectItems.forEach((item, i) => {
+                    let yPercent = Math.max(0, Math.min(100, (i - currentProgress) * 100));
+                    
+                    if (Math.abs(yPercent - 0) < 0.1) yPercent = 0;
+                    if (Math.abs(yPercent - 100) < 0.1) yPercent = 100;
+                    
+                    item.style.transform = `translate3d(0, ${yPercent}%, 0)`;
+                });
+
+                requestAnimationFrame(renderSmooth);
+            }
+            requestAnimationFrame(renderSmooth);
+
             window.addEventListener('scroll', () => {
                 const showcaseTop = showcase.offsetTop;
                 const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
 
-                // Tính toán xem người dùng đã cuộn được bao xa KỂ TỪ KHI chạm vào section này
                 let scrolledInside = scrollY - showcaseTop;
                 if (scrolledInside < 0) scrolledInside = 0;
+                
+                const maxScroll = showcase.offsetHeight - windowHeight;
+                if (scrolledInside > maxScroll) scrolledInside = maxScroll;
 
-                // Cứ cuộn hết 1 chiều cao màn hình (windowHeight) là nhảy 1 index
-                const windowHeight = window.innerHeight;
-                let index = Math.floor(scrolledInside / windowHeight);
+                targetProgress = scrolledInside / windowHeight;
 
-                // Khóa giới hạn (clamp) để index không bị vượt quá số lượng dự án
-                if (index < 0) index = 0;
-                if (index >= totalProjects) index = totalProjects - 1;
+                // 3. Cập nhật Text, Sidebar và Tag 2 bên
+                let activeIndex = Math.round(targetProgress);
+                if (activeIndex < 0) activeIndex = 0;
+                if (activeIndex >= totalProjects) activeIndex = totalProjects - 1;
 
-                // --- CẬP NHẬT GIAO DIỆN ---
+                currentElem.textContent = String(activeIndex + 1).padStart(2, '0');
 
-                // A. Trượt khối ảnh lên trên
-                track.style.transform = `translateY(-${index * 100}%)`;
-
-                // B. Thay đổi số thứ tự siêu to khổng lồ
-                currentElem.textContent = String(index + 1).padStart(2, '0');
-
-                // C. Bật sáng tên dự án đang active ở danh sách bên phải
                 listItems.forEach((li, i) => {
-                    if (i === index) {
+                    if (i === activeIndex) {
                         li.classList.add('active');
                     } else {
                         li.classList.remove('active');
                     }
                 });
 
-                // D. Cập nhật Text cho giao diện Mobile
                 const mobileTitle = document.getElementById('psMobileTitle');
                 const mobileTags = document.getElementById('psMobileTags');
-                const currentProjectItem = document.querySelectorAll('.ps-project-item')[index];
+                const currentProjectItem = projectItems[activeIndex];
                 
                 if (mobileTitle && mobileTags && currentProjectItem) {
+                    const tagsData = currentProjectItem.getAttribute('data-tags');
+                    
+                    // Cập nhật cho Mobile
                     mobileTitle.textContent = currentProjectItem.getAttribute('data-title');
-                    mobileTags.textContent = currentProjectItem.getAttribute('data-tags');
+                    mobileTags.textContent = tagsData;
+
+                    // Tách chuỗi để cập nhật cho 2 chữ Trái/Phải trên Desktop
+                    if (tagLeftElem && tagRightElem && tagsData) {
+                        const splitTags = tagsData.split('-'); // Cắt chuỗi ở dấu gạch ngang
+                        if (splitTags.length >= 2) {
+                            tagLeftElem.textContent = splitTags[0].trim();
+                            tagRightElem.textContent = splitTags[1].trim();
+                        } else {
+                            tagLeftElem.textContent = tagsData.trim();
+                            tagRightElem.textContent = '';
+                        }
+                    }
+                }
+
+                // 4. Auto-Snap
+                clearTimeout(snapTimeout);
+                
+                if (scrollY >= showcaseTop && scrollY <= showcaseTop + maxScroll) {
+                    snapTimeout = setTimeout(() => {
+                        let fraction = targetProgress % 1; 
+                        let targetIndex;
+
+                        if (targetProgress > lastStableIndex) {
+                            targetIndex = fraction >= 0.05 ? Math.ceil(targetProgress) : Math.floor(targetProgress);
+                        } else if (targetProgress < lastStableIndex) {
+                            targetIndex = fraction <= 0.95 ? Math.floor(targetProgress) : Math.ceil(targetProgress);
+                        } else {
+                            targetIndex = lastStableIndex;
+                        }
+
+                        targetIndex = Math.max(0, Math.min(totalProjects - 1, targetIndex));
+
+                        if (Math.abs(targetProgress - targetIndex) > 0.005) {
+                            window.scrollTo({
+                                top: showcaseTop + targetIndex * windowHeight,
+                                behavior: 'smooth' 
+                            });
+                        }
+                        
+                        lastStableIndex = targetIndex; 
+                    }, 600); 
                 }
             }, { passive: true });
         }
 
         const projectItemElements = document.querySelectorAll('.ps-project-item');
-        
+
         projectItemElements.forEach(item => {
             item.addEventListener('click', function (e) {
-                // Chỉ chạy tính năng này trên màn hình mobile (<= 768px)
                 if (window.innerWidth <= 768) {
-                    
-                    // Nếu người dùng bấm thẳng vào nút "XEM DỰ ÁN", 
-                    // ta không làm gì cả để trình duyệt tự động chuyển trang
                     if (e.target.classList.contains('ps-btn-view')) {
                         return;
                     }
-                    
-                    // Kiểm tra xem ảnh này đang hiện nút hay không
+
                     const isShowing = this.classList.contains('show-button');
-                    
-                    // Ẩn nút của tất cả các ảnh khác (nếu có)
                     projectItemElements.forEach(p => p.classList.remove('show-button'));
-                    
-                    // Nếu nút chưa hiện, thì bật nó lên
+
                     if (!isShowing) {
                         this.classList.add('show-button');
                     }
