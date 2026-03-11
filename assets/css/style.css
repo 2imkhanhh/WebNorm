@@ -80,7 +80,7 @@ header.navbar {
 .nav-link-item {
   font-size: 15px;
   font-weight: 500;
-  color: #ECEE7D !important; 
+  color: #ECEE7D !important;
   letter-spacing: 0.01em;
   transition: opacity 0.2s;
   white-space: nowrap;
@@ -111,7 +111,7 @@ header.navbar {
   font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 2px;
-  color: #ECEE7D !important; 
+  color: #ECEE7D !important;
 }
 
 .nav-hamburger {
@@ -140,7 +140,7 @@ header.navbar {
   display: block;
   width: 22px;
   height: 2.5px;
-  background: #ECEE7D; 
+  background: #ECEE7D;
   border-radius: 2px;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s;
   transform-origin: center;
@@ -517,7 +517,7 @@ header.navbar {
    PROJECT SHOWCASE SECTION
    ===================== */
 .project-showcase {
-  background-color: #000000; 
+  background-color: #000000;
   color: #ffffff;
   position: relative;
 }
@@ -525,14 +525,15 @@ header.navbar {
 .ps-sticky-wrap {
   position: sticky;
   top: 0;
-  height: 100vh; 
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
 
-.ps-label-top, .ps-label-bottom {
+.ps-label-top,
+.ps-label-bottom {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -575,7 +576,10 @@ header.navbar {
   justify-content: space-between;
 }
 
-.ps-left, .ps-right { flex: 1; }
+.ps-left,
+.ps-right {
+  flex: 1;
+}
 
 .ps-counter {
   display: flex;
@@ -583,7 +587,7 @@ header.navbar {
 }
 
 .ps-num-current {
-  font-size: 12vw; 
+  font-size: 12vw;
   font-weight: 500;
   line-height: 0.8;
   letter-spacing: -0.05em;
@@ -606,7 +610,8 @@ header.navbar {
   max-width: 1200px;
 }
 
-.ps-tag-left, .ps-tag-right {
+.ps-tag-left,
+.ps-tag-right {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -614,14 +619,20 @@ header.navbar {
   color: #ffffff;
   z-index: 3;
 }
-.ps-tag-left { left: -30px; }
-.ps-tag-right { right: -30px; }
+
+.ps-tag-left {
+  left: -30px;
+}
+
+.ps-tag-right {
+  right: -30px;
+}
 
 .ps-image-viewport {
-  width: 100%; 
-  max-width: unset; 
-  aspect-ratio: 16 / 9; 
-  overflow: hidden; 
+  width: 100%;
+  max-width: unset;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
   position: relative;
   border-radius: 8px;
 }
@@ -630,7 +641,7 @@ header.navbar {
   display: flex;
   flex-direction: column;
   height: 100%;
-  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); 
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ps-project-item {
@@ -643,7 +654,7 @@ header.navbar {
 .ps-project-item img {
   width: 100%;
   height: 100%;
-  object-fit: contain; 
+  object-fit: contain;
   display: block;
 }
 
@@ -957,6 +968,89 @@ header.navbar {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+  }
+
+  .project-showcase .ps-center {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .project-showcase .ps-image-viewport {
+    width: calc(100% + 32px) !important;
+    margin-left: -16px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-showcase .ps-mobile-info {
+    text-align: left;
+    margin-top: 20px !important;
+  }
+
+  .project-showcase .ps-mobile-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .project-showcase .ps-mobile-tags {
+    font-size: 14px;
+    color: #BDBDBD;
+    margin-bottom: 0;
+    font-weight: 400;
+  }
+
+  .project-showcase .ps-sticky-wrap {
+    align-items: flex-start;
+    padding-top: 12vh;
+  }
+
+  .project-showcase .ps-content-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+  }
+
+  .project-showcase .ps-left {
+    width: 100%;
+  }
+
+  .project-showcase .ps-counter {
+    align-items: baseline;
+    margin-bottom: 24px;
+  }
+
+  .project-showcase .ps-num-current {
+    font-size: 25vw;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+  }
+
+  .project-showcase .ps-num-total {
+    font-size: 5vw;
+    margin-left: 6px;
+  }
+
+  .project-showcase .ps-label-bottom {
+    font-size: 15px;
+    bottom: 20%;
+  }
+
+  .project-showcase .ps-project-item .ps-btn-view {
+    opacity: 0 !important;
+    pointer-events: none;
+    /* Chặn người dùng bấm trúng nút khi nó đang tàng hình */
+  }
+
+  /* Hiển thị nút khi có class 'show-button' được add từ Javascript */
+  .project-showcase .ps-project-item.show-button .ps-btn-view {
+    opacity: 1 !important;
+    pointer-events: auto;
+    /* Mở lại khả năng bấm */
+    transform: translate(-50%, -50%) scale(1.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
   }
 }
 
