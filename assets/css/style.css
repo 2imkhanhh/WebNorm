@@ -80,7 +80,7 @@ header.navbar {
 .nav-link-item {
   font-size: 15px;
   font-weight: 500;
-  color: #ECEE7D !important;
+  color: #ffffff !important;
   letter-spacing: 0.01em;
   transition: opacity 0.2s;
   white-space: nowrap;
@@ -97,7 +97,7 @@ header.navbar {
   height: 26px;
   width: auto;
   display: block;
-  filter: invert(88%) sepia(21%) saturate(983%) hue-rotate(22deg) brightness(102%) contrast(87%);
+  filter: brightness(0) invert(1);
 }
 
 .nav-contact-group {
@@ -111,7 +111,7 @@ header.navbar {
   font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 2px;
-  color: #ECEE7D !important;
+  color: #ffffff !important;
 }
 
 .nav-hamburger {
@@ -140,7 +140,7 @@ header.navbar {
   display: block;
   width: 22px;
   height: 2.5px;
-  background: #ECEE7D;
+  background: #ffffff;
   border-radius: 2px;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s;
   transform-origin: center;
@@ -1041,14 +1041,11 @@ header.navbar {
   .project-showcase .ps-project-item .ps-btn-view {
     opacity: 0 !important;
     pointer-events: none;
-    /* Chặn người dùng bấm trúng nút khi nó đang tàng hình */
   }
 
-  /* Hiển thị nút khi có class 'show-button' được add từ Javascript */
   .project-showcase .ps-project-item.show-button .ps-btn-view {
     opacity: 1 !important;
     pointer-events: auto;
-    /* Mở lại khả năng bấm */
     transform: translate(-50%, -50%) scale(1.08) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
   }
