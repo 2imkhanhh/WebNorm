@@ -36,7 +36,7 @@
 
 html,
 body {
-  font-family: 'AeonikPro', sans-serif;
+  font-family: 'AeonikPro';
   font-weight: 400;
 }
 
@@ -587,10 +587,10 @@ header.navbar {
 }
 
 .ps-num-current {
-  font-size: 12vw;
+  font-size: 8vw;
   font-weight: 500;
   line-height: 0.8;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -598,7 +598,7 @@ header.navbar {
   font-size: 2.5vw;
   font-weight: 500;
   color: #ffffff;
-  margin-bottom: 0;
+  margin-bottom: -5px;
 }
 
 .ps-center {
@@ -813,6 +813,99 @@ header.navbar {
 
   .desc-text {
     font-size: 1.25rem;
+  }
+
+  .project-showcase .ps-tag-left,
+  .project-showcase .ps-tag-right,
+  .project-showcase .ps-right {
+    display: none !important;
+  }
+
+  /* Ép hiển thị thông tin Mobile trên Tablet */
+  .project-showcase .ps-mobile-info {
+    display: block !important;
+  }
+
+  /* Layout chính cho Tablet & Mobile */
+  .project-showcase .ps-center {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .project-showcase .ps-image-viewport {
+    width: calc(100% + 32px) !important;
+    margin-left: -16px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-showcase .ps-mobile-info {
+    text-align: left;
+    margin-top: 20px !important;
+  }
+
+  .project-showcase .ps-mobile-title {
+    font-size: 24px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .project-showcase .ps-mobile-tags {
+    font-size: 14px;
+    color: #BDBDBD;
+    margin-bottom: 0;
+    font-weight: 400;
+  }
+
+  .project-showcase .ps-sticky-wrap {
+    align-items: flex-start;
+    padding-top: 12vh;
+  }
+
+  .project-showcase .ps-content-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+  }
+
+  .project-showcase .ps-left {
+    width: 100%;
+  }
+
+  .project-showcase .ps-counter {
+    align-items: baseline;
+    margin-bottom: 24px;
+  }
+
+  .project-showcase .ps-num-current {
+    font-size: 18vw; 
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+  }
+
+  .project-showcase .ps-num-total {
+    font-size: 5vw;
+    margin-left: 6px;
+  }
+
+  .project-showcase .ps-label-bottom {
+    font-size: 18px;
+    bottom: 15%;
+  }
+
+  /* Logic hover ảnh / nút bấm */
+  .project-showcase .ps-project-item .ps-btn-view {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  .project-showcase .ps-project-item.show-button .ps-btn-view {
+    opacity: 1 !important;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1.08) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
   }
 }
 
