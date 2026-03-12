@@ -100,7 +100,7 @@
                 <div class="col-md-3"></div>
             </div>
 
-            <div class="row align-items-start content-footer" style="margin-bottom: 200px;">
+            <div class="row align-items-start content-footer" style="margin-bottom: 200px; margin-left: -20px;">
 
                 <div class="col-md-3">
                     <span class="label-side">• Về chúng tôi</span>
@@ -191,6 +191,30 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-intro-section">
+        <div class="container-fluid px-4">
+            <div class="row services-intro-row">
+                
+                <div class="col-12 col-lg-2 mb-4 mb-lg-0">
+                    <span class="si-label">• Dịch vụ</span>
+                </div>
+                
+                <div class="col-12 col-lg-7 mb-4 mb-lg-0">
+                    <h2 class="si-statement reveal-text-multi">
+                        Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác biệt và tăng trưởng.
+                    </h2>
+                </div>
+                
+                <div class="col-12 col-lg-3 d-flex justify-content-lg-end">
+                    <p class="si-desc">
+                        Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.
+                    </p>
+                </div>
+
             </div>
         </div>
     </section>
@@ -291,9 +315,9 @@
         });
 
         // REVEAL TEXT
-        const revealTextEl = document.querySelector('.reveal-text');
+        const revealElements = document.querySelectorAll('.reveal-text, .reveal-text-multi');
 
-        if (revealTextEl) {
+        revealElements.forEach(revealTextEl => {
             const text = revealTextEl.textContent.trim();
             const words = text.split(/\s+/);
             revealTextEl.innerHTML = '';
@@ -331,11 +355,8 @@
                 const elemAbsTop = rect.top + scrollY;
 
                 const rawStart = elemAbsTop - windowH + (windowH * 0.15);
-
                 const animEnd = elemAbsTop + (windowH * -0.1);
-
                 const animStart = Math.min(rawStart, animEnd - 50);
-
                 const clampedStart = Math.max(animStart, 0);
 
                 if (scrollY <= clampedStart) {
@@ -362,7 +383,7 @@
             requestAnimationFrame(() => {
                 requestAnimationFrame(updateChars);
             });
-        }
+        });
 
         // PROJECT SHOWCASE SCROLL LOGIC
         const showcase = document.getElementById('projectShowcase');
@@ -385,7 +406,7 @@
             showcase.style.height = `${totalProjects * 100}vh`;
 
             // 1. Setup CSS đè ảnh
-            track.style.display = 'block'; 
+            track.style.display = 'block';
             track.style.position = 'relative';
 
             // Mảng lưu trữ các đoạn text sẽ trượt
@@ -403,17 +424,17 @@
                 item.style.width = '100%';
                 item.style.height = '100%';
                 item.style.zIndex = index + 1;
-                item.style.transition = 'none'; 
-                item.style.willChange = 'transform'; 
+                item.style.transition = 'none';
+                item.style.willChange = 'transform';
                 item.style.transform = index === 0 ? 'translate3d(0, 0%, 0)' : 'translate3d(0, 100%, 0)';
 
                 // Gom dữ liệu chữ từ các project
                 numTexts.push(String(index + 1).padStart(2, '0'));
                 mobileTitles.push(item.getAttribute('data-title') || '');
-                
+
                 const tagsData = item.getAttribute('data-tags') || '';
                 mobileTagsList.push(tagsData);
-                
+
                 // Tách text bằng dấu gạch ngang '-'
                 const splitTags = tagsData.split('-');
                 if (splitTags.length >= 2) {
@@ -429,11 +450,11 @@
             function createTextTrack(container, texts, heightEm, align = 'left') {
                 if (!container) return null;
                 container.innerHTML = '';
-                container.style.overflow = 'hidden'; 
+                container.style.overflow = 'hidden';
                 container.style.height = heightEm;
                 container.style.verticalAlign = 'bottom';
-                
-                container.style.paddingRight = '0.05em'; 
+
+                container.style.paddingRight = '0.05em';
                 container.style.minWidth = 'max-content';
 
                 const trackDiv = document.createElement('div');
@@ -444,7 +465,7 @@
                     const itemDiv = document.createElement('div');
                     itemDiv.textContent = txt;
                     itemDiv.style.height = heightEm;
-                    itemDiv.style.lineHeight = heightEm; 
+                    itemDiv.style.lineHeight = heightEm;
                     itemDiv.style.whiteSpace = 'nowrap';
                     itemDiv.style.textAlign = align;
                     trackDiv.appendChild(itemDiv);
@@ -464,8 +485,8 @@
             ].filter(t => t !== null);
 
             // Biến dùng cho nội suy 
-            let targetProgress = 0;   
-            let currentProgress = 0;  
+            let targetProgress = 0;
+            let currentProgress = 0;
             let snapTimeout;
             let lastStableIndex = 0;
 
@@ -488,7 +509,7 @@
 
                 requestAnimationFrame(renderSmooth);
             }
-            requestAnimationFrame(renderSmooth); 
+            requestAnimationFrame(renderSmooth);
 
             window.addEventListener('scroll', () => {
                 const showcaseTop = showcase.offsetTop;
@@ -497,7 +518,7 @@
 
                 let scrolledInside = scrollY - showcaseTop;
                 if (scrolledInside < 0) scrolledInside = 0;
-                
+
                 const maxScroll = showcase.offsetHeight - windowHeight;
                 if (scrolledInside > maxScroll) scrolledInside = maxScroll;
 
@@ -518,10 +539,10 @@
 
                 // 4. Auto-Snap 
                 clearTimeout(snapTimeout);
-                
+
                 if (scrollY >= showcaseTop && scrollY <= showcaseTop + maxScroll) {
                     snapTimeout = setTimeout(() => {
-                        let fraction = targetProgress % 1; 
+                        let fraction = targetProgress % 1;
                         let targetIndex;
 
                         if (targetProgress > lastStableIndex) {
@@ -537,12 +558,12 @@
                         if (Math.abs(targetProgress - targetIndex) > 0.005) {
                             window.scrollTo({
                                 top: showcaseTop + targetIndex * windowHeight,
-                                behavior: 'smooth' 
+                                behavior: 'smooth'
                             });
                         }
-                        
-                        lastStableIndex = targetIndex; 
-                    }, 600); 
+
+                        lastStableIndex = targetIndex;
+                    }, 600);
                 }
             }, { passive: true });
         }
@@ -551,20 +572,20 @@
 
         projectItemElements.forEach(item => {
             const btn = item.querySelector('.ps-btn-view');
-            const img = item.querySelector('img'); 
+            const img = item.querySelector('img');
 
-            img.addEventListener('mousemove', function(e) {
+            img.addEventListener('mousemove', function (e) {
                 if (window.innerWidth > 1024) {
                     const rect = item.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    
+
                     btn.style.left = `${x}px`;
                     btn.style.top = `${y}px`;
                 }
             });
 
-            img.addEventListener('mouseleave', function() {
+            img.addEventListener('mouseleave', function () {
                 if (window.innerWidth > 1024) {
                     setTimeout(() => {
                         btn.style.left = '50%';
