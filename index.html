@@ -370,7 +370,7 @@
         const listItems = document.querySelectorAll('#psList li');
         const projectItems = document.querySelectorAll('.ps-project-item');
 
-        // Các phần tử chữ cần tạo track cuộn (Slot Machine)
+        // Các phần tử chữ cần tạo track cuộn 
         const currentElem = document.getElementById('psCurrent');
         const totalElem = document.getElementById('psTotal');
         const tagLeftElem = document.querySelector('.ps-tag-left');
@@ -425,15 +425,14 @@
                 }
             });
 
-            // Hàm bọc text thành băng chuyền (Slot Machine container)
+            // Hàm bọc text thành băng chuyền 
             function createTextTrack(container, texts, heightEm, align = 'left') {
                 if (!container) return null;
                 container.innerHTML = '';
-                container.style.overflow = 'hidden'; // Giấu phần text thừa
+                container.style.overflow = 'hidden'; 
                 container.style.height = heightEm;
                 container.style.verticalAlign = 'bottom';
                 
-                // THÊM 2 DÒNG NÀY ĐỂ MỞ RỘNG KHUNG, CHỐNG CẮT MẤT ĐUÔI CHỮ
                 container.style.paddingRight = '0.05em'; 
                 container.style.minWidth = 'max-content';
 
@@ -445,7 +444,7 @@
                     const itemDiv = document.createElement('div');
                     itemDiv.textContent = txt;
                     itemDiv.style.height = heightEm;
-                    itemDiv.style.lineHeight = heightEm; // Căn giữa chữ
+                    itemDiv.style.lineHeight = heightEm; 
                     itemDiv.style.whiteSpace = 'nowrap';
                     itemDiv.style.textAlign = align;
                     trackDiv.appendChild(itemDiv);
@@ -455,7 +454,7 @@
                 return { elem: trackDiv, count: texts.length };
             }
 
-            // Khởi tạo các băng chuyền text với chiều cao phù hợp với CSS cũ
+            // Khởi tạo các băng chuyền text 
             const textTracks = [
                 createTextTrack(currentElem, numTexts, '0.8em', 'left'),
                 createTextTrack(tagLeftElem, leftTags, '1.2em', 'left'),
@@ -464,13 +463,13 @@
                 createTextTrack(mobileTagsElem, mobileTagsList, '1.2em', 'left')
             ].filter(t => t !== null);
 
-            // Biến dùng cho nội suy mượt (Lerp)
+            // Biến dùng cho nội suy 
             let targetProgress = 0;   
             let currentProgress = 0;  
             let snapTimeout;
             let lastStableIndex = 0;
 
-            // 2. Vòng lặp Render mượt mà (60FPS)
+            // 2. Vòng lặp Render 
             function renderSmooth() {
                 currentProgress += (targetProgress - currentProgress) * 0.08;
 
@@ -482,7 +481,6 @@
                     item.style.transform = `translate3d(0, ${yPercent}%, 0)`;
                 });
 
-                // Di chuyển các băng chuyền Chữ & Số y hệt như Ảnh
                 textTracks.forEach(trackObj => {
                     const percentY = -(currentProgress * 100 / trackObj.count);
                     trackObj.elem.style.transform = `translate3d(0, ${percentY}%, 0)`;
@@ -490,7 +488,7 @@
 
                 requestAnimationFrame(renderSmooth);
             }
-            requestAnimationFrame(renderSmooth); // Kích hoạt render
+            requestAnimationFrame(renderSmooth); 
 
             window.addEventListener('scroll', () => {
                 const showcaseTop = showcase.offsetTop;
@@ -505,7 +503,7 @@
 
                 targetProgress = scrolledInside / windowHeight;
 
-                // 3. Cập nhật trạng thái "Sáng lên" cho danh sách Sidebar (bên phải)
+                // 3. Cập nhật trạng thái cho danh sách Sidebar 
                 let activeIndex = Math.round(targetProgress);
                 if (activeIndex < 0) activeIndex = 0;
                 if (activeIndex >= totalProjects) activeIndex = totalProjects - 1;
@@ -518,7 +516,7 @@
                     }
                 });
 
-                // 4. Auto-Snap (Tự hút cực nhạy)
+                // 4. Auto-Snap 
                 clearTimeout(snapTimeout);
                 
                 if (scrollY >= showcaseTop && scrollY <= showcaseTop + maxScroll) {
@@ -552,11 +550,43 @@
         const projectItemElements = document.querySelectorAll('.ps-project-item');
 
         projectItemElements.forEach(item => {
+            const btn = item.querySelector('.ps-btn-view');
+            const img = item.querySelector('img'); 
+
+            img.addEventListener('mousemove', function(e) {
+                if (window.innerWidth > 1024) {
+                    const rect = item.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    btn.style.left = `${x}px`;
+                    btn.style.top = `${y}px`;
+                }
+            });
+
+            img.addEventListener('mouseleave', function() {
+                if (window.innerWidth > 1024) {
+                    setTimeout(() => {
+                        btn.style.left = '50%';
+                        btn.style.top = '50%';
+                    }, 300);
+                }
+            });
+
+            img.addEventListener('click', function (e) {
+                if (window.innerWidth > 1024) {
+                    const link = btn.getAttribute('href');
+                    if (link && link !== '#') {
+                        window.location.href = link;
+                    } else {
+                        console.log('Đã click chuyển hướng dự án!');
+                    }
+                }
+            });
+
             item.addEventListener('click', function (e) {
                 if (window.innerWidth <= 1024) {
-                    if (e.target.classList.contains('ps-btn-view')) {
-                        return;
-                    }
+                    if (e.target.classList.contains('ps-btn-view')) return;
 
                     const isShowing = this.classList.contains('show-button');
                     projectItemElements.forEach(p => p.classList.remove('show-button'));

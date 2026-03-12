@@ -648,11 +648,16 @@ header.navbar {
   height: 100%;
   flex-shrink: 0;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .ps-project-item img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   display: block;
 }
@@ -669,6 +674,7 @@ header.navbar {
   font-size: 13px;
   font-weight: 500;
   opacity: 0;
+  white-space: nowrap;
   transition: opacity 0.3s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
 }
 
@@ -677,9 +683,9 @@ header.navbar {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
-.ps-project-item:hover .ps-btn-view {
+/* .ps-project-item:hover .ps-btn-view {
   opacity: 1;
-}
+} */
 
 .ps-right {
   display: flex;
@@ -1176,6 +1182,25 @@ header.navbar {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (min-width: 1025px) {
+  .project-showcase .ps-project-item img {
+    cursor: none; 
+  }
+  
+  .project-showcase .ps-btn-view {
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease !important;
+    transform: translate(-50%, -50%) scale(0.6); 
+  }
+
+  /* CHÚ Ý: Đã đổi từ .ps-project-item:hover sang img:hover */
+  .project-showcase .ps-project-item img:hover ~ .ps-btn-view {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   }
 }
 
