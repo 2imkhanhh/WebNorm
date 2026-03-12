@@ -360,7 +360,7 @@ header.navbar {
   color: #BDBDBD;
   text-align: left;
   letter-spacing: -0.02em;
-  word-spacing: -0.5em;
+  /* word-spacing: -0.5em; */
 }
 
 .reveal-char {
@@ -713,8 +713,8 @@ header.navbar {
 }
 
 .services-intro-section {
-  background-color: #FAFAFA; 
-  padding: 200px 0 400px 10px; 
+  background-color: #FAFAFA;
+  padding: 200px 0 200px 10px;
   position: relative;
   z-index: 10;
 }
@@ -728,7 +728,7 @@ header.navbar {
   color: #757575;
   font-weight: 500;
   display: inline-block;
-  margin-top: 15px; 
+  margin-top: 15px;
 }
 
 .si-statement {
@@ -737,8 +737,8 @@ header.navbar {
   line-height: 1.25;
   letter-spacing: -0.02em;
   margin: 0;
-  word-spacing: -0.5em; 
-  max-width: 95%; /* Ép thêm một chút để dòng rớt đẹp như thiết kế */
+  /* word-spacing: -0.5em;  */
+  max-width: 95%;
 }
 
 .si-text-dark {
@@ -754,9 +754,89 @@ header.navbar {
   color: #757575;
   line-height: 1.5;
   font-weight: 400;
+  margin-top: 15px;
+  margin-right: 5px;
+  max-width: 200px;
+}
+
+.services-detail-section {
+  background-color: #FAFAFA;
+  padding-bottom: 200px;
+}
+
+.service-content-wrapper {
+  padding: 30px 0 20px 0;
+}
+
+.service-divider {
+  border: 0;
+  border-top: 1px solid #BDBDBD;
+  margin: 0 0 0 50px; 
+  transition: border-color 0.6s ease;
+}
+
+.service-number-box {
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.service-text-box {
+  flex-grow: 1;
+}
+
+.service-number {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #BDBDBD;
+  display: inline-block;
+  transition: color 0.6s ease;
+}
+
+.service-title {
+  font-size: 2vw;
+  font-weight: 500;
+  margin-bottom: 0;
+  letter-spacing: -0.02em;
+  color: #BDBDBD;
+  line-height: 1;
+  transition: color 0.6s ease;
+}
+
+.service-header-row {
+  margin-bottom: 20px;
+}
+
+.service-list {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  margin-top: 15px; 
-  max-width: 220px; 
+}
+
+.service-list li {
+  font-size: 1.5vw;
+  color: #BDBDBD;
+  margin-bottom: 5px;
+  padding-left: 0;
+  transition: color 0.6s ease;
+}
+
+.service-list li::before {
+  content: "\2022";
+  color: #BDBDBD;
+  margin-right: 15px;
+  display: inline-block;
+  transition: color 0.6s ease;
+}
+
+.service-item.active .service-divider {
+  border-color: #111111;
+}
+
+.service-item.active .service-number,
+.service-item.active .service-title,
+.service-item.active .service-list li,
+.service-item.active .service-list li::before {
+  color: #111111 !important;
 }
 
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -933,7 +1013,7 @@ header.navbar {
   }
 
   .project-showcase .ps-num-current {
-    font-size: 18vw; 
+    font-size: 18vw;
     line-height: 0.8;
     letter-spacing: -0.04em;
   }
@@ -948,7 +1028,6 @@ header.navbar {
     bottom: 15%;
   }
 
-  /* Logic hover ảnh / nút bấm */
   .project-showcase .ps-project-item .ps-btn-view {
     opacity: 0 !important;
     pointer-events: none;
@@ -959,6 +1038,26 @@ header.navbar {
     pointer-events: auto;
     transform: translate(-50%, -50%) scale(1.08) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .services-intro-section {
+    padding: 120px 0;
+  }
+
+  .si-label {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .si-statement {
+    font-size: 4vw;
+    max-width: 90%;
+  }
+
+  .si-desc {
+    margin-top: 10px;
+    max-width: 100%;
+    font-size: 1.1rem;
   }
 }
 
@@ -1194,6 +1293,27 @@ header.navbar {
     transform: translate(-50%, -50%) scale(1.08) !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
   }
+
+  .services-intro-section {
+    padding: 80px 0;
+  }
+
+  .si-label {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  .si-statement {
+    font-size: 2.2rem;
+    max-width: 100%;
+    word-spacing: normal;
+  }
+
+  .si-desc {
+    margin-top: 24px;
+    max-width: 90%;
+    font-size: 1rem;
+  }
 }
 
 @keyframes mobileFadeInLeft {
@@ -1234,17 +1354,16 @@ header.navbar {
 
 @media (min-width: 1025px) {
   .project-showcase .ps-project-item img {
-    cursor: none; 
+    cursor: none;
   }
-  
+
   .project-showcase .ps-btn-view {
     pointer-events: none;
     transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease !important;
-    transform: translate(-50%, -50%) scale(0.6); 
+    transform: translate(-50%, -50%) scale(0.6);
   }
 
-  /* CHÚ Ý: Đã đổi từ .ps-project-item:hover sang img:hover */
-  .project-showcase .ps-project-item img:hover ~ .ps-btn-view {
+  .project-showcase .ps-project-item img:hover~.ps-btn-view {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
