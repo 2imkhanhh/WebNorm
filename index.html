@@ -951,7 +951,6 @@
                 const totalElem = document.querySelector('.testimonial-pagination .total');
                 const progressCircle = document.querySelector('.progress-ring-circle');
                 const sliderContainer = document.querySelector('.testi-slider-container');
-                // Lấy thêm section tổng để làm mốc theo dõi
                 const testimonialSection = document.querySelector('.testimonial-section');
 
                 if (!track || slides.length === 0) return;
@@ -963,8 +962,21 @@
 
                 const intervalTime = 5000;
                 const rewindTime = 800;
-                const circleCircumference = 170;
 
+                function getCircumference() {
+                    const width = window.innerWidth;
+                    let radius = 27; // Desktop mặc định (nút 56px)
+                    if (width <= 768) {
+                        radius = 25; // Mobile (nút 48px)
+                    } else if (width > 768 && width <= 1024) {
+                        radius = 31; // Tablet (nút 64px)
+                    }
+                    return 2 * Math.PI * radius;
+                }
+
+                let circleCircumference = getCircumference();
+
+                // GIỮ LẠI DẤU / NHƯ YÊU CẦU CỦA BẠN
                 if (totalElem) {
                     totalElem.textContent = '/' + String(slides.length).padStart(2, '0');
                 }
@@ -993,6 +1005,9 @@
                     clearTimeout(progressTimer);
                     clearTimeout(rewindTimeout);
 
+                    circleCircumference = getCircumference();
+                    progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
+
                     progressCircle.style.transition = `stroke-dashoffset ${rewindTime}ms ease-in-out`;
                     progressCircle.style.strokeDashoffset = circleCircumference;
 
@@ -1004,7 +1019,7 @@
                             moveToNextSlide();
                         }, intervalTime);
 
-                    }, rewindTime + 50);
+                    }, rewindTime + 50); 
                 }
 
                 function moveToNextSlide() {
@@ -1019,7 +1034,16 @@
                     startProgress();
                 }
 
-                window.addEventListener('resize', updateCarousel);
+                window.addEventListener('resize', () => {
+                    if (progressCircle) {
+                        circleCircumference = getCircumference();
+                        progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
+                        progressCircle.style.transition = 'none';
+                        progressCircle.style.strokeDashoffset = circleCircumference;
+                    }
+                    updateCarousel();
+                    if(isPlaying) startProgress(); 
+                });
 
                 if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
                 if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
@@ -1047,7 +1071,6 @@
                     startProgress();
                 }
             }
-
             initTestimonialSlider();
 
         });

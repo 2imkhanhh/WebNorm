@@ -1013,7 +1013,7 @@ header.navbar {
   color: #111111;
   position: relative;
   z-index: 2;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .next-btn-wrapper {
@@ -1357,98 +1357,172 @@ header.navbar {
   }
 
   .testimonial-section {
-    padding: 60px 0 60px 0;
+    padding: 60px 0;
   }
- 
-  /* Title sizes */
+
   .testimonial-title {
     font-size: 10vw;
     margin-top: 16px;
   }
- 
+
   .text-left {
     padding-left: 6vw;
   }
- 
+
   .text-right {
     padding-right: 4vw;
     margin-top: 12px;
   }
- 
+
   .quote-mark {
     left: -10px;
     font-size: 0.5em;
   }
- 
-  /* Slider */
+
   .testimonial-main-content {
     margin-top: 80px;
+    overflow: hidden;
   }
- 
+
+  .testi-slider-container {
+    overflow: hidden;
+  }
+
+  .testi-track {
+    align-items: stretch;
+  }
+
   .testi-slide {
     flex: 0 0 100vw;
     max-width: 100vw;
     padding: 0 50px;
+    opacity: 0;
   }
- 
-  /* Avatar + quote stacked vertically */
+
+  .testi-slide.active {
+    opacity: 1;
+  }
+
+  /* Ép dọc và căn giữa (Tablet) */
   .testi-slide .row {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
   }
- 
+
   .testi-slide .col-md-5 {
     width: 100%;
-    justify-content: flex-start !important;
-    padding-right: 0 !important;
+    display: flex;
+    justify-content: center !important;
+    padding: 0 !important;
     margin-bottom: 24px;
   }
- 
+
   .testimonial-avatar {
-    width: clamp(120px, 28vw, 200px);
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    margin-bottom: 30px;
+    width: 240px;
+    aspect-ratio: 4 / 5;
+    border-radius: 12px;
+    margin-bottom: 0;
   }
- 
+
   .testi-slide .col-md-7 {
     width: 100%;
-    padding-left: 0 !important;
+    padding: 0 !important;
   }
- 
-  .quote-text {
-    font-size: 1.05rem;
-    line-height: 1.6;
+
+  .testimonial-quote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
- 
+
+  .quote-author {
+    order: 1;
+    margin-top: 0;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
   .author-name {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    margin-bottom: 4px;
   }
- 
+
   .author-position {
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
- 
-  /* Footer pagination */
+
+  .quote-text {
+    order: 2;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    text-align: center;
+    max-width: 85%;
+  }
+
+  /* Footer (Số đếm + Nút) Căn giữa */
   .testimonial-footer {
-    margin-top: 40px;
+    margin-top: 50px;
+    width: 100%;
   }
- 
+
+  .testimonial-footer .row {
+    margin: 0 !important;
+    justify-content: center !important;
+  }
+
   .testimonial-footer .col-md-4 {
     display: none !important;
   }
- 
+
   .testimonial-footer .col-md-6 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 30px !important;
+  }
+
+  .testimonial-pagination {
     width: 100%;
-    padding: 0 20px;
+    display: flex;
+    justify-content: center !important;
+    align-items: baseline !important;
   }
- 
+
   .testimonial-pagination .current {
-    font-size: 10vw;
+    font-size: 14vw;
+    line-height: 0.72;
+    margin-bottom: -2px;
   }
- 
+
   .testimonial-pagination .total {
     font-size: 4vw;
+    line-height: 1;
+    margin-left: 4px;
+  }
+
+  .testimonial-nav-btns {
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    gap: 20px;
+  }
+
+  .nav-btn,
+  .next-btn-wrapper,
+  .progress-ring {
+    width: 64px;
+    height: 64px;
+  }
+
+  .progress-ring circle {
+    cx: 32;
+    cy: 32;
+    r: 31;
   }
 }
 
@@ -1745,156 +1819,190 @@ header.navbar {
   }
 
   .testimonial-section {
-    padding: 40px 0 50px 0;
-    overflow: hidden;
+    padding: 40px 0 60px 0;
   }
- 
-  /* --- Title --- */
-  .testimonial-title-container {
-    gap: 0;
-  }
- 
+
   .testimonial-title {
-    font-size: 13vw;
-    line-height: 1;
-    margin-top: 12px;
-    letter-spacing: -0.03em;
+    font-size: 11vw;
+    margin-top: 16px;
   }
- 
+
   .text-left {
-    padding-left: 4vw;
-    align-self: flex-start;
+    padding-left: 6vw;
   }
- 
+
   .text-right {
     padding-right: 4vw;
-    margin-top: 8px;
-    align-self: flex-end;
+    margin-top: 12px;
   }
- 
+
   .quote-mark {
-    left: -8px;
-    font-size: 0.48em;
-    top: 2px;
+    left: -10px;
+    font-size: 0.5em;
   }
- 
-  /* --- Slider main --- */
+
+  /* Bố cục Slider */
   .testimonial-main-content {
-    margin-top: 48px;
+    margin-top: 60px;
+    overflow: hidden;
   }
- 
+
+  .testi-slider-container {
+    overflow: hidden;
+  }
+
+  .testi-track {
+    align-items: stretch;
+  }
+
   .testi-slide {
     flex: 0 0 100vw;
     max-width: 100vw;
-    padding: 0 30px;
-    opacity: 0.15;
+    padding: 0 24px;
+    opacity: 0;
+    /* Giấu các slide lân cận trên mobile */
   }
- 
+
   .testi-slide.active {
     opacity: 1;
   }
- 
-  /* Stack: avatar top, quote below */
+
+  /* Ép tất cả vào 1 cột dọc và căn giữa */
   .testi-slide .row {
     flex-direction: column;
-    align-items: flex-start;
-  }
- 
-  .testi-slide .col-md-5 {
-    width: 100%;
-    justify-content: flex-start !important;
-    padding-right: 0 !important;
-    margin-bottom: 20px;
-  }
- 
-  .testimonial-avatar {
-    width: 88px;
-    height: 88px;
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
- 
-  .testi-slide .col-md-7 {
-    width: 100%;
-    padding-left: 0 !important;
-  }
- 
-  .quote-text {
-    font-size: 0.95rem;
-    line-height: 1.65;
-    color: #111111;
-  }
- 
-  .quote-author {
-    margin-top: 20px;
-  }
- 
-  .author-name {
-    font-size: 0.85rem;
-    font-weight: 700;
-  }
- 
-  .author-position {
-    font-size: 0.8rem;
-    color: #757575;
-  }
- 
-  /* --- Footer --- */
-  .testimonial-footer {
-    margin-top: 32px;
-  }
- 
-  /* Hide the empty md-4 col */
-  .testimonial-footer .d-none.d-md-block {
-    display: none !important;
-  }
- 
-  .testimonial-footer .col-md-6 {
-    width: 100%;
-    padding: 0 16px;
-  }
- 
-  .testimonial-pagination .current {
-    font-size: 14vw;
-    line-height: 0.8;
-  }
- 
-  .testimonial-pagination .total {
-    font-size: 5vw;
-  }
- 
-  .testimonial-nav-btns {
-    gap: 8px;
-  }
- 
-  .nav-btn {
-    width: 48px;
-    height: 48px;
-  }
- 
-  .next-btn-wrapper {
-    width: 48px;
-    height: 48px;
-  }
- 
-  .progress-ring {
-    width: 48px;
-    height: 48px;
-  }
- 
-  .progress-ring circle {
-    cx: 24;
-    cy: 24;
-    r: 23;
+    align-items: center;
   }
 
-  .testimonial-main-content {
-    overflow: hidden;
+  /* 1. HÌNH ẢNH (Nằm trên cùng) */
+  .testi-slide .col-md-5 {
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin-bottom: 24px;
   }
- 
-  .testi-slider-container {
-    overflow: hidden;
+
+  .testimonial-avatar {
+    width: clamp(160px, 50vw, 260px);
+    /* Phóng to ảnh như thiết kế */
+    aspect-ratio: 4 / 5;
+    /* Form chữ nhật đứng nhẹ */
+    border-radius: 12px;
+    /* Bo góc mềm mại */
+    margin-bottom: 0;
+  }
+
+  .testi-slide .col-md-7 {
+    width: 100%;
+    padding: 0 !important;
+  }
+
+  /* 2. ĐẢO VỊ TRÍ TÊN VÀ ĐÁNH GIÁ (Dùng Flexbox order) */
+  .testimonial-quote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Kéo tên và chức vụ lên trước (order: 1) */
+  .quote-author {
+    order: 1;
+    margin-top: 0;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .author-name {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .author-position {
+    font-size: 0.95rem;
+  }
+
+  /* Đẩy đoạn đánh giá dài xuống dưới (order: 2) */
+  .quote-text {
+    order: 2;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  /* 3. FOOTER (Số đếm ở trên, nút ở dưới) */
+  .testimonial-footer {
+    margin-top: 40px;
+    width: 100%;
+  }
+
+  /* Ép khung row của Bootstrap mất tác dụng gây lệch */
+  .testimonial-footer .row {
+    margin: 0 !important;
+    justify-content: center !important;
+  }
+
+  /* Bắt buộc giấu cột tàng hình bên trái trên cả Tablet */
+  .testimonial-footer .col-md-4 {
+    display: none !important;
+  }
+
+  /* Ép cột chứa nút chiếm 100% chiều rộng và căn giữa tuyệt đối */
+  .testimonial-footer .col-md-6 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    /* Đẩy nút xuống dưới số */
+    align-items: center !important;
+    /* Căn giữa */
+    justify-content: center !important;
+    gap: 24px !important;
+  }
+
+  /* Đảm bảo bản thân cục số đứng ngay tâm */
+  .testimonial-pagination {
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    align-items: baseline !important;
+    /* <--- THÊM DÒNG NÀY: Bí quyết căn đáy chuẩn 100% */
+  }
+
+  .testimonial-pagination .current {
+    font-size: 18vw;
+    line-height: 0.72;
+    /* <--- Sửa 0.8 thành 0.72 để triệt tiêu khoảng trắng thừa dưới bụng số */
+    margin-bottom: -2px;
+    /* Gọt nốt vi sai nếu có */
+  }
+
+  .testimonial-pagination .total {
+    font-size: 6vw;
+    line-height: 1;
+    margin-left: 2px;
+    /* Tạo 1 khoảng cách cực nhỏ giữa 02 và /03 cho thoáng */
+  }
+
+  /* Đảm bảo cục 2 nút cũng đứng ngay tâm */
+  .testimonial-nav-btns {
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+    gap: 16px;
+  }
+
+  .nav-btn,
+  .next-btn-wrapper,
+  .progress-ring {
+    width: 52px;
+    height: 52px;
+  }
+
+  .progress-ring circle {
+    cx: 26;
+    cy: 26;
+    r: 25;
   }
 }
 
