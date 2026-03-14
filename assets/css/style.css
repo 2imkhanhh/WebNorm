@@ -53,9 +53,7 @@ a {
   color: inherit;
 }
 
-/* =====================
-   NAVBAR
-   ===================== */
+/* NAVBAR */
 header.navbar {
   background: transparent !important;
   padding: 20px 0 !important;
@@ -160,9 +158,7 @@ header.navbar {
   transform: translateY(-8px) rotate(-45deg);
 }
 
-/* =====================
-   HERO SECTION
-   ===================== */
+/* HERO SECTION */
 .hero-section {
   flex: 1;
   display: flex;
@@ -258,9 +254,7 @@ header.navbar {
   display: none;
 }
 
-/* =====================
-   BIG BOTTOM TEXT
-   ===================== */
+/*BIG BOTTOM TEXT */
 .big-bottom-text {
   width: 100%;
   margin-top: -100px;
@@ -278,10 +272,7 @@ header.navbar {
   letter-spacing: -0.02em;
 }
 
-/* =====================
-   BIG BOTTOM TEXT ROWS
-   ===================== */
-/* Desktop: row1 = both words spread left/right on one line, row2 = centered */
+/* BIG BOTTOM TEXT ROWS */
 .bbt-row {
   width: 100%;
 }
@@ -890,7 +881,6 @@ header.navbar {
   margin-top: 150px;
   width: 100vw;
   margin-left: calc(-50vw + 50%);
-  /* Kéo full viền màn hình để ló slide 2 bên */
 }
 
 .testi-slider-container {
@@ -900,7 +890,7 @@ header.navbar {
   padding: 0;
 }
 
-/* --- TRACK & SLIDE (ĐÃ TỐI ƯU ỔN ĐỊNH 100%) --- */
+/* --- TRACK & SLIDE --- */
 .testi-track {
   display: flex;
   align-items: stretch;
@@ -1030,7 +1020,7 @@ header.navbar {
   border: none;
 }
 
-/* --- HIỆU ỨNG ICON BAY LƯỢN CHUẨN XÁC --- */
+/* --- HIỆU ỨNG ICON --- */
 .icon-wrap {
   position: relative;
   display: flex;
@@ -1174,7 +1164,6 @@ header.navbar {
     line-height: 1.15;
   }
 
-  /* Row 1: NHẬN DIỆN left only; Row 2: CHIẾN LƯỢC right only; Row 3: VĂN HOÁ center */
   .bbt-row-1 {
     flex-direction: column;
     gap: 0;
@@ -1229,12 +1218,10 @@ header.navbar {
     display: none !important;
   }
 
-  /* Ép hiển thị thông tin Mobile trên Tablet */
   .project-showcase .ps-mobile-info {
     display: block !important;
   }
 
-  /* Layout chính cho Tablet & Mobile */
   .project-showcase .ps-center {
     flex-direction: column;
     align-items: flex-start;
@@ -1403,7 +1390,6 @@ header.navbar {
     opacity: 1;
   }
 
-  /* Ép dọc và căn giữa (Tablet) */
   .testi-slide .row {
     flex-direction: column;
     align-items: center;
@@ -1460,7 +1446,6 @@ header.navbar {
     max-width: 85%;
   }
 
-  /* Footer (Số đếm + Nút) Căn giữa */
   .testimonial-footer {
     margin-top: 50px;
     width: 100%;
@@ -1841,7 +1826,6 @@ header.navbar {
     font-size: 0.5em;
   }
 
-  /* Bố cục Slider */
   .testimonial-main-content {
     margin-top: 60px;
     overflow: hidden;
@@ -1860,20 +1844,17 @@ header.navbar {
     max-width: 100vw;
     padding: 0 24px;
     opacity: 0;
-    /* Giấu các slide lân cận trên mobile */
   }
 
   .testi-slide.active {
     opacity: 1;
   }
 
-  /* Ép tất cả vào 1 cột dọc và căn giữa */
   .testi-slide .row {
     flex-direction: column;
     align-items: center;
   }
 
-  /* 1. HÌNH ẢNH (Nằm trên cùng) */
   .testi-slide .col-md-5 {
     width: 100%;
     display: flex;
@@ -1884,11 +1865,8 @@ header.navbar {
 
   .testimonial-avatar {
     width: clamp(160px, 50vw, 260px);
-    /* Phóng to ảnh như thiết kế */
     aspect-ratio: 4 / 5;
-    /* Form chữ nhật đứng nhẹ */
     border-radius: 12px;
-    /* Bo góc mềm mại */
     margin-bottom: 0;
   }
 
@@ -1897,14 +1875,12 @@ header.navbar {
     padding: 0 !important;
   }
 
-  /* 2. ĐẢO VỊ TRÍ TÊN VÀ ĐÁNH GIÁ (Dùng Flexbox order) */
   .testimonial-quote {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  /* Kéo tên và chức vụ lên trước (order: 1) */
   .quote-author {
     order: 1;
     margin-top: 0;
@@ -1921,7 +1897,6 @@ header.navbar {
     font-size: 0.95rem;
   }
 
-  /* Đẩy đoạn đánh giá dài xuống dưới (order: 2) */
   .quote-text {
     order: 2;
     font-size: 1rem;
@@ -1929,62 +1904,50 @@ header.navbar {
     text-align: center;
   }
 
-  /* 3. FOOTER (Số đếm ở trên, nút ở dưới) */
   .testimonial-footer {
     margin-top: 40px;
     width: 100%;
   }
 
-  /* Ép khung row của Bootstrap mất tác dụng gây lệch */
   .testimonial-footer .row {
     margin: 0 !important;
     justify-content: center !important;
   }
 
-  /* Bắt buộc giấu cột tàng hình bên trái trên cả Tablet */
   .testimonial-footer .col-md-4 {
     display: none !important;
   }
 
-  /* Ép cột chứa nút chiếm 100% chiều rộng và căn giữa tuyệt đối */
   .testimonial-footer .col-md-6 {
     flex: 0 0 100% !important;
     max-width: 100% !important;
     padding: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    /* Đẩy nút xuống dưới số */
     align-items: center !important;
-    /* Căn giữa */
     justify-content: center !important;
     gap: 24px !important;
   }
 
-  /* Đảm bảo bản thân cục số đứng ngay tâm */
   .testimonial-pagination {
     width: 100%;
     display: flex;
     justify-content: center !important;
     align-items: baseline !important;
-    /* <--- THÊM DÒNG NÀY: Bí quyết căn đáy chuẩn 100% */
   }
 
   .testimonial-pagination .current {
     font-size: 18vw;
     line-height: 0.72;
-    /* <--- Sửa 0.8 thành 0.72 để triệt tiêu khoảng trắng thừa dưới bụng số */
     margin-bottom: -2px;
-    /* Gọt nốt vi sai nếu có */
   }
 
   .testimonial-pagination .total {
     font-size: 6vw;
     line-height: 1;
     margin-left: 2px;
-    /* Tạo 1 khoảng cách cực nhỏ giữa 02 và /03 cho thoáng */
   }
 
-  /* Đảm bảo cục 2 nút cũng đứng ngay tâm */
   .testimonial-nav-btns {
     width: 100%;
     display: flex;
