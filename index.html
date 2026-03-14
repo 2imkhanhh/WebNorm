@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Brand Design Agency</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
@@ -342,436 +343,714 @@
         </div>
     </section>
 
+    <section class="testimonial-section">
+        <div class="container-fluid px-4 px-md-5">
+
+            <div class="row">
+                <div class="col-12 testimonial-title-container" id="testimonialTitleWrap">
+
+                    <h2 class="testimonial-title text-left scroll-slide-left">
+                        <span class="quote-mark">“</span>TRẢI NGHIỆM
+                    </h2>
+
+                    <h2 class="testimonial-title text-right scroll-slide-right">
+                        KHÁCH HÀNG
+                    </h2>
+
+                </div>
+            </div>
+
+            <div class="testimonial-main-content">
+                <div class="testi-slider-container">
+                    <div class="testi-track" id="testiTrack">
+
+                        <div class="testi-slide active">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="assets/images/avatar.png" alt="Nguyễn Minh Anh">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 ps-md-4">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            “Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định
+                                            hướng rõ ràng.
+                                            Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến
+                                            lược đến hệ thống nhận diện.
+                                            Trong suốt quá trình làm việc, mọi thứ được triển khai rất bài bản và minh
+                                            bạch. Kết quả cuối cùng
+                                            không chỉ là một bộ nhận diện đẹp mà còn là một nền tảng thương hiệu rõ ràng
+                                            để doanh nghiệp phát triển lâu dài.
+                                            Chúng tôi thật sự hài lòng với sự hợp tác này.”
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">Nguyễn Minh Anh</h4>
+                                            <p class="author-position">Giám đốc Marketing</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testi-slide">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="assets/images/project2.png" alt="Khách hàng 2">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 ps-md-4">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            “Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn
+                                            tru.
+                                            Chúng tôi đánh giá cao sự sáng tạo và khả năng thấu hiểu thị trường của đội
+                                            ngũ.
+                                            Bộ nhận diện mới đã giúp doanh số tăng trưởng rõ rệt trong quý vừa qua.”
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">Trần Văn B</h4>
+                                            <p class="author-position">CEO Tiên Phong</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testi-slide">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="assets/images/project3.png" alt="Khách hàng 3">
+                                    </div>
+                                </div>
+                                <div class="col-md-7 ps-md-4">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            “Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến
+                                            lược rất sát thực tế.
+                                            Rất mong được tiếp tục đồng hành trong các dự án tương lai.”
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">Lê Thị C</h4>
+                                            <p class="author-position">Founder Nem.A</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-footer">
+                <div class="row align-items-center">
+                    <div class="col-md-4 d-none d-md-block"></div>
+                    <div class="col-md-6 d-flex align-items-center gap-4">
+                        <div class="testimonial-pagination">
+                            <span class="current">01</span><span class="total">/06</span>
+                        </div>
+                        <div class="testimonial-nav-btns">
+                            <button class="nav-btn prev" aria-label="Previous">
+                                <span class="icon-wrap">
+                                    <i class='bx bx-left-arrow-alt icon-main'></i>
+                                    <i class='bx bx-left-arrow-alt icon-alt'></i>
+                                </span>
+                            </button>
+
+                            <div class="next-btn-wrapper">
+                                <svg class="progress-ring" width="56" height="56">
+                                    <circle class="progress-ring-bg" stroke="#E0E0E0" stroke-width="1"
+                                        fill="transparent" r="27" cx="28" cy="28" />
+                                    <circle class="progress-ring-circle" stroke="#111111" stroke-width="1.5"
+                                        fill="transparent" r="27" cx="28" cy="28" />
+                                </svg>
+                                <button class="nav-btn next" aria-label="Next">
+                                    <span class="icon-wrap">
+                                        <i class='bx bx-right-arrow-alt icon-main'></i>
+                                        <i class='bx bx-right-arrow-alt icon-alt'></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
     <script>
-        // Hamburger toggle
-        const hamburger = document.querySelector('.nav-hamburger');
-        const mobileMenu = document.getElementById('mobileMenu');
+        document.addEventListener("DOMContentLoaded", () => {
 
-        hamburger.addEventListener('click', () => {
-            const isOpen = mobileMenu.classList.toggle('open');
-            hamburger.classList.toggle('active', isOpen);
-            document.body.style.overflow = isOpen ? 'hidden' : '';
-        });
+            // ==========================================
+            // 1. HAMBURGER & MENU MOBILE
+            // ==========================================
+            const hamburger = document.querySelector('.nav-hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
 
-        document.querySelectorAll('.mobile-menu-item').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('open');
-                hamburger.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        });
-
-        const langToggleMobile = document.getElementById('langToggleMobile');
-        langToggleMobile.addEventListener('click', function (e) {
-            e.preventDefault();
-            const newLang = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
-            this.textContent = newLang;
-            langToggle.textContent = newLang;
-        });
-
-        const langToggle = document.getElementById('langToggle');
-        langToggle.addEventListener('click', function (e) {
-            e.preventDefault();
-            this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
-        });
-
-        // Banner hover
-        const bannerImg = document.querySelector('.hero-img');
-        const banners = [
-            'assets/images/banner.png',
-            'assets/images/banner2.png',
-            'assets/images/banner3.png',
-        ];
-        let currentIndex = 0;
-        let intervalId = null;
-
-        bannerImg.addEventListener('mouseenter', () => {
-            intervalId = setInterval(() => {
-                currentIndex = (currentIndex + 1) % banners.length;
-                bannerImg.src = banners[currentIndex];
-            }, 400);
-        });
-        bannerImg.addEventListener('mouseleave', () => {
-            clearInterval(intervalId);
-            intervalId = null;
-        });
-
-        // STAGGER PER CHARACTER
-        function splitIntoChars(el) {
-            const text = el.textContent;
-            const wordIndex = parseInt(el.dataset.wordIndex);
-            const wordDelay = wordIndex * 80;
-
-            el.innerHTML = '';
-            el.style.display = 'inline-block';
-            el.style.overflow = 'visible';
-
-            [...text].forEach((char, i) => {
-                const wrapper = document.createElement('span');
-                wrapper.className = 'char-clip';
-
-                const inner = document.createElement('span');
-                inner.className = 'stagger-char';
-                inner.textContent = char === ' ' ? '\u00A0' : char;
-                inner.style.animationDelay = `${wordDelay + i * 60}ms`;
-
-                wrapper.appendChild(inner);
-                el.appendChild(wrapper);
-            });
-        }
-
-        const staggerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
-                    staggerObserver.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.4,
-            rootMargin: "0px 0px 0px 0px"
-        });
-
-        document.querySelectorAll('.stagger-word').forEach(el => {
-            splitIntoChars(el);
-            staggerObserver.observe(el);
-        });
-
-        // REVEAL TEXT
-        const revealElements = document.querySelectorAll('.reveal-text, .reveal-text-multi');
-
-        revealElements.forEach(revealTextEl => {
-            const text = revealTextEl.textContent.trim();
-            const words = text.split(/\s+/);
-            revealTextEl.innerHTML = '';
-
-            const charEls = [];
-
-            words.forEach((word, wIndex) => {
-                const wordSpan = document.createElement('span');
-                wordSpan.style.display = 'inline-block';
-
-                if (wIndex < words.length - 1) {
-                    wordSpan.style.marginRight = '0.2em';
-                }
-
-                [...word].forEach((char) => {
-                    const charSpan = document.createElement('span');
-                    charSpan.classList.add('reveal-char');
-                    charSpan.textContent = char;
-                    wordSpan.appendChild(charSpan);
-                    charEls.push(charSpan);
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', () => {
+                    const isOpen = mobileMenu.classList.toggle('open');
+                    hamburger.classList.toggle('active', isOpen);
+                    document.body.style.overflow = isOpen ? 'hidden' : '';
                 });
 
-                revealTextEl.appendChild(wordSpan);
-            });
-
-            function updateChars() {
-                const windowH = window.innerHeight;
-                const scrollY = window.scrollY || window.pageYOffset;
-                const rect = revealTextEl.getBoundingClientRect();
-                const elemAbsTop = rect.top + scrollY;
-
-                const rawStart = elemAbsTop - windowH + (windowH * 0.15);
-                const animEnd = elemAbsTop + (windowH * -0.1);
-                const animStart = Math.min(rawStart, animEnd - 50);
-                const clampedStart = Math.max(animStart, 0);
-
-                if (scrollY <= clampedStart) {
-                    charEls.forEach(el => el.classList.remove('lit'));
-                    return;
-                }
-
-                if (scrollY >= animEnd) {
-                    charEls.forEach(el => el.classList.add('lit'));
-                    return;
-                }
-
-                const progress = (scrollY - clampedStart) / (animEnd - clampedStart);
-                const litCount = Math.round(progress * charEls.length);
-
-                charEls.forEach((el, i) => {
-                    el.classList.toggle('lit', i < litCount);
+                document.querySelectorAll('.mobile-menu-item').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.remove('open');
+                        hamburger.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
                 });
             }
 
-            window.addEventListener('scroll', updateChars, { passive: true });
-            window.addEventListener('resize', updateChars, { passive: true });
+            // ==========================================
+            // 2. NGÔN NGỮ (LANGUAGE TOGGLE)
+            // ==========================================
+            const langToggleMobile = document.getElementById('langToggleMobile');
+            const langToggle = document.getElementById('langToggle');
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(updateChars);
-            });
-        });
-
-        // PROJECT SHOWCASE SCROLL LOGIC
-        const showcase = document.getElementById('projectShowcase');
-        const track = document.getElementById('psTrack');
-        const listItems = document.querySelectorAll('#psList li');
-        const projectItems = document.querySelectorAll('.ps-project-item');
-
-        // Các phần tử chữ cần tạo track cuộn 
-        const currentElem = document.getElementById('psCurrent');
-        const totalElem = document.getElementById('psTotal');
-        const tagLeftElem = document.querySelector('.ps-tag-left');
-        const tagRightElem = document.querySelector('.ps-tag-right');
-        const mobileTitleElem = document.getElementById('psMobileTitle');
-        const mobileTagsElem = document.getElementById('psMobileTags');
-
-        if (showcase && track && projectItems.length > 0) {
-            const totalProjects = listItems.length;
-
-            totalElem.textContent = '/' + String(totalProjects).padStart(2, '0');
-            showcase.style.height = `${totalProjects * 100}vh`;
-
-            // 1. Setup CSS đè ảnh
-            track.style.display = 'block';
-            track.style.position = 'relative';
-
-            // Mảng lưu trữ các đoạn text sẽ trượt
-            const numTexts = [];
-            const leftTags = [];
-            const rightTags = [];
-            const mobileTitles = [];
-            const mobileTagsList = [];
-
-            projectItems.forEach((item, index) => {
-                // Setup vị trí cho ảnh
-                item.style.position = 'absolute';
-                item.style.top = '0';
-                item.style.left = '0';
-                item.style.width = '100%';
-                item.style.height = '100%';
-                item.style.zIndex = index + 1;
-                item.style.transition = 'none';
-                item.style.willChange = 'transform';
-                item.style.transform = index === 0 ? 'translate3d(0, 0%, 0)' : 'translate3d(0, 100%, 0)';
-
-                // Gom dữ liệu chữ từ các project
-                numTexts.push(String(index + 1).padStart(2, '0'));
-                mobileTitles.push(item.getAttribute('data-title') || '');
-
-                const tagsData = item.getAttribute('data-tags') || '';
-                mobileTagsList.push(tagsData);
-
-                // Tách text bằng dấu gạch ngang '-'
-                const splitTags = tagsData.split('-');
-                if (splitTags.length >= 2) {
-                    leftTags.push(splitTags[0].trim());
-                    rightTags.push(splitTags[1].trim());
-                } else {
-                    leftTags.push(tagsData.trim());
-                    rightTags.push('');
-                }
-            });
-
-            // Hàm bọc text thành băng chuyền 
-            function createTextTrack(container, texts, heightEm, align = 'left') {
-                if (!container) return null;
-                container.innerHTML = '';
-                container.style.overflow = 'hidden';
-                container.style.height = heightEm;
-                container.style.verticalAlign = 'bottom';
-
-                container.style.paddingRight = '0.05em';
-                container.style.minWidth = 'max-content';
-
-                const trackDiv = document.createElement('div');
-                trackDiv.style.willChange = 'transform';
-                trackDiv.style.transition = 'none';
-
-                texts.forEach(txt => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.textContent = txt;
-                    itemDiv.style.height = heightEm;
-                    itemDiv.style.lineHeight = heightEm;
-                    itemDiv.style.whiteSpace = 'nowrap';
-                    itemDiv.style.textAlign = align;
-                    trackDiv.appendChild(itemDiv);
+            if (langToggleMobile && langToggle) {
+                langToggleMobile.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const newLang = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
+                    this.textContent = newLang;
+                    langToggle.textContent = newLang;
                 });
 
-                container.appendChild(trackDiv);
-                return { elem: trackDiv, count: texts.length };
+                langToggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
+                });
             }
 
-            // Khởi tạo các băng chuyền text 
-            const textTracks = [
-                createTextTrack(currentElem, numTexts, '0.8em', 'left'),
-                createTextTrack(tagLeftElem, leftTags, '1.2em', 'left'),
-                createTextTrack(tagRightElem, rightTags, '1.2em', 'right'),
-                createTextTrack(mobileTitleElem, mobileTitles, '1.2em', 'left'),
-                createTextTrack(mobileTagsElem, mobileTagsList, '1.2em', 'left')
-            ].filter(t => t !== null);
+            // ==========================================
+            // 3. BANNER HOVER
+            // ==========================================
+            const bannerImg = document.querySelector('.hero-img');
+            if (bannerImg) {
+                const banners = [
+                    'assets/images/banner.png',
+                    'assets/images/banner2.png',
+                    'assets/images/banner3.png',
+                ];
+                let bannerIndex = 0;
+                let bannerIntervalId = null;
 
-            // Biến dùng cho nội suy 
-            let targetProgress = 0;
-            let currentProgress = 0;
-            let snapTimeout;
-            let lastStableIndex = 0;
-
-            // 2. Vòng lặp Render 
-            function renderSmooth() {
-                currentProgress += (targetProgress - currentProgress) * 0.08;
-
-                // Di chuyển Ảnh 1:1
-                projectItems.forEach((item, i) => {
-                    let yPercent = Math.max(0, Math.min(100, (i - currentProgress) * 100));
-                    if (Math.abs(yPercent - 0) < 0.1) yPercent = 0;
-                    if (Math.abs(yPercent - 100) < 0.1) yPercent = 100;
-                    item.style.transform = `translate3d(0, ${yPercent}%, 0)`;
+                bannerImg.addEventListener('mouseenter', () => {
+                    bannerIntervalId = setInterval(() => {
+                        bannerIndex = (bannerIndex + 1) % banners.length;
+                        bannerImg.src = banners[bannerIndex];
+                    }, 400);
                 });
 
-                textTracks.forEach(trackObj => {
-                    const percentY = -(currentProgress * 100 / trackObj.count);
-                    trackObj.elem.style.transform = `translate3d(0, ${percentY}%, 0)`;
+                bannerImg.addEventListener('mouseleave', () => {
+                    clearInterval(bannerIntervalId);
+                    bannerIntervalId = null;
                 });
-
-                requestAnimationFrame(renderSmooth);
             }
-            requestAnimationFrame(renderSmooth);
 
-            window.addEventListener('scroll', () => {
-                const showcaseTop = showcase.offsetTop;
-                const scrollY = window.scrollY;
-                const windowHeight = window.innerHeight;
+            // ==========================================
+            // 4. ANIMATION CHỮ HIỆN TỪ DƯỚI LÊN (STAGGER)
+            // ==========================================
+            function splitIntoChars(el) {
+                const text = el.textContent;
+                const wordIndex = parseInt(el.dataset.wordIndex);
+                const wordDelay = wordIndex * 80;
 
-                let scrolledInside = scrollY - showcaseTop;
-                if (scrolledInside < 0) scrolledInside = 0;
+                el.innerHTML = '';
+                el.style.display = 'inline-block';
+                el.style.overflow = 'visible';
 
-                const maxScroll = showcase.offsetHeight - windowHeight;
-                if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+                [...text].forEach((char, i) => {
+                    const wrapper = document.createElement('span');
+                    wrapper.className = 'char-clip';
 
-                targetProgress = scrolledInside / windowHeight;
+                    const inner = document.createElement('span');
+                    inner.className = 'stagger-char';
+                    inner.textContent = char === ' ' ? '\u00A0' : char;
+                    inner.style.animationDelay = `${wordDelay + i * 60}ms`;
 
-                // 3. Cập nhật trạng thái cho danh sách Sidebar 
-                let activeIndex = Math.round(targetProgress);
-                if (activeIndex < 0) activeIndex = 0;
-                if (activeIndex >= totalProjects) activeIndex = totalProjects - 1;
+                    wrapper.appendChild(inner);
+                    el.appendChild(wrapper);
+                });
+            }
 
-                listItems.forEach((li, i) => {
-                    if (i === activeIndex) {
-                        li.classList.add('active');
-                    } else {
-                        li.classList.remove('active');
+            const staggerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                        staggerObserver.unobserve(entry.target);
                     }
                 });
+            }, { threshold: 0.4 });
 
-                // 4. Auto-Snap 
-                clearTimeout(snapTimeout);
+            document.querySelectorAll('.stagger-word').forEach(el => {
+                splitIntoChars(el);
+                staggerObserver.observe(el);
+            });
 
-                if (scrollY >= showcaseTop && scrollY <= showcaseTop + maxScroll) {
-                    snapTimeout = setTimeout(() => {
-                        let fraction = targetProgress % 1;
-                        let targetIndex;
+            // ==========================================
+            // 5. HIỆU ỨNG SÁNG CHỮ KHI CUỘN (REVEAL TEXT)
+            // ==========================================
+            const revealElements = document.querySelectorAll('.reveal-text, .reveal-text-multi');
 
-                        if (targetProgress > lastStableIndex) {
-                            targetIndex = fraction >= 0.05 ? Math.ceil(targetProgress) : Math.floor(targetProgress);
-                        } else if (targetProgress < lastStableIndex) {
-                            targetIndex = fraction <= 0.95 ? Math.floor(targetProgress) : Math.ceil(targetProgress);
+            revealElements.forEach(revealTextEl => {
+                const text = revealTextEl.textContent.trim();
+                const words = text.split(/\s+/);
+                revealTextEl.innerHTML = '';
+
+                const charEls = [];
+
+                words.forEach((word, wIndex) => {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.style.display = 'inline-block';
+
+                    if (wIndex < words.length - 1) {
+                        wordSpan.style.marginRight = '0.2em';
+                    }
+
+                    [...word].forEach((char) => {
+                        const charSpan = document.createElement('span');
+                        charSpan.classList.add('reveal-char');
+                        charSpan.textContent = char;
+                        wordSpan.appendChild(charSpan);
+                        charEls.push(charSpan);
+                    });
+
+                    revealTextEl.appendChild(wordSpan);
+                });
+
+                function updateChars() {
+                    const windowH = window.innerHeight;
+                    const scrollY = window.scrollY || window.pageYOffset;
+                    const rect = revealTextEl.getBoundingClientRect();
+                    const elemAbsTop = rect.top + scrollY;
+
+                    const rawStart = elemAbsTop - windowH + (windowH * 0.15);
+                    const animEnd = elemAbsTop + (windowH * -0.1);
+                    const animStart = Math.min(rawStart, animEnd - 50);
+                    const clampedStart = Math.max(animStart, 0);
+
+                    if (scrollY <= clampedStart) {
+                        charEls.forEach(el => el.classList.remove('lit'));
+                        return;
+                    }
+
+                    if (scrollY >= animEnd) {
+                        charEls.forEach(el => el.classList.add('lit'));
+                        return;
+                    }
+
+                    const progress = (scrollY - clampedStart) / (animEnd - clampedStart);
+                    const litCount = Math.round(progress * charEls.length);
+
+                    charEls.forEach((el, i) => {
+                        el.classList.toggle('lit', i < litCount);
+                    });
+                }
+
+                window.addEventListener('scroll', updateChars, { passive: true });
+                window.addEventListener('resize', updateChars, { passive: true });
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(updateChars);
+                });
+            });
+
+            // ==========================================
+            // 6. ANIMATION LƯỚT CHỮ (TRẢI NGHIỆM KHÁCH HÀNG)
+            // ==========================================
+            const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right');
+            if (animatedTexts.length > 0) {
+                const textObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
                         } else {
-                            targetIndex = lastStableIndex;
+                            entry.target.classList.remove('is-visible');
                         }
+                    });
+                }, { threshold: 0.5, rootMargin: "0px" });
 
-                        targetIndex = Math.max(0, Math.min(totalProjects - 1, targetIndex));
+                animatedTexts.forEach(text => textObserver.observe(text));
+            }
 
-                        if (Math.abs(targetProgress - targetIndex) > 0.005) {
-                            window.scrollTo({
-                                top: showcaseTop + targetIndex * windowHeight,
-                                behavior: 'smooth'
-                            });
-                        }
+            // ==========================================
+            // 7. PROJECT SHOWCASE (DANH MỤC DỰ ÁN DÍNH CUỘN)
+            // ==========================================
+            const showcase = document.getElementById('projectShowcase');
+            const psTrack = document.getElementById('psTrack');
+            const listItems = document.querySelectorAll('#psList li');
+            const projectItems = document.querySelectorAll('.ps-project-item');
 
-                        lastStableIndex = targetIndex;
-                    }, 600);
+            const psCurrent = document.getElementById('psCurrent');
+            const psTotal = document.getElementById('psTotal');
+            const tagLeftElem = document.querySelector('.ps-tag-left');
+            const tagRightElem = document.querySelector('.ps-tag-right');
+            const mobileTitleElem = document.getElementById('psMobileTitle');
+            const mobileTagsElem = document.getElementById('psMobileTags');
+
+            if (showcase && psTrack && projectItems.length > 0) {
+                const totalProjects = listItems.length;
+
+                if (psTotal) {
+                    psTotal.textContent = '/' + String(totalProjects).padStart(2, '0');
                 }
-            }, { passive: true });
-        }
 
-        const projectItemElements = document.querySelectorAll('.ps-project-item');
+                showcase.style.height = `${totalProjects * 100}vh`;
 
-        projectItemElements.forEach(item => {
-            const btn = item.querySelector('.ps-btn-view');
-            const img = item.querySelector('img');
+                psTrack.style.display = 'block';
+                psTrack.style.position = 'relative';
 
-            img.addEventListener('mousemove', function (e) {
-                if (window.innerWidth > 1024) {
-                    const rect = item.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
+                const numTexts = [];
+                const leftTags = [];
+                const rightTags = [];
+                const mobileTitles = [];
+                const mobileTagsList = [];
 
-                    btn.style.left = `${x}px`;
-                    btn.style.top = `${y}px`;
-                }
-            });
+                projectItems.forEach((item, index) => {
+                    item.style.position = 'absolute';
+                    item.style.top = '0';
+                    item.style.left = '0';
+                    item.style.width = '100%';
+                    item.style.height = '100%';
+                    item.style.zIndex = index + 1;
+                    item.style.transition = 'none';
+                    item.style.willChange = 'transform';
+                    item.style.transform = index === 0 ? 'translate3d(0, 0%, 0)' : 'translate3d(0, 100%, 0)';
 
-            img.addEventListener('mouseleave', function () {
-                if (window.innerWidth > 1024) {
-                    setTimeout(() => {
-                        btn.style.left = '50%';
-                        btn.style.top = '50%';
-                    }, 300);
-                }
-            });
+                    numTexts.push(String(index + 1).padStart(2, '0'));
+                    mobileTitles.push(item.getAttribute('data-title') || '');
 
-            img.addEventListener('click', function (e) {
-                if (window.innerWidth > 1024) {
-                    const link = btn.getAttribute('href');
-                    if (link && link !== '#') {
-                        window.location.href = link;
+                    const tagsData = item.getAttribute('data-tags') || '';
+                    mobileTagsList.push(tagsData);
+
+                    const splitTags = tagsData.split('-');
+                    if (splitTags.length >= 2) {
+                        leftTags.push(splitTags[0].trim());
+                        rightTags.push(splitTags[1].trim());
                     } else {
-                        console.log('Đã click chuyển hướng dự án!');
+                        leftTags.push(tagsData.trim());
+                        rightTags.push('');
                     }
+                });
+
+                function createTextTrack(container, texts, heightEm, align = 'left') {
+                    if (!container) return null;
+                    container.innerHTML = '';
+                    container.style.overflow = 'hidden';
+                    container.style.height = heightEm;
+                    container.style.paddingRight = '0.05em';
+                    container.style.minWidth = 'max-content';
+
+                    const trackDiv = document.createElement('div');
+                    trackDiv.style.willChange = 'transform';
+                    trackDiv.style.transition = 'none';
+
+                    texts.forEach(txt => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.textContent = txt;
+                        itemDiv.style.height = heightEm;
+                        itemDiv.style.lineHeight = heightEm;
+                        itemDiv.style.whiteSpace = 'nowrap';
+                        itemDiv.style.textAlign = align;
+                        trackDiv.appendChild(itemDiv);
+                    });
+
+                    container.appendChild(trackDiv);
+                    return { elem: trackDiv, count: texts.length };
                 }
-            });
 
-            item.addEventListener('click', function (e) {
-                if (window.innerWidth <= 1024) {
-                    if (e.target.classList.contains('ps-btn-view')) return;
+                const textTracks = [
+                    createTextTrack(psCurrent, numTexts, '0.8em', 'left'),
+                    createTextTrack(tagLeftElem, leftTags, '1.2em', 'left'),
+                    createTextTrack(tagRightElem, rightTags, '1.2em', 'right'),
+                    createTextTrack(mobileTitleElem, mobileTitles, '1.2em', 'left'),
+                    createTextTrack(mobileTagsElem, mobileTagsList, '1.2em', 'left')
+                ].filter(t => t !== null);
 
-                    const isShowing = this.classList.contains('show-button');
-                    projectItemElements.forEach(p => p.classList.remove('show-button'));
+                let psTargetProgress = 0;
+                let psCurrentProgress = 0;
+                let snapTimeout;
+                let lastStableIndex = 0;
 
-                    if (!isShowing) {
-                        this.classList.add('show-button');
+                function renderSmooth() {
+                    psCurrentProgress += (psTargetProgress - psCurrentProgress) * 0.08;
+
+                    projectItems.forEach((item, i) => {
+                        let yPercent = Math.max(0, Math.min(100, (i - psCurrentProgress) * 100));
+                        if (Math.abs(yPercent - 0) < 0.1) yPercent = 0;
+                        if (Math.abs(yPercent - 100) < 0.1) yPercent = 100;
+                        item.style.transform = `translate3d(0, ${yPercent}%, 0)`;
+                    });
+
+                    textTracks.forEach(trackObj => {
+                        const percentY = -(psCurrentProgress * 100 / trackObj.count);
+                        trackObj.elem.style.transform = `translate3d(0, ${percentY}%, 0)`;
+                    });
+
+                    requestAnimationFrame(renderSmooth);
+                }
+                requestAnimationFrame(renderSmooth);
+
+                window.addEventListener('scroll', () => {
+                    const showcaseTop = showcase.offsetTop;
+                    const scrollY = window.scrollY;
+                    const windowHeight = window.innerHeight;
+
+                    let scrolledInside = scrollY - showcaseTop;
+                    if (scrolledInside < 0) scrolledInside = 0;
+
+                    const maxScroll = showcase.offsetHeight - windowHeight;
+                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+
+                    psTargetProgress = scrolledInside / windowHeight;
+
+                    let activeIndex = Math.round(psTargetProgress);
+                    if (activeIndex < 0) activeIndex = 0;
+                    if (activeIndex >= totalProjects) activeIndex = totalProjects - 1;
+
+                    listItems.forEach((li, i) => {
+                        if (i === activeIndex) {
+                            li.classList.add('active');
+                        } else {
+                            li.classList.remove('active');
+                        }
+                    });
+
+                    clearTimeout(snapTimeout);
+
+                    if (scrollY >= showcaseTop && scrollY <= showcaseTop + maxScroll) {
+                        snapTimeout = setTimeout(() => {
+                            let fraction = psTargetProgress % 1;
+                            let targetIndex;
+
+                            if (psTargetProgress > lastStableIndex) {
+                                targetIndex = fraction >= 0.05 ? Math.ceil(psTargetProgress) : Math.floor(psTargetProgress);
+                            } else if (psTargetProgress < lastStableIndex) {
+                                targetIndex = fraction <= 0.95 ? Math.floor(psTargetProgress) : Math.ceil(psTargetProgress);
+                            } else {
+                                targetIndex = lastStableIndex;
+                            }
+
+                            targetIndex = Math.max(0, Math.min(totalProjects - 1, targetIndex));
+
+                            if (Math.abs(psTargetProgress - targetIndex) > 0.005) {
+                                window.scrollTo({
+                                    top: showcaseTop + targetIndex * windowHeight,
+                                    behavior: 'smooth'
+                                });
+                            }
+
+                            lastStableIndex = targetIndex;
+                        }, 600);
                     }
+                }, { passive: true });
+            }
+
+            const projectItemElements = document.querySelectorAll('.ps-project-item');
+            projectItemElements.forEach(item => {
+                const btn = item.querySelector('.ps-btn-view');
+                const img = item.querySelector('img');
+
+                if (btn && img) {
+                    img.addEventListener('mousemove', function (e) {
+                        if (window.innerWidth > 1024) {
+                            const rect = item.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+
+                            btn.style.left = `${x}px`;
+                            btn.style.top = `${y}px`;
+                        }
+                    });
+
+                    img.addEventListener('mouseleave', function () {
+                        if (window.innerWidth > 1024) {
+                            setTimeout(() => {
+                                btn.style.left = '50%';
+                                btn.style.top = '50%';
+                            }, 300);
+                        }
+                    });
+
+                    img.addEventListener('click', function (e) {
+                        if (window.innerWidth > 1024) {
+                            const link = btn.getAttribute('href');
+                            if (link && link !== '#') {
+                                window.location.href = link;
+                            }
+                        }
+                    });
+
+                    item.addEventListener('click', function (e) {
+                        if (window.innerWidth <= 1024) {
+                            if (e.target.classList.contains('ps-btn-view')) return;
+
+                            const isShowing = this.classList.contains('show-button');
+                            projectItemElements.forEach(p => p.classList.remove('show-button'));
+
+                            if (!isShowing) {
+                                this.classList.add('show-button');
+                            }
+                        }
+                    });
                 }
             });
-        });
 
-        const serviceItems = document.querySelectorAll('.service-item');
+            // ==========================================
+            // 8. ACTIVE TRẠNG THÁI SERVICES KHI CUỘN
+            // ==========================================
+            const serviceItems = document.querySelectorAll('.service-item');
 
-        function calculateActiveService() {
-            let activeItem = null;
-            let minDistance = Infinity;
+            function calculateActiveService() {
+                let activeItem = null;
+                let minDistance = Infinity;
+                const viewportCenter = window.innerHeight / 2;
 
-            const viewportCenter = window.innerHeight / 2;
+                serviceItems.forEach(item => {
+                    const rect = item.getBoundingClientRect();
+                    const itemCenter = rect.top + rect.height / 2;
+                    const distance = Math.abs(viewportCenter - itemCenter);
 
-            serviceItems.forEach(item => {
-                const rect = item.getBoundingClientRect();
-                const itemCenter = rect.top + rect.height / 2;
-                const distance = Math.abs(viewportCenter - itemCenter);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        activeItem = item;
+                    }
+                });
 
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    activeItem = item;
+                serviceItems.forEach(item => {
+                    const rect = item.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+                    if (item === activeItem && isVisible) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', calculateActiveService, { passive: true });
+            window.addEventListener('resize', calculateActiveService, { passive: true });
+            calculateActiveService();
+
+            // ==========================================
+            // 9. TESTIMONIAL SLIDER (FINAL & STABLE)
+            // ==========================================
+            function initTestimonialSlider() {
+                const track = document.getElementById('testiTrack');
+                const slides = Array.from(document.querySelectorAll('.testi-slide'));
+                const prevBtn = document.querySelector('.testimonial-nav-btns .prev');
+                const nextBtn = document.querySelector('.next-btn-wrapper');
+                const currentElem = document.querySelector('.testimonial-pagination .current');
+                const totalElem = document.querySelector('.testimonial-pagination .total');
+                const progressCircle = document.querySelector('.progress-ring-circle');
+                const sliderContainer = document.querySelector('.testi-slider-container');
+                // Lấy thêm section tổng để làm mốc theo dõi
+                const testimonialSection = document.querySelector('.testimonial-section');
+
+                if (!track || slides.length === 0) return;
+
+                let currentIndex = 0;
+                let progressTimer;
+                let rewindTimeout;
+                let isPlaying = false;
+
+                const intervalTime = 5000;
+                const rewindTime = 800;
+                const circleCircumference = 170;
+
+                if (totalElem) {
+                    totalElem.textContent = '/' + String(slides.length).padStart(2, '0');
                 }
-            });
 
-            serviceItems.forEach(item => {
-                const rect = item.getBoundingClientRect();
-                const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                function updateCarousel() {
+                    if (currentElem) {
+                        currentElem.textContent = String(currentIndex + 1).padStart(2, '0');
+                    }
 
-                if (item === activeItem && isVisible) {
-                    item.classList.add('active');
+                    slides.forEach((slide, index) => {
+                        slide.classList.toggle('active', index === currentIndex);
+                    });
+
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = slides[0].offsetWidth;
+
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+                    const translateX = centerOffset - (currentIndex * slideWidth);
+
+                    track.style.transform = `translate3d(${translateX}px, 0, 0)`;
+                }
+
+                function startProgress() {
+                    if (!progressCircle) return;
+
+                    clearTimeout(progressTimer);
+                    clearTimeout(rewindTimeout);
+
+                    progressCircle.style.transition = `stroke-dashoffset ${rewindTime}ms ease-in-out`;
+                    progressCircle.style.strokeDashoffset = circleCircumference;
+
+                    rewindTimeout = setTimeout(() => {
+                        progressCircle.style.transition = `stroke-dashoffset ${intervalTime}ms linear`;
+                        progressCircle.style.strokeDashoffset = 0;
+
+                        progressTimer = setTimeout(() => {
+                            moveToNextSlide();
+                        }, intervalTime);
+
+                    }, rewindTime + 50);
+                }
+
+                function moveToNextSlide() {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                    startProgress();
+                }
+
+                function moveToPrevSlide() {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateCarousel();
+                    startProgress();
+                }
+
+                window.addEventListener('resize', updateCarousel);
+
+                if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
+                if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
+
+                updateCarousel();
+
+                if (testimonialSection) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                if (!isPlaying) {
+                                    isPlaying = true;
+                                    startProgress();
+                                }
+                            } else {
+                                isPlaying = false;
+                                clearTimeout(progressTimer);
+                                clearTimeout(rewindTimeout);
+                            }
+                        });
+                    }, { threshold: 0.3 });
+
+                    observer.observe(testimonialSection);
                 } else {
-                    item.classList.remove('active');
+                    startProgress();
                 }
-            });
-        }
+            }
 
-        window.addEventListener('scroll', calculateActiveService, { passive: true });
-        window.addEventListener('resize', calculateActiveService, { passive: true });
+            initTestimonialSlider();
 
-        calculateActiveService();
+        });
     </script>
 </body>
 

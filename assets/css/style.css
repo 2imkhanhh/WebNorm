@@ -42,6 +42,7 @@ body {
 
 body {
   background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 8%);
+  background-repeat: no-repeat;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -771,7 +772,7 @@ header.navbar {
 .service-divider {
   border: 0;
   border-top: 1px solid #BDBDBD;
-  margin: 0 0 0 50px; 
+  margin: 0 0 0 50px;
   transition: border-color 0.6s ease;
 }
 
@@ -837,6 +838,280 @@ header.navbar {
 .service-item.active .service-list li,
 .service-item.active .service-list li::before {
   color: #111111 !important;
+}
+
+.testimonial-section {
+  padding: 0 0 50px 0;
+  overflow: hidden;
+}
+
+.testimonial-title-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.testimonial-title {
+  font-size: 8vw;
+  font-weight: 500;
+  line-height: 1;
+  color: #111111;
+  margin-top: 20px;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.text-left {
+  align-self: flex-start;
+  text-align: left;
+  position: relative;
+  padding-left: 12vw;
+}
+
+.text-right {
+  align-self: flex-end;
+  text-align: right;
+  padding-right: 9vw;
+  margin-top: 20px;
+}
+
+.quote-mark {
+  position: absolute;
+  left: -15px;
+  top: 5px;
+  color: #BDBDBD;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.55em;
+  line-height: 1;
+}
+
+/* --- KHOẢNG CÁCH VÀ LAYOUT SLIDER --- */
+.testimonial-main-content {
+  margin-top: 150px;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  /* Kéo full viền màn hình để ló slide 2 bên */
+}
+
+.testi-slider-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+}
+
+/* --- TRACK & SLIDE (ĐÃ TỐI ƯU ỔN ĐỊNH 100%) --- */
+.testi-track {
+  display: flex;
+  align-items: stretch;
+  transition: transform 0.6s ease-in-out;
+  will-change: transform;
+}
+
+.testi-slide {
+  flex: 0 0 65vw;
+  max-width: 900px;
+  padding: 0 30px;
+  opacity: 0.2;
+  transition: opacity 0.6s ease;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.testi-slide.active {
+  opacity: 1;
+}
+
+/* --- NỘI DUNG SLIDE --- */
+.testimonial-avatar {
+  width: clamp(250px, 18vw, 400px);
+  aspect-ratio: 25 / 28;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.testimonial-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quote-text {
+  font-size: 1.3vw;
+  line-height: 1.5;
+  color: #111111;
+  font-weight: 400;
+  margin-bottom: 0;
+  letter-spacing: -0.01em;
+}
+
+.quote-author {
+  margin-top: 30px;
+}
+
+.author-name {
+  font-size: 1vw;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: #424242;
+}
+
+.author-position {
+  font-size: 1vw;
+  color: #757575;
+  margin: 0;
+}
+
+/* --- ĐIỀU HƯỚNG & PHÂN TRANG --- */
+.testimonial-footer {
+  margin-top: 40px;
+}
+
+.testimonial-footer .d-flex.gap-4 {
+  align-items: flex-end !important;
+}
+
+.testimonial-pagination {
+  font-family: 'AeonikPro', sans-serif;
+  font-weight: 500;
+}
+
+.testimonial-pagination .current {
+  font-size: 7vw;
+  color: #111111;
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.testimonial-pagination .total {
+  font-size: 2.5vw;
+  font-weight: 500;
+  color: #111111;
+}
+
+.testimonial-nav-btns {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.nav-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid #BDBDBD;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  color: #111111;
+  position: relative;
+  z-index: 2;
+  overflow: hidden; 
+}
+
+.next-btn-wrapper {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.next-btn-wrapper .nav-btn {
+  border: none;
+}
+
+/* --- HIỆU ỨNG ICON BAY LƯỢN CHUẨN XÁC --- */
+.icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+.icon-wrap i {
+  position: absolute;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.prev .icon-main {
+  transform: translateX(0);
+}
+
+.prev .icon-alt {
+  transform: translateX(70px);
+}
+
+.prev:hover .icon-main {
+  transform: translateX(-70px);
+}
+
+.prev:hover .icon-alt {
+  transform: translateX(0);
+}
+
+.next .icon-main {
+  transform: translateX(0);
+}
+
+.next .icon-alt {
+  transform: translateX(-70px);
+}
+
+.next:hover .icon-main {
+  transform: translateX(70px);
+}
+
+.next:hover .icon-alt {
+  transform: translateX(0);
+}
+
+.progress-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotate(-90deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.progress-ring-circle {
+  stroke-dasharray: 170 170;
+  stroke-dashoffset: 170;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+/* --- ANIMATION LƯỚT CHỮ --- */
+.scroll-slide-left {
+  opacity: 0;
+  transform: translateX(-150px);
+  transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1), transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.scroll-slide-right {
+  opacity: 0;
+  transform: translateX(150px);
+  transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1), transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.scroll-slide-left.is-visible,
+.scroll-slide-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -1066,19 +1341,114 @@ header.navbar {
   }
 
   .service-title {
-    font-size: 2.2rem; 
+    font-size: 2.2rem;
   }
 
   .service-list li {
-    font-size: 1.15rem; 
+    font-size: 1.15rem;
   }
 
   .service-number-box {
-    width: 40px; 
+    width: 40px;
   }
 
   .service-divider {
-    margin: 0 0 0 40px; 
+    margin: 0 0 0 40px;
+  }
+
+  .testimonial-section {
+    padding: 60px 0 60px 0;
+  }
+ 
+  /* Title sizes */
+  .testimonial-title {
+    font-size: 10vw;
+    margin-top: 16px;
+  }
+ 
+  .text-left {
+    padding-left: 6vw;
+  }
+ 
+  .text-right {
+    padding-right: 4vw;
+    margin-top: 12px;
+  }
+ 
+  .quote-mark {
+    left: -10px;
+    font-size: 0.5em;
+  }
+ 
+  /* Slider */
+  .testimonial-main-content {
+    margin-top: 80px;
+  }
+ 
+  .testi-slide {
+    flex: 0 0 100vw;
+    max-width: 100vw;
+    padding: 0 50px;
+  }
+ 
+  /* Avatar + quote stacked vertically */
+  .testi-slide .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+ 
+  .testi-slide .col-md-5 {
+    width: 100%;
+    justify-content: flex-start !important;
+    padding-right: 0 !important;
+    margin-bottom: 24px;
+  }
+ 
+  .testimonial-avatar {
+    width: clamp(120px, 28vw, 200px);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    margin-bottom: 30px;
+  }
+ 
+  .testi-slide .col-md-7 {
+    width: 100%;
+    padding-left: 0 !important;
+  }
+ 
+  .quote-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+ 
+  .author-name {
+    font-size: 0.9rem;
+  }
+ 
+  .author-position {
+    font-size: 0.85rem;
+  }
+ 
+  /* Footer pagination */
+  .testimonial-footer {
+    margin-top: 40px;
+  }
+ 
+  .testimonial-footer .col-md-4 {
+    display: none !important;
+  }
+ 
+  .testimonial-footer .col-md-6 {
+    width: 100%;
+    padding: 0 20px;
+  }
+ 
+  .testimonial-pagination .current {
+    font-size: 10vw;
+  }
+ 
+  .testimonial-pagination .total {
+    font-size: 4vw;
   }
 }
 
@@ -1345,7 +1715,7 @@ header.navbar {
   }
 
   .service-title {
-    font-size: 1.4rem; 
+    font-size: 1.4rem;
     line-height: 1.2;
   }
 
@@ -1355,7 +1725,7 @@ header.navbar {
   }
 
   .service-number-box {
-    width: 35px; 
+    width: 35px;
   }
 
   .service-number {
@@ -1363,15 +1733,168 @@ header.navbar {
   }
 
   .service-divider {
-    margin: 0 0 0 35px; 
+    margin: 0 0 0 35px;
   }
 
   .service-header-row {
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
   }
-  
+
   .service-list li::before {
-    margin-right: 10px; 
+    margin-right: 10px;
+  }
+
+  .testimonial-section {
+    padding: 40px 0 50px 0;
+    overflow: hidden;
+  }
+ 
+  /* --- Title --- */
+  .testimonial-title-container {
+    gap: 0;
+  }
+ 
+  .testimonial-title {
+    font-size: 13vw;
+    line-height: 1;
+    margin-top: 12px;
+    letter-spacing: -0.03em;
+  }
+ 
+  .text-left {
+    padding-left: 4vw;
+    align-self: flex-start;
+  }
+ 
+  .text-right {
+    padding-right: 4vw;
+    margin-top: 8px;
+    align-self: flex-end;
+  }
+ 
+  .quote-mark {
+    left: -8px;
+    font-size: 0.48em;
+    top: 2px;
+  }
+ 
+  /* --- Slider main --- */
+  .testimonial-main-content {
+    margin-top: 48px;
+  }
+ 
+  .testi-slide {
+    flex: 0 0 100vw;
+    max-width: 100vw;
+    padding: 0 30px;
+    opacity: 0.15;
+  }
+ 
+  .testi-slide.active {
+    opacity: 1;
+  }
+ 
+  /* Stack: avatar top, quote below */
+  .testi-slide .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+ 
+  .testi-slide .col-md-5 {
+    width: 100%;
+    justify-content: flex-start !important;
+    padding-right: 0 !important;
+    margin-bottom: 20px;
+  }
+ 
+  .testimonial-avatar {
+    width: 88px;
+    height: 88px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+ 
+  .testi-slide .col-md-7 {
+    width: 100%;
+    padding-left: 0 !important;
+  }
+ 
+  .quote-text {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: #111111;
+  }
+ 
+  .quote-author {
+    margin-top: 20px;
+  }
+ 
+  .author-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+ 
+  .author-position {
+    font-size: 0.8rem;
+    color: #757575;
+  }
+ 
+  /* --- Footer --- */
+  .testimonial-footer {
+    margin-top: 32px;
+  }
+ 
+  /* Hide the empty md-4 col */
+  .testimonial-footer .d-none.d-md-block {
+    display: none !important;
+  }
+ 
+  .testimonial-footer .col-md-6 {
+    width: 100%;
+    padding: 0 16px;
+  }
+ 
+  .testimonial-pagination .current {
+    font-size: 14vw;
+    line-height: 0.8;
+  }
+ 
+  .testimonial-pagination .total {
+    font-size: 5vw;
+  }
+ 
+  .testimonial-nav-btns {
+    gap: 8px;
+  }
+ 
+  .nav-btn {
+    width: 48px;
+    height: 48px;
+  }
+ 
+  .next-btn-wrapper {
+    width: 48px;
+    height: 48px;
+  }
+ 
+  .progress-ring {
+    width: 48px;
+    height: 48px;
+  }
+ 
+  .progress-ring circle {
+    cx: 24;
+    cy: 24;
+    r: 23;
+  }
+
+  .testimonial-main-content {
+    overflow: hidden;
+  }
+ 
+  .testi-slider-container {
+    overflow: hidden;
   }
 }
 
