@@ -1537,6 +1537,9 @@ header.navbar {
   }
 
   /* Hero layout */
+  .hero-section{
+    background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 100%);
+  }
   .hero-section .container-fluid {
     padding-bottom: 0;
   }
