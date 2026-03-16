@@ -1104,6 +1104,10 @@ header.navbar {
   transform: translateX(0);
 }
 
+.blog-intro-section {
+  padding: 300px 0 150px 0;
+}
+
 @media (max-width: 1024px) and (min-width: 769px) {
   .mobile-menu {
     display: block;
@@ -1509,6 +1513,10 @@ header.navbar {
     cy: 32;
     r: 31;
   }
+
+  .blog-intro-section {
+    padding: 100px 0;
+  }
 }
 
 /* =====================
@@ -1537,9 +1545,10 @@ header.navbar {
   }
 
   /* Hero layout */
-  .hero-section{
+  .hero-section {
     background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 100%);
   }
+
   .hero-section .container-fluid {
     padding-bottom: 0;
   }
@@ -1969,6 +1978,10 @@ header.navbar {
     cx: 26;
     cy: 26;
     r: 25;
+  }
+
+  .blog-intro-section {
+    padding: 50px 0;
   }
 }
 
