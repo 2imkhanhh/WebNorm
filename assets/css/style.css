@@ -1080,7 +1080,7 @@ header.navbar {
 .progress-ring-circle {
   stroke-dasharray: 170 170;
   stroke-dashoffset: 170;
-  transition: stroke-dashoffset 0.1s linear;
+  /* transition: stroke-dashoffset 0.1s linear; */
 }
 
 /* --- ANIMATION LƯỚT CHỮ --- */

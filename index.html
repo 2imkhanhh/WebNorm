@@ -1028,20 +1028,21 @@
                 if (!track || slides.length === 0) return;
 
                 let currentIndex = 0;
-                let progressTimer;
-                let rewindTimeout;
-                let isPlaying = false;
+                let isInView = false;      // Biến kiểm tra có trên màn hình không
+                let isScrolling = false;   // Biến kiểm tra người dùng có đang lướt không
+                let scrollTimeout;
 
-                const intervalTime = 5000;
-                const rewindTime = 800;
+                const intervalTime = 5000; // 5000ms = 5 giây cho mỗi vòng
+                let currentProgressTime = 0; // Lưu trữ thời gian đã chạy (để resume)
+                let lastFrameTime = 0;
+                let animationFrameId;
 
                 function getCircumference() {
-                    return 2 * Math.PI * 27;
+                    return 2 * Math.PI * 27; // Cố định bán kính 27
                 }
 
                 let circleCircumference = getCircumference();
 
-                // GIỮ LẠI DẤU / NHƯ YÊU CẦU CỦA BẠN
                 if (totalElem) {
                     totalElem.textContent = '/' + String(slides.length).padStart(2, '0');
                 }
@@ -1057,84 +1058,90 @@
 
                     const containerWidth = sliderContainer.clientWidth;
                     const slideWidth = slides[0].offsetWidth;
-
                     const centerOffset = (containerWidth - slideWidth) / 2;
                     const translateX = centerOffset - (currentIndex * slideWidth);
 
                     track.style.transform = `translate3d(${translateX}px, 0, 0)`;
                 }
 
-                function startProgress() {
-                    if (!progressCircle) return;
+                // VÒNG LẶP VẼ ANIMATION LIÊN TỤC (60 FPS)
+                function progressLoop(currentTime) {
+                    if (!lastFrameTime) lastFrameTime = currentTime;
+                    const deltaTime = currentTime - lastFrameTime;
+                    lastFrameTime = currentTime;
 
-                    clearTimeout(progressTimer);
-                    clearTimeout(rewindTimeout);
+                    // ĐIỀU KIỆN VÀNG: Chỉ chạy time khi Section trong tầm nhìn VÀ không lướt
+                    if (isInView && !isScrolling) {
+                        currentProgressTime += deltaTime;
 
-                    circleCircumference = getCircumference();
-                    progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
-
-                    progressCircle.style.transition = `stroke-dashoffset ${rewindTime}ms ease-in-out`;
-                    progressCircle.style.strokeDashoffset = circleCircumference;
-
-                    rewindTimeout = setTimeout(() => {
-                        progressCircle.style.transition = `stroke-dashoffset ${intervalTime}ms linear`;
-                        progressCircle.style.strokeDashoffset = 0;
-
-                        progressTimer = setTimeout(() => {
+                        // Nếu chạy đủ 5 giây -> Đổi slide và reset time
+                        if (currentProgressTime >= intervalTime) {
+                            currentProgressTime = 0;
                             moveToNextSlide();
-                        }, intervalTime);
+                        }
 
-                    }, rewindTime + 50);
+                        // Cập nhật đường viền SVG tương ứng với thời gian đã chạy
+                        if (progressCircle) {
+                            const progressRatio = currentProgressTime / intervalTime;
+                            const offset = circleCircumference - (progressRatio * circleCircumference);
+                            progressCircle.style.strokeDashoffset = offset;
+                        }
+                    }
+
+                    // Gọi lại hàm để vẽ frame tiếp theo
+                    animationFrameId = requestAnimationFrame(progressLoop);
                 }
 
                 function moveToNextSlide() {
                     currentIndex = (currentIndex + 1) % slides.length;
+                    currentProgressTime = 0; // Reset thời gian vòng tròn
                     updateCarousel();
-                    startProgress();
                 }
 
                 function moveToPrevSlide() {
                     currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    currentProgressTime = 0; // Reset thời gian vòng tròn
                     updateCarousel();
-                    startProgress();
                 }
 
-                window.addEventListener('resize', () => {
-                    if (progressCircle) {
-                        circleCircumference = getCircumference();
-                        progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
-                        progressCircle.style.transition = 'none';
-                        progressCircle.style.strokeDashoffset = circleCircumference;
-                    }
-                    updateCarousel();
-                    if (isPlaying) startProgress();
-                });
+                // Cài đặt mặc định cho CSS SVG (Ép JS làm chủ)
+                if (progressCircle) {
+                    progressCircle.style.transition = 'none'; // Không cho CSS can thiệp
+                    progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
+                    progressCircle.style.strokeDashoffset = circleCircumference;
+                }
 
-                if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
-                if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
+                // 1. LẮNG NGHE SỰ KIỆN LƯỚT: Khi lướt thì Tạm Dừng, nhả ra thì Chạy Tiếp
+                window.addEventListener('scroll', () => {
+                    isScrolling = true;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        isScrolling = false; // Ngừng lướt sau 150ms
+                        lastFrameTime = performance.now(); // Đồng bộ lại time để không bị giật
+                    }, 150);
+                }, { passive: true });
 
-                updateCarousel();
-
+                // 2. LẮNG NGHE SỰ KIỆN XUẤT HIỆN: Khuất màn hình thì Tạm Dừng, ló mặt thì Chạy Tiếp
                 if (testimonialSection) {
                     const observer = new IntersectionObserver((entries) => {
                         entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                if (!isPlaying) {
-                                    isPlaying = true;
-                                    startProgress();
-                                }
-                            } else {
-                                isPlaying = false;
-                                clearTimeout(progressTimer);
-                                clearTimeout(rewindTimeout);
+                            isInView = entry.isIntersecting;
+                            if (isInView) {
+                                lastFrameTime = performance.now(); // Đồng bộ time khi hiện lên lại
                             }
                         });
-                    }, { threshold: 0 }); 
-
+                    }, { threshold: 0 }); // Hiển thị 1% cũng kích hoạt chạy
                     observer.observe(testimonialSection);
                 } else {
-                    startProgress();
+                    isInView = true;
                 }
+
+                // Khởi động
+                updateCarousel();
+                animationFrameId = requestAnimationFrame(progressLoop);
+
+                if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
+                if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
             }
             initTestimonialSlider();
 
