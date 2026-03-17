@@ -338,9 +338,9 @@ header.navbar {
    INTRO SECTION
    ===================== */
 .intro-section {
-  padding: 50px 0;
+  padding: 50px 0 0 0;
   background-color: #fafafa;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 .reveal-text {
@@ -1108,6 +1108,102 @@ header.navbar {
   padding: 200px 0 150px 0;
 }
 
+.blog-slider-section {
+  padding-bottom: 120px;
+  overflow-x: hidden;
+  /* Ngăn scroll ngang của toàn trang */
+}
+
+/* Thủ thuật kéo tràn viền bên phải */
+.blog-slider-container {
+  display: block;
+  position: relative;
+  overflow: hidden;
+
+  /* Bù lại padding px-4 của Bootstrap trên Mobile */
+  width: calc(100% + 1.5rem);
+  margin-right: -1.5rem;
+}
+
+.blog-track {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+  gap: 24px;
+  /* Khoảng cách giữa các bài */
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.blog-card {
+  /* Tính toán chia chính xác 2.5 ảnh trong khung hình */
+  flex: 0 0 calc((100% - 48px) / 2.5) !important;
+  width: calc((100% - 48px) / 2.5) !important;
+  max-width: calc((100% - 48px) / 2.5) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-img-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-color: #E0E0E0;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.blog-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.blog-card:hover .blog-img-wrap img {
+  transform: scale(1.05);
+}
+
+.blog-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #111111;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  margin-bottom: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Nút điều hướng */
+.blog-nav-btns .nav-btn {
+  width: 56px;
+  height: 56px;
+  border: 1px solid #111;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 24px;
+  color: #111;
+}
+
+.blog-nav-btns .nav-btn:hover {
+  background: #111;
+  color: #fff;
+}
+
+.blog-nav-btns .nav-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 @media (max-width: 1024px) and (min-width: 769px) {
   .mobile-menu {
     display: block;
@@ -1131,6 +1227,10 @@ header.navbar {
   }
 
   /* Hero layout */
+  .hero-section {
+    background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 100%);
+  }
+
   .hero-section .container-fluid {
     padding-bottom: 0;
   }
@@ -1517,6 +1617,12 @@ header.navbar {
   .blog-intro-section {
     padding: 100px 0;
   }
+
+  .blog-card {
+    flex: 0 0 calc((100% - 24px) / 2) !important;
+    width: calc((100% - 24px) / 2) !important;
+    max-width: calc((100% - 24px) / 2) !important;
+  }
 }
 
 /* =====================
@@ -1628,6 +1734,11 @@ header.navbar {
   .reveal-text {
     width: 100%;
     font-size: 2rem;
+  }
+
+  .label-side{
+    display: inline-block;
+    margin-bottom: 24px !important;
   }
 
   .desc-text {
@@ -1983,6 +2094,20 @@ header.navbar {
   .blog-intro-section {
     padding: 50px 0;
   }
+
+  .blog-slider-section {
+    padding-bottom: 60px;
+  }
+
+  .blog-card {
+    flex: 0 0 calc((100% - 12px) / 1.3) !important;
+    width: calc((100% - 12px) / 1.3) !important;
+    max-width: calc((100% - 12px) / 1.3) !important;
+  }
+
+  .blog-title {
+    font-size: 1.15rem;
+  }
 }
 
 @keyframes mobileFadeInLeft {
@@ -2036,6 +2161,12 @@ header.navbar {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .blog-slider-container {
+    /* Bù lại padding px-md-5 (3rem) của Bootstrap trên PC */
+    width: calc(100% + 3rem);
+    margin-right: -3rem;
   }
 }
 
