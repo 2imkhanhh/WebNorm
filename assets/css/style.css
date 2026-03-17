@@ -1621,11 +1621,11 @@ header.navbar {
     height: 64px;
   }
 
-  .progress-ring circle {
+  /* .progress-ring circle {
     cx: 32;
     cy: 32;
     r: 30;
-  }
+  } */
 
   .blog-intro-section {
     padding: 100px 0;
@@ -2098,11 +2098,11 @@ header.navbar {
     height: 52px;
   }
 
-  .progress-ring circle {
+  /* .progress-ring circle {
     cx: 26;
     cy: 26;
     r: 24;
-  }
+  } */
 
   .blog-intro-section {
     padding: 50px 0;
