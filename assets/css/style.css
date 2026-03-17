@@ -1191,6 +1191,10 @@ header.navbar {
   transition: all 0.3s ease;
   font-size: 24px;
   color: #111;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  /* Xóa chớp màu xám mặc định của điện thoại */
+  touch-action: manipulation;
 }
 
 @media (hover: hover) {
@@ -1204,6 +1208,7 @@ header.navbar {
   background: #111 !important;
   color: #fff !important;
   transform: scale(0.95);
+  transition: none !important;
 }
 
 .blog-nav-btns .nav-btn.disabled {
