@@ -461,11 +461,11 @@
                             </button>
 
                             <div class="next-btn-wrapper">
-                                <svg class="progress-ring" width="56" height="56">
+                                <svg class="progress-ring" width="56" height="56" viewBox="0 0 56 56">
                                     <circle class="progress-ring-bg" stroke="#E0E0E0" stroke-width="1"
-                                        fill="transparent" r="27" cx="28" cy="28" />
+                                        fill="transparent" r="26" cx="28" cy="28" />
                                     <circle class="progress-ring-circle" stroke="#111111" stroke-width="1.5"
-                                        fill="transparent" r="27" cx="28" cy="28" />
+                                        fill="transparent" r="26" cx="28" cy="28" />
                                 </svg>
                                 <button class="nav-btn next" aria-label="Next">
                                     <span class="icon-wrap">
@@ -1036,11 +1036,11 @@
 
                 function getCircumference() {
                     const width = window.innerWidth;
-                    let radius = 27; // Desktop mặc định (nút 56px)
+                    let radius = 26; // <-- SỬA SỐ NÀY TỪ 27 XUỐNG 26
                     if (width <= 768) {
-                        radius = 25; // Mobile (nút 48px)
+                        radius = 24; // <-- Mobile (nút 52px, r nên là 24 thay vì 25)
                     } else if (width > 768 && width <= 1024) {
-                        radius = 31; // Tablet (nút 64px)
+                        radius = 30; // <-- Tablet (nút 64px, r nên là 30 thay vì 31)
                     }
                     return 2 * Math.PI * radius;
                 }

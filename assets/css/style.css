@@ -1624,7 +1624,7 @@ header.navbar {
   .progress-ring circle {
     cx: 32;
     cy: 32;
-    r: 31;
+    r: 30;
   }
 
   .blog-intro-section {
@@ -2101,7 +2101,7 @@ header.navbar {
   .progress-ring circle {
     cx: 26;
     cy: 26;
-    r: 25;
+    r: 24;
   }
 
   .blog-intro-section {
