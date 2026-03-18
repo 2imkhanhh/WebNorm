@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
     <header class="navbar navbar-expand-lg">
         <div class="navbar-inner">
             <a href="#" class="nav-link-item">About us</a>
@@ -610,6 +609,40 @@
         </div>
     </section>
 
+    <footer class="footer-section" id="footerSection">
+        <div class="footer-sticky">
+            <div class="container-fluid px-4 px-md-5 w-100">
+                <div class="row align-items-center">
+
+                    <div class="col-12 col-md-9">
+                        <div class="footer-text-wrap">
+                            <div class="footer-line">
+                                <span class="text-old">TỪ NHỮNG</span>
+                                <span class="text-new">ĐẾN MỘT</span>
+                            </div>
+                            <div class="footer-line">
+                                <span class="text-old">Ý TƯỞNG</span>
+                                <span class="text-new">THƯƠNG HIỆU</span>
+                            </div>
+                            <div class="footer-line">
+                                <span class="text-old">BAN ĐẦU</span>
+                                <span class="text-new">ĐÁNG NHỚ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-3 text-start text-md-end mt-5 mt-md-0">
+                        <a href="#" class="footer-btn">
+                            XEM DỰ ÁN
+                            <span class="arrow-wrap"><i class='bx bx-right-arrow-alt'></i></span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -1084,17 +1117,17 @@
                 if (!track || slides.length === 0) return;
 
                 let currentIndex = 0;
-                let isInView = false;      
-                let isScrolling = false;   
+                let isInView = false;
+                let isScrolling = false;
                 let scrollTimeout;
 
-                const intervalTime = 5000; 
-                let currentProgressTime = 0; 
+                const intervalTime = 5000;
+                let currentProgressTime = 0;
                 let lastFrameTime = 0;
                 let animationFrameId;
 
                 function getCircumference() {
-                    return 2 * Math.PI * 27; 
+                    return 2 * Math.PI * 27;
                 }
 
                 let circleCircumference = getCircumference();
@@ -1235,6 +1268,68 @@
 
                 window.addEventListener('resize', updateBlogSlider);
                 updateBlogSlider();
+            }
+
+            // ==========================================
+            // 11. FOOTER SCROLL TEXT JS
+            // ==========================================
+            const footerSection = document.getElementById('footerSection');
+            const footerLines = document.querySelectorAll('.footer-line');
+            const blogSection = document.querySelector('.blog-slider-section'); 
+
+            if (footerSection && footerLines.length > 0) {
+                let targetFooterProgress = 0;
+                let currentFooterProgress = 0;
+
+                function renderFooterSmooth() {
+                    currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.08;
+
+                    footerLines.forEach((line) => {
+                        const textNew = line.querySelector('.text-new');
+                        let speedMultiplier = 1.2; 
+                        let progress = currentFooterProgress * speedMultiplier;
+                        
+                        if (progress < 0) progress = 0;
+                        if (progress > 1) progress = 1;
+
+                        const insetTop = (1 - progress) * 100;
+                        textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
+                        textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
+                    });
+
+                    requestAnimationFrame(renderFooterSmooth);
+                }
+                
+                requestAnimationFrame(renderFooterSmooth);
+
+                window.addEventListener('scroll', () => {
+                    const footerTop = footerSection.offsetTop;
+                    const scrollY = window.scrollY;
+                    const windowHeight = window.innerHeight;
+
+                    // --- CHUYỂN ĐỔI DARK MODE TẠI MỐC 20% ---
+                    const scrolledIntoFooter = (scrollY + windowHeight) - footerTop;
+                    const triggerDistance = footerSection.offsetHeight * 0.1; 
+                    
+                    if (scrolledIntoFooter >= triggerDistance) {
+                        footerSection.classList.add('dark-mode'); 
+                        if (blogSection) blogSection.classList.add('dark-mode'); // Bật đen cho Blog
+                    } else {
+                        footerSection.classList.remove('dark-mode'); 
+                        if (blogSection) blogSection.classList.remove('dark-mode'); // Tắt đen cho Blog
+                    }
+
+                    // --- TÍNH TOÁN HIỆU ỨNG TRƯỢT CHỮ ---
+                    let scrolledInside = scrollY - footerTop;
+                    if (scrolledInside < 0) scrolledInside = 0;
+
+                    const maxScroll = footerSection.offsetHeight - windowHeight;
+                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+
+                    if (maxScroll > 0) {
+                        targetFooterProgress = scrolledInside / maxScroll;
+                    }
+                }, { passive: true });
             }
         });
     </script>

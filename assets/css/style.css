@@ -1119,7 +1119,7 @@ header.navbar {
   /* transition: stroke-dashoffset 0.1s linear; */
 }
 
-/* --- ANIMATION LƯỚT CHỮ --- */
+/* --- ANIMATION --- */
 .scroll-slide-left {
   opacity: 0;
   transform: translateX(-150px);
@@ -1147,18 +1147,46 @@ header.navbar {
 .blog-slider-section {
   padding-bottom: 120px;
   overflow-x: hidden;
-  /* Ngăn scroll ngang của toàn trang */
+  z-index: 16;
+  transition: background-color 0.6s ease;
 }
 
-/* Thủ thuật kéo tràn viền bên phải */
 .blog-slider-container {
   display: block;
   position: relative;
   overflow: hidden;
-
-  /* Bù lại padding px-4 của Bootstrap trên Mobile */
   width: calc(100% + 1.5rem);
   margin-right: -1.5rem;
+}
+
+.blog-slider-section .link-more,
+.blog-slider-section .blog-title,
+.blog-slider-section .blog-title a,
+.blog-slider-section .nav-btn,
+.blog-slider-section .nav-btn i {
+  transition: color 0.6s ease, border-color 0.6s ease, background-color 0.6s ease;
+}
+
+/* Khi class .dark-mode được kích hoạt */
+.blog-slider-section.dark-mode {
+  background-color: #111111;
+  /* Đổi nền Blog sang đen */
+}
+
+/* Biến chữ và nút thành màu trắng để nổi bật trên nền đen */
+.blog-slider-section.dark-mode .link-more,
+.blog-slider-section.dark-mode .blog-title,
+.blog-slider-section.dark-mode .blog-title a {
+  color: #ffffff !important;
+}
+
+.blog-slider-section.dark-mode .nav-btn i {
+  color: #ffffff !important;
+}
+
+/* Nếu nút của bạn có viền, đổi viền sang trắng luôn */
+.blog-slider-section.dark-mode .nav-btn {
+  border-color: #ffffff !important;
 }
 
 .blog-track {
@@ -1166,13 +1194,11 @@ header.navbar {
   flex-wrap: nowrap !important;
   align-items: stretch;
   gap: 24px;
-  /* Khoảng cách giữa các bài */
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
 .blog-card {
-  /* Tính toán chia chính xác 2.5 ảnh trong khung hình */
   flex: 0 0 calc((100% - 48px) / 2.5) !important;
   width: calc((100% - 48px) / 2.5) !important;
   max-width: calc((100% - 48px) / 2.5) !important;
@@ -1259,6 +1285,160 @@ header.navbar {
   opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* =====================
+   11. FOOTER SECTION 
+   ===================== */
+.footer-section {
+  background-color: #ffffff;
+  /* Mặc định nền trắng */
+  color: #111111;
+  /* Mặc định chữ đen */
+  height: 250vh;
+  position: relative;
+  z-index: 20;
+  transition: background-color 0.6s ease, color 0.6s ease;
+  /* Làm mượt khi đổi nền */
+}
+
+.footer-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.footer-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-line {
+  position: relative;
+  overflow: hidden;
+  height: 1.3em;
+  line-height: 1.3em;
+
+  font-size: 7vw;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.8vw;
+}
+
+.footer-text-wrap .footer-line:last-child {
+  margin-bottom: 0 !important;
+}
+
+.footer-line .text-old {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  color: #111111;
+  /* Mặc định chữ đen */
+  justify-content: flex-start !important;
+  text-align: left;
+  transition: color 0.6s ease;
+  /* Làm mượt khi đổi màu chữ */
+}
+
+/* Chữ mới (Trượt lên đè vào) */
+.footer-line .text-new {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+  color: #111111;
+  /* Mặc định chữ đen */
+  background-color: #ffffff;
+  /* Màn che màu trắng */
+
+  will-change: clip-path;
+
+  /* Ẩn toàn bộ bằng cách "cắt" 100% từ phía trên đỉnh */
+  -webkit-clip-path: inset(100% 0 0 0);
+  clip-path: inset(100% 0 0 0);
+  justify-content: flex-start !important;
+  text-align: left;
+  transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+.footer-line span {
+  display: block;
+  height: 1.1em;
+}
+
+/* Nút bấm (Mặc định nền đen, chữ trắng trên nền web trắng) */
+.footer-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: #111111;
+  color: #ffffff;
+  padding: 10px 10px 10px 24px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  /* Đổi thành 'all' để mượt cả hiệu ứng hover (scale) lẫn hiệu ứng đổi màu */
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-btn .arrow-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #333333;
+  border-radius: 50%;
+  margin-left: 16px;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.footer-btn i {
+  font-size: 18px;
+}
+
+.footer-btn:hover {
+  transform: scale(1.05);
+}
+
+.footer-btn:hover .arrow-wrap {
+  transform: translateX(3px);
+}
+
+/* ======================================
+   TRẠNG THÁI DARK MODE (Lớp class được JS thêm vào khi cuộn qua 20%)
+   ====================================== */
+.footer-section.dark-mode {
+  background-color: #111111;
+}
+
+.footer-section.dark-mode .footer-line .text-old {
+  color: #ffffff;
+}
+
+.footer-section.dark-mode .footer-line .text-new {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+.footer-section.dark-mode .footer-btn {
+  background-color: #ffffff;
+  color: #111111;
+}
+
+.footer-section.dark-mode .footer-btn .arrow-wrap {
+  background-color: #E0E0E0;
 }
 
 @media (max-width: 1024px) and (min-width: 769px) {
