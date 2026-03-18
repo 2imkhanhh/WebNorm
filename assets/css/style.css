@@ -1291,15 +1291,11 @@ header.navbar {
    11. FOOTER SECTION 
    ===================== */
 .footer-section {
-  background-color: #ffffff;
-  /* Mặc định nền trắng */
   color: #111111;
-  /* Mặc định chữ đen */
   height: 250vh;
   position: relative;
   z-index: 20;
   transition: background-color 0.6s ease, color 0.6s ease;
-  /* Làm mượt khi đổi nền */
 }
 
 .footer-sticky {
@@ -1321,7 +1317,6 @@ header.navbar {
   overflow: hidden;
   height: 1.3em;
   line-height: 1.3em;
-
   font-size: 7vw;
   font-weight: 500;
   text-transform: uppercase;
@@ -1339,32 +1334,22 @@ header.navbar {
   align-items: center;
   height: 100%;
   color: #111111;
-  /* Mặc định chữ đen */
   justify-content: flex-start !important;
   text-align: left;
   transition: color 0.6s ease;
-  /* Làm mượt khi đổi màu chữ */
 }
 
-/* Chữ mới (Trượt lên đè vào) */
 .footer-line .text-new {
   position: absolute;
   top: 0;
   left: 0;
-
   display: flex;
   align-items: center;
-
   width: 100%;
   height: 100%;
   color: #111111;
-  /* Mặc định chữ đen */
   background-color: #ffffff;
-  /* Màn che màu trắng */
-
   will-change: clip-path;
-
-  /* Ẩn toàn bộ bằng cách "cắt" 100% từ phía trên đỉnh */
   -webkit-clip-path: inset(100% 0 0 0);
   clip-path: inset(100% 0 0 0);
   justify-content: flex-start !important;
@@ -1377,48 +1362,41 @@ header.navbar {
   height: 1.1em;
 }
 
-/* Nút bấm (Mặc định nền đen, chữ trắng trên nền web trắng) */
 .footer-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  /* Khoảng cách giữa chữ và mũi tên */
   background-color: #111111;
   color: #ffffff;
-  padding: 10px 10px 10px 24px;
+  padding: 14px 28px;
+  /* Dáng nút viên thuốc (pill) cân đối 2 bên */
   border-radius: 50px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  /* Đổi thành 'all' để mượt cả hiệu ứng hover (scale) lẫn hiệu ứng đổi màu */
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.footer-btn .arrow-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background-color: #333333;
-  border-radius: 50%;
-  margin-left: 16px;
-  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
+/* Mũi tên */
 .footer-btn i {
-  font-size: 18px;
+  font-size: 20px;
+  /* Tăng kích thước mũi tên cho hợp với chữ */
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Hiệu ứng rê chuột */
 .footer-btn:hover {
   transform: scale(1.05);
+  /* Phóng to nhẹ toàn bộ nút */
 }
 
-.footer-btn:hover .arrow-wrap {
-  transform: translateX(3px);
+.footer-btn:hover i {
+  transform: translateX(4px);
+  /* Mũi tên nhích ra xa một chút xíu */
 }
 
-/* ======================================
-   TRẠNG THÁI DARK MODE (Lớp class được JS thêm vào khi cuộn qua 20%)
-   ====================================== */
 .footer-section.dark-mode {
   background-color: #111111;
 }
@@ -1812,8 +1790,6 @@ header.navbar {
     gap: 30px !important;
   }
 
-
-
   .testimonial-pagination {
     width: 100%;
     display: flex;
@@ -1869,6 +1845,29 @@ header.navbar {
     flex: 0 0 calc((100% - 24px) / 2) !important;
     width: calc((100% - 24px) / 2) !important;
     max-width: calc((100% - 24px) / 2) !important;
+  }
+
+  .blog-slider-section {
+    padding-bottom: 15px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .blog-slider-section .blog-nav-btns.mt-5 {
+    margin-top: 20px !important;
+  }
+
+  .footer-sticky .row {
+    transform: translateY(-8vh);
+  }
+
+  .footer-line {
+    font-size: 8.5vw;
+    margin-bottom: 2.5vw;
+  }
+
+  .footer-btn {
+    padding: 10px 10px 10px 20px;
+    font-size: 12px;
   }
 }
 
@@ -2363,7 +2362,16 @@ header.navbar {
   }
 
   .blog-slider-section {
-    padding-bottom: 60px;
+    padding-bottom: 5px !important;
+    ;
+  }
+
+  .blog-slider-section .blog-nav-btns.mt-5 {
+    margin-top: 10px !important;
+  }
+
+  .footer-sticky .row {
+    transform: translateY(-12vh);
   }
 
   .blog-card {
@@ -2374,6 +2382,27 @@ header.navbar {
 
   .blog-title {
     font-size: 1.15rem;
+  }
+
+  .footer-line {
+    font-size: 13.5vw;
+    margin-bottom: 4.5vw;
+  }
+
+  .footer-section .col-12.text-start.text-md-end {
+    text-align: center !important;
+    margin-top: 60px !important;
+  }
+
+  .footer-btn {
+    width: auto;
+    padding: 15px 30px;
+    font-size: 18px;
+    justify-content: center;
+  }
+
+  .footer-btn i {
+    font-size: 18px;
   }
 }
 

@@ -633,8 +633,7 @@
 
                     <div class="col-12 col-md-3 text-start text-md-end mt-5 mt-md-0">
                         <a href="#" class="footer-btn">
-                            XEM DỰ ÁN
-                            <span class="arrow-wrap"><i class='bx bx-right-arrow-alt'></i></span>
+                            CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
                         </a>
                     </div>
 
@@ -940,7 +939,7 @@
                 let lastStableIndex = 0;
 
                 function renderSmooth() {
-                    psCurrentProgress += (psTargetProgress - psCurrentProgress) * 0.08;
+                    psCurrentProgress += (psTargetProgress - psCurrentProgress) * 0.9;
 
                     projectItems.forEach((item, i) => {
                         let yPercent = Math.max(0, Math.min(100, (i - psCurrentProgress) * 100));
@@ -1275,20 +1274,22 @@
             // ==========================================
             const footerSection = document.getElementById('footerSection');
             const footerLines = document.querySelectorAll('.footer-line');
-            const blogSection = document.querySelector('.blog-slider-section'); 
+            const blogSection = document.querySelector('.blog-slider-section');
 
             if (footerSection && footerLines.length > 0) {
                 let targetFooterProgress = 0;
                 let currentFooterProgress = 0;
+                let footerSnapTimeout;
+                let lastScrollY = window.scrollY;
 
                 function renderFooterSmooth() {
-                    currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.08;
+                    currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.05;
 
                     footerLines.forEach((line) => {
                         const textNew = line.querySelector('.text-new');
-                        let speedMultiplier = 1.2; 
-                        let progress = currentFooterProgress * speedMultiplier;
-                        
+
+                        let progress = currentFooterProgress;
+
                         if (progress < 0) progress = 0;
                         if (progress > 1) progress = 1;
 
@@ -1299,7 +1300,7 @@
 
                     requestAnimationFrame(renderFooterSmooth);
                 }
-                
+
                 requestAnimationFrame(renderFooterSmooth);
 
                 window.addEventListener('scroll', () => {
@@ -1307,19 +1308,22 @@
                     const scrollY = window.scrollY;
                     const windowHeight = window.innerHeight;
 
-                    // --- CHUYỂN ĐỔI DARK MODE TẠI MỐC 20% ---
+                    const scrollDirection = scrollY > lastScrollY ? 'down' : 'up';
+                    lastScrollY = scrollY;
+
+                    // --- 1. CÔNG TẮC DARK MODE (Mốc 20%) ---
                     const scrolledIntoFooter = (scrollY + windowHeight) - footerTop;
-                    const triggerDistance = footerSection.offsetHeight * 0.1; 
-                    
+                    const triggerDistance = footerSection.offsetHeight * 0.2;
+
                     if (scrolledIntoFooter >= triggerDistance) {
-                        footerSection.classList.add('dark-mode'); 
-                        if (blogSection) blogSection.classList.add('dark-mode'); // Bật đen cho Blog
+                        footerSection.classList.add('dark-mode');
+                        if (blogSection) blogSection.classList.add('dark-mode');
                     } else {
-                        footerSection.classList.remove('dark-mode'); 
-                        if (blogSection) blogSection.classList.remove('dark-mode'); // Tắt đen cho Blog
+                        footerSection.classList.remove('dark-mode');
+                        if (blogSection) blogSection.classList.remove('dark-mode');
                     }
 
-                    // --- TÍNH TOÁN HIỆU ỨNG TRƯỢT CHỮ ---
+                    // --- 2. TÍNH TOÁN % LỰC KÉO RÒNG RỌC ---
                     let scrolledInside = scrollY - footerTop;
                     if (scrolledInside < 0) scrolledInside = 0;
 
@@ -1328,6 +1332,40 @@
 
                     if (maxScroll > 0) {
                         targetFooterProgress = scrolledInside / maxScroll;
+                    }
+
+                    // --- 3. HIỆU ỨNG SNAP (TỰ ĐỘNG HÚT 2 CHIỀU) ---
+                    clearTimeout(footerSnapTimeout);
+
+                    if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
+
+                        footerSnapTimeout = setTimeout(() => {
+                            let snapTargetY;
+
+                            if (scrollDirection === 'down') {
+                                // Nếu cuộn xuống qua mốc 20% -> Hút xuống đáy để hiện chữ mới
+                                if (targetFooterProgress >= 0.2) {
+                                    snapTargetY = footerTop + maxScroll;
+                                } else {
+                                    snapTargetY = footerTop;
+                                }
+                            } else {
+                                // Nếu cuộn ngược lên trên qua mốc 80% (tức là kéo ngược lại 20%) -> Hút lên đỉnh để về chữ cũ
+                                if (targetFooterProgress <= 0.8) {
+                                    snapTargetY = footerTop;
+                                } else {
+                                    snapTargetY = footerTop + maxScroll;
+                                }
+                            }
+
+                            // Ra lệnh cuộn trang
+                            if (Math.abs(scrollY - snapTargetY) > 5) {
+                                window.scrollTo({
+                                    top: snapTargetY,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        }, 600);
                     }
                 }, { passive: true });
             }
