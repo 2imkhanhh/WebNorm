@@ -1315,9 +1315,8 @@
                     const scrollDirection = scrollY > lastScrollY ? 'down' : 'up';
                     lastScrollY = scrollY;
 
-                    // --- 1. CÔNG TẮC DARK MODE (Mốc 20%) ---
                     const scrolledIntoFooter = (scrollY + windowHeight) - footerTop;
-                    const triggerDistance = footerSection.offsetHeight * 0.2;
+                    const triggerDistance = footerSection.offsetHeight * (window.innerWidth <= 1024 ? 0.25 : 0.2);
 
                     if (scrolledIntoFooter >= triggerDistance) {
                         footerSection.classList.add('dark-mode');
@@ -1327,7 +1326,6 @@
                         if (blogSection) blogSection.classList.remove('dark-mode');
                     }
 
-                    // --- 2. TÍNH TOÁN % LỰC KÉO RÒNG RỌC ---
                     let scrolledInside = scrollY - footerTop;
                     if (scrolledInside < 0) scrolledInside = 0;
 
@@ -1338,7 +1336,6 @@
                         targetFooterProgress = scrolledInside / maxScroll;
                     }
 
-                    // --- 3. HIỆU ỨNG SNAP (TỰ ĐỘNG HÚT 2 CHIỀU) ---
                     clearTimeout(footerSnapTimeout);
 
                     if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
@@ -1360,7 +1357,6 @@
                                 }
                             }
 
-                            // Ra lệnh cuộn trang
                             if (Math.abs(scrollY - snapTargetY) > 5) {
                                 window.scrollTo({
                                     top: snapTargetY,
