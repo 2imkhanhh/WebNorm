@@ -610,7 +610,7 @@
     </section>
 
     <footer class="footer-section" id="footerSection">
-        <div class="footer-sticky">
+        <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
             <div class="container-fluid px-4 px-md-5 w-100">
                 <div class="row align-items-center">
 
@@ -631,7 +631,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-3 text-start text-md-end mt-5 mt-md-0">
+                    <div class="col-12 col-md-3 text-start text-md-end mt-5 mt-md-0 footer-real-btn-col">
                         <a href="#" class="footer-btn">
                             CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
                         </a>
@@ -641,6 +641,10 @@
             </div>
         </div>
     </footer>
+
+    <a href="#" class="footer-cursor-btn" id="footerCursorBtn">
+        CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+    </a>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -1343,15 +1347,13 @@
                             let snapTargetY;
 
                             if (scrollDirection === 'down') {
-                                // Nếu cuộn xuống qua mốc 20% -> Hút xuống đáy để hiện chữ mới
-                                if (targetFooterProgress >= 0.2) {
+                                if (targetFooterProgress >= 0.1) {
                                     snapTargetY = footerTop + maxScroll;
                                 } else {
                                     snapTargetY = footerTop;
                                 }
                             } else {
-                                // Nếu cuộn ngược lên trên qua mốc 80% (tức là kéo ngược lại 20%) -> Hút lên đỉnh để về chữ cũ
-                                if (targetFooterProgress <= 0.8) {
+                                if (targetFooterProgress <= 0.9) {
                                     snapTargetY = footerTop;
                                 } else {
                                     snapTargetY = footerTop + maxScroll;
@@ -1366,6 +1368,57 @@
                                 });
                             }
                         }, 600);
+                    }
+                }, { passive: true });
+            }
+
+            // ==========================================
+            // 12. FOOTER CURSOR BUTTON
+            // ==========================================
+            const footerZone = document.getElementById('footerCursorZone');
+            const footerCursorBtn = document.getElementById('footerCursorBtn');
+
+            if (footerZone && footerCursorBtn) {
+                let mouseX = 0, mouseY = 0;
+                let btnX = 0, btnY = 0;
+
+                // Chạy lerp liên tục
+                function animateCursor() {
+                    btnX += (mouseX - btnX) * 0.12;
+                    btnY += (mouseY - btnY) * 0.12;
+                    footerCursorBtn.style.left = btnX + 'px';
+                    footerCursorBtn.style.top = btnY + 'px';
+                    requestAnimationFrame(animateCursor);
+                }
+                requestAnimationFrame(animateCursor);
+
+                // Dùng mousemove trên document để kiểm tra vị trí chuột
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+
+                    const rect = footerZone.getBoundingClientRect();
+                    const isInZone = e.clientX >= rect.left && e.clientX <= rect.right
+                        && e.clientY >= rect.top && e.clientY <= rect.bottom;
+
+                    if (isInZone) {
+                        footerCursorBtn.classList.add('is-visible');
+                        if (footerSection && footerSection.classList.contains('dark-mode')) {
+                            footerCursorBtn.classList.add('dark');
+                        } else {
+                            footerCursorBtn.classList.remove('dark');
+                        }
+                    } else {
+                        footerCursorBtn.classList.remove('is-visible');
+                    }
+                });
+                window.addEventListener('scroll', () => {
+                    const rect = footerZone.getBoundingClientRect();
+                    const isInZone = mouseX >= rect.left && mouseX <= rect.right
+                        && mouseY >= rect.top && mouseY <= rect.bottom;
+
+                    if (!isInZone) {
+                        footerCursorBtn.classList.remove('is-visible');
                     }
                 }, { passive: true });
             }
