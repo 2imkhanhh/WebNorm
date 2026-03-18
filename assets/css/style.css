@@ -1213,6 +1213,14 @@ header.navbar {
   overflow: hidden;
 }
 
+.blog-title a {
+  transition: opacity 0.3s ease;
+}
+
+.blog-title a:hover {
+  opacity: 0.7;
+}
+
 /* Nút điều hướng */
 .blog-nav-btns .nav-btn {
   width: 56px;
