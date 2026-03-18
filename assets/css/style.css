@@ -1362,16 +1362,29 @@ header.navbar {
   height: 1.1em;
 }
 
+.footer-text-wrap .footer-line:nth-child(1) .text-old,
+.footer-text-wrap .footer-line:nth-child(1) .text-new {
+  padding-left: 20vw;
+}
+
+.footer-text-wrap .footer-line:nth-child(2) .text-old,
+.footer-text-wrap .footer-line:nth-child(2) .text-new {
+  padding-left: 40vw;
+}
+
+.footer-text-wrap .footer-line:nth-child(3) .text-old,
+.footer-text-wrap .footer-line:nth-child(3) .text-new {
+  padding-left: 30vw;
+}
+
 .footer-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  /* Khoảng cách giữa chữ và mũi tên */
   background-color: #111111;
   color: #ffffff;
   padding: 14px 28px;
-  /* Dáng nút viên thuốc (pill) cân đối 2 bên */
   border-radius: 50px;
   font-size: 14px;
   font-weight: 500;
@@ -1909,9 +1922,34 @@ header.navbar {
     margin-bottom: 2.5vw;
   }
 
+  .footer-text-wrap .footer-line:nth-child(1) .text-old,
+  .footer-text-wrap .footer-line:nth-child(1) .text-new {
+    padding-left: 15vw;
+  }
+
+  .footer-text-wrap .footer-line:nth-child(2) .text-old,
+  .footer-text-wrap .footer-line:nth-child(2) .text-new {
+    padding-left: 30vw;
+  }
+
+  .footer-text-wrap .footer-line:nth-child(3) .text-old,
+  .footer-text-wrap .footer-line:nth-child(3) .text-new {
+    padding-left: 20vw;
+  }
+
   .footer-btn {
+    margin-top: 50px;
     padding: 10px 10px 10px 20px;
-    font-size: 12px;
+    font-size: 15px;
+  }
+
+  .footer-real-btn-col {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    margin-top: 60px !important;
+    text-align: center !important;
   }
 }
 
@@ -2429,7 +2467,7 @@ header.navbar {
   }
 
   .footer-line {
-    font-size: 13.5vw;
+    font-size: 12vw;
     margin-bottom: 4.5vw;
   }
 
@@ -2438,10 +2476,25 @@ header.navbar {
     margin-top: 60px !important;
   }
 
+  .footer-text-wrap .footer-line:nth-child(1) .text-old,
+  .footer-text-wrap .footer-line:nth-child(1) .text-new {
+    padding-left: 0;
+  }
+
+  .footer-text-wrap .footer-line:nth-child(2) .text-old,
+  .footer-text-wrap .footer-line:nth-child(2) .text-new {
+    padding-left: 12vw;
+  }
+
+  .footer-text-wrap .footer-line:nth-child(3) .text-old,
+  .footer-text-wrap .footer-line:nth-child(3) .text-new {
+    padding-left: 5vw;
+  }
+
   .footer-btn {
     width: auto;
     padding: 15px 30px;
-    font-size: 18px;
+    font-size: 15px;
     justify-content: center;
   }
 
