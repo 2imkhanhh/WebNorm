@@ -2005,9 +2005,9 @@ header.navbar {
     margin-top: 20px !important;
   }
 
-  .footer-sticky .row {
+  /* .footer-sticky .row {
     transform: translateY(-8vh);
-  }
+  } */
 
   .footer-line {
     font-size: 8.5vw;
@@ -2549,9 +2549,9 @@ header.navbar {
     margin-top: 10px !important;
   }
 
-  .footer-sticky .row {
+  /* .footer-sticky .row {
     transform: translateY(-12vh);
-  }
+  } */
 
   .blog-card {
     flex: 0 0 calc((100% - 12px) / 1.3) !important;
