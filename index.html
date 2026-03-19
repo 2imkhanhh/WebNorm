@@ -1410,6 +1410,7 @@
             const footerCursorBtn = document.getElementById('footerCursorBtn');
 
             if (footerZone && footerCursorBtn) {
+                if (window.innerWidth <= 1024) return;
                 let mouseX = 0, mouseY = 0;
                 let btnX = 0, btnY = 0;
 

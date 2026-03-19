@@ -2035,6 +2035,10 @@ header.navbar {
     font-size: 15px;
   }
 
+  .footer-cursor-btn {
+    display: none !important;
+  }
+
   .footer-real-btn-col {
     width: 100% !important;
     max-width: 100% !important;
@@ -2045,8 +2049,8 @@ header.navbar {
   }
 
   .final-footer-section {
-    margin-top: -15vh; 
-    padding-top: 60px; 
+    margin-top: -15vh;
+    padding-top: 60px;
   }
 }
 
@@ -2595,6 +2599,10 @@ header.navbar {
     justify-content: center;
   }
 
+  .footer-cursor-btn {
+    display: none !important;
+  }
+
   .footer-btn i {
     font-size: 18px;
   }
@@ -2605,8 +2613,10 @@ header.navbar {
   }
 
   .final-footer-section {
-    margin-top: -25vh; /* Kéo lên mạnh hơn vì điện thoại màn hình dọc rất dài */
-    padding-top: 40px; /* Thu hẹp thêm khoảng trống bên trong */
+    margin-top: -25vh;
+    /* Kéo lên mạnh hơn vì điện thoại màn hình dọc rất dài */
+    padding-top: 40px;
+    /* Thu hẹp thêm khoảng trống bên trong */
     padding-bottom: 0;
   }
 
