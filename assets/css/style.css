@@ -1167,13 +1167,10 @@ header.navbar {
   transition: color 0.6s ease, border-color 0.6s ease, background-color 0.6s ease;
 }
 
-/* Khi class .dark-mode được kích hoạt */
 .blog-slider-section.dark-mode {
   background-color: #111111;
-  /* Đổi nền Blog sang đen */
 }
 
-/* Biến chữ và nút thành màu trắng để nổi bật trên nền đen */
 .blog-slider-section.dark-mode .link-more,
 .blog-slider-section.dark-mode .blog-title,
 .blog-slider-section.dark-mode .blog-title a {
@@ -1184,7 +1181,6 @@ header.navbar {
   color: #ffffff !important;
 }
 
-/* Nếu nút của bạn có viền, đổi viền sang trắng luôn */
 .blog-slider-section.dark-mode .nav-btn {
   border-color: #ffffff !important;
 }
@@ -1247,7 +1243,6 @@ header.navbar {
   opacity: 0.7;
 }
 
-/* Nút điều hướng */
 .blog-nav-btns .nav-btn {
   width: 56px;
   height: 56px;
@@ -1263,7 +1258,6 @@ header.navbar {
   color: #111;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
-  /* Xóa chớp màu xám mặc định của điện thoại */
   touch-action: manipulation;
 }
 
@@ -1574,7 +1568,7 @@ header.navbar {
   object-position: bottom;
 }
 
-@media (max-width: 1024px) and (min-width: 769px) {
+@media (max-width: 1024px) and (min-width: 768px) {
   .mobile-menu {
     display: block;
   }
@@ -2049,12 +2043,17 @@ header.navbar {
     margin-top: 60px !important;
     text-align: center !important;
   }
+
+  .final-footer-section {
+    margin-top: -15vh; 
+    padding-top: 60px; 
+  }
 }
 
 /* =====================
    MOBILE (≤ 768px)
    ===================== */
-@media (max-width: 768px) {
+@media (max-width: 765px) {
   .mobile-menu {
     display: block;
   }
@@ -2606,6 +2605,8 @@ header.navbar {
   }
 
   .final-footer-section {
+    margin-top: -25vh; /* Kéo lên mạnh hơn vì điện thoại màn hình dọc rất dài */
+    padding-top: 40px; /* Thu hẹp thêm khoảng trống bên trong */
     padding-bottom: 0;
   }
 
