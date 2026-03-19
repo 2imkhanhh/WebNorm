@@ -943,7 +943,7 @@
                 let lastStableIndex = 0;
 
                 function renderSmooth() {
-                    psCurrentProgress += (psTargetProgress - psCurrentProgress) * 0.9;
+                    psCurrentProgress += (psTargetProgress - psCurrentProgress) * 0.08;
 
                     projectItems.forEach((item, i) => {
                         let yPercent = Math.max(0, Math.min(100, (i - psCurrentProgress) * 100));
