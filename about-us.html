@@ -43,12 +43,12 @@
     </div>
 
     <section class="about-hero-gallery">
-        <div class="gallery-track">
+        <div class="gallery-track" id="galleryTrack">
             <div class="gallery-item"><img src="assets/images/gallery1.jpg" alt="Gallery 1"></div>
             <div class="gallery-item"><img src="assets/images/gallery2.jpg" alt="Gallery 2"></div>
             <div class="gallery-item"><img src="assets/images/gallery3.jpg" alt="Gallery 3"></div>
             <div class="gallery-item"><img src="assets/images/gallery4.jpg" alt="Gallery 4"></div>
-            <div class="gallery-item"><img src="assets/images/gallery5.jpg" alt="Gallery 5"></div> 
+            <div class="gallery-item"><img src="assets/images/gallery5.jpg" alt="Gallery 5"></div>
             <div class="gallery-item"><img src="assets/images/gallery6.jpg" alt="Gallery 6"></div>
             <div class="gallery-item"><img src="assets/images/gallery7.jpg" alt="Gallery 7"></div>
             <div class="gallery-item"><img src="assets/images/gallery8.jpg" alt="Gallery 8"></div>
@@ -57,4 +57,28 @@
     </section>
 
     <script src="assets/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('galleryTrack');
+            
+            if (track) {
+                // Lấy tất cả các ảnh gốc hiện có trong HTML
+                const originalItems = Array.from(track.children);
+                const totalItems = originalItems.length;
+
+                // 1. Gắn biến --i cho các ảnh gốc (từ 1 đến 9)
+                originalItems.forEach((item, index) => {
+                    item.style.setProperty('--i', index + 1);
+                });
+
+                // 2. Nhân bản (clone) từng ảnh và gắn --i tiếp nối (từ 10 đến 18)
+                originalItems.forEach((item, index) => {
+                    const clone = item.cloneNode(true); // Copy toàn bộ HTML của ảnh
+                    clone.style.setProperty('--i', totalItems + index + 1); // Tiếp tục đếm lên
+                    clone.setAttribute('aria-hidden', 'true'); // Tốt cho SEO/Trình đọc màn hình (bỏ qua bản sao)
+                    track.appendChild(clone); // Nhét bản sao vào cuối danh sách
+                });
+            }
+        });
+    </script>
 </body>
