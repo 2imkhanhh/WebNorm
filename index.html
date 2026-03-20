@@ -683,10 +683,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-
-            // ==========================================
-            // 1. HAMBURGER & MENU MOBILE
-            // ==========================================
+            // HAMBURGER & MENU MOBILE
             const hamburger = document.querySelector('.nav-hamburger');
             const mobileMenu = document.getElementById('mobileMenu');
 
@@ -706,9 +703,7 @@
                 });
             }
 
-            // ==========================================
-            // 2. NGÔN NGỮ (LANGUAGE TOGGLE)
-            // ==========================================
+            // LANGUAGE TOGGLE
             const langToggleMobile = document.getElementById('langToggleMobile');
             const langToggle = document.getElementById('langToggle');
 
@@ -726,9 +721,7 @@
                 });
             }
 
-            // ==========================================
-            // 3. BANNER HOVER
-            // ==========================================
+            // BANNER HOVER
             const bannerImg = document.querySelector('.hero-img');
             if (bannerImg) {
                 const banners = [
@@ -752,9 +745,7 @@
                 });
             }
 
-            // ==========================================
-            // 4. ANIMATION CHỮ HIỆN TỪ DƯỚI LÊN (STAGGER)
-            // ==========================================
+            // ANIMATION TEXT
             function splitIntoChars(el) {
                 const text = el.textContent;
                 const wordIndex = parseInt(el.dataset.wordIndex);
@@ -792,9 +783,7 @@
                 staggerObserver.observe(el);
             });
 
-            // ==========================================
-            // 5. HIỆU ỨNG SÁNG CHỮ KHI CUỘN (REVEAL TEXT)
-            // ==========================================
+            // REVEAL TEXT
             const revealElements = document.querySelectorAll('.reveal-text, .reveal-text-multi');
 
             revealElements.forEach(revealTextEl => {
@@ -860,9 +849,7 @@
                 });
             });
 
-            // ==========================================
-            // 6. ANIMATION LƯỚT CHỮ (TRẢI NGHIỆM KHÁCH HÀNG)
-            // ==========================================
+            // ANIMATION TESTIMONIAL
             const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right');
             if (animatedTexts.length > 0) {
                 const textObserver = new IntersectionObserver((entries) => {
@@ -878,9 +865,7 @@
                 animatedTexts.forEach(text => textObserver.observe(text));
             }
 
-            // ==========================================
-            // 7. PROJECT SHOWCASE (DANH MỤC DỰ ÁN DÍNH CUỘN)
-            // ==========================================
+            // PROJECT SHOWCASE 
             const showcase = document.getElementById('projectShowcase');
             const psTrack = document.getElementById('psTrack');
             const listItems = document.querySelectorAll('#psList li');
@@ -1101,9 +1086,7 @@
                 }
             });
 
-            // ==========================================
-            // 8. ACTIVE TRẠNG THÁI SERVICES KHI CUỘN
-            // ==========================================
+            // ACTIVE STATUS SERVICES 
             const serviceItems = document.querySelectorAll('.service-item');
 
             function calculateActiveService() {
@@ -1138,9 +1121,7 @@
             window.addEventListener('resize', calculateActiveService, { passive: true });
             calculateActiveService();
 
-            // ==========================================
-            // 9. TESTIMONIAL SLIDER (FINAL & STABLE)
-            // ==========================================
+            // TESTIMONIAL SLIDER 
             function initTestimonialSlider() {
                 const track = document.getElementById('testiTrack');
                 const slides = Array.from(document.querySelectorAll('.testi-slide'));
@@ -1308,9 +1289,7 @@
                 updateBlogSlider();
             }
 
-            // ==========================================
-            // 11. FOOTER SCROLL TEXT JS
-            // ==========================================
+            // FOOTER SCROLL TEXT 
             const footerSection = document.getElementById('footerSection');
             const footerLines = document.querySelectorAll('.footer-line');
             const blogSection = document.querySelector('.blog-slider-section');
@@ -1403,9 +1382,7 @@
                 }, { passive: true });
             }
 
-            // ==========================================
-            // 12. FOOTER CURSOR BUTTON
-            // ==========================================
+            // FOOTER CURSOR BUTTON
             const footerZone = document.getElementById('footerCursorZone');
             const footerCursorBtn = document.getElementById('footerCursorBtn');
 
@@ -1414,7 +1391,6 @@
                 let mouseX = 0, mouseY = 0;
                 let btnX = 0, btnY = 0;
 
-                // Chạy lerp liên tục
                 function animateCursor() {
                     btnX += (mouseX - btnX) * 0.12;
                     btnY += (mouseY - btnY) * 0.12;
@@ -1424,7 +1400,6 @@
                 }
                 requestAnimationFrame(animateCursor);
 
-                // Dùng mousemove trên document để kiểm tra vị trí chuột
                 document.addEventListener('mousemove', (e) => {
                     mouseX = e.clientX;
                     mouseY = e.clientY;

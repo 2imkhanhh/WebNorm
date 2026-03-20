@@ -71,13 +71,13 @@ header.navbar {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 10px 40px;
+  padding: 10px clamp(24px, 2.5vw, 60px);
   flex-wrap: nowrap;
   pointer-events: auto;
 }
 
 .nav-link-item {
-  font-size: 15px;
+  font-size: clamp(13px, 1vw, 20px);
   font-weight: 500;
   color: #ffffff !important;
   letter-spacing: 0.01em;
@@ -93,7 +93,7 @@ header.navbar {
 }
 
 .navbar-logo img {
-  height: 26px;
+  height: clamp(22px, 1.8vw, 40px);
   width: auto;
   display: block;
   filter: brightness(0) invert(1);
@@ -189,7 +189,7 @@ header.navbar {
 }
 
 .hero-tagline p {
-  font-size: 15px;
+  font-size: clamp(13px, 1vw, 20px);
   font-weight: 400;
   color: #757575;
   line-height: 0.2;
@@ -206,7 +206,7 @@ header.navbar {
 .hero-img {
   width: 60vw;
   max-width: 1200px;
-  min-width: 480px;
+  min-width: 38vw;
   object-fit: contain;
   display: block;
   margin-top: 15%;
@@ -239,7 +239,7 @@ header.navbar {
   align-items: center;
   justify-content: center;
   font-family: 'AeonikPro', sans-serif;
-  font-size: 13px;
+  font-size: clamp(11px, 0.85vw, 17px);
   font-weight: 500;
   letter-spacing: 0.02em;
   color: #1a1a1a;
@@ -249,12 +249,11 @@ header.navbar {
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s;
 }
 
-/* CTA mobile — hidden on desktop, shown on mobile/tablet */
 .hero-ctas-mobile {
   display: none;
 }
 
-/*BIG BOTTOM TEXT */
+/* BIG BOTTOM TEXT */
 .big-bottom-text {
   width: 100%;
   margin-top: -100px;
@@ -287,9 +286,7 @@ header.navbar {
   justify-content: center;
 }
 
-/* =====================
-   STAGGER PER CHARACTER
-   ===================== */
+/* STAGGER PER CHARACTER */
 .stagger-word {
   display: inline-flex !important;
   overflow: hidden;
@@ -334,13 +331,10 @@ header.navbar {
   }
 }
 
-/* =====================
-   INTRO SECTION
-   ===================== */
+/* INTRO SECTION */
 .intro-section {
   padding: 50px 0 0 0;
   background-color: #fafafa;
-  /* min-height: 100vh; */
 }
 
 .reveal-text {
@@ -352,7 +346,6 @@ header.navbar {
   color: #BDBDBD;
   text-align: left;
   letter-spacing: -0.02em;
-  /* word-spacing: -0.5em; */
 }
 
 .reveal-char {
@@ -366,19 +359,19 @@ header.navbar {
 }
 
 .label-side {
-  font-size: 1rem;
+  font-size: clamp(13px, 0.9vw, 18px);
   color: #757575;
 }
 
 .desc-text {
-  font-size: 1.5rem;
+  font-size: clamp(18px, 1.5vw, 30px);
   line-height: 1.4;
   font-weight: 400;
   color: #757575;
 }
 
 .link-more {
-  font-size: 1rem;
+  font-size: clamp(12px, 0.9vw, 18px);
   font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 5px;
@@ -423,9 +416,7 @@ header.navbar {
   transform: translateX(0);
 }
 
-/* =====================
-   MOBILE MENU OVERLAY
-   ===================== */
+/* MOBILE MENU OVERLAY */
 .mobile-menu {
   display: none;
   position: fixed;
@@ -505,9 +496,7 @@ header.navbar {
   margin-top: 16px;
 }
 
-/* =====================
-   PROJECT SHOWCASE SECTION
-   ===================== */
+/* PROJECT SHOWCASE SECTION */
 .project-showcase {
   background-color: #000000;
   color: #ffffff;
@@ -529,13 +518,8 @@ header.navbar {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 14px;
+  font-size: clamp(12px, 0.9vw, 18px);
 }
-
-/* .ps-label-top {
-  top: 8%;
-  color: #757575;
-} */
 
 .ps-label-bottom {
   bottom: 8%;
@@ -606,7 +590,7 @@ header.navbar {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: clamp(12px, 0.9vw, 18px);
   color: #ffffff;
   z-index: 3;
 }
@@ -661,9 +645,9 @@ header.navbar {
   transform: translate(-50%, -50%) scale(1);
   background: #ffffff;
   color: #111111;
-  padding: 12px 28px;
+  padding: clamp(10px, 0.8vw, 18px) clamp(20px, 1.8vw, 36px);
   border-radius: 30px;
-  font-size: 13px;
+  font-size: clamp(11px, 0.85vw, 17px);
   font-weight: 500;
   opacity: 0;
   white-space: nowrap;
@@ -674,10 +658,6 @@ header.navbar {
   transform: translate(-50%, -50%) scale(1.08);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
-
-/* .ps-project-item:hover .ps-btn-view {
-  opacity: 1;
-} */
 
 .ps-right {
   display: flex;
@@ -692,7 +672,7 @@ header.navbar {
 }
 
 .ps-project-list li {
-  font-size: 1.5rem;
+  font-size: clamp(16px, 1.4vw, 28px);
   font-weight: 400;
   color: #555555;
   margin-bottom: 12px;
@@ -716,7 +696,7 @@ header.navbar {
 }
 
 .si-label {
-  font-size: 1rem;
+  font-size: clamp(13px, 0.9vw, 18px);
   color: #757575;
   font-weight: 500;
   display: inline-block;
@@ -729,7 +709,6 @@ header.navbar {
   line-height: 1.25;
   letter-spacing: -0.02em;
   margin: 0;
-  /* word-spacing: -0.5em;  */
   max-width: 95%;
 }
 
@@ -742,13 +721,13 @@ header.navbar {
 }
 
 .si-desc {
-  font-size: 1rem;
+  font-size: clamp(13px, 0.9vw, 18px);
   color: #757575;
   line-height: 1.5;
   font-weight: 400;
   margin-top: 15px;
   margin-right: 5px;
-  max-width: 200px;
+  max-width: clamp(160px, 14vw, 260px);
 }
 
 .services-detail-section {
@@ -763,12 +742,12 @@ header.navbar {
 .service-divider {
   border: 0;
   border-top: 1px solid #BDBDBD;
-  margin: 0 0 0 50px;
+  margin: 0 0 0 clamp(30px, 3vw, 70px);
   transition: border-color 0.6s ease;
 }
 
 .service-number-box {
-  width: 50px;
+  width: clamp(30px, 3vw, 70px);
   flex-shrink: 0;
 }
 
@@ -777,7 +756,7 @@ header.navbar {
 }
 
 .service-number {
-  font-size: 1.1rem;
+  font-size: clamp(13px, 1vw, 22px);
   font-weight: 500;
   color: #BDBDBD;
   display: inline-block;
@@ -842,7 +821,6 @@ header.navbar {
 .service-image-viewport {
   width: 80%;
   max-width: 400px;
-  /* aspect-ratio: 16 / 10; */
   overflow: hidden;
   border-radius: 8px;
   position: relative;
@@ -910,7 +888,6 @@ header.navbar {
   line-height: 1;
 }
 
-/* --- KHOẢNG CÁCH VÀ LAYOUT SLIDER --- */
 .testimonial-main-content {
   margin-top: 150px;
   width: 100vw;
@@ -949,7 +926,7 @@ header.navbar {
 
 /* --- NỘI DUNG SLIDE --- */
 .testimonial-avatar {
-  width: clamp(250px, 18vw, 400px);
+  width: clamp(200px, 18vw, 420px);
   aspect-ratio: 25 / 28;
   background-color: #f0f0f0;
   border-radius: 8px;
@@ -1024,8 +1001,8 @@ header.navbar {
 }
 
 .nav-btn {
-  width: 56px;
-  height: 56px;
+  width: clamp(44px, 3.5vw, 72px);
+  height: clamp(44px, 3.5vw, 72px);
   border-radius: 50%;
   border: 1px solid #BDBDBD;
   background: transparent;
@@ -1042,8 +1019,8 @@ header.navbar {
 
 .next-btn-wrapper {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: clamp(44px, 3.5vw, 72px);
+  height: clamp(44px, 3.5vw, 72px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1054,15 +1031,14 @@ header.navbar {
   border: none;
 }
 
-/* --- HIỆU ỨNG ICON --- */
 .icon-wrap {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  font-size: 24px;
+  width: clamp(20px, 1.6vw, 32px);
+  height: clamp(20px, 1.6vw, 32px);
+  font-size: clamp(20px, 1.6vw, 32px);
 }
 
 .icon-wrap i {
@@ -1111,12 +1087,13 @@ header.navbar {
   transform: rotate(-90deg);
   pointer-events: none;
   z-index: 1;
+  width: 100%;
+  height: 100%;
 }
 
 .progress-ring-circle {
   stroke-dasharray: 170 170;
   stroke-dashoffset: 170;
-  /* transition: stroke-dashoffset 0.1s linear; */
 }
 
 /* --- ANIMATION --- */
@@ -1223,7 +1200,7 @@ header.navbar {
 }
 
 .blog-title {
-  font-size: 1.25rem;
+  font-size: clamp(14px, 1.2vw, 24px);
   font-weight: 500;
   color: #111111;
   line-height: 1.4;
@@ -1244,8 +1221,8 @@ header.navbar {
 }
 
 .blog-nav-btns .nav-btn {
-  width: 56px;
-  height: 56px;
+  width: clamp(44px, 3.5vw, 72px);
+  height: clamp(44px, 3.5vw, 72px);
   border: 1px solid #111;
   background: transparent;
   display: flex;
@@ -1253,8 +1230,7 @@ header.navbar {
   justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 24px;
+  font-size: clamp(18px, 1.6vw, 32px);
   color: #111;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
@@ -1281,9 +1257,6 @@ header.navbar {
   pointer-events: none;
 }
 
-/* =====================
-   11. FOOTER SECTION 
-   ===================== */
 .footer-section {
   color: #111111;
   height: 250vh;
@@ -1378,30 +1351,25 @@ header.navbar {
   gap: 6px;
   background-color: #111111;
   color: #ffffff;
-  padding: 14px 28px;
+  padding: clamp(10px, 0.9vw, 20px) clamp(20px, 1.8vw, 38px);
   border-radius: 50px;
-  font-size: 14px;
+  font-size: clamp(12px, 0.9vw, 20px);
   font-weight: 500;
   text-decoration: none;
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Mũi tên */
 .footer-btn i {
-  font-size: 20px;
-  /* Tăng kích thước mũi tên cho hợp với chữ */
+  font-size: clamp(16px, 1.5vw, 28px);
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Hiệu ứng rê chuột */
 .footer-btn:hover {
   transform: scale(1.05);
-  /* Phóng to nhẹ toàn bộ nút */
 }
 
 .footer-btn:hover i {
   transform: translateX(4px);
-  /* Mũi tên nhích ra xa một chút xíu */
 }
 
 .footer-section.dark-mode {
@@ -1438,10 +1406,10 @@ header.navbar {
   gap: 6px;
   background-color: #111111;
   color: #ffffff;
-  padding: 14px 28px;
+  padding: clamp(10px, 0.9vw, 20px) clamp(20px, 1.8vw, 38px);
   border-radius: 50px;
   font-family: 'AeonikPro', sans-serif;
-  font-size: 14px;
+  font-size: clamp(12px, 0.9vw, 20px);
   font-weight: 500;
   white-space: nowrap;
   text-decoration: none;
@@ -1455,16 +1423,14 @@ header.navbar {
 }
 
 .footer-cursor-btn i {
-  font-size: 20px;
+  font-size: clamp(16px, 1.5vw, 28px);
 }
 
-/* Khi hiển thị */
 .footer-cursor-btn.is-visible {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Đảo màu khi dark-mode */
 .footer-cursor-btn.dark {
   background-color: #ffffff;
   color: #111111;
@@ -1487,7 +1453,7 @@ header.navbar {
 }
 
 .contact-info p {
-  font-size: 16px;
+  font-size: clamp(14px, 1.1vw, 22px);
   line-height: 1.6;
   margin-bottom: 4px;
   font-weight: 400;
@@ -1495,7 +1461,7 @@ header.navbar {
 }
 
 .copyright p {
-  font-size: 14px;
+  font-size: clamp(12px, 0.85vw, 18px);
   color: #757575;
   margin-bottom: 0;
   line-height: 1;
@@ -1515,7 +1481,7 @@ header.navbar {
 }
 
 .social-title {
-  font-size: 15px;
+  font-size: clamp(13px, 1vw, 20px);
   color: #BDBDBD;
   margin-bottom: 24px;
 }
