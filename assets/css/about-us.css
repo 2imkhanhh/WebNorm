@@ -1,0 +1,81 @@
+body.about-page {
+  background: #FFFFFF; 
+  overflow-x: hidden;
+}
+
+/* GALLERY IMAGE */
+.about-hero-gallery {
+    width: 100%;
+    padding-top: 18vw; 
+    padding-bottom: 25vw;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.gallery-track {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5vw; 
+    width: auto; 
+}
+
+.gallery-item {
+    flex: 0 0 10vw; 
+    position: relative;
+    aspect-ratio: 1 / 2; 
+    overflow: hidden; 
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%; 
+    display: block;
+    object-fit: cover; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.gallery-item:nth-child(5) {
+    transform: translateY(-8vw);
+}
+
+.gallery-item:nth-child(4),
+.gallery-item:nth-child(6) {
+    transform: translateY(-3vw);
+}
+
+.gallery-item:nth-child(3),
+.gallery-item:nth-child(7) {
+    transform: translateY(3vw);
+}
+
+.gallery-item:nth-child(2),
+.gallery-item:nth-child(8) {
+    transform: translateY(10vw);
+}
+
+.gallery-item:nth-child(1),
+.gallery-item:nth-child(9) {
+    transform: translateY(18vw);
+}
+
+@media (max-width: 1024px) and (min-width: 768px) {
+    .gallery-track {
+        gap: 2vw;
+        width: 160%;
+    }
+    .gallery-item {
+        flex: 0 0 15vw;
+    }
+}
+
+@media (max-width: 765px) {
+    .gallery-track {
+        gap: 3vw;
+        width: 250%; 
+    }
+    .gallery-item {
+        flex: 0 0 22vw;
+    }
+}

@@ -13,7 +13,7 @@
 <body>
     <header class="navbar navbar-expand-lg">
         <div class="navbar-inner">
-            <a href="#" class="nav-link-item">About us</a>
+            <a href="about-us.html" class="nav-link-item">About us</a>
             <a href="#" class="nav-link-item">Work</a>
             <a href="index.html" class="navbar-logo">
                 <img src="assets/images/logo.png" alt="Logo" />
@@ -33,7 +33,7 @@
 
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-inner">
-            <a href="#" class="mobile-menu-item">About us</a>
+            <a href="about-us.html" class="mobile-menu-item">About us</a>
             <a href="#" class="mobile-menu-item">Work</a>
             <a href="#" class="mobile-menu-item">Blog</a>
             <a href="#" class="mobile-menu-item">Contact</a>
@@ -681,46 +681,9 @@
         </div>
     </section>
 
+    <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // HAMBURGER & MENU MOBILE
-            const hamburger = document.querySelector('.nav-hamburger');
-            const mobileMenu = document.getElementById('mobileMenu');
-
-            if (hamburger && mobileMenu) {
-                hamburger.addEventListener('click', () => {
-                    const isOpen = mobileMenu.classList.toggle('open');
-                    hamburger.classList.toggle('active', isOpen);
-                    document.body.style.overflow = isOpen ? 'hidden' : '';
-                });
-
-                document.querySelectorAll('.mobile-menu-item').forEach(link => {
-                    link.addEventListener('click', () => {
-                        mobileMenu.classList.remove('open');
-                        hamburger.classList.remove('active');
-                        document.body.style.overflow = '';
-                    });
-                });
-            }
-
-            // LANGUAGE TOGGLE
-            const langToggleMobile = document.getElementById('langToggleMobile');
-            const langToggle = document.getElementById('langToggle');
-
-            if (langToggleMobile && langToggle) {
-                langToggleMobile.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const newLang = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
-                    this.textContent = newLang;
-                    langToggle.textContent = newLang;
-                });
-
-                langToggle.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
-                });
-            }
-
             // BANNER HOVER
             const bannerImg = document.querySelector('.hero-img');
             if (bannerImg) {

@@ -2020,9 +2020,7 @@ header.navbar {
   }
 }
 
-/* =====================
-   MOBILE (≤ 768px)
-   ===================== */
+/* MOBILE (≤ 765px) */
 @media (max-width: 765px) {
   .mobile-menu {
     display: block;
@@ -2036,7 +2034,6 @@ header.navbar {
     padding: 0 10px;
   }
 
-  /* Hide all desktop nav links */
   .navbar-inner .nav-link-item {
     display: none;
   }
