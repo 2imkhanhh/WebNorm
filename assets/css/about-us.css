@@ -1,12 +1,13 @@
 body.about-page {
     background: #FFFFFF;
     overflow-x: hidden;
+    min-height: auto;
 }
 
-/* GALLERY IMAGE */
 :root {
     --total-items: 9;
     --item-width: 10vw;
+    --item-height: calc(var(--item-width) * 2);
     --item-gap: 1.5vw;
     --cycle-time: 30s;
     --shift-time: calc(var(--cycle-time) / var(--total-items));
@@ -16,7 +17,7 @@ body.about-page {
 .about-hero-gallery {
     width: 100%;
     padding-top: 15vw;
-    padding-bottom: 25vw;
+    padding-bottom: 20vw;
     display: flex;
     justify-content: flex-start;
     overflow: hidden;
@@ -34,16 +35,13 @@ body.about-page {
 
 .gallery-item {
     flex: 0 0 var(--item-width);
+    height: var(--item-height);
     position: relative;
-    aspect-ratio: 1 / 2;
     overflow: hidden;
     cursor: pointer;
     animation: waveY var(--wave-time) ease-in-out infinite;
-    animation-delay: calc(((var(--i) - 9.5) * var(--shift-time)) - (var(--wave-time) * 10));
-    transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1),
-        aspect-ratio 0.5s cubic-bezier(0.25, 1, 0.5, 1),
-        filter 0.5s ease,
-        box-shadow 0.5s ease;
+    animation-delay: calc(((9.5 - var(--i)) * var(--shift-time)) - (var(--wave-time) * 10));
+    transition: flex 0.8s ease-out, filter 0.8s ease, box-shadow 0.8s ease;
     z-index: 1;
 }
 
@@ -65,23 +63,26 @@ body.about-page {
 
 .gallery-track:has(.gallery-item:hover) .gallery-item:not(:hover) {
     filter: grayscale(40%) brightness(0.7);
+    transition: filter 0.5s ease-out;
 }
 
 .gallery-item:hover {
     flex: 0 0 35vw;
-    aspect-ratio: 16 / 9;
     z-index: 10;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s,
+        filter 1.2s ease,
+        box-shadow 1.2s ease;
 }
 
-/* KEYFRAMES */
+/* KEYFRAMES GALLERY */
 @keyframes scrollX {
     from {
-        transform: translateX(0);
+        transform: translateX(calc(-1 * var(--total-items) * (var(--item-width) + var(--item-gap))));
     }
 
     to {
-        transform: translateX(calc(-1 * var(--total-items) * (var(--item-width) + var(--item-gap))));
+        transform: translateX(0);
     }
 }
 
@@ -97,24 +98,104 @@ body.about-page {
     }
 }
 
+.solution-section-wrapper {
+    height: 150vh;
+    position: relative;
+    background: #FFFFFF;
+}
+
+.solution-sticky-zone {
+    position: sticky;
+    top: 30vh;
+    width: 100%;
+}
+
+.testimonial-title {
+    overflow: visible !important;
+}
+
+.solution-right-group {
+    width: 100%;
+    text-align: right;
+    padding-right: 5%;
+}
+
+.brand-line-custom {
+    font-size: clamp(32px, 5.5vw, 110px);
+    font-weight: 500;
+    line-height: 1.1;
+    position: relative;
+    display: inline-block;
+    text-transform: uppercase;
+    color: #C4C4C4;
+    margin-top: -10px;
+    white-space: nowrap;
+    text-align: left;
+    margin-right: 15%;
+}
+
+.brand-line-custom .text-old {
+    display: block;
+    color: #C4C4C4;
+}
+
+.brand-line-custom .text-new {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #C4C4C4;
+    background: #FFFFFF;
+    -webkit-clip-path: inset(100% 0 0 0);
+    clip-path: inset(100% 0 0 0);
+    display: block;
+}
+
+/* TABLET */
 @media (max-width: 1024px) and (min-width: 768px) {
-    .gallery-track {
-        gap: 2vw;
-        width: 160%;
+    :root {
+        --item-width: 15vw;
+        --item-gap: 2vw;
     }
 
-    .gallery-item {
-        flex: 0 0 15vw;
+    .gallery-item:hover {
+        flex: 0 0 50vw;
     }
 }
 
 @media (max-width: 765px) {
-    .gallery-track {
-        gap: 3vw;
-        width: 250%;
+    :root {
+        --item-width: 25vw;
+        --item-gap: 3vw;
     }
 
-    .gallery-item {
-        flex: 0 0 22vw;
+    .about-hero-gallery {
+        padding-top: 30vw;
+        padding-bottom: 30vw;
+    }
+
+    .gallery-item:hover {
+        flex: 0 0 80vw;
+    }
+
+    @keyframes waveY {
+
+        0%,
+        100% {
+            transform: translateY(25vw);
+        }
+
+        50% {
+            transform: translateY(-12vw);
+        }
+    }
+
+    .solution-section-wrapper {
+        height: 120vh;
+    }
+
+    .brand-overlap-wrap {
+        padding-right: 0vw;
     }
 }

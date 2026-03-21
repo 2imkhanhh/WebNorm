@@ -56,28 +56,145 @@
         </div>
     </section>
 
+    <section class="solution-section-wrapper" id="solutionSection">
+        <div class="solution-sticky-zone">
+            <div class="container-fluid px-4 px-md-5">
+                <div class="row">
+                    <div class="col-12 testimonial-title-container" style="overflow: visible !important;">
+
+                        <h2 class="testimonial-title text-left scroll-slide-left mb-0">GIẢI PHÁP&nbsp;</h2>
+
+                        <div class="solution-right-group mt-3 mt-md-0">
+                            <h2 class="testimonial-title scroll-slide-right mb-0">THIẾT KẾ CHO</h2>
+
+                            <div class="brand-line-custom">
+                                <span class="text-old">THƯƠNG HIỆU</span>
+                                <span class="text-new">DOANH NGHIỆP</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. ANIMATION CHO GALLERY VÒNG CUNG (Giữ nguyên)
             const track = document.getElementById('galleryTrack');
-            
             if (track) {
-                // Lấy tất cả các ảnh gốc hiện có trong HTML
                 const originalItems = Array.from(track.children);
                 const totalItems = originalItems.length;
-
-                // 1. Gắn biến --i cho các ảnh gốc (từ 1 đến 9)
+                originalItems.forEach((item, index) => item.style.setProperty('--i', index + 1));
                 originalItems.forEach((item, index) => {
-                    item.style.setProperty('--i', index + 1);
+                    const clone = item.cloneNode(true);
+                    clone.style.setProperty('--i', totalItems + index + 1);
+                    clone.setAttribute('aria-hidden', 'true');
+                    track.appendChild(clone);
                 });
+            }
 
-                // 2. Nhân bản (clone) từng ảnh và gắn --i tiếp nối (từ 10 đến 18)
-                originalItems.forEach((item, index) => {
-                    const clone = item.cloneNode(true); // Copy toàn bộ HTML của ảnh
-                    clone.style.setProperty('--i', totalItems + index + 1); // Tiếp tục đếm lên
-                    clone.setAttribute('aria-hidden', 'true'); // Tốt cho SEO/Trình đọc màn hình (bỏ qua bản sao)
-                    track.appendChild(clone); // Nhét bản sao vào cuối danh sách
-                });
+            // 2. ANIMATION CHỮ TRƯỢT TỪ 2 BÊN (Giữ nguyên)
+            const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right');
+            if (animatedTexts.length > 0) {
+                const textObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                        } else {
+                            entry.target.classList.remove('is-visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+                animatedTexts.forEach(text => textObserver.observe(text));
+            }
+
+            // =========================================
+            // 3. ANIMATION LỘ CHỮ "DOANH NGHIỆP" KHI CUỘN
+            // =========================================
+            const solutionSection = document.getElementById('solutionSection');
+            const brandLineCustom = document.querySelector('.brand-line-custom');
+
+            if (solutionSection && brandLineCustom) {
+                let targetSolutionProgress = 0;
+                let currentSolutionProgress = 0;
+                let solutionSnapTimeout; // Biến delay chờ snap
+                let solutionLastScrollY = window.scrollY; // Biến check hướng cuộn
+
+                function renderSolutionSmooth() {
+                    currentSolutionProgress += (targetSolutionProgress - currentSolutionProgress) * 0.05;
+
+                    const textNew = brandLineCustom.querySelector('.text-new');
+                    if (textNew) {
+                        let progress = currentSolutionProgress;
+                        if (progress < 0) progress = 0;
+                        if (progress > 1) progress = 1;
+
+                        const insetTop = (1 - progress) * 100;
+                        textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
+                        textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
+                    }
+                    requestAnimationFrame(renderSolutionSmooth);
+                }
+
+                requestAnimationFrame(renderSolutionSmooth);
+
+                window.addEventListener('scroll', () => {
+                    const sectionTop = solutionSection.offsetTop;
+                    const scrollY = window.scrollY;
+                    const windowHeight = window.innerHeight;
+
+                    // Xác định hướng cuộn
+                    const scrollDirection = scrollY > solutionLastScrollY ? 'down' : 'up';
+                    solutionLastScrollY = scrollY;
+
+                    let scrolledInside = scrollY - sectionTop;
+                    if (scrolledInside < 0) scrolledInside = 0;
+
+                    const maxScroll = solutionSection.offsetHeight - windowHeight;
+                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+
+                    if (maxScroll > 0) {
+                        targetSolutionProgress = scrolledInside / maxScroll;
+                    }
+
+                    // ==========================================
+                    // LOGIC TỰ ĐỘNG HÍT (SNAP) GIỐNG HỆT FOOTER
+                    // ==========================================
+                    clearTimeout(solutionSnapTimeout);
+
+                    // Chỉ kích hoạt hít khi đang nằm trong vùng của Solution Section
+                    if (scrollY > sectionTop && scrollY < sectionTop + maxScroll) {
+
+                        solutionSnapTimeout = setTimeout(() => {
+                            let snapTargetY;
+
+                            if (scrollDirection === 'down') {
+                                if (targetSolutionProgress >= 0.1) {
+                                    snapTargetY = sectionTop + maxScroll; // Cuộn xuống > 10% -> Tự hít hiện hết chữ
+                                } else {
+                                    snapTargetY = sectionTop; // Ít quá -> Trội ngược lại
+                                }
+                            } else {
+                                if (targetSolutionProgress <= 0.9) {
+                                    snapTargetY = sectionTop; // Cuộn lên qua 10% -> Tự hít ẩn hết chữ
+                                } else {
+                                    snapTargetY = sectionTop + maxScroll;
+                                }
+                            }
+
+                            if (Math.abs(scrollY - snapTargetY) > 5) {
+                                window.scrollTo({
+                                    top: snapTargetY,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        }, 600); // Delay 600ms y hệt footer
+                    }
+                }, { passive: true });
             }
         });
     </script>
