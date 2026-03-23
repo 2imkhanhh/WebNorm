@@ -69,9 +69,9 @@ body.about-page {
 }
 
 .gallery-item:hover {
-    flex: 0 0 35vw;
+    flex: 0 0 30vw;
     z-index: 10;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); */
     transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s,
         filter 1.2s ease,
         box-shadow 1.2s ease;
