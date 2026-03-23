@@ -62,8 +62,10 @@ body.about-page {
 }
 
 .gallery-track:has(.gallery-item:hover) .gallery-item:not(:hover) {
+    flex: 0 0 var(--item-width);
     filter: grayscale(40%) brightness(0.7);
-    transition: filter 0.5s ease-out;
+    transition: flex 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        filter 0.5s ease-out;
 }
 
 .gallery-item:hover {
@@ -75,7 +77,6 @@ body.about-page {
         box-shadow 1.2s ease;
 }
 
-/* KEYFRAMES GALLERY */
 @keyframes scrollX {
     from {
         transform: translateX(calc(-1 * var(--total-items) * (var(--item-width) + var(--item-gap))));
@@ -87,6 +88,7 @@ body.about-page {
 }
 
 @keyframes waveY {
+
     0%,
     100% {
         transform: translateY(18vw);
@@ -112,7 +114,7 @@ body.about-page {
 .testimonial-title {
     font-size: 7vw;
     line-height: 1.2;
-    margin: 0; /* Loại bỏ browser default margin của h2 */
+    margin: 0;
 }
 
 .solution-text-1 {
@@ -257,6 +259,7 @@ body.about-page {
     }
 
     @keyframes waveY {
+
         0%,
         100% {
             transform: translateY(25vw);
