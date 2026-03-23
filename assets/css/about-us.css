@@ -100,8 +100,8 @@ body.about-page {
 
 .solution-section-wrapper {
     height: 150vh;
+    margin-top: 5%;
     position: relative;
-    background: #FFFFFF;
 }
 
 .solution-sticky-zone {
@@ -111,7 +111,7 @@ body.about-page {
 }
 
 .testimonial-title {
-    overflow: visible !important;
+    font-size: 7vw;
 }
 
 .solution-right-group {
@@ -120,36 +120,56 @@ body.about-page {
     padding-right: 5%;
 }
 
-.brand-line-custom {
-    font-size: clamp(32px, 5.5vw, 110px);
-    font-weight: 500;
-    line-height: 1.1;
+.brand-line {
     position: relative;
+    overflow: hidden;
+    height: 1.3em;
+    line-height: 1.3em;
     display: inline-block;
-    text-transform: uppercase;
-    color: #C4C4C4;
-    margin-top: -10px;
-    white-space: nowrap;
+    margin-left: auto;
+    margin-right: 5%;
+    padding-right: 1em;
     text-align: left;
-    margin-right: 15%;
 }
 
-.brand-line-custom .text-old {
-    display: block;
-    color: #C4C4C4;
+.brand-line .text-old {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    white-space: nowrap;
+    height: 100%;
+    color: #BDBDBD;
 }
 
-.brand-line-custom .text-new {
+.brand-line .text-new {
     position: absolute;
     top: 0;
     left: 0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     width: 100%;
     height: 100%;
-    color: #C4C4C4;
-    background: #FFFFFF;
+    color: #BDBDBD;
+    background-color: #ffffff;
+    white-space: nowrap;
     -webkit-clip-path: inset(100% 0 0 0);
     clip-path: inset(100% 0 0 0);
-    display: block;
+}
+
+.scroll-slide-up {
+    opacity: 0;
+    transform: translateY(60px); 
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition-delay: 0.3s;
+    will-change: transform, opacity;
+}
+
+.scroll-slide-up.is-visible {
+    opacity: 1;
+    transform: translateY(0); 
 }
 
 /* TABLET */
@@ -162,7 +182,29 @@ body.about-page {
     .gallery-item:hover {
         flex: 0 0 50vw;
     }
+
+    .solution-section-wrapper {
+        height: 220vh;
+    }
+
+    .solution-sticky-zone {
+        top: 20vh;
+    }
+
+    .testimonial-title {
+        font-size: 9vw;
+    }
+
+    .solution-right-group {
+        padding-right: 4%;
+    }
+
+    .brand-line {
+        margin-right: 4%;
+        padding-right: 0.5em;
+    }
 }
+
 
 @media (max-width: 765px) {
     :root {
@@ -179,8 +221,28 @@ body.about-page {
         flex: 0 0 80vw;
     }
 
-    @keyframes waveY {
+    .solution-section-wrapper {
+        height: 280vh;
+    }
 
+    .solution-sticky-zone {
+        top: 15vh;
+    }
+
+    .testimonial-title {
+        font-size: 11vw;
+    }
+
+    .solution-right-group {
+        padding-right: 3%;
+    }
+
+    .brand-line {
+        /* margin-right: 5%; */
+        padding-right: 0.8em;
+    }
+
+    @keyframes waveY {
         0%,
         100% {
             transform: translateY(25vw);
@@ -189,13 +251,5 @@ body.about-page {
         50% {
             transform: translateY(-12vw);
         }
-    }
-
-    .solution-section-wrapper {
-        height: 120vh;
-    }
-
-    .brand-overlap-wrap {
-        padding-right: 0vw;
     }
 }

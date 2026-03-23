@@ -60,18 +60,18 @@
         <div class="solution-sticky-zone">
             <div class="container-fluid px-4 px-md-5">
                 <div class="row">
-                    <div class="col-12 testimonial-title-container" style="overflow: visible !important;">
+                    <div class="col-12 testimonial-title-container">
 
-                        <h2 class="testimonial-title text-left scroll-slide-left mb-0">GIẢI PHÁP&nbsp;</h2>
+                        <h2 class="testimonial-title text-left scroll-slide-left mb-0">GIẢI PHÁP</h2>
 
                         <div class="solution-right-group mt-3 mt-md-0">
                             <h2 class="testimonial-title scroll-slide-right mb-0">THIẾT KẾ CHO</h2>
-
-                            <div class="brand-line-custom">
-                                <span class="text-old">THƯƠNG HIỆU</span>
-                                <span class="text-new">DOANH NGHIỆP</span>
-                            </div>
                         </div>
+
+                        <h2 class="testimonial-title brand-line scroll-slide-up mb-0">
+                            <span class="text-old">THƯƠNG HIỆU</span>
+                            <span class="text-new">DOANH NGHIỆP</span>
+                        </h2>
 
                     </div>
                 </div>
@@ -82,8 +82,6 @@
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
-            // 1. ANIMATION CHO GALLERY VÒNG CUNG (Giữ nguyên)
             const track = document.getElementById('galleryTrack');
             if (track) {
                 const originalItems = Array.from(track.children);
@@ -97,8 +95,7 @@
                 });
             }
 
-            // 2. ANIMATION CHỮ TRƯỢT TỪ 2 BÊN (Giữ nguyên)
-            const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right');
+            const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
             if (animatedTexts.length > 0) {
                 const textObserver = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
@@ -112,22 +109,19 @@
                 animatedTexts.forEach(text => textObserver.observe(text));
             }
 
-            // =========================================
-            // 3. ANIMATION LỘ CHỮ "DOANH NGHIỆP" KHI CUỘN
-            // =========================================
             const solutionSection = document.getElementById('solutionSection');
-            const brandLineCustom = document.querySelector('.brand-line-custom');
+            const brandLine = document.querySelector('.brand-line');
 
-            if (solutionSection && brandLineCustom) {
+            if (solutionSection && brandLine) {
                 let targetSolutionProgress = 0;
                 let currentSolutionProgress = 0;
-                let solutionSnapTimeout; // Biến delay chờ snap
-                let solutionLastScrollY = window.scrollY; // Biến check hướng cuộn
+                let solutionSnapTimeout; 
+                let solutionLastScrollY = window.scrollY; 
 
                 function renderSolutionSmooth() {
                     currentSolutionProgress += (targetSolutionProgress - currentSolutionProgress) * 0.05;
 
-                    const textNew = brandLineCustom.querySelector('.text-new');
+                    const textNew = brandLine.querySelector('.text-new');
                     if (textNew) {
                         let progress = currentSolutionProgress;
                         if (progress < 0) progress = 0;
@@ -147,7 +141,6 @@
                     const scrollY = window.scrollY;
                     const windowHeight = window.innerHeight;
 
-                    // Xác định hướng cuộn
                     const scrollDirection = scrollY > solutionLastScrollY ? 'down' : 'up';
                     solutionLastScrollY = scrollY;
 
@@ -161,12 +154,8 @@
                         targetSolutionProgress = scrolledInside / maxScroll;
                     }
 
-                    // ==========================================
-                    // LOGIC TỰ ĐỘNG HÍT (SNAP) GIỐNG HỆT FOOTER
-                    // ==========================================
                     clearTimeout(solutionSnapTimeout);
 
-                    // Chỉ kích hoạt hít khi đang nằm trong vùng của Solution Section
                     if (scrollY > sectionTop && scrollY < sectionTop + maxScroll) {
 
                         solutionSnapTimeout = setTimeout(() => {
@@ -174,13 +163,13 @@
 
                             if (scrollDirection === 'down') {
                                 if (targetSolutionProgress >= 0.1) {
-                                    snapTargetY = sectionTop + maxScroll; // Cuộn xuống > 10% -> Tự hít hiện hết chữ
+                                    snapTargetY = sectionTop + maxScroll; 
                                 } else {
-                                    snapTargetY = sectionTop; // Ít quá -> Trội ngược lại
+                                    snapTargetY = sectionTop; 
                                 }
                             } else {
                                 if (targetSolutionProgress <= 0.9) {
-                                    snapTargetY = sectionTop; // Cuộn lên qua 10% -> Tự hít ẩn hết chữ
+                                    snapTargetY = sectionTop; 
                                 } else {
                                     snapTargetY = sectionTop + maxScroll;
                                 }
@@ -192,7 +181,7 @@
                                     behavior: 'smooth'
                                 });
                             }
-                        }, 600); // Delay 600ms y hệt footer
+                        }, 600); 
                     }
                 }, { passive: true });
             }
