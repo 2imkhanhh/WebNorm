@@ -87,7 +87,6 @@ body.about-page {
 }
 
 @keyframes waveY {
-
     0%,
     100% {
         transform: translateY(18vw);
@@ -112,6 +111,12 @@ body.about-page {
 
 .testimonial-title {
     font-size: 7vw;
+    line-height: 1.2;
+    margin: 0; /* Loại bỏ browser default margin của h2 */
+}
+
+.solution-text-1 {
+    margin-left: 10%;
 }
 
 .solution-right-group {
@@ -123,9 +128,10 @@ body.about-page {
 .brand-line {
     position: relative;
     overflow: hidden;
-    height: 1.3em;
-    line-height: 1.3em;
-    display: inline-block;
+    height: 1.2em;
+    line-height: 1.2em;
+    display: block;
+    width: fit-content;
     margin-left: auto;
     margin-right: 5%;
     padding-right: 1em;
@@ -154,14 +160,13 @@ body.about-page {
     height: 100%;
     color: #BDBDBD;
     background-color: #ffffff;
-    white-space: nowrap;
     -webkit-clip-path: inset(100% 0 0 0);
     clip-path: inset(100% 0 0 0);
 }
 
 .scroll-slide-up {
     opacity: 0;
-    transform: translateY(60px); 
+    transform: translateY(60px);
     transition: opacity 0.8s ease, transform 0.8s ease;
     transition-delay: 0.3s;
     will-change: transform, opacity;
@@ -169,7 +174,7 @@ body.about-page {
 
 .scroll-slide-up.is-visible {
     opacity: 1;
-    transform: translateY(0); 
+    transform: translateY(0);
 }
 
 /* TABLET */
@@ -184,7 +189,8 @@ body.about-page {
     }
 
     .solution-section-wrapper {
-        height: 220vh;
+        height: 140vh;
+        margin-top: 15vw;
     }
 
     .solution-sticky-zone {
@@ -197,15 +203,17 @@ body.about-page {
 
     .solution-right-group {
         padding-right: 4%;
+        margin-top: 1.5vw;
     }
 
     .brand-line {
         margin-right: 4%;
-        padding-right: 0.5em;
+        padding-right: 0.8em;
+        margin-top: 1.5vw;
     }
 }
 
-
+/* MOBILE */
 @media (max-width: 765px) {
     :root {
         --item-width: 25vw;
@@ -222,7 +230,8 @@ body.about-page {
     }
 
     .solution-section-wrapper {
-        height: 280vh;
+        margin-top: 20vw;
+        height: 120vh;
     }
 
     .solution-sticky-zone {
@@ -233,13 +242,18 @@ body.about-page {
         font-size: 11vw;
     }
 
+    .solution-text-1 {
+        margin-left: 0;
+    }
+
     .solution-right-group {
         padding-right: 3%;
+        margin-top: 4vw;
     }
 
     .brand-line {
-        /* margin-right: 5%; */
         padding-right: 0.8em;
+        margin-top: 4vw;
     }
 
     @keyframes waveY {

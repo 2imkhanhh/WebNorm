@@ -62,13 +62,13 @@
                 <div class="row">
                     <div class="col-12 testimonial-title-container">
 
-                        <h2 class="testimonial-title text-left scroll-slide-left mb-0">GIẢI PHÁP</h2>
+                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1">GIẢI PHÁP</h2>
 
-                        <div class="solution-right-group mt-3 mt-md-0">
-                            <h2 class="testimonial-title scroll-slide-right mb-0">THIẾT KẾ CHO</h2>
+                        <div class="solution-right-group">
+                            <h2 class="testimonial-title scroll-slide-right">THIẾT KẾ CHO</h2>
                         </div>
 
-                        <h2 class="testimonial-title brand-line scroll-slide-up mb-0">
+                        <h2 class="testimonial-title brand-line scroll-slide-up">
                             <span class="text-old">THƯƠNG HIỆU</span>
                             <span class="text-new">DOANH NGHIỆP</span>
                         </h2>
@@ -95,8 +95,12 @@
                 });
             }
 
+            let hasScrolled = false;
+
             const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
-            if (animatedTexts.length > 0) {
+
+            function initTextObserver() {
+                if (animatedTexts.length === 0) return;
                 const textObserver = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
@@ -105,23 +109,38 @@
                             entry.target.classList.remove('is-visible');
                         }
                     });
-                }, { threshold: 0.1 });
+                }, { threshold: 0.2 });
                 animatedTexts.forEach(text => textObserver.observe(text));
             }
+
+            window.addEventListener('scroll', () => {
+                if (!hasScrolled) {
+                    hasScrolled = true;
+                    initTextObserver();
+                }
+            }, { once: false, passive: true });
 
             const solutionSection = document.getElementById('solutionSection');
             const brandLine = document.querySelector('.brand-line');
 
             if (solutionSection && brandLine) {
+                const isMobile = window.innerWidth <= 765;
+                const snapDelay = isMobile ? 800 : 600;
+
                 let targetSolutionProgress = 0;
                 let currentSolutionProgress = 0;
-                let solutionSnapTimeout; 
-                let solutionLastScrollY = window.scrollY; 
+                let solutionSnapTimeout;
+                let solutionLastScrollY = window.scrollY;
+
+                const textNew = brandLine.querySelector('.text-new');
+                if (textNew) {
+                    textNew.style.webkitClipPath = 'inset(100% 0 0 0)';
+                    textNew.style.clipPath = 'inset(100% 0 0 0)';
+                }
 
                 function renderSolutionSmooth() {
                     currentSolutionProgress += (targetSolutionProgress - currentSolutionProgress) * 0.05;
 
-                    const textNew = brandLine.querySelector('.text-new');
                     if (textNew) {
                         let progress = currentSolutionProgress;
                         if (progress < 0) progress = 0;
@@ -157,19 +176,18 @@
                     clearTimeout(solutionSnapTimeout);
 
                     if (scrollY > sectionTop && scrollY < sectionTop + maxScroll) {
-
                         solutionSnapTimeout = setTimeout(() => {
                             let snapTargetY;
 
                             if (scrollDirection === 'down') {
                                 if (targetSolutionProgress >= 0.1) {
-                                    snapTargetY = sectionTop + maxScroll; 
+                                    snapTargetY = sectionTop + maxScroll;
                                 } else {
-                                    snapTargetY = sectionTop; 
+                                    snapTargetY = sectionTop;
                                 }
                             } else {
                                 if (targetSolutionProgress <= 0.9) {
-                                    snapTargetY = sectionTop; 
+                                    snapTargetY = sectionTop;
                                 } else {
                                     snapTargetY = sectionTop + maxScroll;
                                 }
@@ -181,7 +199,7 @@
                                     behavior: 'smooth'
                                 });
                             }
-                        }, 600); 
+                        }, snapDelay);
                     }
                 }, { passive: true });
             }
