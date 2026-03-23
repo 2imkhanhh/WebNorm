@@ -53,28 +53,46 @@ body.about-page {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-.gallery-track:has(.gallery-item:hover),
 .gallery-track:has(.gallery-item.is-active) {
     animation-play-state: paused;
 }
 
-.gallery-track:has(.gallery-item:hover) .gallery-item,
 .gallery-track:has(.gallery-item.is-active) .gallery-item {
     animation-play-state: paused;
 }
 
-.gallery-track:has(.gallery-item:hover) .gallery-item:not(:hover),
 .gallery-track:has(.gallery-item.is-active) .gallery-item:not(.is-active) {
     flex: 0 0 var(--item-width);
     transition: flex 1.2s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.gallery-item:hover,
 .gallery-item.is-active {
     flex: 0 0 30vw;
     z-index: 10;
     transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s,
         box-shadow 1.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .gallery-track:has(.gallery-item:hover) {
+        animation-play-state: paused;
+    }
+
+    .gallery-track:has(.gallery-item:hover) .gallery-item {
+        animation-play-state: paused;
+    }
+
+    .gallery-track:has(.gallery-item:hover) .gallery-item:not(:hover) {
+        flex: 0 0 var(--item-width);
+        transition: flex 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    .gallery-item:hover {
+        flex: 0 0 30vw;
+        z-index: 10;
+        transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s,
+            box-shadow 1.2s ease;
+    }
 }
 
 @keyframes scrollX {
@@ -186,9 +204,14 @@ body.about-page {
         --item-gap: 2vw;
     }
 
-    .gallery-item:hover,
-    .gallery-item.is-active { 
+    .gallery-item.is-active {
         flex: 0 0 45vw;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .gallery-item:hover {
+            flex: 0 0 45vw;
+        }
     }
 
     .solution-section-wrapper {
@@ -228,9 +251,14 @@ body.about-page {
         padding-bottom: 30vw;
     }
 
-    .gallery-item:hover,
-    .gallery-item.is-active { 
+    .gallery-item.is-active {
         flex: 0 0 76vw;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .gallery-item:hover {
+            flex: 0 0 76vw;
+        }
     }
 
     .solution-section-wrapper {

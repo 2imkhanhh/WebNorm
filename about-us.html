@@ -82,7 +82,6 @@
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- 1. CLONE GALLERY ITEMS CHO HIỆU ỨNG VÒNG LẶP ---
             const track = document.getElementById('galleryTrack');
             if (track) {
                 const originalItems = Array.from(track.children);
@@ -96,33 +95,26 @@
                 });
             }
 
-            // --- 2. XỬ LÝ CLICK ĐỂ PHÓNG TO/THU NHỎ ẢNH TRÊN MOBILE/TABLET ---
-            // Lấy danh sách gallery sau khi đã clone xong
             const galleryItems = document.querySelectorAll('.gallery-item');
 
             galleryItems.forEach(item => {
                 item.addEventListener('click', (e) => {
-                    // Ngăn sự kiện click lan ra ngoài (tránh kích hoạt document click bên dưới)
                     e.stopPropagation();
 
-                    // Nếu ảnh đang mở thì đóng lại
                     if (item.classList.contains('is-active')) {
                         item.classList.remove('is-active');
                     } else {
-                        // Nếu ảnh chưa mở: Đóng tất cả các ảnh khác trước, sau đó mở ảnh được click
                         galleryItems.forEach(el => el.classList.remove('is-active'));
                         item.classList.add('is-active');
                     }
                 });
             });
 
-            // Bấm ra ngoài khoảng trống (bất kỳ đâu trên trang) thì thu nhỏ tất cả ảnh lại
             document.addEventListener('click', () => {
                 galleryItems.forEach(item => item.classList.remove('is-active'));
             });
 
 
-            // --- 3. ANIMATION CHO TEXT KHI SCROLL ---
             let hasScrolled = false;
             const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
 
@@ -148,7 +140,6 @@
             }, { once: false, passive: true });
 
 
-            // --- 4. ANIMATION VÀ XỬ LÝ SNAP SCROLL CHO SECTION SOLUTION ---
             const solutionSection = document.getElementById('solutionSection');
             const brandLine = document.querySelector('.brand-line');
 
