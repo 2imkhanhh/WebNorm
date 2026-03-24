@@ -327,49 +327,88 @@
                 
                 let targetWfProgress = 0;
                 let currentWfProgress = 0;
+                
+                // Kiểm tra xem có phải màn hình Desktop không (> 1024px)
+                let isDesktop = window.innerWidth > 1024;
 
-                function renderWorkflowSmooth() {
-                    currentWfProgress += (targetWfProgress - currentWfProgress) * 0.08;
+                window.addEventListener('resize', () => {
+                    isDesktop = window.innerWidth > 1024;
+                    if (!isDesktop) {
+                        // Reset lại style JS khi thu nhỏ màn hình
+                        workflowSlogan.style.transform = '';
+                        workflowSlogan.style.opacity = '';
+                        workflowTrack.style.transform = '';
+                    }
+                });
 
-                    const sloganMove = currentWfProgress * -200;
-                    workflowSlogan.style.transform = `translateX(${sloganMove}%)`;
-                    workflowSlogan.style.opacity = 1 - (currentWfProgress * 5);
-
-                    const maxTrackScroll = workflowTrack.scrollWidth - (window.innerWidth * 0.25); 
-                    const trackMove = currentWfProgress * -maxTrackScroll;
-                    
-                    workflowTrack.style.transform = `translateX(${trackMove}px)`;
-
-                    if (steps.length > 0) {
-                        let activeIndex = Math.round(currentWfProgress * (steps.length - 1));
-
-                        steps.forEach((step, index) => {
-                            if (index === activeIndex) {
-                                step.classList.add('is-active');
-                            } else {
-                                step.classList.remove('is-active');
+                const stepObserver = new IntersectionObserver((entries) => {
+                    if (!isDesktop) {
+                        entries.forEach(entry => {
+                            // entry.isIntersecting sẽ là TRUE khi step chạm vào vùng giữa màn hình
+                            if (entry.isIntersecting) {
+                                // Bước 1: Quét và TẮT HẾT class 'is-active' ở TẤT CẢ các bước
+                                steps.forEach(s => s.classList.remove('is-active'));
+                                
+                                // Bước 2: Chỉ BẬT SÁNG duy nhất bước đang nằm ở giữa màn hình
+                                entry.target.classList.add('is-active');
                             }
                         });
                     }
+                }, { 
+                    // rootMargin '-45% 0px -45% 0px' nghĩa là cắt bỏ 45% không gian phía trên 
+                    // và 45% không gian phía dưới màn hình. 
+                    // => Chỉ tạo ra một vùng nhận diện hẹp 10% nằm chuẩn xác ở GIỮA màn hình.
+                    rootMargin: "-45% 0px -45% 0px",
+                    threshold: 0
+                });
 
+                steps.forEach(step => stepObserver.observe(step));
+
+                function renderWorkflowSmooth() {
+                    if (isDesktop) {
+                        currentWfProgress += (targetWfProgress - currentWfProgress) * 0.08;
+
+                        const sloganMove = currentWfProgress * -200;
+                        workflowSlogan.style.transform = `translateX(${sloganMove}%)`;
+                        workflowSlogan.style.opacity = 1 - (currentWfProgress * 5);
+
+                        const maxTrackScroll = workflowTrack.scrollWidth - (window.innerWidth * 0.25); 
+                        const trackMove = currentWfProgress * -maxTrackScroll;
+                        
+                        workflowTrack.style.transform = `translateX(${trackMove}px)`;
+
+                        if (steps.length > 0) {
+                            let activeIndex = Math.round(currentWfProgress * (steps.length - 1));
+
+                            steps.forEach((step, index) => {
+                                if (index === activeIndex) {
+                                    step.classList.add('is-active');
+                                } else {
+                                    step.classList.remove('is-active');
+                                }
+                            });
+                        }
+                    }
                     requestAnimationFrame(renderWorkflowSmooth);
                 }
 
                 requestAnimationFrame(renderWorkflowSmooth);
 
                 window.addEventListener('scroll', () => {
-                    const sectionTop = workflowSection.offsetTop;
-                    const windowHeight = window.innerHeight;
-                    const scrollY = window.scrollY;
+                    if (isDesktop) {
+                        const sectionTop = workflowSection.offsetTop;
+                        const windowHeight = window.innerHeight;
+                        const scrollY = window.scrollY;
 
-                    const maxScroll = workflowSection.offsetHeight - windowHeight;
-                    let scrolledInside = scrollY - sectionTop;
+                        const maxScroll = workflowSection.offsetHeight - windowHeight;
+                        let scrolledInside = scrollY - sectionTop;
 
-                    if (scrolledInside < 0) scrolledInside = 0;
-                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+                        if (scrolledInside < 0) scrolledInside = 0;
+                        if (scrolledInside > maxScroll) scrolledInside = maxScroll;
 
-                    if (maxScroll > 0) {
-                        targetWfProgress = scrolledInside / maxScroll;
+                        if (maxScroll > 0) {
+                            targetWfProgress = scrolledInside / maxScroll;
+                        }
                     }
                 }, { passive: true });
             }

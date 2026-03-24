@@ -256,15 +256,13 @@ body.about-page {
     color: #757575;
     font-weight: 500;
     max-width: 90%;
-    will-change: transform; /* Thêm để tối ưu chuyển động JS */
+    will-change: transform; 
 }
 
 .workflow-slider-track {
     flex-wrap: nowrap;
     gap: 5rem;
     will-change: transform;
-    /* XÓA hoặc COMMENT dòng transition cũ đi để JS chạy không bị giật lag */
-    /* transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); */ 
 }
 
 .workflow-step {
@@ -383,9 +381,34 @@ body.about-page {
         padding-left: 1.5rem;
     }
 
+    .workflow-section {
+        height: auto; 
+        padding: 50px 0; 
+    }
+    .workflow-sticky-zone {
+        position: relative;
+        top: 0;
+        padding: 0;
+    }
+    
+    .workflow-left-col {
+        margin-bottom: 3rem; 
+    }
+
+    .workflow-slogan {
+        transform: none !important; 
+        opacity: 1 !important; 
+    }
+
+    .workflow-slider-track {
+        flex-direction: column; 
+        gap: 3rem; 
+        transform: none !important;
+    }
+
     .workflow-step {
-        flex: 0 0 70% !important;
-        max-width: 70% !important;
+        flex: 0 0 100% !important; 
+        max-width: 100% !important;
     }
 }
 
@@ -438,9 +461,35 @@ body.about-page {
         margin-top: 4vw;
     }
 
+    .workflow-section {
+        height: auto; 
+        padding: 0; 
+    }
+    .workflow-sticky-zone {
+        position: relative; 
+        top: 0;
+        padding: 0;
+    }
+    
+    .workflow-left-col {
+        margin-bottom: 3rem; 
+    }
+
+    .workflow-slogan {
+        transform: none !important; 
+        margin-bottom: 50px !important;
+        opacity: 1 !important; 
+    }
+
+    .workflow-slider-track {
+        flex-direction: column; 
+        gap: 3rem; 
+        transform: none !important; 
+    }
+
     .workflow-step {
-        flex: 0 0 80% !important;
-        max-width: 80% !important;
+        flex: 0 0 100% !important; 
+        max-width: 100% !important;
     }
 
     @keyframes waveY {
