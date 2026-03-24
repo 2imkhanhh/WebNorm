@@ -322,9 +322,39 @@
             if (workflowSection && workflowSlogan && workflowTrack) {
                 const steps = workflowTrack.querySelectorAll('.workflow-step');
                 
+                let isDesktop = window.innerWidth > 1024;
                 let targetWfProgress = 0;
                 let currentWfProgress = 0;
-                let isDesktop = window.innerWidth > 1024;
+
+                function calculateActiveWorkflowStep() {
+                    if (isDesktop) return; 
+
+                    let activeItem = null;
+                    let minDistance = Infinity;
+                    const viewportCenter = window.innerHeight / 2;
+
+                    steps.forEach(step => {
+                        const rect = step.getBoundingClientRect();
+                        const itemCenter = rect.top + rect.height / 2;
+                        const distance = Math.abs(viewportCenter - itemCenter);
+
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            activeItem = step;
+                        }
+                    });
+
+                    steps.forEach(step => {
+                        const rect = step.getBoundingClientRect();
+                        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+                        if (step === activeItem && isVisible) {
+                            step.classList.add('is-active');
+                        } else {
+                            step.classList.remove('is-active');
+                        }
+                    });
+                }
 
                 window.addEventListener('resize', () => {
                     isDesktop = window.innerWidth > 1024;
@@ -332,8 +362,9 @@
                         workflowSlogan.style.transform = '';
                         workflowSlogan.style.opacity = '';
                         workflowTrack.style.transform = '';
+                        calculateActiveWorkflowStep(); 
                     }
-                });
+                }, { passive: true });
 
                 function renderWorkflowSmooth() {
                     if (isDesktop) {
@@ -380,30 +411,11 @@
                             targetWfProgress = scrolledInside / maxScroll;
                         }
                     } else {
-                        const centerY = window.innerHeight / 2;
-                        let minDistance = Infinity;
-                        let closestIndex = 0;
-
-                        steps.forEach((step, index) => {
-                            const rect = step.getBoundingClientRect();
-                            const stepCenter = rect.top + (rect.height / 2);
-                            const distance = Math.abs(centerY - stepCenter);
-
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                closestIndex = index;
-                            }
-                        });
-
-                        steps.forEach((step, index) => {
-                            if (index === closestIndex) {
-                                step.classList.add('is-active');
-                            } else {
-                                step.classList.remove('is-active');
-                            }
-                        });
+                        calculateActiveWorkflowStep();
                     }
                 }, { passive: true });
+
+                calculateActiveWorkflowStep();
             }
         });
     </script>
