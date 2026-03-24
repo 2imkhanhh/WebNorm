@@ -198,7 +198,7 @@ body.about-page {
 }
 
 .about-intro-section {
-    padding: 100px 0;
+    padding: 100px 0 0 0;
     background-color: #ffffff;
 }
 
@@ -227,6 +227,96 @@ body.about-page {
     object-fit: cover;
     border-radius: 12px;
     transition: transform 1s ease;
+}
+
+.workflow-section {
+    padding: 0 0 100px 0;
+    overflow: hidden;
+}
+
+.workflow-content-row {
+    margin-left: -20px;
+}
+
+.sync-gap {
+    margin-bottom: 0.5rem !important;
+    line-height: 2;
+}
+
+.workflow-slogan {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #757575;
+    font-weight: 500;
+    max-width: 90%;
+}
+
+.workflow-slider-track {
+    flex-wrap: nowrap;
+    gap: 5rem;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.workflow-step {
+    flex: 0 0 60% !important;
+    max-width: 60% !important;
+    transition: opacity 0.8s ease;
+}
+
+.step-number {
+    font-size: 1.2rem;
+    color: #BDBDBD;
+    transition: color 0.5s ease;
+}
+
+.step-title {
+    font-size: clamp(2rem, 2.5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    transition: color 0.5s ease;
+}
+
+.step-desc {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #BDBDBD;
+    transition: color 0.5s ease;
+}
+
+.step-image-wrapper {
+    background-color: #EEEEEE;
+    border-radius: 8px;
+    padding: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+    margin-top: auto;
+    transition: opacity 0.8s ease;
+}
+
+.workflow-step:not(.is-active) {
+    opacity: 0.6;
+}
+
+.workflow-step:not(.is-active) .step-title,
+.workflow-step:not(.is-active) .step-number {
+    color: #BDBDBD;
+}
+
+.workflow-step:not(.is-active) .step-image-wrapper {
+    opacity: 0.5;
+}
+
+.workflow-step.is-active .step-title {
+    color: #111;
+}
+
+.workflow-step.is-active .step-desc,
+.workflow-step.is-active .step-number {
+    color: #757575;
 }
 
 /* TABLET */
@@ -281,6 +371,11 @@ body.about-page {
     .about-text-right {
         padding-left: 1.5rem;
     }
+
+    .workflow-step {
+        flex: 0 0 70% !important;
+        max-width: 70% !important;
+    }
 }
 
 /* MOBILE */
@@ -332,6 +427,11 @@ body.about-page {
         margin-top: 4vw;
     }
 
+    .workflow-step {
+        flex: 0 0 80% !important;
+        max-width: 80% !important;
+    }
+
     @keyframes waveY {
 
         0%,
@@ -356,5 +456,9 @@ body.about-page {
 
     .about-text-right {
         padding-left: 3rem;
+    }
+
+    .workflow-steps-container {
+        padding-top: calc(1.2rem + 0.75rem);
     }
 }

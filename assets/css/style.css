@@ -359,7 +359,7 @@ header.navbar {
 }
 
 .label-side {
-  font-size: clamp(13px, 0.9vw, 18px);
+  font-size: clamp(13px, 1.2vw, 18px);
   color: #757575;
 }
 
