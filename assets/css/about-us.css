@@ -230,8 +230,15 @@ body.about-page {
 }
 
 .workflow-section {
-    padding: 0 0 100px 0;
-    overflow: hidden;
+    height: 400vh; 
+    position: relative;
+    padding: 0; 
+}
+.workflow-sticky-zone {
+    position: sticky;
+    top: 2vh; 
+    padding: 50px 0 100px 0; 
+    overflow: hidden; 
 }
 
 .workflow-content-row {
@@ -249,18 +256,23 @@ body.about-page {
     color: #757575;
     font-weight: 500;
     max-width: 90%;
+    will-change: transform; /* Thêm để tối ưu chuyển động JS */
 }
 
 .workflow-slider-track {
     flex-wrap: nowrap;
     gap: 5rem;
-    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+    /* XÓA hoặc COMMENT dòng transition cũ đi để JS chạy không bị giật lag */
+    /* transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1); */ 
 }
 
 .workflow-step {
-    flex: 0 0 60% !important;
-    max-width: 60% !important;
+    flex: 0 0 55% !important;
+    max-width: 55% !important;
     transition: opacity 0.8s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .step-number {
@@ -278,9 +290,9 @@ body.about-page {
 }
 
 .step-desc {
-    font-size: 1rem;
+    font-size: clamp(16px, 1.5vw, 25px);
     line-height: 1.6;
-    margin-bottom: 2rem;
+    margin: 0.5rem 0 0.5rem 0;
     color: #BDBDBD;
     transition: color 0.5s ease;
 }
@@ -288,11 +300,10 @@ body.about-page {
 .step-image-wrapper {
     background-color: #EEEEEE;
     border-radius: 8px;
-    padding: 3rem;
+    padding: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 250px;
     margin-top: auto;
     transition: opacity 0.8s ease;
 }
