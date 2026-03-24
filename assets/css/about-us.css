@@ -268,9 +268,10 @@ body.about-page {
 .workflow-step {
     flex: 0 0 55% !important;
     max-width: 55% !important;
-    transition: opacity 0.8s ease;
+    transition: opacity 0.6s ease !important; 
     display: flex;
     flex-direction: column;
+    opacity: 0.6; 
 }
 
 .step-number {
@@ -284,7 +285,8 @@ body.about-page {
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    transition: color 0.5s ease;
+    color: #BDBDBD; 
+    transition: color 0.6s ease !important;
 }
 
 .step-desc {
@@ -303,29 +305,25 @@ body.about-page {
     justify-content: center;
     align-items: center;
     margin-top: auto;
-    transition: opacity 0.8s ease;
+    opacity: 0.5; 
+    transition: opacity 0.6s ease !important;
 }
 
-.workflow-step:not(.is-active) {
-    opacity: 0.6;
-}
-
-.workflow-step:not(.is-active) .step-title,
-.workflow-step:not(.is-active) .step-number {
-    color: #BDBDBD;
-}
-
-.workflow-step:not(.is-active) .step-image-wrapper {
-    opacity: 0.5;
+.workflow-step.is-active {
+    opacity: 1 !important;
 }
 
 .workflow-step.is-active .step-title {
-    color: #111;
+    color: #111111 !important;
 }
 
 .workflow-step.is-active .step-desc,
 .workflow-step.is-active .step-number {
-    color: #757575;
+    color: #757575 !important;
+}
+
+.workflow-step.is-active .step-image-wrapper {
+    opacity: 1 !important;
 }
 
 /* TABLET */
@@ -492,7 +490,7 @@ body.about-page {
         max-width: 100% !important;
     }
 
-    /* .workflow-step, 
+    .workflow-step, 
     .workflow-step .step-image-wrapper {
         transition: opacity 0.6s ease !important; 
     }
@@ -501,7 +499,7 @@ body.about-page {
     .workflow-step .step-desc, 
     .workflow-step .step-number {
         transition: color 0.6s ease !important; 
-    } */
+    }
 
     @keyframes waveY {
 
