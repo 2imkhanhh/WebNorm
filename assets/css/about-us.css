@@ -197,6 +197,38 @@ body.about-page {
     transform: translateY(0);
 }
 
+.about-intro-section {
+    padding: 100px 0;
+    background-color: #ffffff;
+}
+
+.about-content-row {
+    margin-left: -20px;
+}
+
+.about-intro-section .desc-text {
+    color: #757575; 
+    line-height: 1.4;
+    font-size: clamp(16px, 1.5vw, 25px);
+    font-weight: 400;
+}
+
+.team-image-wrapper {
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 150px;
+    overflow: hidden;
+}
+
+.team-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 1s ease;
+}
+
 /* TABLET */
 @media (max-width: 1024px) and (min-width: 768px) {
     :root {
@@ -298,5 +330,18 @@ body.about-page {
         50% {
             transform: translateY(-12vw);
         }
+    }
+}
+
+@media (min-width: 1025px) {
+    .custom-nudge {
+        margin-left: 15%;
+    }
+    .about-text-left {
+        padding-right: 3rem; 
+    }
+
+    .about-text-right {
+        padding-left: 3rem; 
     }
 }
