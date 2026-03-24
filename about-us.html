@@ -121,7 +121,6 @@
         <div class="workflow-sticky-zone">
             <div class="container-fluid px-4 px-md-5">
                 <div class="row align-items-start workflow-content-row">
-
                     <div class="col-md-3" style="position: relative; z-index: 1;">
                         <span class="label-side d-block sync-gap">• Quy trình làm việc</span>
                         <p class="workflow-slogan m-0">
@@ -129,8 +128,7 @@
                         </p>
                     </div>
 
-                    <div class="col-lg-7 col-md-9 custom-nudge workflow-steps-container" style="position: relative; z-index: 10;">
-                        
+                    <div class="col-lg-7 col-md-9 custom-nudge workflow-steps-container" style="position: relative; z-index: 10;"> 
                         <div class="row flex-nowrap workflow-slider-track" id="workflowSliderTrack">
 
                             <div class="col-12 workflow-step is-active">
@@ -168,7 +166,6 @@
 
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -327,42 +324,16 @@
                 
                 let targetWfProgress = 0;
                 let currentWfProgress = 0;
-                
-                // Kiểm tra xem có phải màn hình Desktop không (> 1024px)
                 let isDesktop = window.innerWidth > 1024;
 
                 window.addEventListener('resize', () => {
                     isDesktop = window.innerWidth > 1024;
                     if (!isDesktop) {
-                        // Reset lại style JS khi thu nhỏ màn hình
                         workflowSlogan.style.transform = '';
                         workflowSlogan.style.opacity = '';
                         workflowTrack.style.transform = '';
                     }
                 });
-
-                const stepObserver = new IntersectionObserver((entries) => {
-                    if (!isDesktop) {
-                        entries.forEach(entry => {
-                            // entry.isIntersecting sẽ là TRUE khi step chạm vào vùng giữa màn hình
-                            if (entry.isIntersecting) {
-                                // Bước 1: Quét và TẮT HẾT class 'is-active' ở TẤT CẢ các bước
-                                steps.forEach(s => s.classList.remove('is-active'));
-                                
-                                // Bước 2: Chỉ BẬT SÁNG duy nhất bước đang nằm ở giữa màn hình
-                                entry.target.classList.add('is-active');
-                            }
-                        });
-                    }
-                }, { 
-                    // rootMargin '-45% 0px -45% 0px' nghĩa là cắt bỏ 45% không gian phía trên 
-                    // và 45% không gian phía dưới màn hình. 
-                    // => Chỉ tạo ra một vùng nhận diện hẹp 10% nằm chuẩn xác ở GIỮA màn hình.
-                    rootMargin: "-45% 0px -45% 0px",
-                    threshold: 0
-                });
-
-                steps.forEach(step => stepObserver.observe(step));
 
                 function renderWorkflowSmooth() {
                     if (isDesktop) {
@@ -379,7 +350,6 @@
 
                         if (steps.length > 0) {
                             let activeIndex = Math.round(currentWfProgress * (steps.length - 1));
-
                             steps.forEach((step, index) => {
                                 if (index === activeIndex) {
                                     step.classList.add('is-active');
@@ -409,6 +379,29 @@
                         if (maxScroll > 0) {
                             targetWfProgress = scrolledInside / maxScroll;
                         }
+                    } else {
+                        const centerY = window.innerHeight / 2;
+                        let minDistance = Infinity;
+                        let closestIndex = 0;
+
+                        steps.forEach((step, index) => {
+                            const rect = step.getBoundingClientRect();
+                            const stepCenter = rect.top + (rect.height / 2);
+                            const distance = Math.abs(centerY - stepCenter);
+
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                closestIndex = index;
+                            }
+                        });
+
+                        steps.forEach((step, index) => {
+                            if (index === closestIndex) {
+                                step.classList.add('is-active');
+                            } else {
+                                step.classList.remove('is-active');
+                            }
+                        });
                     }
                 }, { passive: true });
             }

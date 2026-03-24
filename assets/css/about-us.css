@@ -492,6 +492,17 @@ body.about-page {
         max-width: 100% !important;
     }
 
+    .workflow-step, 
+    .workflow-step .step-image-wrapper {
+        transition: opacity 0.2s ease !important; 
+    }
+    
+    .workflow-step .step-title, 
+    .workflow-step .step-desc, 
+    .workflow-step .step-number {
+        transition: color 0.2s ease !important;
+    }
+
     @keyframes waveY {
 
         0%,
