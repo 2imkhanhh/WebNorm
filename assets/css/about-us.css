@@ -509,6 +509,17 @@ body.about-page {
     .workflow-step {
         flex: 0 0 100% !important;
         max-width: 100% !important;
+        transition: opacity 0.15s ease;
+    }
+
+    .step-image-wrapper {
+        transition: opacity 0.15s ease, filter 0.15s ease;
+    }
+
+    .step-number,
+    .step-title,
+    .step-desc {
+        transition: color 0.15s ease;
     }
 
     @keyframes waveY {

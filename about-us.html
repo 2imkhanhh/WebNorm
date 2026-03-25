@@ -410,31 +410,27 @@
                 let isTicking = false;
 
                 window.addEventListener('scroll', () => {
+                    if (!isDesktop) {
+                        calculateActiveWorkflowStep();
+                        return;
+                    }
+
                     if (!isTicking) {
                         window.requestAnimationFrame(() => {
-                            if (isDesktop) {
-                                const sectionTop = workflowSection.offsetTop;
-                                const windowHeight = window.innerHeight;
-                                const scrollY = window.scrollY;
+                            const sectionTop = workflowSection.offsetTop;
+                            const windowHeight = window.innerHeight;
+                            const scrollY = window.scrollY;
+                            const maxScroll = workflowSection.offsetHeight - windowHeight;
+                            let scrolledInside = Math.max(0, Math.min(scrollY - sectionTop, maxScroll));
 
-                                const maxScroll = workflowSection.offsetHeight - windowHeight;
-                                let scrolledInside = scrollY - sectionTop;
-
-                                if (scrolledInside < 0) scrolledInside = 0;
-                                if (scrolledInside > maxScroll) scrolledInside = maxScroll;
-
-                                if (maxScroll > 0) {
-                                    targetWfProgress = scrolledInside / maxScroll;
-                                }
-                            } else {
-                                calculateActiveWorkflowStep();
+                            if (maxScroll > 0) {
+                                targetWfProgress = scrolledInside / maxScroll;
                             }
                             isTicking = false;
                         });
-                        isTicking = true; 
+                        isTicking = true;
                     }
                 }, { passive: true });
-
                 calculateActiveWorkflowStep();
             }
         });
