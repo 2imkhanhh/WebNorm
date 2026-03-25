@@ -268,9 +268,15 @@ body.about-page {
 .workflow-step {
     flex: 0 0 55% !important;
     max-width: 55% !important;
+    display: grid;
+    grid-template-rows: auto 1fr auto; 
+    will-change: transform, opacity;
+}
+
+.step-top {
     display: flex;
     flex-direction: column;
-    will-change: transform, opacity;
+    gap: 0.3rem;
 }
 
 .step-number {
@@ -297,15 +303,16 @@ body.about-page {
 }
 
 .step-image-wrapper {
-    background-color: #EEEEEE;
-    border-radius: 8px;
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: auto;
-    opacity: 0.4; 
-    transition: opacity 0.25s ease !important;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.step-image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px; 
 }
 
 .workflow-step.is-active .step-title {
