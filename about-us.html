@@ -124,18 +124,21 @@
                     <div class="col-md-3" style="position: relative; z-index: 1;">
                         <span class="label-side d-block sync-gap">• Quy trình làm việc</span>
                         <p class="workflow-slogan m-0">
-                            We create innovative and thought-provoking environments that foster deeper human experiences.
+                            We create innovative and thought-provoking environments that foster deeper human
+                            experiences.
                         </p>
                     </div>
 
-                    <div class="col-lg-7 col-md-9 custom-nudge workflow-steps-container" style="position: relative; z-index: 10;"> 
+                    <div class="col-lg-7 col-md-9 custom-nudge workflow-steps-container"
+                        style="position: relative; z-index: 10;">
                         <div class="row flex-nowrap workflow-slider-track" id="workflowSliderTrack">
 
                             <div class="col-12 workflow-step is-active">
                                 <span class="step-number d-block sync-gap">01/</span>
                                 <h3 class="step-title m-0">Trao đổi & tìm hiểu</h3>
                                 <p class="step-desc">
-                                    Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu, xác định tầm nhìn và kỳ vọng chung.
+                                    Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu,
+                                    xác định tầm nhìn và kỳ vọng chung.
                                 </p>
                                 <div class="step-image-wrapper">
                                     <img src="assets/images/step1.png" alt="Bước 1" class="img-fluid">
@@ -157,7 +160,8 @@
                                 <span class="step-number d-block sync-gap">03/</span>
                                 <h3 class="step-title m-0">Thiết kế & hoàn thiện</h3>
                                 <p class="step-desc">
-                                    Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm cuối cùng.
+                                    Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm
+                                    cuối cùng.
                                 </p>
                                 <div class="step-image-wrapper">
                                     <img src="assets/images/step1.png" alt="Bước 3" class="img-fluid">
@@ -321,13 +325,13 @@
 
             if (workflowSection && workflowSlogan && workflowTrack) {
                 const steps = workflowTrack.querySelectorAll('.workflow-step');
-                
+
                 let isDesktop = window.innerWidth > 1024;
                 let targetWfProgress = 0;
                 let currentWfProgress = 0;
 
                 function calculateActiveWorkflowStep() {
-                    if (isDesktop) return; 
+                    if (isDesktop) return;
 
                     let activeItem = null;
                     let minDistance = Infinity;
@@ -362,7 +366,7 @@
                         workflowSlogan.style.transform = '';
                         workflowSlogan.style.opacity = '';
                         workflowTrack.style.transform = '';
-                        calculateActiveWorkflowStep(); 
+                        calculateActiveWorkflowStep();
                     }
                 }, { passive: true });
 
@@ -374,9 +378,9 @@
                         workflowSlogan.style.transform = `translateX(${sloganMove}%)`;
                         workflowSlogan.style.opacity = 1 - (currentWfProgress * 5);
 
-                        const maxTrackScroll = workflowTrack.scrollWidth - (window.innerWidth * 0.25); 
+                        const maxTrackScroll = workflowTrack.scrollWidth - (window.innerWidth * 0.25);
                         const trackMove = currentWfProgress * -maxTrackScroll;
-                        
+
                         workflowTrack.style.transform = `translateX(${trackMove}px)`;
 
                         if (steps.length > 0) {
@@ -394,24 +398,33 @@
                 }
 
                 requestAnimationFrame(renderWorkflowSmooth);
+                let isTicking = false;
 
                 window.addEventListener('scroll', () => {
-                    if (isDesktop) {
-                        const sectionTop = workflowSection.offsetTop;
-                        const windowHeight = window.innerHeight;
-                        const scrollY = window.scrollY;
+                    if (!isTicking) {
+                        window.requestAnimationFrame(() => {
+                            if (isDesktop) {
+                                // Logic Desktop
+                                const sectionTop = workflowSection.offsetTop;
+                                const windowHeight = window.innerHeight;
+                                const scrollY = window.scrollY;
 
-                        const maxScroll = workflowSection.offsetHeight - windowHeight;
-                        let scrolledInside = scrollY - sectionTop;
+                                const maxScroll = workflowSection.offsetHeight - windowHeight;
+                                let scrolledInside = scrollY - sectionTop;
 
-                        if (scrolledInside < 0) scrolledInside = 0;
-                        if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+                                if (scrolledInside < 0) scrolledInside = 0;
+                                if (scrolledInside > maxScroll) scrolledInside = maxScroll;
 
-                        if (maxScroll > 0) {
-                            targetWfProgress = scrolledInside / maxScroll;
-                        }
-                    } else {
-                        calculateActiveWorkflowStep();
+                                if (maxScroll > 0) {
+                                    targetWfProgress = scrolledInside / maxScroll;
+                                }
+                            } else {
+                                // Logic Mobile
+                                calculateActiveWorkflowStep();
+                            }
+                            isTicking = false; // Reset cờ sau khi frame đã render xong
+                        });
+                        isTicking = true; // Khóa lại chờ frame tiếp theo
                     }
                 }, { passive: true });
 
