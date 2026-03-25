@@ -337,7 +337,6 @@
                     let minDistance = Infinity;
                     const viewportCenter = window.innerHeight / 2;
 
-                    // 1. Tìm step gần giữa màn hình nhất
                     steps.forEach(step => {
                         const rect = step.getBoundingClientRect();
                         const itemCenter = rect.top + rect.height / 2;
@@ -349,15 +348,11 @@
                         }
                     });
 
-                    // 2. Cập nhật class is-active ĐỒNG THỜI
-                    // Thay vì lặp lại if/else rời rạc, ta dùng cách này để đảm bảo nó tắt/bật cùng 1 lúc
-                    steps.forEach(step => {
-                        const rect = step.getBoundingClientRect();
-                        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                    steps.forEach(step => step.classList.remove('is-active'));
 
-                        // Chuyển class toggle để đồng bộ nhịp chuyển tiếp CSS
-                        step.classList.toggle('is-active', step === activeItem && isVisible);
-                    });
+                    if (activeItem) {
+                        activeItem.classList.add('is-active');
+                    }
                 }
 
                 window.addEventListener('resize', () => {

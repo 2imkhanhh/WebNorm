@@ -270,13 +270,12 @@ body.about-page {
     max-width: 55% !important;
     display: flex;
     flex-direction: column;
-    /* Không để transition hay opacity ở đây nữa */
 }
 
 .step-number {
     font-size: 1.2rem;
     color: #BDBDBD;
-    transition: color 0.4s ease !important;
+    transition: color 0.25s ease !important;
 }
 
 .step-title {
@@ -285,7 +284,7 @@ body.about-page {
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: #BDBDBD; 
-    transition: color 0.4s ease !important;
+    transition: color 0.25s ease !important;
 }
 
 .step-desc {
@@ -293,7 +292,7 @@ body.about-page {
     line-height: 1.6;
     margin: 0.5rem 0 0.5rem 0;
     color: #BDBDBD;
-    transition: color 0.4s ease !important;
+    transition: color 0.25s ease !important;
 }
 
 .step-image-wrapper {
@@ -304,8 +303,8 @@ body.about-page {
     justify-content: center;
     align-items: center;
     margin-top: auto;
-    opacity: 0.4; /* Ảnh mờ làm gốc */
-    transition: opacity 0.4s ease !important;
+    opacity: 0.4; 
+    transition: opacity 0.25s ease !important;
 }
 
 .workflow-step.is-active .step-title {
