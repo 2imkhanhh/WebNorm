@@ -413,7 +413,6 @@
                     if (!isTicking) {
                         window.requestAnimationFrame(() => {
                             if (isDesktop) {
-                                // Logic Desktop
                                 const sectionTop = workflowSection.offsetTop;
                                 const windowHeight = window.innerHeight;
                                 const scrollY = window.scrollY;
@@ -428,12 +427,11 @@
                                     targetWfProgress = scrolledInside / maxScroll;
                                 }
                             } else {
-                                // Logic Mobile
                                 calculateActiveWorkflowStep();
                             }
-                            isTicking = false; // Reset cờ sau khi frame đã render xong
+                            isTicking = false;
                         });
-                        isTicking = true; // Khóa lại chờ frame tiếp theo
+                        isTicking = true; 
                     }
                 }, { passive: true });
 

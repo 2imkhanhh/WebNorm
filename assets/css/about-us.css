@@ -230,24 +230,20 @@ body.about-page {
 }
 
 .workflow-section {
-    height: 400vh; 
+    height: 400vh;
     position: relative;
-    padding: 0; 
+    padding: 0;
 }
+
 .workflow-sticky-zone {
     position: sticky;
-    top: 2vh; 
-    padding: 50px 0 100px 0; 
-    overflow: hidden; 
+    top: 2vh;
+    padding: 50px 0 100px 0;
+    overflow: hidden;
 }
 
 .workflow-content-row {
     margin-left: -20px;
-}
-
-.sync-gap {
-    margin-bottom: 0.5rem !important;
-    line-height: 2;
 }
 
 .workflow-slogan {
@@ -256,33 +252,50 @@ body.about-page {
     color: #757575;
     font-weight: 500;
     max-width: 90%;
-    will-change: transform; 
 }
 
+/* ===== TRACK ===== */
 .workflow-slider-track {
     flex-wrap: nowrap;
     gap: 5rem;
-    will-change: transform;
 }
 
+/* ===== STEP (KHÔNG SCALE, KHÔNG MOVE) ===== */
 .workflow-step {
     flex: 0 0 55% !important;
     max-width: 55% !important;
+
     display: grid;
-    grid-template-rows: auto 1fr auto; 
-    will-change: transform, opacity;
+    grid-template-rows: auto 1fr auto;
+
+    opacity: 0.5;
+
+    transition: opacity 0.4s ease;
 }
 
+/* ===== ACTIVE STEP ===== */
+.workflow-step.is-active {
+    opacity: 1;
+}
+
+/* ===== TOP ===== */
 .step-top {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
 }
 
+/* ===== TEXT ===== */
+.step-number,
+.step-title,
+.step-desc {
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+/* mặc định */
 .step-number {
     font-size: 1.2rem;
     color: #BDBDBD;
-    transition: color 0.25s ease !important;
 }
 
 .step-title {
@@ -290,42 +303,46 @@ body.about-page {
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    color: #BDBDBD; 
-    transition: color 0.25s ease !important;
+    color: #BDBDBD;
 }
 
 .step-desc {
     font-size: clamp(16px, 1.5vw, 25px);
     line-height: 1.6;
-    margin: 0.5rem 0 0.5rem 0;
+    margin: 0.5rem 0;
     color: #BDBDBD;
-    transition: color 0.25s ease !important;
 }
 
-.step-image-wrapper {
-    background: none;
-    padding: 0;
-    border-radius: 0;
-}
-
-.step-image-wrapper img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 8px; 
-}
-
+/* active */
 .workflow-step.is-active .step-title {
-    color: #111111 !important;
+    color: #111;
 }
 
 .workflow-step.is-active .step-desc,
 .workflow-step.is-active .step-number {
-    color: #757575 !important;
+    color: #666;
+}
+
+.step-image-wrapper {
+    opacity: 0.4;
+    filter: blur(2px);
+
+    transition: opacity 0.4s ease, filter 0.4s ease;
 }
 
 .workflow-step.is-active .step-image-wrapper {
-    opacity: 1 !important;
+    opacity: 1;
+    filter: blur(0);
+}
+
+.step-image-wrapper img {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
 }
 
 /* TABLET */
@@ -382,32 +399,33 @@ body.about-page {
     }
 
     .workflow-section {
-        height: auto; 
-        padding: 50px 0; 
+        height: auto;
+        padding: 50px 0;
     }
+
     .workflow-sticky-zone {
         position: relative;
         top: 0;
         padding: 0;
     }
-    
+
     .workflow-left-col {
-        margin-bottom: 3rem; 
+        margin-bottom: 3rem;
     }
 
     .workflow-slogan {
-        transform: none !important; 
-        opacity: 1 !important; 
+        transform: none !important;
+        opacity: 1 !important;
     }
 
     .workflow-slider-track {
-        flex-direction: column; 
-        gap: 3rem; 
+        flex-direction: column;
+        gap: 3rem;
         transform: none !important;
     }
 
     .workflow-step {
-        flex: 0 0 100% !important; 
+        flex: 0 0 100% !important;
         max-width: 100% !important;
     }
 }
@@ -462,33 +480,34 @@ body.about-page {
     }
 
     .workflow-section {
-        height: auto; 
-        padding: 0; 
+        height: auto;
+        padding: 0;
     }
+
     .workflow-sticky-zone {
-        position: relative; 
+        position: relative;
         top: 0;
         padding: 0;
     }
-    
+
     .workflow-left-col {
-        margin-bottom: 3rem; 
+        margin-bottom: 3rem;
     }
 
     .workflow-slogan {
-        transform: none !important; 
+        transform: none !important;
         margin-bottom: 50px !important;
-        opacity: 1 !important; 
+        opacity: 1 !important;
     }
 
     .workflow-slider-track {
-        flex-direction: column; 
-        gap: 3rem; 
-        transform: none !important; 
+        flex-direction: column;
+        gap: 3rem;
+        transform: none !important;
     }
 
     .workflow-step {
-        flex: 0 0 100% !important; 
+        flex: 0 0 100% !important;
         max-width: 100% !important;
     }
 
