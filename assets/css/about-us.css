@@ -254,13 +254,11 @@ body.about-page {
     max-width: 90%;
 }
 
-/* ===== TRACK ===== */
 .workflow-slider-track {
     flex-wrap: nowrap;
     gap: 5rem;
 }
 
-/* ===== STEP ===== */
 .workflow-step {
     flex: 0 0 55% !important;
     max-width: 55% !important;
@@ -273,26 +271,22 @@ body.about-page {
     transition: opacity 0.4s ease;
 }
 
-/* ===== ACTIVE STEP ===== */
 .workflow-step.is-active {
     opacity: 1;
 }
 
-/* ===== TOP ===== */
 .step-top {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
 }
 
-/* ===== TEXT ===== */
 .step-number,
 .step-title,
 .step-desc {
     transition: color 0.3s ease, opacity 0.3s ease;
 }
 
-/* mặc định */
 .step-number {
     font-size: 1.2rem;
     color: #BDBDBD;
@@ -313,7 +307,6 @@ body.about-page {
     color: #BDBDBD;
 }
 
-/* active */
 .workflow-step.is-active .step-title {
     color: #111;
 }
@@ -323,7 +316,6 @@ body.about-page {
     color: #666;
 }
 
-/* ===== IMAGE WRAPPER — dùng opacity + scale, bỏ blur ===== */
 .step-image-wrapper {
     opacity: 0.35;
     transform: scale(0.98);
@@ -401,7 +393,7 @@ body.about-page {
 
     .workflow-section {
         height: auto;
-        padding: 50px 0;
+        padding: 0;
     }
 
     .workflow-sticky-zone {
@@ -416,6 +408,7 @@ body.about-page {
 
     .workflow-slogan {
         transform: none !important;
+        margin-bottom: 50px !important;
         opacity: 1 !important;
     }
 
@@ -428,6 +421,17 @@ body.about-page {
     .workflow-step {
         flex: 0 0 100% !important;
         max-width: 100% !important;
+        transition: opacity 0.15s ease;
+    }
+
+    .step-image-wrapper {
+        transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .step-number,
+    .step-title,
+    .step-desc {
+        transition: color 0.15s ease;
     }
 }
 
