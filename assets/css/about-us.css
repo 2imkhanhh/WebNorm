@@ -270,6 +270,7 @@ body.about-page {
     max-width: 55% !important;
     display: flex;
     flex-direction: column;
+    will-change: transform, opacity;
 }
 
 .step-number {
