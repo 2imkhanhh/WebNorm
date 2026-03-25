@@ -260,7 +260,7 @@ body.about-page {
     gap: 5rem;
 }
 
-/* ===== STEP (KHÔNG SCALE, KHÔNG MOVE) ===== */
+/* ===== STEP ===== */
 .workflow-step {
     flex: 0 0 55% !important;
     max-width: 55% !important;
@@ -323,16 +323,17 @@ body.about-page {
     color: #666;
 }
 
+/* ===== IMAGE WRAPPER — dùng opacity + scale, bỏ blur ===== */
 .step-image-wrapper {
-    opacity: 0.4;
-    filter: blur(2px);
-
-    transition: opacity 0.4s ease, filter 0.4s ease;
+    opacity: 0.35;
+    transform: scale(0.98);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    will-change: transform, opacity;
 }
 
 .workflow-step.is-active .step-image-wrapper {
     opacity: 1;
-    filter: blur(0);
+    transform: scale(1);
 }
 
 .step-image-wrapper img {
@@ -513,7 +514,7 @@ body.about-page {
     }
 
     .step-image-wrapper {
-        transition: opacity 0.15s ease, filter 0.15s ease;
+        transition: opacity 0.15s ease, transform 0.15s ease;
     }
 
     .step-number,
