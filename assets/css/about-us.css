@@ -338,6 +338,54 @@ body.about-page {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
 }
 
+.members-section{
+    padding-bottom: 100px;
+}
+
+.members-section .text-left {
+    padding-left: 20vw; 
+}
+
+.members-section .text-right {
+    padding-right: 20vw; 
+}
+
+.members-grid-container {
+    padding-top: 50px;
+}
+
+.member-card {
+    margin-bottom: 20px;
+    transition: transform 0.5s ease;
+    width: 80%; 
+    margin-inline: auto; 
+}
+
+.member-card:hover {
+    transform: translateY(-10px);
+}
+
+.member-card img {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px; 
+    margin-bottom: 15px;
+    filter: grayscale(0%);
+}
+
+.member-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #111;
+}
+
+.member-role {
+    font-size: 0.85rem;
+    color: #8A8A8A;
+    text-transform: none;
+}
+
 /* TABLET */
 @media (max-width: 1024px) and (min-width: 768px) {
     :root {
