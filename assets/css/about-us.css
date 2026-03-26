@@ -419,9 +419,14 @@ body.about-page {
     transform: rotateY(0deg);
 }
 
-.member-card.is-covered img,
-.member-card.is-covered .member-name,
-.member-card.is-covered .member-role {
+.member-card.is-covered img {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* 2. Class mới để ẩn tên và chức vụ khi bắt đầu chơi */
+.member-card.hide-text .member-name,
+.member-card.hide-text .member-role {
     opacity: 0;
     transition: opacity 0.2s;
 }

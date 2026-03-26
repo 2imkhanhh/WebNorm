@@ -428,28 +428,29 @@
                     </div>
                 </div>
 
-                <!-- <div class="row member-row">
+                <div class="row member-row">
                     <div class="col-6 col-md-3 member-item">
                         <div class="member-card">
-                            <img src="assets/images/team1.png" alt="Member 5">
-                            <h4 class="member-name">Mạnh Thọ</h4>
-                            <p class="member-role">CEO - CO founder</p>
+                            <img src="assets/images/team6.png" alt="Member 5">
+                            <h4 class="member-name">Ha Lee</h4>
+                            <p class="member-role">UI/UX designer</p>
                         </div>
                     </div>
                     <div class="col-md-3 d-none d-md-block"></div>
                     <div class="col-6 col-md-3 member-item">
                         <div class="member-card">
-                            <img src="assets/images/team2.png" alt="Member 6">
-                            <h4 class="member-name">Loan Ng</h4>
-                            <p class="member-role">Marketing Executive</p>
+                            <img src="assets/images/team7.png" alt="Member 6">
+                            <h4 class="member-name">Mẫn Vy</h4>
+                            <p class="member-role">UI/UX designer</p>
                         </div>
                     </div>
                     <div class="col-md-3 d-none d-md-block"></div>
-                </div> -->
+                </div>
 
             </div>
         </div>
     </section>
+
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -705,6 +706,7 @@
                 let targetMember = null;
                 let remaining = [];
 
+                // 1. SETUP BAN ĐẦU
                 cards.forEach(card => {
                     originalData.push({
                         imgSrc: card.querySelector('img').src,
@@ -718,8 +720,12 @@
                     card.appendChild(cover);
 
                     card.style.transition = 'transform 0.5s ease, opacity 0.3s ease';
+
+                    // Vừa vào web là ÚP THẺ (che ảnh) nhưng KHÔNG ẨN TÊN
+                    card.classList.add('is-covered');
                 });
 
+                // 2. NHẤN NÚT CHƠI
                 startBtn.addEventListener('click', () => {
                     if (isPlaying) return;
                     isPlaying = true;
@@ -727,8 +733,13 @@
                     instruction.innerHTML = "Đang trộn bài... Chờ xíu nhóo";
                     instruction.classList.remove('d-none');
 
-                    cards.forEach(c => c.classList.add('is-covered'));
+                    // Bắt đầu chơi: Ẩn luôn tên và đảm bảo thẻ đang úp
+                    cards.forEach(c => {
+                        c.classList.add('is-covered');
+                        c.classList.add('hide-text'); // Thêm class ẩn tên
+                    });
 
+                    // Xáo bài
                     setTimeout(() => {
                         cards.forEach(c => c.classList.add('shuffling'));
 
@@ -750,19 +761,39 @@
                     }, 500);
                 });
 
+                // 3. XỬ LÝ LƯỢT CHƠI & CHIẾN THẮNG
                 function nextTurn() {
                     if (remaining.length === 0) {
-                        instruction.innerHTML = "Vỗ tay🎉 Em giỏi quá đi";
-                        startBtn.innerHTML = "<i class='bx bx-reset'></i> Chơi lại";
-                        startBtn.classList.remove('d-none');
-                        isPlaying = false;
+                        instruction.innerHTML = "Vỗ tay🎉 Em giỏi quá đi! Đang xếp lại đội hình...";
+                        isPlaying = false; // Tạm khóa
+
+                        // Chờ 1.5s ăn mừng rồi khôi phục về y như cũ
+                        setTimeout(() => {
+                            cards.forEach((card, i) => {
+                                // Lấy lại dữ liệu nguyên bản
+                                card.querySelector('img').src = originalData[i].imgSrc;
+                                card.querySelector('.member-name').innerText = originalData[i].name;
+                                card.querySelector('.member-role').innerText = originalData[i].role;
+                                card.dataset.answer = originalData[i].name;
+
+                                // Lật ngửa bài, hiện mặt và tên đầy đủ
+                                card.classList.remove('is-covered', 'hide-text', 'shake-wrong', 'shuffling');
+                            });
+
+                            instruction.innerHTML = "Đã khôi phục vị trí ban đầu! 😎";
+                            startBtn.innerHTML = "<i class='bx bx-reset'></i> Chơi lại";
+                            startBtn.classList.remove('d-none');
+                        }, 1500);
                         return;
                     }
+
                     const randomIndex = Math.floor(Math.random() * remaining.length);
                     targetMember = remaining[randomIndex];
                     instruction.innerHTML = `Lật thẻ để tìm: <span style="color: #111111; font-size: 1.2em;">${targetMember.name}</span>`;
+                    isPlaying = true;
                 }
 
+                // 4. HÀM TRÁO LẠI CÁC THẺ ĐANG ÚP (KHI ĐOÁN SAI)
                 function reshuffleHiddenCards() {
                     const hiddenCards = Array.from(cards).filter(c => c.classList.contains('is-covered'));
 
@@ -775,7 +806,6 @@
 
                     hiddenData.sort(() => Math.random() - 0.5);
 
-                    // instruction.innerHTML = "Đang tráo lại vị trí... Nhìn cho kỹ nha 👀";
                     hiddenCards.forEach(c => c.classList.add('shuffling'));
 
                     setTimeout(() => {
@@ -790,28 +820,34 @@
 
                         instruction.innerHTML = `Lật thẻ để tìm: <span style="color: #111111; font-size: 1.2em;">${targetMember.name}</span>`;
                         isPlaying = true;
-                    }, 1000); 
+                    }, 1000);
                 }
 
+                // 5. BẮT SỰ KIỆN CLICK LẬT BÀI
                 cards.forEach(card => {
                     card.addEventListener('click', function () {
                         if (!isPlaying || !this.classList.contains('is-covered')) return;
 
                         const guess = this.dataset.answer;
 
-                        this.classList.remove('is-covered');
+                        // Xóa class úp và class ẩn tên đi để show đáp án ra
+                        this.classList.remove('is-covered', 'hide-text');
 
                         if (guess === targetMember.name) {
+                            // ĐOÁN ĐÚNG
                             remaining = remaining.filter(m => m.name !== guess);
+                            isPlaying = false; // Tạm khóa click chống bấm loạn
                             setTimeout(nextTurn, 600);
                         } else {
-                            isPlaying = false; 
+                            // ĐOÁN SAI
+                            isPlaying = false;
                             this.classList.add('shake-wrong');
                             instruction.innerHTML = `Sai rồi bé ơi :)) Đây là ${guess} mà`;
 
                             setTimeout(() => {
                                 this.classList.remove('shake-wrong');
-                                this.classList.add('is-covered');
+                                // Úp thẻ lại và giấu tên đi lần nữa
+                                this.classList.add('is-covered', 'hide-text');
 
                                 reshuffleHiddenCards();
                             }, 1500);
