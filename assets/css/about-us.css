@@ -356,13 +356,8 @@ body.about-page {
 
 .member-card {
     margin-bottom: 20px;
-    transition: transform 0.5s ease;
     width: 80%; 
     margin-inline: auto; 
-}
-
-.member-card:hover {
-    transform: translateY(-10px);
 }
 
 .member-card img {
