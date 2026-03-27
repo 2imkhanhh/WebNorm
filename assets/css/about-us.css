@@ -386,6 +386,24 @@ body.about-page {
     text-transform: none;
 }
 
+.members-section.dark-mode {
+  background-color: #111111;
+}
+
+.members-section,
+.members-section .testimonial-title,
+.members-section .member-card,
+.members-section .member-name,
+.members-section .member-role {
+  transition: color 0.6s ease, background-color 0.6s ease, border-color 0.6s ease;
+}
+
+.members-section.dark-mode .testimonial-title,
+.members-section.dark-mode .member-name,
+.members-section.dark-mode .member-role {
+  color: #ffffff !important;
+}
+
 /* TABLET */
 @media (max-width: 1024px) and (min-width: 768px) {
     :root {

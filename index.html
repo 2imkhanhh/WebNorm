@@ -382,7 +382,7 @@
                 <div class="col-12 testimonial-title-container" id="testimonialTitleWrap">
 
                     <h2 class="testimonial-title text-left scroll-slide-left">
-                        <span class="quote-mark">“</span>TRẢI NGHIỆM
+                        <span class="quote-mark">"</span>TRẢI NGHIỆM
                     </h2>
 
                     <h2 class="testimonial-title text-right scroll-slide-right">
@@ -406,7 +406,7 @@
                                 <div class="col-md-7 ps-md-4">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
-                                            “Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định
+                                            "Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định
                                             hướng rõ ràng.
                                             Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến
                                             lược đến hệ thống nhận diện.
@@ -414,7 +414,7 @@
                                             bạch. Kết quả cuối cùng
                                             không chỉ là một bộ nhận diện đẹp mà còn là một nền tảng thương hiệu rõ ràng
                                             để doanh nghiệp phát triển lâu dài.
-                                            Chúng tôi thật sự hài lòng với sự hợp tác này.”
+                                            Chúng tôi thật sự hài lòng với sự hợp tác này."
                                         </p>
                                         <div class="quote-author">
                                             <h4 class="author-name">Nguyễn Minh Anh</h4>
@@ -435,11 +435,11 @@
                                 <div class="col-md-7 ps-md-4">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
-                                            “Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn
+                                            "Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn
                                             tru.
                                             Chúng tôi đánh giá cao sự sáng tạo và khả năng thấu hiểu thị trường của đội
                                             ngũ.
-                                            Bộ nhận diện mới đã giúp doanh số tăng trưởng rõ rệt trong quý vừa qua.”
+                                            Bộ nhận diện mới đã giúp doanh số tăng trưởng rõ rệt trong quý vừa qua."
                                         </p>
                                         <div class="quote-author">
                                             <h4 class="author-name">Trần Văn B</h4>
@@ -460,9 +460,9 @@
                                 <div class="col-md-7 ps-md-4">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
-                                            “Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến
+                                            "Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến
                                             lược rất sát thực tế.
-                                            Rất mong được tiếp tục đồng hành trong các dự án tương lai.”
+                                            Rất mong được tiếp tục đồng hành trong các dự án tương lai."
                                         </p>
                                         <div class="quote-author">
                                             <h4 class="author-name">Lê Thị C</h4>
@@ -1109,6 +1109,7 @@
             }
             initTestimonialSlider();
 
+            // BLOG SLIDER
             const blogTrack = document.getElementById('blogTrack');
             const blogPrev = document.getElementById('blogPrev');
             const blogNext = document.getElementById('blogNext');
@@ -1149,147 +1150,6 @@
 
                 window.addEventListener('resize', updateBlogSlider);
                 updateBlogSlider();
-            }
-
-            // FOOTER SCROLL TEXT 
-            const footerSection = document.getElementById('footerSection');
-            const footerLines = document.querySelectorAll('.footer-line');
-            const blogSection = document.querySelector('.blog-slider-section');
-
-            if (footerSection && footerLines.length > 0) {
-                let targetFooterProgress = 0;
-                let currentFooterProgress = 0;
-                let footerSnapTimeout;
-                let lastScrollY = window.scrollY;
-
-                function renderFooterSmooth() {
-                    currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.05;
-
-                    footerLines.forEach((line) => {
-                        const textNew = line.querySelector('.text-new');
-
-                        let progress = currentFooterProgress;
-
-                        if (progress < 0) progress = 0;
-                        if (progress > 1) progress = 1;
-
-                        const insetTop = (1 - progress) * 100;
-                        textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
-                        textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
-                    });
-
-                    requestAnimationFrame(renderFooterSmooth);
-                }
-
-                requestAnimationFrame(renderFooterSmooth);
-
-                window.addEventListener('scroll', () => {
-                    const footerTop = footerSection.offsetTop;
-                    const scrollY = window.scrollY;
-                    const windowHeight = window.innerHeight;
-
-                    const scrollDirection = scrollY > lastScrollY ? 'down' : 'up';
-                    lastScrollY = scrollY;
-
-                    const scrolledIntoFooter = (scrollY + windowHeight) - footerTop;
-                    const triggerDistance = footerSection.offsetHeight * (window.innerWidth <= 1024 ? 0.25 : 0.2);
-
-                    if (scrolledIntoFooter >= triggerDistance) {
-                        footerSection.classList.add('dark-mode');
-                        if (blogSection) blogSection.classList.add('dark-mode');
-                    } else {
-                        footerSection.classList.remove('dark-mode');
-                        if (blogSection) blogSection.classList.remove('dark-mode');
-                    }
-
-                    let scrolledInside = scrollY - footerTop;
-                    if (scrolledInside < 0) scrolledInside = 0;
-
-                    const maxScroll = footerSection.offsetHeight - windowHeight;
-                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
-
-                    if (maxScroll > 0) {
-                        targetFooterProgress = scrolledInside / maxScroll;
-                    }
-
-                    clearTimeout(footerSnapTimeout);
-
-                    if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
-
-                        footerSnapTimeout = setTimeout(() => {
-                            let snapTargetY;
-
-                            if (scrollDirection === 'down') {
-                                if (targetFooterProgress >= 0.1) {
-                                    snapTargetY = footerTop + maxScroll;
-                                } else {
-                                    snapTargetY = footerTop;
-                                }
-                            } else {
-                                if (targetFooterProgress <= 0.9) {
-                                    snapTargetY = footerTop;
-                                } else {
-                                    snapTargetY = footerTop + maxScroll;
-                                }
-                            }
-
-                            if (Math.abs(scrollY - snapTargetY) > 5) {
-                                window.scrollTo({
-                                    top: snapTargetY,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        }, 600);
-                    }
-                }, { passive: true });
-            }
-
-            // FOOTER CURSOR BUTTON
-            const footerZone = document.getElementById('footerCursorZone');
-            const footerCursorBtn = document.getElementById('footerCursorBtn');
-
-            if (footerZone && footerCursorBtn) {
-                if (window.innerWidth <= 1024) return;
-                let mouseX = 0, mouseY = 0;
-                let btnX = 0, btnY = 0;
-
-                function animateCursor() {
-                    btnX += (mouseX - btnX) * 0.12;
-                    btnY += (mouseY - btnY) * 0.12;
-                    footerCursorBtn.style.left = btnX + 'px';
-                    footerCursorBtn.style.top = btnY + 'px';
-                    requestAnimationFrame(animateCursor);
-                }
-                requestAnimationFrame(animateCursor);
-
-                document.addEventListener('mousemove', (e) => {
-                    mouseX = e.clientX;
-                    mouseY = e.clientY;
-
-                    const rect = footerZone.getBoundingClientRect();
-                    const isInZone = e.clientX >= rect.left && e.clientX <= rect.right
-                        && e.clientY >= rect.top && e.clientY <= rect.bottom;
-
-                    if (isInZone) {
-                        footerCursorBtn.classList.add('is-visible');
-                        if (footerSection && footerSection.classList.contains('dark-mode')) {
-                            footerCursorBtn.classList.add('dark');
-                        } else {
-                            footerCursorBtn.classList.remove('dark');
-                        }
-                    } else {
-                        footerCursorBtn.classList.remove('is-visible');
-                    }
-                });
-                window.addEventListener('scroll', () => {
-                    const rect = footerZone.getBoundingClientRect();
-                    const isInZone = mouseX >= rect.left && mouseX <= rect.right
-                        && mouseY >= rect.top && mouseY <= rect.bottom;
-
-                    if (!isInZone) {
-                        footerCursorBtn.classList.remove('is-visible');
-                    }
-                }, { passive: true });
             }
         });
     </script>

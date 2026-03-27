@@ -440,6 +440,82 @@
             </div>
         </div>
     </section>
+
+    <!-- ═══ FOOTER (giống index.html) ══════════════════════════════════════ -->
+    <footer class="footer-section" id="footerSection">
+        <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
+            <div class="container-fluid px-4 px-md-5 w-100">
+                <div class="row align-items-center">
+
+                    <div class="col-12">
+                        <div class="footer-text-wrap">
+                            <div class="footer-line">
+                                <span class="text-old">TỪ NHỮNG</span>
+                                <span class="text-new">ĐẾN MỘT</span>
+                            </div>
+                            <div class="footer-line">
+                                <span class="text-old">Ý TƯỞNG</span>
+                                <span class="text-new">THƯƠNG HIỆU</span>
+                            </div>
+                            <div class="footer-line">
+                                <span class="text-old">BAN ĐẦU</span>
+                                <span class="text-new">ĐÁNG NHỚ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-start text-md-end mt-5 mt-md-0 footer-real-btn-col">
+                        <a href="#" class="footer-btn">
+                            CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="footer-cursor-btn" id="footerCursorBtn">
+        CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+    </a>
+
+    <section class="final-footer-section">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+
+                <div class="col-12 col-md-6 d-flex flex-column justify-content-between final-left-col">
+                    <div class="contact-info">
+                        <p>(+84)816 656718</p>
+                        <p>info@norm.vn</p>
+                        <p>No. 110 Nguyen Ngoc Nai street,<br>Phuong Liet ward, Ha Noi city, Vietnam</p>
+                    </div>
+                    <div class="copyright">
+                        <p>@2026 All Rights Reserved</p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 d-flex flex-column align-items-md-end final-right-col mt-5 mt-md-0">
+                    <div class="social-links-wrap">
+                        <p class="social-title">• Mạng xã hội</p>
+                        <ul class="social-list">
+                            <li><a href="#">Behance</a></li>
+                            <li><a href="#">Linkedin</a></li>
+                            <li><a href="#">Instagram</a></li>
+                            <li><a href="#">Facebook</a></li>
+                            <li><a href="#">Dribble</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-dome">
+                <img src="assets/images/footer-background.png" alt="Footer Texture">
+            </div>
+        </div>
+    </section>
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -461,7 +537,6 @@
             galleryItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
-
                     if (item.classList.contains('is-active')) {
                         item.classList.remove('is-active');
                     } else {
@@ -474,7 +549,6 @@
             document.addEventListener('click', () => {
                 galleryItems.forEach(item => item.classList.remove('is-active'));
             });
-
 
             let hasScrolled = false;
             const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
@@ -499,7 +573,6 @@
                     initTextObserver();
                 }
             }, { once: false, passive: true });
-
 
             const solutionSection = document.getElementById('solutionSection');
             const brandLine = document.querySelector('.brand-line');
@@ -559,31 +632,19 @@
                     if (scrollY > sectionTop && scrollY < sectionTop + maxScroll) {
                         solutionSnapTimeout = setTimeout(() => {
                             let snapTargetY;
-
                             if (scrollDirection === 'down') {
-                                if (targetSolutionProgress >= 0.1) {
-                                    snapTargetY = sectionTop + maxScroll;
-                                } else {
-                                    snapTargetY = sectionTop;
-                                }
+                                snapTargetY = targetSolutionProgress >= 0.1 ? sectionTop + maxScroll : sectionTop;
                             } else {
-                                if (targetSolutionProgress <= 0.9) {
-                                    snapTargetY = sectionTop;
-                                } else {
-                                    snapTargetY = sectionTop + maxScroll;
-                                }
+                                snapTargetY = targetSolutionProgress <= 0.9 ? sectionTop : sectionTop + maxScroll;
                             }
-
                             if (Math.abs(scrollY - snapTargetY) > 5) {
-                                window.scrollTo({
-                                    top: snapTargetY,
-                                    behavior: 'smooth'
-                                });
+                                window.scrollTo({ top: snapTargetY, behavior: 'smooth' });
                             }
                         }, snapDelay);
                     }
                 }, { passive: true });
             }
+
             const workflowSection = document.getElementById('workflowSection');
             const workflowSlogan = document.querySelector('.workflow-slogan');
             const workflowTrack = document.getElementById('workflowSliderTrack');
@@ -614,10 +675,7 @@
                     });
 
                     steps.forEach(step => step.classList.remove('is-active'));
-
-                    if (activeItem) {
-                        activeItem.classList.add('is-active');
-                    }
+                    if (activeItem) activeItem.classList.add('is-active');
                 }
 
                 window.addEventListener('resize', () => {
@@ -640,17 +698,12 @@
 
                         const maxTrackScroll = workflowTrack.scrollWidth - (window.innerWidth * 0.25);
                         const trackMove = currentWfProgress * -maxTrackScroll;
-
                         workflowTrack.style.transform = `translateX(${trackMove}px)`;
 
                         if (steps.length > 0) {
                             let activeIndex = Math.round(currentWfProgress * (steps.length - 1));
                             steps.forEach((step, index) => {
-                                if (index === activeIndex) {
-                                    step.classList.add('is-active');
-                                } else {
-                                    step.classList.remove('is-active');
-                                }
+                                step.classList.toggle('is-active', index === activeIndex);
                             });
                         }
                     }
@@ -665,7 +718,6 @@
                         calculateActiveWorkflowStep();
                         return;
                     }
-
                     if (!isTicking) {
                         window.requestAnimationFrame(() => {
                             const sectionTop = workflowSection.offsetTop;
@@ -673,7 +725,6 @@
                             const scrollY = window.scrollY;
                             const maxScroll = workflowSection.offsetHeight - windowHeight;
                             let scrolledInside = Math.max(0, Math.min(scrollY - sectionTop, maxScroll));
-
                             if (maxScroll > 0) {
                                 targetWfProgress = scrolledInside / maxScroll;
                             }
@@ -682,8 +733,11 @@
                         isTicking = true;
                     }
                 }, { passive: true });
+
                 calculateActiveWorkflowStep();
             }
         });
     </script>
 </body>
+
+</html>

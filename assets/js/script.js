@@ -102,7 +102,7 @@ revealElements.forEach(revealTextEl => {
     });
 });
 
-// ACTIVE STATUS SERVICES 
+// ACTIVE STATUS SERVICES
 const serviceItems = document.querySelectorAll('.service-item');
 
 function calculateActiveService() {
@@ -136,3 +136,134 @@ function calculateActiveService() {
 window.addEventListener('scroll', calculateActiveService, { passive: true });
 window.addEventListener('resize', calculateActiveService, { passive: true });
 document.addEventListener('DOMContentLoaded', calculateActiveService);
+
+// ─── FOOTER SCROLL TEXT (shared) ────────────────────────────────────────────
+function initFooterScrollText() {
+    const footerSection = document.getElementById('footerSection');
+    const footerLines = document.querySelectorAll('.footer-line');
+    const blogSection = document.querySelector('.blog-slider-section, .members-section');
+
+    if (!footerSection || footerLines.length === 0) return;
+
+    let targetFooterProgress = 0;
+    let currentFooterProgress = 0;
+    let footerSnapTimeout;
+    let lastScrollY = window.scrollY;
+
+    function renderFooterSmooth() {
+        currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.05;
+
+        footerLines.forEach((line) => {
+            const textNew = line.querySelector('.text-new');
+            if (!textNew) return;
+            let progress = Math.max(0, Math.min(1, currentFooterProgress));
+            const insetTop = (1 - progress) * 100;
+            textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
+            textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
+        });
+
+        requestAnimationFrame(renderFooterSmooth);
+    }
+
+    requestAnimationFrame(renderFooterSmooth);
+
+    window.addEventListener('scroll', () => {
+        const footerTop = footerSection.offsetTop;
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+
+        const scrollDirection = scrollY > lastScrollY ? 'down' : 'up';
+        lastScrollY = scrollY;
+
+        const scrolledIntoFooter = (scrollY + windowHeight) - footerTop;
+        const triggerDistance = footerSection.offsetHeight * (window.innerWidth <= 1024 ? 0.25 : 0.2);
+
+        if (scrolledIntoFooter >= triggerDistance) {
+            footerSection.classList.add('dark-mode');
+            if (blogSection) blogSection.classList.add('dark-mode');
+        } else {
+            footerSection.classList.remove('dark-mode');
+            if (blogSection) blogSection.classList.remove('dark-mode');
+        }
+
+        let scrolledInside = Math.max(0, scrollY - footerTop);
+        const maxScroll = footerSection.offsetHeight - windowHeight;
+        if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+
+        if (maxScroll > 0) {
+            targetFooterProgress = scrolledInside / maxScroll;
+        }
+
+        clearTimeout(footerSnapTimeout);
+
+        if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
+            footerSnapTimeout = setTimeout(() => {
+                let snapTargetY;
+                if (scrollDirection === 'down') {
+                    snapTargetY = targetFooterProgress >= 0.1 ? footerTop + maxScroll : footerTop;
+                } else {
+                    snapTargetY = targetFooterProgress <= 0.9 ? footerTop : footerTop + maxScroll;
+                }
+                if (Math.abs(scrollY - snapTargetY) > 5) {
+                    window.scrollTo({ top: snapTargetY, behavior: 'smooth' });
+                }
+            }, 600);
+        }
+    }, { passive: true });
+}
+
+// ─── FOOTER CURSOR BUTTON (shared) ──────────────────────────────────────────
+function initFooterCursorBtn() {
+    const footerSection = document.getElementById('footerSection');
+    const footerZone = document.getElementById('footerCursorZone');
+    const footerCursorBtn = document.getElementById('footerCursorBtn');
+
+    if (!footerZone || !footerCursorBtn || window.innerWidth <= 1024) return;
+
+    let mouseX = 0, mouseY = 0;
+    let btnX = 0, btnY = 0;
+
+    function animateCursor() {
+        btnX += (mouseX - btnX) * 0.12;
+        btnY += (mouseY - btnY) * 0.12;
+        footerCursorBtn.style.left = btnX + 'px';
+        footerCursorBtn.style.top = btnY + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    requestAnimationFrame(animateCursor);
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        const rect = footerZone.getBoundingClientRect();
+        const isInZone = e.clientX >= rect.left && e.clientX <= rect.right
+            && e.clientY >= rect.top && e.clientY <= rect.bottom;
+
+        if (isInZone) {
+            footerCursorBtn.classList.add('is-visible');
+            if (footerSection && footerSection.classList.contains('dark-mode')) {
+                footerCursorBtn.classList.add('dark');
+            } else {
+                footerCursorBtn.classList.remove('dark');
+            }
+        } else {
+            footerCursorBtn.classList.remove('is-visible');
+        }
+    });
+
+    window.addEventListener('scroll', () => {
+        const rect = footerZone.getBoundingClientRect();
+        const isInZone = mouseX >= rect.left && mouseX <= rect.right
+            && mouseY >= rect.top && mouseY <= rect.bottom;
+        if (!isInZone) {
+            footerCursorBtn.classList.remove('is-visible');
+        }
+    }, { passive: true });
+}
+
+// Khởi chạy footer cho tất cả trang
+document.addEventListener('DOMContentLoaded', () => {
+    initFooterScrollText();
+    initFooterCursorBtn();
+});
