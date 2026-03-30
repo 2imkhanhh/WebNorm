@@ -5,9 +5,9 @@ body.work-page {
 }
 
 .work-hero-section {
-    padding-top: 180px; 
+    padding-top: 180px;
     padding-bottom: 80px;
-    padding-left: clamp(24px, 2.5vw, 60px); 
+    padding-left: clamp(24px, 2.5vw, 60px);
     padding-right: clamp(24px, 2.5vw, 60px);
     width: 100%;
 }
@@ -21,7 +21,7 @@ body.work-page {
 .wh-line {
     display: flex;
     width: 100%;
-    line-height: 1.2; 
+    line-height: 1.2;
 }
 
 .wh-space-between {
@@ -34,26 +34,206 @@ body.work-page {
 
 .wh-text {
     font-family: 'AeonikPro', sans-serif;
-    font-size: clamp(40px, 8vw, 130px); 
+    font-size: clamp(40px, 8vw, 130px);
     font-weight: 500;
-    letter-spacing: -0.02em; 
-    text-decoration: none; 
-    transition: color 0.3s ease, opacity 0.3s ease; 
-    display: inline-block; 
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    transition: color 0.3s ease, opacity 0.3s ease;
+    display: inline-block;
 }
 
 .wh-dark {
-    color: #424242; 
+    color: #424242;
 }
 
-.wh-dark:hover {
+/* .wh-dark:hover {
     opacity: 0.6; 
-}
+} */
 
 .wh-light {
-    color: #BDBDBD; 
+    color: #BDBDBD;
 }
 
 .wh-light:hover {
-    color: #424242; 
+    color: #424242;
+}
+
+.work-list-section {
+    padding-left: clamp(24px, 2.5vw, 60px);
+    padding-right: clamp(24px, 2.5vw, 60px);
+    padding-bottom: 120px;
+    width: 100%;
+}
+
+.work-list-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+}
+
+.view-list-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111111;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s ease;
+}
+
+.view-list-btn:hover {
+    opacity: 0.6;
+}
+
+.view-list-btn i {
+    font-size: 18px;
+}
+
+.work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 80px;
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-img-wrap {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+    background-color: #E0E0E0;
+    margin-bottom: 16px;
+}
+
+.project-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-card:hover .project-img {
+    transform: scale(1.05);
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.project-title {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111111;
+    margin: 0;
+}
+
+.project-category {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #757575;
+    margin: 0;
+}
+
+.work-list-section,
+.work-list-section .view-list-btn,
+.work-list-section .project-title,
+.work-list-section .project-category,
+.work-list-section .project-img-wrap {
+    transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+/* Background cho section khi ở dark mode */
+.work-list-section.dark-mode {
+    background-color: #111111;
+}
+
+/* Đổi màu chữ nút xem danh sách */
+.work-list-section.dark-mode .view-list-btn {
+    color: #ffffff;
+}
+
+/* Đổi màu tên dự án */
+.work-list-section.dark-mode .project-title {
+    color: #ffffff;
+}
+
+/* Đổi màu thể loại dự án (sáng lên một chút để dễ đọc trên nền đen) */
+.work-list-section.dark-mode .project-category {
+    color: #BDBDBD;
+}
+
+/* Đổi màu nền của khung chứa ảnh dự án (giúp không bị chói màu xám sáng khi ảnh chưa load xong) */
+.work-list-section.dark-mode .project-img-wrap {
+    background-color: #222222;
+}
+
+/* TABLET */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .work-hero-section {
+        padding-top: 140px;
+        padding-bottom: 60px;
+    }
+
+    .wh-text {
+        font-size: clamp(36px, 7vw, 80px);
+    }
+
+    .work-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px 40px;
+    }
+
+    .project-title {
+        font-size: 16px;
+    }
+
+    .project-category {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 765px) {
+    .work-hero-section {
+        padding-top: 100px;
+        padding-bottom: 40px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .wh-text {
+        font-size: clamp(28px, 9vw, 52px);
+        letter-spacing: -0.01em;
+    }
+
+    .work-list-section {
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 80px;
+    }
+
+    .work-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .project-title {
+        font-size: 16px;
+    }
+
+    .project-category {
+        font-size: 12px;
+    }
 }
