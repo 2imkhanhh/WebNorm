@@ -1,0 +1,59 @@
+body.work-page {
+    background: #FFFFFF;
+    overflow-x: hidden;
+    min-height: auto;
+}
+
+.work-hero-section {
+    padding-top: 180px; 
+    padding-bottom: 80px;
+    padding-left: clamp(24px, 2.5vw, 60px); 
+    padding-right: clamp(24px, 2.5vw, 60px);
+    width: 100%;
+}
+
+.work-hero-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.wh-line {
+    display: flex;
+    width: 100%;
+    line-height: 1.2; 
+}
+
+.wh-space-between {
+    justify-content: space-between;
+}
+
+.wh-right {
+    justify-content: flex-end;
+}
+
+.wh-text {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(40px, 8vw, 130px); 
+    font-weight: 500;
+    letter-spacing: -0.02em; 
+    text-decoration: none; 
+    transition: color 0.3s ease, opacity 0.3s ease; 
+    display: inline-block; 
+}
+
+.wh-dark {
+    color: #424242; 
+}
+
+.wh-dark:hover {
+    opacity: 0.6; 
+}
+
+.wh-light {
+    color: #BDBDBD; 
+}
+
+.wh-light:hover {
+    color: #424242; 
+}

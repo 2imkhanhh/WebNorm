@@ -137,7 +137,7 @@ window.addEventListener('scroll', calculateActiveService, { passive: true });
 window.addEventListener('resize', calculateActiveService, { passive: true });
 document.addEventListener('DOMContentLoaded', calculateActiveService);
 
-// ─── FOOTER SCROLL TEXT (shared) ────────────────────────────────────────────
+// FOOTER SCROLL TEXT
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
@@ -212,11 +212,12 @@ function initFooterScrollText() {
     }, { passive: true });
 }
 
-// ─── FOOTER CURSOR BUTTON (shared) ──────────────────────────────────────────
+// FOOTER CURSOR BUTTON 
 function initFooterCursorBtn() {
     const footerSection = document.getElementById('footerSection');
     const footerZone = document.getElementById('footerCursorZone');
     const footerCursorBtn = document.getElementById('footerCursorBtn');
+    const textWrap = document.querySelector('.footer-text-wrap'); 
 
     if (!footerZone || !footerCursorBtn || window.innerWidth <= 1024) return;
 
@@ -236,9 +237,15 @@ function initFooterCursorBtn() {
         mouseX = e.clientX;
         mouseY = e.clientY;
 
-        const rect = footerZone.getBoundingClientRect();
-        const isInZone = e.clientX >= rect.left && e.clientX <= rect.right
-            && e.clientY >= rect.top && e.clientY <= rect.bottom;
+        const zoneRect = footerZone.getBoundingClientRect();
+        
+        let triggerTop = zoneRect.top; 
+        if (textWrap) {
+            triggerTop = textWrap.getBoundingClientRect().top;
+        }
+
+        const isInZone = e.clientX >= zoneRect.left && e.clientX <= zoneRect.right
+            && e.clientY >= triggerTop && e.clientY <= zoneRect.bottom;
 
         if (isInZone) {
             footerCursorBtn.classList.add('is-visible');
@@ -253,16 +260,22 @@ function initFooterCursorBtn() {
     });
 
     window.addEventListener('scroll', () => {
-        const rect = footerZone.getBoundingClientRect();
-        const isInZone = mouseX >= rect.left && mouseX <= rect.right
-            && mouseY >= rect.top && mouseY <= rect.bottom;
+        const zoneRect = footerZone.getBoundingClientRect();
+        
+        let triggerTop = zoneRect.top;
+        if (textWrap) {
+            triggerTop = textWrap.getBoundingClientRect().top;
+        }
+
+        const isInZone = mouseX >= zoneRect.left && mouseX <= zoneRect.right
+            && mouseY >= triggerTop && mouseY <= zoneRect.bottom;
+            
         if (!isInZone) {
             footerCursorBtn.classList.remove('is-visible');
         }
     }, { passive: true });
 }
 
-// Khởi chạy footer cho tất cả trang
 document.addEventListener('DOMContentLoaded', () => {
     initFooterScrollText();
     initFooterCursorBtn();
