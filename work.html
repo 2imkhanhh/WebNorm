@@ -45,16 +45,16 @@
     <section class="work-hero-section">
         <div class="work-hero-container">
             <div class="wh-line">
-                <a href="#" class="wh-text wh-dark">TẤT CẢ DỰ ÁN</a>
+                <a href="#" class="wh-text wh-dark filter-btn" data-filter="all">TẤT CẢ DỰ ÁN</a>
             </div>
 
             <div class="wh-line wh-space-between">
-                <a href="#" class="wh-text wh-light">NỔI BẬT</a>
-                <a href="#" class="wh-text wh-light">NHẬN DIỆN</a>
+                <a href="#" class="wh-text wh-light filter-btn" data-filter="featured">NỔI BẬT</a>
+                <a href="#" class="wh-text wh-light filter-btn" data-filter="identity">NHẬN DIỆN</a>
             </div>
 
             <div class="wh-line wh-right">
-                <a href="#" class="wh-text wh-light">WEBSITE</a>
+                <a href="#" class="wh-text wh-light filter-btn" data-filter="website">WEBSITE</a>
             </div>
         </div>
     </section>
@@ -67,43 +67,53 @@
         </div>
 
         <div class="work-grid">
-            <a href="#" class="project-card">
+            <a href="#" class="project-card" data-category="identity">
                 <div class="project-img-wrap">
                     <img src="assets/images/project1.png" alt="Tiên Phong" class="project-img">
                 </div>
                 <div class="project-info">
-                    <h3 class="project-title">Tiên Phong</h3>
-                    <p class="project-category">Brand identity - UI/UX - Social Stategy</p>
+                    <h3 class="project-title">Nhận diện</h3>
+                    <p class="project-category">Brand identity</p>
                 </div>
             </a>
 
-            <a href="#" class="project-card">
+            <a href="#" class="project-card" data-category="website">
                 <div class="project-img-wrap">
                     <img src="assets/images/project2.png" alt="Tiên Phong" class="project-img">
                 </div>
                 <div class="project-info">
-                    <h3 class="project-title">Tiên Phong</h3>
-                    <p class="project-category">Brand identity - UI/UX - Social Stategy</p>
+                    <h3 class="project-title">Website</h3>
+                    <p class="project-category">UI/UX Design</p>
                 </div>
             </a>
 
-            <a href="#" class="project-card">
+            <a href="#" class="project-card" data-category="featured">
                 <div class="project-img-wrap">
                     <img src="assets/images/project3.png" alt="Tiên Phong" class="project-img">
                 </div>
                 <div class="project-info">
-                    <h3 class="project-title">Tiên Phong</h3>
+                    <h3 class="project-title">Nổi bật</h3>
                     <p class="project-category">Brand identity - UI/UX - Social Stategy</p>
                 </div>
             </a>
 
-            <a href="#" class="project-card">
+            <a href="#" class="project-card" data-category="featured">
                 <div class="project-img-wrap">
                     <img src="assets/images/project4.png" alt="Tiên Phong" class="project-img">
                 </div>
                 <div class="project-info">
-                    <h3 class="project-title">Tiên Phong</h3>
-                    <p class="project-category">Brand identity - UI/UX - Social Stategy</p>
+                    <h3 class="project-title">Nổi bật 2</h3>
+                    <p class="project-category">Social Stategy</p>
+                </div>
+            </a>
+
+            <a href="#" class="project-card" data-category="website">
+                <div class="project-img-wrap">
+                    <img src="assets/images/project4.png" alt="Tiên Phong" class="project-img">
+                </div>
+                <div class="project-info">
+                    <h3 class="project-title">Website </h3>
+                    <p class="project-category">Web Development</p>
                 </div>
             </a>
         </div>
@@ -183,4 +193,46 @@
     </section>
 
     <script src="assets/js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const projects = document.querySelectorAll('.project-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Ngăn trình duyệt nhảy trang
+
+                    // 1. Đổi màu nút: Nút được bấm thì đậm, các nút khác thì nhạt
+                    filterBtns.forEach(fBtn => {
+                        fBtn.classList.remove('wh-dark');
+                        fBtn.classList.add('wh-light');
+                    });
+                    btn.classList.remove('wh-light');
+                    btn.classList.add('wh-dark');
+
+                    // 2. Lấy giá trị của bộ lọc
+                    const filterValue = btn.getAttribute('data-filter');
+
+                    // 3. Lọc dự án bằng Inline Style (Chống lỗi Cache CSS)
+                    projects.forEach(project => {
+                        // Lấy data-category của từng dự án (thêm || '' để đề phòng có thẻ quên ghi)
+                        const category = project.getAttribute('data-category') || '';
+
+                        if (filterValue === 'all' || category.includes(filterValue)) {
+                            // Hiện dự án (Thẻ project-card của bạn dùng display: flex)
+                            project.style.display = 'flex'; 
+                            
+                            // Trick nhỏ để reset lại hiệu ứng mượt mà khi hiện ra
+                            project.style.animation = 'none';
+                            project.offsetHeight; // Ép trình duyệt load lại thay đổi
+                            project.style.animation = 'fadeIn 0.4s ease forwards';
+                        } else {
+                            // Ẩn lập tức dự án đi
+                            project.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>

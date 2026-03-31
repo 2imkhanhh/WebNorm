@@ -1,0 +1,84 @@
+body.work-detail-page {
+    background: #FFFFFF;
+    overflow-x: hidden;
+    min-height: auto;
+}
+
+.project-intro-section {
+    padding-top: 180px; /* Đẩy xuống để không bị header che mất */
+    padding-bottom: 80px;
+}
+
+.intro-slogan {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(32px, 3.5vw, 44px);
+    font-weight: 700;
+    color: #111111;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    max-width: 90%;
+    margin: 0;
+}
+
+.intro-right-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Đẩy toàn bộ nội dung dồn xuống dưới đáy */
+    height: 100%;
+    padding-top: 60px; /* Đẩy thêm một khoảng hở ở trên để chắc chắn nó tụt xuống */
+}
+
+.intro-desc {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(16px, 1.2vw, 18px);
+    color: #666666;
+    line-height: 1.5;
+    max-width: 500px;
+    margin-bottom: 60px;
+}
+
+/* Cụm thông tin Khách hàng, Dịch vụ, Thời gian */
+.intro-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.meta-label {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 13px;
+    color: #A0A0A0;
+    font-weight: 400;
+}
+
+.meta-value {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 14px;
+    color: #111111;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* SECTION ẢNH BANNER */
+.project-hero-section {
+    width: 100%;
+    /* margin-bottom: 80px; Nếu sau này bên dưới còn nội dung thì mở comment cái này */
+}
+
+.hero-image-wrap {
+    width: 100%;
+    display: block;
+}
+
+.hero-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
