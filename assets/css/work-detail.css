@@ -133,3 +133,114 @@ body.work-detail-page {
     display: block;
     border-radius: 2px; 
 }
+
+.project-credits-section {
+    padding-bottom: 100px; 
+}
+
+.credits-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.credit-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 6px; 
+}
+
+.credit-role {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(15px, 1.2vw, 18px);
+    color: #111111;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.credit-name {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(15px, 1.2vw, 18px);
+    color: #757575; 
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.service-divider {
+  border: 0;
+  border-top: 1px solid #BDBDBD;
+}
+
+.explore-section {
+    padding-bottom: 150px; 
+}
+
+.explore-title {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(40px, 5.5vw, 85px); 
+    font-weight: 500;
+    color: #111111;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.next-project-link {
+    display: block;
+    text-decoration: none;
+}
+
+.next-project-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.next-project-wrapper,
+.next-project-wrapper * {
+    cursor: none !important;
+}
+
+.next-project-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
+}
+
+.next-project-link:hover .next-project-img {
+    transform: scale(1.05);
+}
+
+.btn-next-project {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    will-change: transform;
+    background-color: #FFFFFF;
+    color: #111111;
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    white-space: nowrap;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.next-project-wrapper:hover .btn-next-project {
+    opacity: 1;
+    transform: scale(1); 
+}
+
+.btn-next-project i {
+    font-size: 18px;
+}
