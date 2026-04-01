@@ -35,9 +35,9 @@ body.work-detail-page {
 .intro-meta {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; 
-    max-width: 95%; 
-    gap: 20px; 
+    justify-content: space-between;
+    max-width: 95%;
+    gap: 20px;
 }
 
 .meta-item {
@@ -85,7 +85,7 @@ body.work-detail-page {
 }
 
 .overview-text-block {
-    margin-bottom: 80px; 
+    margin-bottom: 80px;
 }
 
 .overview-content-row {
@@ -113,7 +113,7 @@ body.work-detail-page {
 .overview-img {
     width: 100%;
     height: auto;
-    object-fit: contain; 
+    object-fit: contain;
     display: block;
 }
 
@@ -121,21 +121,21 @@ body.work-detail-page {
     padding-bottom: 120px;
 }
 
-.gallery-row > div {
+.gallery-row>div {
     display: flex;
 }
 
 .gallery-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
     object-position: center;
     display: block;
-    border-radius: 2px; 
+    border-radius: 2px;
 }
 
 .project-credits-section {
-    padding-bottom: 100px; 
+    padding-bottom: 100px;
 }
 
 .credits-list {
@@ -146,7 +146,7 @@ body.work-detail-page {
 .credit-item {
     display: flex;
     flex-direction: column;
-    margin-bottom: 6px; 
+    margin-bottom: 6px;
 }
 
 .credit-role {
@@ -160,23 +160,23 @@ body.work-detail-page {
 .credit-name {
     font-family: 'AeonikPro', sans-serif;
     font-size: clamp(15px, 1.2vw, 18px);
-    color: #757575; 
+    color: #757575;
     font-weight: 400;
     line-height: 1.4;
 }
 
 .service-divider {
-  border: 0;
-  border-top: 1px solid #BDBDBD;
+    border: 0;
+    border-top: 1px solid #BDBDBD;
 }
 
 .explore-section {
-    padding-bottom: 150px; 
+    padding-bottom: 150px;
 }
 
 .explore-title {
     font-family: 'AeonikPro', sans-serif;
-    font-size: clamp(40px, 5.5vw, 85px); 
+    font-size: clamp(40px, 5.5vw, 85px);
     font-weight: 500;
     color: #111111;
     margin: 0;
@@ -205,7 +205,7 @@ body.work-detail-page {
     height: auto;
     object-fit: cover;
     display: block;
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .next-project-link:hover .next-project-img {
@@ -216,11 +216,10 @@ body.work-detail-page {
     position: absolute;
     top: 0;
     left: 0;
-    transform: translate(0, 0) scale(0);
+    transform: scale(0);
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    will-change: transform;
     background-color: #FFFFFF;
     color: #111111;
     font-family: 'AeonikPro', sans-serif;
@@ -231,14 +230,14 @@ body.work-detail-page {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
-    transition: opacity 0.3s ease, transform 0.2s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .next-project-wrapper:hover .btn-next-project {
     opacity: 1;
-    transform: scale(1); 
+    transform: scale(1);
 }
 
 .btn-next-project i {
