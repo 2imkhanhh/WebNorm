@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
-    const blogSection = document.querySelector('.blog-slider-section, .members-section, .work-list-section');
+    const blogSection = document.querySelector('.blog-slider-section, .members-section, .work-list-section, .explore-section');
 
     if (!footerSection || footerLines.length === 0) return;
 
