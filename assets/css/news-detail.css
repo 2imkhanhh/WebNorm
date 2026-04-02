@@ -1,0 +1,132 @@
+body.news-detail-page {
+    background: #FAFAFA;
+    overflow-x: hidden;
+    min-height: auto;
+}
+
+.article-section {
+    padding-top: 180px; 
+    padding-bottom: 120px;
+}
+
+.article-date {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 15px;
+    color: #BDBDBD;
+    margin-bottom: 20px;
+    letter-spacing: 0.01em;
+}
+
+.article-title {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(32px, 3.5vw, 44px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: #111111;
+    margin-bottom: 60px;
+    letter-spacing: -0.02em;
+}
+
+.article-meta-bar {
+    margin-bottom: 60px;
+    gap: 24px; 
+}
+
+.author-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 16px;
+}
+
+.author-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.author-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111111;
+    margin: 0 0 4px 0;
+}
+
+.author-role {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+}
+
+.share-actions {
+    gap: 12px;
+}
+
+.share-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #757575;
+    margin-right: 8px;
+}
+
+.share-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #DEDEDE;
+    border-radius: 50%;
+    color: #111111;
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.share-icon.text-icon {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.share-icon:hover {
+    background-color: #111111;
+    border-color: #111111;
+    color: #ffffff;
+}
+
+.article-content {
+    color: #1a1a1a;
+}
+
+.article-content p {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    margin-bottom: 24px;
+    color: #111111;
+}
+
+.article-content h3 {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: #111111;
+    margin-top: 48px;
+    margin-bottom: 20px;
+}
+
+.article-image-container {
+    width: 100%;
+    margin-top: 40px;    
+    margin-bottom: 20px; 
+    border-radius: 8px;  
+    overflow: hidden;
+}
+
+.article-fluid-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
