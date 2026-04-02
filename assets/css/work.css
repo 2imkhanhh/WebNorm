@@ -155,27 +155,22 @@ body.work-page {
     transition: background-color 0.6s ease, color 0.6s ease;
 }
 
-/* Background cho section khi ở dark mode */
 .work-list-section.dark-mode {
     background-color: #111111;
 }
 
-/* Đổi màu chữ nút xem danh sách */
 .work-list-section.dark-mode .view-list-btn {
     color: #ffffff;
 }
 
-/* Đổi màu tên dự án */
 .work-list-section.dark-mode .project-title {
     color: #ffffff;
 }
 
-/* Đổi màu thể loại dự án (sáng lên một chút để dễ đọc trên nền đen) */
 .work-list-section.dark-mode .project-category {
     color: #BDBDBD;
 }
 
-/* Đổi màu nền của khung chứa ảnh dự án (giúp không bị chói màu xám sáng khi ảnh chưa load xong) */
 .work-list-section.dark-mode .project-img-wrap {
     background-color: #222222;
 }

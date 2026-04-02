@@ -4,20 +4,85 @@ body.news-page {
     min-height: auto;
 }
 
-.news-heading-section{
+.news-heading-section {
     padding-top: 180px;
+    padding-bottom: 100px; 
+}
+
+.container-fluid.custom-padding {
+    padding-left: clamp(24px, 2.5vw, 60px);
+    padding-right: clamp(24px, 2.5vw, 60px);
+}
+
+.testimonial-title-container {
+    display: flex;
+    flex-direction: column;
 }
 
 .news-text-left {
-  align-self: flex-start;
-  text-align: left;
-  position: relative;
-  padding-left: 20vw;
+    align-self: flex-start;
+    text-align: left;
+    position: relative;
+    padding-left: 20vw;
 }
 
 .news-text-right {
-  align-self: flex-end;
-  text-align: right;
-  padding-right: 20vw;
-  margin-top: 20px;
+    align-self: flex-end;
+    text-align: right;
+    padding-right: 20vw;
+    margin-top: 20px;
+}
+
+.news-grid-section {
+    padding-bottom: 150px; 
+}
+
+.news-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.news-image-wrapper {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.news-image-wrapper img {
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.news-card:hover .news-image-wrapper img {
+    transform: scale(1.02); 
+}
+
+.news-meta {
+    margin-bottom: 6px;
+}
+
+.news-date {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 13px;
+    color: #9E9E9E;
+    font-weight: 400;
+}
+
+.news-card-title {
+    font-size: clamp(16px, 1.2vw, 18px);
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.news-card-title a {
+    color: #111111;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.news-card-title a:hover {
+    color: #757575;
 }
