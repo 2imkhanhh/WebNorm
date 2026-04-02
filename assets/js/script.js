@@ -141,7 +141,9 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
-    const blogSection = document.querySelector('.blog-slider-section, .members-section, .work-list-section, .explore-section');
+    
+    // Thay querySelector bằng querySelectorAll để lấy TẤT CẢ các section cần đổi màu
+    const sectionsToDarken = document.querySelectorAll('.blog-slider-section, .members-section, .work-list-section, .explore-section, .project-credits-section');
 
     if (!footerSection || footerLines.length === 0) return;
 
@@ -180,10 +182,16 @@ function initFooterScrollText() {
 
         if (scrolledIntoFooter >= triggerDistance) {
             footerSection.classList.add('dark-mode');
-            if (blogSection) blogSection.classList.add('dark-mode');
+            // Lặp qua tất cả các section và thêm class dark-mode
+            sectionsToDarken.forEach(section => {
+                section.classList.add('dark-mode');
+            });
         } else {
             footerSection.classList.remove('dark-mode');
-            if (blogSection) blogSection.classList.remove('dark-mode');
+            // Lặp qua tất cả các section và xóa class dark-mode
+            sectionsToDarken.forEach(section => {
+                section.classList.remove('dark-mode');
+            });
         }
 
         let scrolledInside = Math.max(0, scrollY - footerTop);

@@ -86,11 +86,9 @@
     <section class="project-overview-section">
         <div class="container-fluid px-4 px-md-5">
             <div class="row align-items-start overview-content-row">
-
                 <div class="col-12 col-md-3">
                     <span class="label-side">• Tổng quan về dự án</span>
                 </div>
-
                 <div class="col-12 col-md-9 col-lg-9">
                     <div class="overview-text-block">
                         <p class="overview-text">
@@ -106,12 +104,10 @@
                             thương hiệu một cách rõ nét.
                         </p>
                     </div>
-
                     <div class="overview-image-wrapper">
                         <img src="assets/images/mockup.png" alt="Project Overview Mockups" class="overview-img">
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
@@ -204,15 +200,13 @@
                 </div>
 
                 <div class="col-12 col-md-6 mt-4 mt-md-0">
-                    <a href="#" class="next-project-link">
-                        <div class="next-project-wrapper">
-                            <img src="assets/images/work3.jpg" alt="Next Project" class="next-project-img">
+                    <div class="next-project-wrapper">
+                        <img src="assets/images/work3.jpg" alt="Next Project" class="next-project-img">
 
-                            <div class="btn-next-project">
-                                XEM DỰ ÁN <i class='bx bx-right-arrow-alt'></i>
-                            </div>
-                        </div>
-                    </a>
+                        <a href="#" class="btn-next-project">
+                            XEM DỰ ÁN <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
                 </div>
 
             </div>
@@ -259,7 +253,7 @@
     <section class="final-footer-section">
         <div class="container-fluid h-100">
             <div class="row h-100">
-                
+
                 <div class="col-12 col-md-6 d-flex flex-column justify-content-between final-left-col">
                     <div class="contact-info">
                         <p>(+84)816 656718</p>
@@ -301,11 +295,35 @@
             if (!wrapper || !cursorBtn) return;
 
             wrapper.addEventListener('mousemove', (e) => {
-                const rect = wrapper.getBoundingClientRect();
-                const x = e.clientX - rect.left - cursorBtn.offsetWidth / 2;
-                const y = e.clientY - rect.top - cursorBtn.offsetHeight / 2;
-                cursorBtn.style.left = x + 'px';
-                cursorBtn.style.top = y + 'px';
+                if (window.innerWidth > 1024) { 
+                    const rect = wrapper.getBoundingClientRect();
+                    const x = e.clientX - rect.left - cursorBtn.offsetWidth / 2;
+                    const y = e.clientY - rect.top - cursorBtn.offsetHeight / 2;
+                    cursorBtn.style.left = x + 'px';
+                    cursorBtn.style.top = y + 'px';
+                }
+            });
+
+            wrapper.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 1024) { 
+                    cursorBtn.style.left = '50%';
+                    cursorBtn.style.top = '50%';
+                }
+            });
+
+            wrapper.addEventListener('click', function (e) {
+                if (window.innerWidth <= 1024) { 
+                    if (e.target.closest('.btn-next-project')) return;
+                    this.classList.toggle('show-button');
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (window.innerWidth <= 1024) {
+                    if (!wrapper.contains(e.target)) {
+                        wrapper.classList.remove('show-button');
+                    }
+                }
             });
         });
     </script>
