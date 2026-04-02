@@ -899,7 +899,6 @@ header.navbar {
   padding: 0;
 }
 
-/* --- TRACK & SLIDE --- */
 .testi-track {
   display: flex;
   align-items: stretch;
@@ -922,7 +921,6 @@ header.navbar {
   opacity: 1;
 }
 
-/* --- NỘI DUNG SLIDE --- */
 .testimonial-avatar {
   width: clamp(200px, 18vw, 420px);
   aspect-ratio: 25 / 28;
@@ -963,7 +961,6 @@ header.navbar {
   margin: 0;
 }
 
-/* --- ĐIỀU HƯỚNG & PHÂN TRANG --- */
 .testimonial-footer {
   margin-top: 40px;
 }

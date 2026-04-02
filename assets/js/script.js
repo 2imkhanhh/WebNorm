@@ -102,6 +102,29 @@ revealElements.forEach(revealTextEl => {
     });
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Gộp tất cả các class hiệu ứng từ cả 2 file
+    const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
+    
+    if (animatedTexts.length > 0) {
+        const textObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                } else {
+                    // Xóa class để khi cuộn ngược lại chữ sẽ có hiệu ứng lại từ đầu
+                    entry.target.classList.remove('is-visible');
+                }
+            });
+        }, { 
+            threshold: 0.2, // Kích hoạt khi thấy 20% thẻ (chạy mượt hơn 0.5)
+            rootMargin: "0px" 
+        });
+
+        animatedTexts.forEach(text => textObserver.observe(text));
+    }
+});
+
 // ACTIVE STATUS SERVICES
 const serviceItems = document.querySelectorAll('.service-item');
 
@@ -142,7 +165,6 @@ function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
     
-    // Thay querySelector bằng querySelectorAll để lấy TẤT CẢ các section cần đổi màu
     const sectionsToDarken = document.querySelectorAll('.blog-slider-section, .members-section, .work-list-section, .explore-section, .project-credits-section');
 
     if (!footerSection || footerLines.length === 0) return;
@@ -182,13 +204,11 @@ function initFooterScrollText() {
 
         if (scrolledIntoFooter >= triggerDistance) {
             footerSection.classList.add('dark-mode');
-            // Lặp qua tất cả các section và thêm class dark-mode
             sectionsToDarken.forEach(section => {
                 section.classList.add('dark-mode');
             });
         } else {
             footerSection.classList.remove('dark-mode');
-            // Lặp qua tất cả các section và xóa class dark-mode
             sectionsToDarken.forEach(section => {
                 section.classList.remove('dark-mode');
             });
