@@ -1614,7 +1614,6 @@ header.navbar {
     display: none;
   }
 
-  /* Hide desktop CTAs, show mobile CTAs below big text */
   .hero-ctas {
     display: none !important;
   }
@@ -2100,7 +2099,6 @@ header.navbar {
     display: none;
   }
 
-  /* Hide desktop CTAs, show mobile CTAs below big text */
   .hero-ctas {
     display: none !important;
   }
@@ -2572,9 +2570,7 @@ header.navbar {
 
   .final-footer-section {
     margin-top: -25vh;
-    /* Kéo lên mạnh hơn vì điện thoại màn hình dọc rất dài */
     padding-top: 40px;
-    /* Thu hẹp thêm khoảng trống bên trong */
     padding-bottom: 0;
   }
 

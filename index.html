@@ -536,19 +536,19 @@
     <section class="blog-slider-section">
         <div class="container-fluid px-4 px-md-5">
             <div class="d-flex justify-content-end mb-4">
-                <a href="#" class="link-more text-uppercase" style="color: #111;">XEM THÊM BÀI VIẾT</a>
+                <a href="news.html" class="link-more text-uppercase" style="color: #111;">XEM THÊM BÀI VIẾT</a>
             </div>
 
             <div class="blog-slider-container">
                 <div class="blog-track" id="blogTrack">
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="#" class="d-block w-100 h-100">
+                            <a href="news-detail.html" class="d-block w-100 h-100">
                                 <img src="assets/images/project1.png" alt="Blog 1">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="#" class="text-decoration-none" style="color: inherit;">
+                            <a href="news-detail.html" class="text-decoration-none" style="color: inherit;">
                                 Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
                             </a>
                         </h3>
@@ -556,12 +556,12 @@
 
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="#" class="d-block w-100 h-100">
+                            <a href="news-detail.html" class="d-block w-100 h-100">
                                 <img src="assets/images/project2.png" alt="Blog 2">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="#" class="text-decoration-none" style="color: inherit;">
+                            <a href="news-detail.html" class="text-decoration-none" style="color: inherit;">
                                 Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
                             </a>
                         </h3>
@@ -569,12 +569,12 @@
 
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="#" class="d-block w-100 h-100">
+                            <a href="news-detail.html" class="d-block w-100 h-100">
                                 <img src="assets/images/project3.png" alt="Blog 3">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="#" class="text-decoration-none" style="color: inherit;">
+                            <a href="news-detail.html" class="text-decoration-none" style="color: inherit;">
                                 Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
                             </a>
                         </h3>
@@ -1108,49 +1108,6 @@
                 if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
             }
             initTestimonialSlider();
-
-            // BLOG SLIDER
-            const blogTrack = document.getElementById('blogTrack');
-            const blogPrev = document.getElementById('blogPrev');
-            const blogNext = document.getElementById('blogNext');
-
-            if (blogTrack && blogPrev && blogNext) {
-                let currentBlogIndex = 0;
-                const blogCards = blogTrack.querySelectorAll('.blog-card');
-
-                function updateBlogSlider() {
-                    if (blogCards.length === 0) return;
-
-                    const cardWidth = blogCards[0].offsetWidth;
-                    const gap = 24;
-                    const moveAmount = cardWidth + gap;
-
-                    const containerWidth = blogTrack.parentElement.offsetWidth;
-                    const visibleCards = containerWidth / moveAmount;
-                    const maxIndex = Math.max(0, Math.ceil(blogCards.length - visibleCards));
-
-                    if (currentBlogIndex > maxIndex) currentBlogIndex = maxIndex;
-                    if (currentBlogIndex < 0) currentBlogIndex = 0;
-
-                    blogPrev.classList.toggle('disabled', currentBlogIndex === 0);
-                    blogNext.classList.toggle('disabled', currentBlogIndex >= maxIndex);
-
-                    blogTrack.style.transform = `translate3d(-${currentBlogIndex * moveAmount}px, 0, 0)`;
-                }
-
-                blogNext.addEventListener('click', () => {
-                    currentBlogIndex++;
-                    updateBlogSlider();
-                });
-
-                blogPrev.addEventListener('click', () => {
-                    currentBlogIndex--;
-                    updateBlogSlider();
-                });
-
-                window.addEventListener('resize', updateBlogSlider);
-                updateBlogSlider();
-            }
         });
     </script>
 </body>

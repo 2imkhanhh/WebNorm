@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
-    
+
     const sectionsToDarken = document.querySelectorAll('.blog-slider-section, .members-section, .work-list-section, .explore-section, .project-credits-section, .news-grid-section');
 
     if (!footerSection || footerLines.length === 0) return;
@@ -222,7 +222,7 @@ function initFooterCursorBtn() {
     const footerSection = document.getElementById('footerSection');
     const footerZone = document.getElementById('footerCursorZone');
     const footerCursorBtn = document.getElementById('footerCursorBtn');
-    const textWrap = document.querySelector('.footer-text-wrap'); 
+    const textWrap = document.querySelector('.footer-text-wrap');
 
     if (!footerZone || !footerCursorBtn || window.innerWidth <= 1024) return;
 
@@ -243,8 +243,8 @@ function initFooterCursorBtn() {
         mouseY = e.clientY;
 
         const zoneRect = footerZone.getBoundingClientRect();
-        
-        let triggerTop = zoneRect.top; 
+
+        let triggerTop = zoneRect.top;
         if (textWrap) {
             triggerTop = textWrap.getBoundingClientRect().top;
         }
@@ -266,7 +266,7 @@ function initFooterCursorBtn() {
 
     window.addEventListener('scroll', () => {
         const zoneRect = footerZone.getBoundingClientRect();
-        
+
         let triggerTop = zoneRect.top;
         if (textWrap) {
             triggerTop = textWrap.getBoundingClientRect().top;
@@ -274,7 +274,7 @@ function initFooterCursorBtn() {
 
         const isInZone = mouseX >= zoneRect.left && mouseX <= zoneRect.right
             && mouseY >= triggerTop && mouseY <= zoneRect.bottom;
-            
+
         if (!isInZone) {
             footerCursorBtn.classList.remove('is-visible');
         }
@@ -285,3 +285,46 @@ document.addEventListener('DOMContentLoaded', () => {
     initFooterScrollText();
     initFooterCursorBtn();
 });
+
+// BLOG SLIDER
+const blogTrack = document.getElementById('blogTrack');
+const blogPrev = document.getElementById('blogPrev');
+const blogNext = document.getElementById('blogNext');
+
+if (blogTrack && blogPrev && blogNext) {
+    let currentBlogIndex = 0;
+    const blogCards = blogTrack.querySelectorAll('.blog-card');
+
+    function updateBlogSlider() {
+        if (blogCards.length === 0) return;
+
+        const cardWidth = blogCards[0].offsetWidth;
+        const gap = 24;
+        const moveAmount = cardWidth + gap;
+
+        const containerWidth = blogTrack.parentElement.offsetWidth;
+        const visibleCards = containerWidth / moveAmount;
+        const maxIndex = Math.max(0, Math.ceil(blogCards.length - visibleCards));
+
+        if (currentBlogIndex > maxIndex) currentBlogIndex = maxIndex;
+        if (currentBlogIndex < 0) currentBlogIndex = 0;
+
+        blogPrev.classList.toggle('disabled', currentBlogIndex === 0);
+        blogNext.classList.toggle('disabled', currentBlogIndex >= maxIndex);
+
+        blogTrack.style.transform = `translate3d(-${currentBlogIndex * moveAmount}px, 0, 0)`;
+    }
+
+    blogNext.addEventListener('click', () => {
+        currentBlogIndex++;
+        updateBlogSlider();
+    });
+
+    blogPrev.addEventListener('click', () => {
+        currentBlogIndex--;
+        updateBlogSlider();
+    });
+
+    window.addEventListener('resize', updateBlogSlider);
+    updateBlogSlider();
+}
