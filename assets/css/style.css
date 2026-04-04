@@ -695,7 +695,7 @@ header.navbar {
 }
 
 .si-label {
-  font-size: clamp(13px, 0.9vw, 18px);
+  font-size: clamp(13px, 1.2vw, 18px);
   color: #757575;
   font-weight: 500;
   display: inline-block;
@@ -1476,7 +1476,6 @@ header.navbar {
 }
 
 .social-title {
-  font-size: clamp(13px, 1vw, 20px);
   color: #BDBDBD;
   margin-bottom: 24px;
 }

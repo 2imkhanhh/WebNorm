@@ -328,3 +328,68 @@ if (blogTrack && blogPrev && blogNext) {
     window.addEventListener('resize', updateBlogSlider);
     updateBlogSlider();
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('a');
+    const contactTriggers = Array.from(links).filter(a => {
+        const text = a.textContent.trim().toLowerCase();
+        return text === 'contact' || text === 'liên hệ';
+    });
+
+    if (contactTriggers.length === 0) return;
+
+    fetch('contact.html')
+        .then(response => response.text())
+        .then(html => {
+            document.body.insertAdjacentHTML('beforeend', html);
+            initContactPopup(contactTriggers);
+        })
+        .catch(err => console.error('Lỗi khi tải contact.html (Hãy chạy bằng Live Server):', err));
+});
+
+function initContactPopup(triggers) {
+    const overlay = document.getElementById('contactOverlay');
+    const sidebar = document.getElementById('contactSidebar');
+    const closeBtn = document.getElementById('contactClose');
+
+    const openPopup = (e) => {
+        if (e) e.preventDefault();
+        overlay.classList.add('active');
+        sidebar.classList.add('active');
+        document.body.style.overflow = 'hidden'; 
+    };
+
+    triggers.forEach(trigger => {
+        trigger.addEventListener('click', openPopup);
+    });
+
+    const closePopup = () => {
+        overlay.classList.remove('active');
+        sidebar.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    closeBtn.addEventListener('click', closePopup);
+    overlay.addEventListener('click', closePopup);
+
+    const optionGroups = document.querySelectorAll('.contact-options');
+    optionGroups.forEach(group => {
+        const pills = group.querySelectorAll('.contact-pill');
+        pills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                pills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+            });
+        });
+    });
+
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thông tin đã được gửi!');
+            closePopup();
+            contactForm.reset();
+        });
+    }
+}
