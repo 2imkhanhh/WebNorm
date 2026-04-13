@@ -133,7 +133,7 @@ body.work-page {
 
 .project-title {
     font-family: 'AeonikPro', sans-serif;
-    font-size: 18px;
+    font-size: clamp(16px, 1.5vw, 25px);
     font-weight: 700;
     color: #111111;
     margin: 0;
@@ -141,7 +141,7 @@ body.work-page {
 
 .project-category {
     font-family: 'AeonikPro', sans-serif;
-    font-size: 13px;
+    font-size: clamp(13px, 1.2vw, 18px);
     font-weight: 400;
     color: #757575;
     margin: 0;
