@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.insertAdjacentHTML('beforeend', html);
             initContactPopup(contactTriggers);
         })
-        .catch(err => console.error('Lỗi khi tải contact.html (Hãy chạy bằng Live Server):', err));
+        .catch(err => console.error('Lỗi', err));
 });
 
 function initContactPopup(triggers) {

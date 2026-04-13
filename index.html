@@ -199,7 +199,6 @@
     <section class="services-intro-section">
         <div class="container-fluid px-4">
             <div class="row services-intro-row">
-
                 <div class="col-12 col-lg-2 mb-4 mb-lg-0">
                     <span class="si-label">• Dịch vụ</span>
                 </div>
@@ -216,14 +215,12 @@
                         Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.
                     </p>
                 </div>
-
             </div>
         </div>
     </section>
 
     <section class="services-detail-section">
         <div class="container-fluid px-4">
-
             <div class="service-item" id="service-01">
                 <div class="row">
                     <div class="col-lg-2 d-none d-lg-block"></div>
@@ -378,10 +375,8 @@
 
     <section class="testimonial-section">
         <div class="container-fluid px-4 px-md-5">
-
             <div class="row">
                 <div class="col-12 testimonial-title-container" id="testimonialTitleWrap">
-
                     <h2 class="testimonial-title text-left scroll-slide-left">
                         <span class="quote-mark">“</span>TRẢI NGHIỆM
                     </h2>
@@ -389,14 +384,12 @@
                     <h2 class="testimonial-title text-right scroll-slide-right">
                         KHÁCH HÀNG
                     </h2>
-
                 </div>
             </div>
 
             <div class="testimonial-main-content">
                 <div class="testi-slider-container">
                     <div class="testi-track" id="testiTrack">
-
                         <div class="testi-slide active">
                             <div class="row align-items-start">
                                 <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
@@ -404,7 +397,7 @@
                                         <img src="assets/images/avatar.png" alt="Nguyễn Minh Anh">
                                     </div>
                                 </div>
-                                <div class="col-md-7 ps-md-4">
+                                <div class="col-md-7">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
                                             "Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định
@@ -433,7 +426,7 @@
                                         <img src="assets/images/project2.png" alt="Khách hàng 2">
                                     </div>
                                 </div>
-                                <div class="col-md-7 ps-md-4">
+                                <div class="col-md-7">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
                                             "Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn
@@ -458,7 +451,7 @@
                                         <img src="assets/images/project3.png" alt="Khách hàng 3">
                                     </div>
                                 </div>
-                                <div class="col-md-7 ps-md-4">
+                                <div class="col-md-7">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
                                             "Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến
@@ -537,7 +530,8 @@
     <section class="blog-slider-section">
         <div class="container-fluid px-4 px-md-5">
             <div class="d-flex justify-content-end mb-4">
-                <a href="news.html" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">XEM THÊM BÀI VIẾT</a>
+                <a href="news.html" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">XEM THÊM
+                    BÀI VIẾT</a>
             </div>
 
             <div class="blog-slider-container">
@@ -649,7 +643,7 @@
     <section class="final-footer-section">
         <div class="container-fluid h-100">
             <div class="row h-100">
-                
+
                 <div class="col-12 col-md-6 d-flex flex-column justify-content-between final-left-col">
                     <div class="contact-info">
                         <p>(+84)816 656718</p>
@@ -987,7 +981,6 @@
             // TESTIMONIAL SLIDER 
             function initTestimonialSlider() {
                 const track = document.getElementById('testiTrack');
-                const slides = Array.from(document.querySelectorAll('.testi-slide'));
                 const prevBtn = document.querySelector('.testimonial-nav-btns .prev');
                 const nextBtn = document.querySelector('.next-btn-wrapper');
                 const currentElem = document.querySelector('.testimonial-pagination .current');
@@ -996,14 +989,28 @@
                 const sliderContainer = document.querySelector('.testi-slider-container');
                 const testimonialSection = document.querySelector('.testimonial-section');
 
-                if (!track || slides.length === 0) return;
+                let initialSlides = Array.from(document.querySelectorAll('.testi-slide'));
+                if (!track || initialSlides.length === 0) return;
 
-                let currentIndex = 0;
+                initialSlides.forEach((slide, index) => {
+                    slide.dataset.index = index + 1;
+                });
+
+                if (totalElem) {
+                    totalElem.textContent = '/' + String(initialSlides.length).padStart(2, '0');
+                }
+
+                if (initialSlides.length > 1) {
+                    track.insertBefore(initialSlides[initialSlides.length - 1], initialSlides[0]);
+                }
+
+                let isAnimating = false;
                 let isInView = false;
                 let isScrolling = false;
                 let scrollTimeout;
 
                 const intervalTime = 5000;
+                const transitionTime = 600; 
                 let currentProgressTime = 0;
                 let lastFrameTime = 0;
                 let animationFrameId;
@@ -1011,40 +1018,97 @@
                 function getCircumference() {
                     return 2 * Math.PI * 27;
                 }
-
                 let circleCircumference = getCircumference();
 
-                if (totalElem) {
-                    totalElem.textContent = '/' + String(slides.length).padStart(2, '0');
-                }
+                function updateCarousel(instant = true) {
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    if (currentSlides.length === 0) return;
 
-                function updateCarousel() {
+                    const activeIndex = currentSlides.length > 1 ? 1 : 0;
+
                     if (currentElem) {
-                        currentElem.textContent = String(currentIndex + 1).padStart(2, '0');
+                        currentElem.textContent = String(currentSlides[activeIndex].dataset.index).padStart(2, '0');
                     }
 
-                    slides.forEach((slide, index) => {
-                        slide.classList.toggle('active', index === currentIndex);
+                    currentSlides.forEach((slide, index) => {
+                        slide.classList.toggle('active', index === activeIndex);
                     });
 
                     const containerWidth = sliderContainer.clientWidth;
-                    const slideWidth = slides[0].offsetWidth;
+                    const slideWidth = currentSlides[0].offsetWidth;
                     const centerOffset = (containerWidth - slideWidth) / 2;
-                    const translateX = centerOffset - (currentIndex * slideWidth);
 
+                    const translateX = centerOffset - (activeIndex * slideWidth);
+
+                    if (instant) track.style.transition = 'none';
                     track.style.transform = `translate3d(${translateX}px, 0, 0)`;
                 }
 
+                // NEXT SLIDE
+                function moveToNextSlide() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = currentSlides[0].offsetWidth;
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+
+                    currentSlides.forEach(s => s.classList.remove('active'));
+                    if (currentSlides[2]) currentSlides[2].classList.add('active');
+                    if (currentElem && currentSlides[2]) currentElem.textContent = String(currentSlides[2].dataset.index).padStart(2, '0');
+
+                    track.style.transition = `transform ${transitionTime}ms ease-in-out`;
+                    track.style.transform = `translate3d(${centerOffset - (slideWidth * 2)}px, 0, 0)`;
+
+                    setTimeout(() => {
+                        track.appendChild(currentSlides[0]);
+
+                        track.style.transition = 'none';
+                        track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
+                        isAnimating = false;
+                    }, transitionTime);
+
+                    currentProgressTime = 0;
+                }
+
+                // PREV SLIDE
+                function moveToPrevSlide() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = currentSlides[0].offsetWidth;
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+
+                    currentSlides.forEach(s => s.classList.remove('active'));
+                    currentSlides[0].classList.add('active');
+                    if (currentElem) currentElem.textContent = String(currentSlides[0].dataset.index).padStart(2, '0');
+
+                    track.style.transition = `transform ${transitionTime}ms ease-in-out`;
+                    track.style.transform = `translate3d(${centerOffset}px, 0, 0)`;
+
+                    setTimeout(() => {
+                        const lastSlide = currentSlides[currentSlides.length - 1];
+                        track.insertBefore(lastSlide, currentSlides[0]);
+
+                        track.style.transition = 'none';
+                        track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
+                        isAnimating = false;
+                    }, transitionTime);
+
+                    currentProgressTime = 0;
+                }
+
+                // AUTO-PLAY & PROGRESS
                 function progressLoop(currentTime) {
                     if (!lastFrameTime) lastFrameTime = currentTime;
 
                     let deltaTime = currentTime - lastFrameTime;
-
-                    if (deltaTime > 100) {
-                        deltaTime = 16;
-                    }
-
+                    if (deltaTime > 100) deltaTime = 16;
                     lastFrameTime = currentTime;
+
                     if (isInView && !isScrolling) {
                         currentProgressTime += deltaTime;
 
@@ -1059,18 +1123,6 @@
                         }
                     }
                     animationFrameId = requestAnimationFrame(progressLoop);
-                }
-
-                function moveToNextSlide() {
-                    currentIndex = (currentIndex + 1) % slides.length;
-                    currentProgressTime = 0;
-                    updateCarousel();
-                }
-
-                function moveToPrevSlide() {
-                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-                    currentProgressTime = 0;
-                    updateCarousel();
                 }
 
                 if (progressCircle) {
@@ -1088,6 +1140,10 @@
                     }, 150);
                 }, { passive: true });
 
+                window.addEventListener('resize', () => {
+                    updateCarousel(true);
+                }, { passive: true });
+
                 if (testimonialSection) {
                     const observer = new IntersectionObserver((entries) => {
                         entries.forEach(entry => {
@@ -1102,7 +1158,7 @@
                     isInView = true;
                 }
 
-                updateCarousel();
+                updateCarousel(true);
                 animationFrameId = requestAnimationFrame(progressLoop);
 
                 if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
