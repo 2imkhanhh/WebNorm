@@ -247,7 +247,7 @@ body.about-page {
 }
 
 .workflow-slogan {
-    font-size: 1.1rem;
+    font-size: clamp(16px, 1.5vw, 25px);
     line-height: 1.5;
     color: #757575;
     font-weight: 500;
@@ -369,14 +369,14 @@ body.about-page {
 }
 
 .member-name {
-    font-size: 1.2rem;
+    font-size: clamp(16px, 1.5vw, 25px);
     font-weight: 700;
     margin-bottom: 5px;
     color: #111;
 }
 
 .member-role {
-    font-size: 0.85rem;
+    font-size: clamp(12px, 0.85vw, 17px);
     color: #8A8A8A;
     text-transform: none;
 }
