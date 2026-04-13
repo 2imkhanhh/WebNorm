@@ -979,6 +979,7 @@ header.navbar {
 .testimonial-pagination {
   font-family: 'AeonikPro', sans-serif;
   font-weight: 500;
+  transform: translateY(0.8vw);
 }
 
 .testimonial-pagination .current {
@@ -1098,7 +1099,7 @@ header.navbar {
   stroke-dashoffset: 170;
 }
 
-/* --- ANIMATION --- */
+/* ANIMATION */
 .scroll-slide-left {
   opacity: 0;
   transform: translateX(-150px);

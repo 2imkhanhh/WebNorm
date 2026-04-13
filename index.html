@@ -1003,7 +1003,6 @@
                 if (initialSlides.length > 1) {
                     const lastSlide = initialSlides[initialSlides.length - 1];
                     track.insertBefore(lastSlide, initialSlides[0]);
-
                     lastSlide.classList.add('initial-hidden');
                 }
 
@@ -1014,14 +1013,40 @@
 
                 const intervalTime = 5000;
                 const transitionTime = 600;
-                let currentProgressTime = 0;
                 let lastFrameTime = 0;
                 let animationFrameId;
+
+                let progressState = 'filling'; 
+                let currentProgressTime = 0;
+                let rewindProgressTime = 0;
+                const rewindDuration = 500; 
 
                 function getCircumference() {
                     return 2 * Math.PI * 27;
                 }
                 let circleCircumference = getCircumference();
+
+                function alignFooter() {
+                    const activeSlide = track.querySelector('.testi-slide.active');
+                    if (!activeSlide) return;
+
+                    const avatarEl = activeSlide.querySelector('.testimonial-avatar');
+                    const footerWrap = document.querySelector('.testimonial-footer .gap-4');
+                    const currentNumberText = document.querySelector('.testimonial-pagination .current');
+
+                    if (avatarEl && footerWrap && currentNumberText) {
+                        footerWrap.style.marginLeft = '0px';
+                        footerWrap.offsetHeight;
+
+                        const avatarRight = avatarEl.getBoundingClientRect().right;
+                        const numberRight = currentNumberText.getBoundingClientRect().right;
+                        const diff = avatarRight - numberRight;
+
+                        if (window.innerWidth >= 768) {
+                            footerWrap.style.marginLeft = `${diff}px`;
+                        }
+                    }
+                }
 
                 function updateCarousel(instant = true) {
                     const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
@@ -1044,9 +1069,18 @@
 
                     if (instant) track.style.transition = 'none';
                     track.style.transform = `translate3d(${translateX}px, 0, 0)`;
+
+                    if (instant) {
+                        track.offsetHeight;
+                        alignFooter();
+                    }
                 }
 
-                // NEXT SLIDE
+                document.fonts.ready.then(() => {
+                    alignFooter();
+                });
+
+                // next slide
                 function moveToNextSlide() {
                     if (isAnimating) return;
                     isAnimating = true;
@@ -1065,24 +1099,23 @@
 
                     setTimeout(() => {
                         track.appendChild(currentSlides[0]);
-
                         track.style.transition = 'none';
                         track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
                         isAnimating = false;
-
                         currentSlides[0].classList.remove('initial-hidden');
                     }, transitionTime);
 
-                    currentProgressTime = 0;
+                    progressState = 'rewinding';
+                    rewindProgressTime = 0;
                 }
 
-                // PREV SLIDE
+
+                // prev slide
                 function moveToPrevSlide() {
                     if (isAnimating) return;
                     isAnimating = true;
 
                     const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
-
                     currentSlides[0].classList.remove('initial-hidden');
 
                     const containerWidth = sliderContainer.clientWidth;
@@ -1105,35 +1138,59 @@
                         isAnimating = false;
                     }, transitionTime);
 
-                    currentProgressTime = 0;
+                    progressState = 'rewinding';
+                    rewindProgressTime = 0;
                 }
 
-                // AUTO-PLAY & PROGRESS
+                // auto play
                 function progressLoop(currentTime) {
                     if (!lastFrameTime) lastFrameTime = currentTime;
-
                     let deltaTime = currentTime - lastFrameTime;
                     if (deltaTime > 100) deltaTime = 16;
                     lastFrameTime = currentTime;
 
                     if (isInView && !isScrolling) {
-                        currentProgressTime += deltaTime;
 
-                        if (currentProgressTime >= intervalTime) {
-                            currentProgressTime = 0;
-                            moveToNextSlide();
+                        if (progressState === 'filling') {
+                            currentProgressTime += deltaTime;
+
+                            if (currentProgressTime >= intervalTime) {
+                                moveToNextSlide();
+                            }
+
+                            if (progressCircle) {
+                                const progressRatio = Math.min(currentProgressTime / intervalTime, 1);
+                                const offset = circleCircumference - (progressRatio * circleCircumference);
+                                progressCircle.style.strokeDashoffset = offset;
+                            }
                         }
-                        if (progressCircle) {
-                            const progressRatio = currentProgressTime / intervalTime;
-                            const offset = circleCircumference - (progressRatio * circleCircumference);
-                            progressCircle.style.strokeDashoffset = offset;
+
+                        else if (progressState === 'rewinding') {
+                            rewindProgressTime += deltaTime;
+
+                            if (rewindProgressTime >= rewindDuration) {
+                                progressState = 'filling'; 
+                                currentProgressTime = 0; 
+                                rewindProgressTime = 0;
+
+                                if (progressCircle) {
+                                    progressCircle.style.strokeDashoffset = circleCircumference;
+                                }
+                            }
+                            else {
+                                if (progressCircle) {
+                                    const rewindRatio = Math.min(rewindProgressTime / rewindDuration, 1);
+                                    const offset = rewindRatio * circleCircumference;
+                                    progressCircle.style.strokeDashoffset = offset;
+                                }
+                            }
                         }
                     }
                     animationFrameId = requestAnimationFrame(progressLoop);
                 }
 
                 if (progressCircle) {
-                    progressCircle.style.transition = 'none';
+                    progressCircle.style.transition = 'none'; 
                     progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
                     progressCircle.style.strokeDashoffset = circleCircumference;
                 }
