@@ -1001,7 +1001,10 @@
                 }
 
                 if (initialSlides.length > 1) {
-                    track.insertBefore(initialSlides[initialSlides.length - 1], initialSlides[0]);
+                    const lastSlide = initialSlides[initialSlides.length - 1];
+                    track.insertBefore(lastSlide, initialSlides[0]);
+
+                    lastSlide.classList.add('initial-hidden');
                 }
 
                 let isAnimating = false;
@@ -1010,7 +1013,7 @@
                 let scrollTimeout;
 
                 const intervalTime = 5000;
-                const transitionTime = 600; 
+                const transitionTime = 600;
                 let currentProgressTime = 0;
                 let lastFrameTime = 0;
                 let animationFrameId;
@@ -1037,7 +1040,6 @@
                     const containerWidth = sliderContainer.clientWidth;
                     const slideWidth = currentSlides[0].offsetWidth;
                     const centerOffset = (containerWidth - slideWidth) / 2;
-
                     const translateX = centerOffset - (activeIndex * slideWidth);
 
                     if (instant) track.style.transition = 'none';
@@ -1067,6 +1069,8 @@
                         track.style.transition = 'none';
                         track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
                         isAnimating = false;
+
+                        currentSlides[0].classList.remove('initial-hidden');
                     }, transitionTime);
 
                     currentProgressTime = 0;
@@ -1078,6 +1082,9 @@
                     isAnimating = true;
 
                     const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+
+                    currentSlides[0].classList.remove('initial-hidden');
+
                     const containerWidth = sliderContainer.clientWidth;
                     const slideWidth = currentSlides[0].offsetWidth;
                     const centerOffset = (containerWidth - slideWidth) / 2;
