@@ -1291,7 +1291,7 @@ header.navbar {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: -0.02em;
-  margin-bottom: 1.8vw;
+  margin-bottom: 0.2vw;
 }
 
 .footer-text-wrap .footer-line:last-child {
@@ -2700,9 +2700,9 @@ header.navbar {
     display: none !important;
   }
 
-  .footer-cursor-zone {
+  /* .footer-cursor-zone {
     cursor: none;
-  }
+  } */
 }
 
 /* @media (max-width: 576px) {

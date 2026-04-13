@@ -154,6 +154,12 @@ function initFooterScrollText() {
     function renderFooterSmooth() {
         currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.05;
 
+        if (currentFooterProgress > 0.6) {
+            footerSection.classList.add('is-text-revealed');
+        } else {
+            footerSection.classList.remove('is-text-revealed');
+        }
+
         footerLines.forEach((line) => {
             const textNew = line.querySelector('.text-new');
             if (!textNew) return;
@@ -226,6 +232,18 @@ function initFooterCursorBtn() {
 
     if (!footerZone || !footerCursorBtn || window.innerWidth <= 1024) return;
 
+    // THÊM MỚI: Tự động chèn CSS ép ẩn triệt để con trỏ chuột hệ thống (đè lên mọi thẻ chữ)
+    if (!document.getElementById('forceHideCursorStyle')) {
+        const style = document.createElement('style');
+        style.id = 'forceHideCursorStyle';
+        style.innerHTML = `
+            .force-hide-cursor, .force-hide-cursor * {
+                cursor: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     let mouseX = 0, mouseY = 0;
     let btnX = 0, btnY = 0;
 
@@ -252,15 +270,22 @@ function initFooterCursorBtn() {
         const isInZone = e.clientX >= zoneRect.left && e.clientX <= zoneRect.right
             && e.clientY >= triggerTop && e.clientY <= zoneRect.bottom;
 
-        if (isInZone) {
+        const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
+
+        if (isInZone && isTextRevealed) {
+            // 1. Chữ mới đã hiện -> Bật nút custom, ẨN triệt để chuột hệ thống
             footerCursorBtn.classList.add('is-visible');
+            footerZone.classList.add('force-hide-cursor'); 
+            
             if (footerSection && footerSection.classList.contains('dark-mode')) {
                 footerCursorBtn.classList.add('dark');
             } else {
                 footerCursorBtn.classList.remove('dark');
             }
         } else {
+            // 2. Chữ cũ hoặc ra ngoài vùng -> Ẩn nút custom, HIỆN LẠI chuột hệ thống
             footerCursorBtn.classList.remove('is-visible');
+            footerZone.classList.remove('force-hide-cursor'); 
         }
     });
 
@@ -275,8 +300,15 @@ function initFooterCursorBtn() {
         const isInZone = mouseX >= zoneRect.left && mouseX <= zoneRect.right
             && mouseY >= triggerTop && mouseY <= zoneRect.bottom;
 
-        if (!isInZone) {
+        const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
+
+        // Áp dụng logic y hệt khi người dùng lăn chuột
+        if (isInZone && isTextRevealed) {
+            footerCursorBtn.classList.add('is-visible');
+            footerZone.classList.add('force-hide-cursor');
+        } else {
             footerCursorBtn.classList.remove('is-visible');
+            footerZone.classList.remove('force-hide-cursor');
         }
     }, { passive: true });
 }
