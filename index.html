@@ -919,7 +919,6 @@
                                     behavior: 'smooth'
                                 });
                             }
-
                             lastStableIndex = targetIndex;
                         }, 600);
                     }
@@ -999,9 +998,7 @@
                 }
 
                 if (initialSlides.length > 1) {
-                    const lastSlide = initialSlides[initialSlides.length - 1];
-                    track.insertBefore(lastSlide, initialSlides[0]);
-                    lastSlide.classList.add('initial-hidden');
+                    track.insertBefore(initialSlides[initialSlides.length - 1], initialSlides[0]);
                 }
 
                 let isAnimating = false;
@@ -1010,14 +1007,14 @@
                 let scrollTimeout;
 
                 const intervalTime = 5000;
-                const transitionTime = 600;
+                const transitionTime = 600; 
+                let currentProgressTime = 0;
                 let lastFrameTime = 0;
                 let animationFrameId;
 
-                let progressState = 'filling'; 
-                let currentProgressTime = 0;
+                let progressState = 'filling';
                 let rewindProgressTime = 0;
-                const rewindDuration = 500; 
+                const rewindDuration = 400; 
 
                 function getCircumference() {
                     return 2 * Math.PI * 27;
@@ -1097,16 +1094,15 @@
 
                     setTimeout(() => {
                         track.appendChild(currentSlides[0]);
+
                         track.style.transition = 'none';
                         track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
                         isAnimating = false;
-                        currentSlides[0].classList.remove('initial-hidden');
                     }, transitionTime);
 
                     progressState = 'rewinding';
                     rewindProgressTime = 0;
                 }
-
 
                 // prev slide
                 function moveToPrevSlide() {
@@ -1114,8 +1110,6 @@
                     isAnimating = true;
 
                     const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
-                    currentSlides[0].classList.remove('initial-hidden');
-
                     const containerWidth = sliderContainer.clientWidth;
                     const slideWidth = currentSlides[0].offsetWidth;
                     const centerOffset = (containerWidth - slideWidth) / 2;
@@ -1148,7 +1142,6 @@
                     lastFrameTime = currentTime;
 
                     if (isInView && !isScrolling) {
-
                         if (progressState === 'filling') {
                             currentProgressTime += deltaTime;
 
@@ -1162,20 +1155,18 @@
                                 progressCircle.style.strokeDashoffset = offset;
                             }
                         }
-
                         else if (progressState === 'rewinding') {
                             rewindProgressTime += deltaTime;
 
                             if (rewindProgressTime >= rewindDuration) {
-                                progressState = 'filling'; 
-                                currentProgressTime = 0; 
+                                progressState = 'filling';
+                                currentProgressTime = 0;
                                 rewindProgressTime = 0;
 
                                 if (progressCircle) {
                                     progressCircle.style.strokeDashoffset = circleCircumference;
                                 }
-                            }
-                            else {
+                            } else {
                                 if (progressCircle) {
                                     const rewindRatio = Math.min(rewindProgressTime / rewindDuration, 1);
                                     const offset = rewindRatio * circleCircumference;
@@ -1188,7 +1179,7 @@
                 }
 
                 if (progressCircle) {
-                    progressCircle.style.transition = 'none'; 
+                    progressCircle.style.transition = 'none';
                     progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
                     progressCircle.style.strokeDashoffset = circleCircumference;
                 }

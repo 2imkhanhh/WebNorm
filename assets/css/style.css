@@ -923,11 +923,6 @@ header.navbar {
   opacity: 1;
 }
 
-.testi-slide.initial-hidden {
-  opacity: 0 !important;
-  pointer-events: none;
-}
-
 .testimonial-avatar {
   width: clamp(200px, 18vw, 420px);
   aspect-ratio: 25 / 28;

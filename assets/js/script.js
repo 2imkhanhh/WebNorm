@@ -232,7 +232,6 @@ function initFooterCursorBtn() {
 
     if (!footerZone || !footerCursorBtn || window.innerWidth <= 1024) return;
 
-    // THÊM MỚI: Tự động chèn CSS ép ẩn triệt để con trỏ chuột hệ thống (đè lên mọi thẻ chữ)
     if (!document.getElementById('forceHideCursorStyle')) {
         const style = document.createElement('style');
         style.id = 'forceHideCursorStyle';
@@ -273,7 +272,6 @@ function initFooterCursorBtn() {
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
 
         if (isInZone && isTextRevealed) {
-            // 1. Chữ mới đã hiện -> Bật nút custom, ẨN triệt để chuột hệ thống
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor'); 
             
@@ -283,7 +281,6 @@ function initFooterCursorBtn() {
                 footerCursorBtn.classList.remove('dark');
             }
         } else {
-            // 2. Chữ cũ hoặc ra ngoài vùng -> Ẩn nút custom, HIỆN LẠI chuột hệ thống
             footerCursorBtn.classList.remove('is-visible');
             footerZone.classList.remove('force-hide-cursor'); 
         }
@@ -302,7 +299,6 @@ function initFooterCursorBtn() {
 
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
 
-        // Áp dụng logic y hệt khi người dùng lăn chuột
         if (isInZone && isTextRevealed) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
@@ -324,41 +320,108 @@ const blogPrev = document.getElementById('blogPrev');
 const blogNext = document.getElementById('blogNext');
 
 if (blogTrack && blogPrev && blogNext) {
-    let currentBlogIndex = 0;
-    const blogCards = blogTrack.querySelectorAll('.blog-card');
+    let isBlogAnimating = false;
+    const blogTransitionTime = 600;
 
-    function updateBlogSlider() {
-        if (blogCards.length === 0) return;
+    blogPrev.classList.remove('disabled');
+    blogNext.classList.remove('disabled');
 
-        const cardWidth = blogCards[0].offsetWidth;
-        const gap = 24;
-        const moveAmount = cardWidth + gap;
-
-        const containerWidth = blogTrack.parentElement.offsetWidth;
-        const visibleCards = containerWidth / moveAmount;
-        const maxIndex = Math.max(0, Math.ceil(blogCards.length - visibleCards));
-
-        if (currentBlogIndex > maxIndex) currentBlogIndex = maxIndex;
-        if (currentBlogIndex < 0) currentBlogIndex = 0;
-
-        blogPrev.classList.toggle('disabled', currentBlogIndex === 0);
-        blogNext.classList.toggle('disabled', currentBlogIndex >= maxIndex);
-
-        blogTrack.style.transform = `translate3d(-${currentBlogIndex * moveAmount}px, 0, 0)`;
+    let originalCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+    if (originalCards.length > 0) {
+        for (let i = 0; i < 2; i++) {
+            originalCards.forEach(card => {
+                let clone = card.cloneNode(true);
+                blogTrack.appendChild(clone);
+            });
+        }
     }
 
     blogNext.addEventListener('click', () => {
-        currentBlogIndex++;
-        updateBlogSlider();
+        if (isBlogAnimating) return;
+        isBlogAnimating = true;
+
+        const currentCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+        if (currentCards.length === 0) return;
+
+        const cardWidth = currentCards[0].offsetWidth;
+        const gap = parseInt(window.getComputedStyle(blogTrack).gap) || 24;
+        const moveAmount = cardWidth + gap;
+
+        blogTrack.style.transition = `transform ${blogTransitionTime}ms ease-in-out`;
+        blogTrack.style.transform = `translate3d(-${moveAmount}px, 0, 0)`;
+
+        setTimeout(() => {
+            blogTrack.appendChild(currentCards[0]);
+            
+            blogTrack.style.transition = 'none';
+            blogTrack.style.transform = 'translate3d(0, 0, 0)';
+            isBlogAnimating = false;
+        }, blogTransitionTime);
     });
 
     blogPrev.addEventListener('click', () => {
-        currentBlogIndex--;
-        updateBlogSlider();
+        if (isBlogAnimating) return;
+        isBlogAnimating = true;
+
+        const currentCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+        if (currentCards.length === 0) return;
+
+        const cardWidth = currentCards[0].offsetWidth;
+        const gap = parseInt(window.getComputedStyle(blogTrack).gap) || 24;
+        const moveAmount = cardWidth + gap;
+
+        const lastCard = currentCards[currentCards.length - 1];
+        blogTrack.insertBefore(lastCard, currentCards[0]);
+
+        blogTrack.style.transition = 'none';
+        blogTrack.style.transform = `translate3d(-${moveAmount}px, 0, 0)`;
+
+        blogTrack.offsetHeight;
+
+        blogTrack.style.transition = `transform ${blogTransitionTime}ms ease-in-out`;
+        blogTrack.style.transform = 'translate3d(0, 0, 0)';
+
+        setTimeout(() => {
+            isBlogAnimating = false;
+        }, blogTransitionTime);
     });
 
-    window.addEventListener('resize', updateBlogSlider);
-    updateBlogSlider();
+    let startX = 0;
+    let currentX = 0;
+    let isDragging = false;
+
+    blogTrack.addEventListener('touchstart', (e) => {
+        if (isBlogAnimating) return;
+        startX = e.touches[0].clientX;
+        currentX = startX;
+        isDragging = true;
+    }, { passive: true });
+
+    blogTrack.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX;
+    }, { passive: true });
+
+    blogTrack.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        let diffX = startX - currentX;
+        if (diffX > 50) {
+            blogNext.click();
+        } 
+        else if (diffX < -50) {
+            blogPrev.click();
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        blogTrack.style.transition = 'none';
+        blogTrack.style.transform = 'translate3d(0, 0, 0)';
+    }, { passive: true });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
