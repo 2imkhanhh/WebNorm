@@ -43,16 +43,17 @@ body.news-page {
     height: 100%;
 }
 
-.news-image-wrapper {
-    display: block;
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 16px;
-}
-
 .news-image-wrapper img {
     display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2; 
+    object-fit: cover; 
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.news-grid-section .row {
+    --bs-gutter-x: 3rem; 
+    --bs-gutter-y: 5rem;
 }
 
 .news-card:hover .news-image-wrapper img {
