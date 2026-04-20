@@ -108,6 +108,7 @@ body.work-page {
 
 .project-img-wrap {
     width: 100%;
+    aspect-ratio: 3 / 2;
     overflow: hidden;
     border-radius: 6px;
     background-color: #E0E0E0;
