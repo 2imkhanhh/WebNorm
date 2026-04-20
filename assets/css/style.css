@@ -606,9 +606,9 @@ header.navbar {
 }
 
 .ps-image-viewport {
-  width: 100%;
+  width: 85%;
   max-width: unset;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   position: relative;
   border-radius: 8px;
@@ -819,8 +819,9 @@ header.navbar {
 }
 
 .service-image-viewport {
-  width: 80%;
+  width: 100%;
   max-width: 400px;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   border-radius: 8px;
   position: relative;
@@ -1179,7 +1180,7 @@ header.navbar {
 
 .blog-img-wrap {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 3 / 2;
   background-color: #E0E0E0;
   margin-bottom: 20px;
   overflow: hidden;
