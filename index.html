@@ -603,7 +603,13 @@
 
     <footer class="footer-section" id="footerSection">
         <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
-            <div class="container-fluid px-4 px-md-5 w-100">
+
+            <video class="footer-bg-video" autoplay loop muted playsinline>
+                <source src="assets/images/test web norrm_1.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ thẻ video.
+            </video>
+            <div class="footer-video-overlay"></div>
+            <div class="container-fluid px-4 px-md-5 w-100" style="position: relative; z-index: 2;">
                 <div class="row align-items-center">
                     <div class="col-12">
                         <div class="footer-text-wrap">
@@ -1005,14 +1011,14 @@
                 let scrollTimeout;
 
                 const intervalTime = 5000;
-                const transitionTime = 600; 
+                const transitionTime = 600;
                 let currentProgressTime = 0;
                 let lastFrameTime = 0;
                 let animationFrameId;
 
                 let progressState = 'filling';
                 let rewindProgressTime = 0;
-                const rewindDuration = 400; 
+                const rewindDuration = 400;
 
                 function getCircumference() {
                     return 2 * Math.PI * 27;
