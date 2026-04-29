@@ -162,20 +162,16 @@ function initFooterScrollText() {
 
         footerLines.forEach((line) => {
             const textNew = line.querySelector('.text-new');
-            const textOld = line.querySelector('.text-old'); // Lấy thêm text-old
+            const textOld = line.querySelector('.text-old'); 
             
-            if (!textNew || !textOld) return; // Đảm bảo có cả 2
+            if (!textNew || !textOld) return; 
             
             let progress = Math.max(0, Math.min(1, currentFooterProgress));
             
-            // 1. Chữ mới: Hiển thị dần từ dưới lên trên (giữ nguyên logic của bạn)
             const insetTop = (1 - progress) * 100;
             textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
             textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
 
-            // 2. Chữ cũ: Cắt dần từ dưới lên trên (thêm logic này)
-            // Khi progress = 0 (chưa cuộn), insetBottom = 0% (hiện toàn bộ)
-            // Khi progress = 1 (cuộn xong), insetBottom = 100% (bị cắt toàn bộ từ dưới lên)
             const insetBottom = progress * 100;
             textOld.style.webkitClipPath = `inset(0 0 ${insetBottom}% 0)`;
             textOld.style.clipPath = `inset(0 0 ${insetBottom}% 0)`;
@@ -326,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFooterCursorBtn();
 });
 
-// BLOG SLIDER
+// Blog slider
 const blogTrack = document.getElementById('blogTrack');
 const blogPrev = document.getElementById('blogPrev');
 const blogNext = document.getElementById('blogNext');
@@ -500,3 +496,17 @@ function initContactPopup(triggers) {
         });
     }
 }
+
+// Lenis Scroll
+const lenis = new Lenis({
+    lerp: 0.05, 
+    smoothWheel: true, 
+    wheelMultiplier: 1.1, 
+});
+
+function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+}
+
+requestAnimationFrame(raf);

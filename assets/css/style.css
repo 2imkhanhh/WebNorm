@@ -1560,6 +1560,27 @@ header.navbar {
   pointer-events: none;
 } */
 
+/* --- Lenis scroll --- */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
 @media (max-width: 1024px) and (min-width: 768px) {
   .mobile-menu {
     display: block;
