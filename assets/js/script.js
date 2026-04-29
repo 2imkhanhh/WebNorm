@@ -141,18 +141,17 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
-
     const sectionsToDarken = document.querySelectorAll('.blog-slider-section, .members-section, .work-list-section, .explore-section, .project-credits-section, .news-grid-section');
 
     if (!footerSection || footerLines.length === 0) return;
 
     let targetFooterProgress = 0;
     let currentFooterProgress = 0;
-    let footerSnapTimeout;
+    let footerSnapTimeout; 
     let lastScrollY = window.scrollY;
 
     function renderFooterSmooth() {
-        currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.05;
+        currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.15;
 
         if (currentFooterProgress > 0.6) {
             footerSection.classList.add('is-text-revealed');
@@ -162,19 +161,19 @@ function initFooterScrollText() {
 
         footerLines.forEach((line) => {
             const textNew = line.querySelector('.text-new');
-            const textOld = line.querySelector('.text-old'); 
-            
-            if (!textNew || !textOld) return; 
-            
-            let progress = Math.max(0, Math.min(1, currentFooterProgress));
-            
+            const textOld = line.querySelector('.text-old');
+
+            if (!textNew || !textOld) return;
+
+            let progress = Math.max(0, Math.min(1, currentFooterProgress * 1.25));
+
             const insetTop = (1 - progress) * 100;
-            textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
-            textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
+            textNew.style.webkitClipPath = `inset(${insetTop}% -10% -10% -10%)`;
+            textNew.style.clipPath = `inset(${insetTop}% -10% -10% -10%)`;
 
             const insetBottom = progress * 100;
-            textOld.style.webkitClipPath = `inset(0 0 ${insetBottom}% 0)`;
-            textOld.style.clipPath = `inset(0 0 ${insetBottom}% 0)`;
+            textOld.style.webkitClipPath = `inset(-10% -10% ${insetBottom}% -10%)`;
+            textOld.style.clipPath = `inset(-10% -10% ${insetBottom}% -10%)`;
         });
 
         requestAnimationFrame(renderFooterSmooth);
@@ -214,19 +213,24 @@ function initFooterScrollText() {
         }
 
         clearTimeout(footerSnapTimeout);
-
+        
         if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
+            
             footerSnapTimeout = setTimeout(() => {
                 let snapTargetY;
+                
                 if (scrollDirection === 'down') {
-                    snapTargetY = targetFooterProgress >= 0.1 ? footerTop + maxScroll : footerTop;
+                    snapTargetY = targetFooterProgress >= 0.05 ? footerTop + maxScroll : footerTop;
                 } else {
-                    snapTargetY = targetFooterProgress <= 0.9 ? footerTop : footerTop + maxScroll;
+                    snapTargetY = targetFooterProgress <= 0.95 ? footerTop : footerTop + maxScroll;
                 }
+                
                 if (Math.abs(scrollY - snapTargetY) > 5) {
-                    window.scrollTo({ top: snapTargetY, behavior: 'smooth' });
+                    if (typeof lenis !== 'undefined') {
+                        lenis.scrollTo(snapTargetY, { duration: 1.5 });
+                    }
                 }
-            }, 600);
+            }, 50); 
         }
     }, { passive: true });
 }
@@ -281,8 +285,8 @@ function initFooterCursorBtn() {
 
         if (isInZone && isTextRevealed) {
             footerCursorBtn.classList.add('is-visible');
-            footerZone.classList.add('force-hide-cursor'); 
-            
+            footerZone.classList.add('force-hide-cursor');
+
             if (footerSection && footerSection.classList.contains('dark-mode')) {
                 footerCursorBtn.classList.add('dark');
             } else {
@@ -290,7 +294,7 @@ function initFooterCursorBtn() {
             }
         } else {
             footerCursorBtn.classList.remove('is-visible');
-            footerZone.classList.remove('force-hide-cursor'); 
+            footerZone.classList.remove('force-hide-cursor');
         }
     });
 
@@ -360,7 +364,7 @@ if (blogTrack && blogPrev && blogNext) {
 
         setTimeout(() => {
             blogTrack.appendChild(currentCards[0]);
-            
+
             blogTrack.style.transition = 'none';
             blogTrack.style.transform = 'translate3d(0, 0, 0)';
             isBlogAnimating = false;
@@ -420,7 +424,7 @@ if (blogTrack && blogPrev && blogNext) {
         let diffX = startX - currentX;
         if (diffX > 50) {
             blogNext.click();
-        } 
+        }
         else if (diffX < -50) {
             blogPrev.click();
         }
@@ -459,7 +463,7 @@ function initContactPopup(triggers) {
         if (e) e.preventDefault();
         overlay.classList.add('active');
         sidebar.classList.add('active');
-        document.body.style.overflow = 'hidden'; 
+        document.body.style.overflow = 'hidden';
     };
 
     triggers.forEach(trigger => {
@@ -499,9 +503,9 @@ function initContactPopup(triggers) {
 
 // Lenis Scroll
 const lenis = new Lenis({
-    lerp: 0.05, 
-    smoothWheel: true, 
-    wheelMultiplier: 1.1, 
+    lerp: 0.05,
+    smoothWheel: true,
+    wheelMultiplier: 1.1,
 });
 
 function raf(time) {

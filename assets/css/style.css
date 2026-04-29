@@ -1409,8 +1409,8 @@ header.navbar {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: #111111;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #111111;
   padding: clamp(10px, 0.9vw, 20px) clamp(20px, 1.8vw, 38px);
   border-radius: 50px;
   font-family: 'AeonikPro', sans-serif;
@@ -1436,10 +1436,10 @@ header.navbar {
   transform: translate(-50%, -50%) scale(1);
 }
 
-.footer-cursor-btn.dark {
+/* .footer-cursor-btn.dark {
   background-color: #ffffff;
   color: #111111;
-}
+} */
 
 .final-footer-section {
   background-color: #111111;
