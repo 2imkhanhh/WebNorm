@@ -444,9 +444,14 @@
 
     <footer class="footer-section" id="footerSection">
         <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
-            <div class="container-fluid px-4 px-md-5 w-100">
-                <div class="row align-items-center">
 
+            <video class="footer-bg-video" autoplay loop muted playsinline>
+                <source src="assets/images/video-norm.webm" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ thẻ video.
+            </video>
+            <div class="footer-video-overlay"></div>
+            <div class="container-fluid px-4 px-md-5 w-100" style="position: relative; z-index: 2;">
+                <div class="row align-items-center">
                     <div class="col-12">
                         <div class="footer-text-wrap">
                             <div class="footer-line">
@@ -469,7 +474,6 @@
                             CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
                         </a>
                     </div>
-
                 </div>
             </div>
         </div>
