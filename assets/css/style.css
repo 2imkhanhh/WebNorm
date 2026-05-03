@@ -523,6 +523,7 @@ header.navbar {
   font-weight: 500;
   line-height: 0.8;
   letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
 }
 
 .ps-counter-top .ps-num-total {
@@ -1635,6 +1636,39 @@ html.lenis body {
     font-size: 1.25rem;
   }
 
+  .ps-counter-top {
+    left: calc(17.5vw + 16px);
+    top: 35vh;
+  }
+
+  .ps-counter-top .ps-num-current {
+    font-size: 8vw;
+  }
+
+  .ps-counter-top .ps-num-total {
+    font-size: 4vw;
+  }
+
+  .ps-horizontal-viewport {
+    margin-top: 0;
+    padding-bottom: 0;
+    transform: translateY(10vh);
+  }
+
+  .ps-sticky-wrap::after {
+    height: 40%;
+  }
+
+  .ps-horizontal-track {
+    padding-left: 17.5vw;
+    padding-right: 17.5vw;
+  }
+
+  .ps-project-item {
+    flex: 0 0 65vw;
+    margin-right: 4vw;
+  }
+
   .services-intro-section {
     padding: 120px 0;
   }
@@ -2074,6 +2108,64 @@ html.lenis body {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+  }
+
+  .ps-counter-top {
+    left: calc(7.5vw + 10px);
+    top: 35vh;
+  }
+
+  .ps-counter-top .ps-num-current {
+    font-size: 16vw;
+  }
+
+  .ps-counter-top .ps-num-total {
+    font-size: 6vw;
+    margin-left: 4px;
+  }
+
+  .ps-horizontal-viewport {
+    margin-top: 2vh;
+    padding-bottom: 0;
+    transform: translateY(8vh);
+  }
+
+  .ps-sticky-wrap::after {
+    height: 30%;
+  }
+
+  .ps-horizontal-track {
+    padding-left: 7.5vw;
+    padding-right: 7.5vw;
+  }
+
+  .ps-project-item {
+    flex: 0 0 85vw;
+    margin-right: 6vw;
+  }
+
+  .ps-card-inner {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .ps-info-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
+  .ps-title {
+    font-size: 18px;
+  }
+
+  .ps-categories span {
+    font-size: 18px;
+  }
+
+  .ps-categories {
+    gap: 12px;
   }
 
   .services-intro-section {
