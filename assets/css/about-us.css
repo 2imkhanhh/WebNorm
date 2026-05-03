@@ -399,6 +399,15 @@ body.about-page {
   color: #ffffff !important;
 }
 
+.solution-sticky-zone,
+.about-intro-section,
+.members-section,
+.services-intro-section,
+.services-detail-section {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 /* TABLET */
 @media (max-width: 1024px) and (min-width: 768px) {
     :root {

@@ -1046,14 +1046,14 @@ header.navbar {
 /* animation */
 .scroll-slide-left {
   opacity: 0;
-  transform: translateX(-150px);
+  transform: translateX(-120px);
   transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1), transform 2s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
 }
 
 .scroll-slide-right {
   opacity: 0;
-  transform: translateX(150px);
+  transform: translateX(120px);
   transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1), transform 2s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
 }
