@@ -809,15 +809,21 @@
                         const categories = item.querySelector('.ps-categories');
 
                         if (infoWrap) {
-                            let opacity = 1 - (distance / (window.innerWidth / 3));
-                            if (opacity < 0) opacity = 0;
+                            if (window.innerWidth > 1024) {
+                                let opacity = 1 - (distance / (window.innerWidth / 3));
+                                if (opacity < 0) opacity = 0;
 
-                            let translateY = (distance / window.innerWidth) * 50;
+                                let translateY = (distance / window.innerWidth) * 50;
 
-                            infoWrap.style.opacity = opacity;
+                                infoWrap.style.opacity = opacity;
 
-                            if (title) title.style.transform = `translateY(${translateY * 0.5}px)`;
-                            if (categories) categories.style.transform = `translateY(${translateY}px)`;
+                                if (title) title.style.transform = `translateY(${translateY * 0.5}px)`;
+                                if (categories) categories.style.transform = `translateY(${translateY}px)`;
+                            } else {
+                                infoWrap.style.opacity = '1';
+                                if (title) title.style.transform = 'none';
+                                if (categories) categories.style.transform = 'none';
+                            }
                         }
                     });
                 }

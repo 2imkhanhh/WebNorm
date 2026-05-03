@@ -1654,12 +1654,12 @@ html.lenis body {
   }
 
   .ps-card-inner {
-    aspect-ratio: auto; 
+    aspect-ratio: auto;
   }
 
   .ps-img-wrap {
-    aspect-ratio: 3 / 2; 
-    flex: none; 
+    aspect-ratio: 3 / 2;
+    flex: none;
   }
 
   .ps-horizontal-viewport {
@@ -1680,6 +1680,15 @@ html.lenis body {
   .ps-project-item {
     flex: 0 0 65vw;
     margin-right: 4vw;
+  }
+
+  .ps-info-wrap,
+  .ps-title,
+  .ps-categories {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
   }
 
   .services-intro-section {
@@ -2185,6 +2194,15 @@ html.lenis body {
 
   .ps-categories {
     gap: 12px;
+  }
+
+  .ps-info-wrap,
+  .ps-title,
+  .ps-categories {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
   }
 
   .services-intro-section {
