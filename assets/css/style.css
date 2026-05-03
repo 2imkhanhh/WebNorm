@@ -2125,7 +2125,7 @@ html.lenis body {
 
   .ps-counter-top {
     left: calc(7.5vw + 10px);
-    top: 35vh;
+    top: 30vh;
   }
 
   .ps-counter-top .ps-num-current {
