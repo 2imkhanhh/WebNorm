@@ -795,21 +795,29 @@
                     projectItems.forEach((item) => {
                         const rect = item.getBoundingClientRect();
                         const itemCenter = rect.left + rect.width / 2;
+                        const viewportCenter = window.innerWidth / 2;
                         const distance = Math.abs(viewportCenter - itemCenter);
 
                         const maxDist = window.innerWidth / 1.5;
                         let scale = 1 - (distance / maxDist) * 0.45;
                         if (scale < 0.65) scale = 0.65;
                         if (scale > 1) scale = 1;
-
                         item.style.transform = `scale(${scale})`;
 
-                        const textImg = item.querySelector('.ps-text-img');
-                        if (textImg) {
-                            let opacity = 1 - (distance / (window.innerWidth / 4));
+                        const infoWrap = item.querySelector('.ps-info-wrap');
+                        const title = item.querySelector('.ps-title');
+                        const categories = item.querySelector('.ps-categories');
+
+                        if (infoWrap) {
+                            let opacity = 1 - (distance / (window.innerWidth / 3));
                             if (opacity < 0) opacity = 0;
-                            if (opacity > 1) opacity = 1;
-                            textImg.style.opacity = opacity;
+
+                            let translateY = (distance / window.innerWidth) * 50;
+
+                            infoWrap.style.opacity = opacity;
+
+                            if (title) title.style.transform = `translateY(${translateY * 0.5}px)`;
+                            if (categories) categories.style.transform = `translateY(${translateY}px)`;
                         }
                     });
                 }

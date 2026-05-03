@@ -609,18 +609,22 @@ header.navbar {
   justify-content: space-between;
   align-items: center;
   background-color: transparent;
-  will-change: opacity;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
 }
 
 .ps-title {
   color: #ffffff;
   font-size: clamp(13px, 1.2vw, 18px);
   font-weight: 600;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ps-categories {
   display: flex;
   gap: 16px;
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ps-categories span {
