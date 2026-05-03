@@ -1653,6 +1653,15 @@ html.lenis body {
     font-size: 4vw;
   }
 
+  .ps-card-inner {
+    aspect-ratio: auto; 
+  }
+
+  .ps-img-wrap {
+    aspect-ratio: 3 / 2; 
+    flex: none; 
+  }
+
   .ps-horizontal-viewport {
     margin-top: 0;
     padding-bottom: 0;
@@ -2135,7 +2144,7 @@ html.lenis body {
   }
 
   .ps-sticky-wrap::after {
-    height: 30%;
+    height: 40%;
   }
 
   .ps-horizontal-track {
@@ -2149,8 +2158,14 @@ html.lenis body {
   }
 
   .ps-card-inner {
-    padding: 16px;
+    aspect-ratio: auto;
+    padding: 12px;
     border-radius: 10px;
+  }
+
+  .ps-img-wrap {
+    aspect-ratio: 3 / 2;
+    flex: none;
   }
 
   .ps-info-wrap {
