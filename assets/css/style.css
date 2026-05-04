@@ -561,6 +561,8 @@ header.navbar {
   background-size: auto 100%;
   z-index: 1;
   pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: overlay;
 }
 
 .ps-horizontal-track {
