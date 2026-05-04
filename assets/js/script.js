@@ -1,4 +1,4 @@
-// HAMBURGER & MENU MOBILE
+// menu mobile
 const hamburger = document.querySelector('.nav-hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
 
@@ -18,7 +18,7 @@ if (hamburger && mobileMenu) {
     });
 }
 
-// LANGUAGE TOGGLE
+// language toogle
 const langToggleMobile = document.getElementById('langToggleMobile');
 const langToggle = document.getElementById('langToggle');
 
@@ -36,7 +36,7 @@ if (langToggleMobile && langToggle) {
     });
 }
 
-// REVEAL TEXT
+// reveal text
 const revealElements = document.querySelectorAll('.reveal-text, .reveal-text-multi');
 
 revealElements.forEach(revealTextEl => {
@@ -94,6 +94,7 @@ revealElements.forEach(revealTextEl => {
         });
     }
 
+    
     window.addEventListener('scroll', updateChars, { passive: true });
     window.addEventListener('resize', updateChars, { passive: true });
 
@@ -102,7 +103,7 @@ revealElements.forEach(revealTextEl => {
     });
 });
 
-// ACTIVE STATUS SERVICES
+// active status services
 const serviceItems = document.querySelectorAll('.service-item');
 
 function calculateActiveService() {
@@ -137,7 +138,7 @@ window.addEventListener('scroll', calculateActiveService, { passive: true });
 window.addEventListener('resize', calculateActiveService, { passive: true });
 document.addEventListener('DOMContentLoaded', calculateActiveService);
 
-// FOOTER SCROLL TEXT
+// footer scroll text
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
@@ -147,7 +148,7 @@ function initFooterScrollText() {
 
     let targetFooterProgress = 0;
     let currentFooterProgress = 0;
-    let footerSnapTimeout; 
+    let footerSnapTimeout;
     let lastScrollY = window.scrollY;
 
     function renderFooterSmooth() {
@@ -213,34 +214,34 @@ function initFooterScrollText() {
         }
 
         clearTimeout(footerSnapTimeout);
-        
+
         if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
-            
+
             footerSnapTimeout = setTimeout(() => {
                 let snapTargetY;
-                
+
                 if (scrollDirection === 'down') {
                     snapTargetY = targetFooterProgress >= 0.05 ? footerTop + maxScroll : footerTop;
                 } else {
                     snapTargetY = targetFooterProgress <= 0.95 ? footerTop : footerTop + maxScroll;
                 }
-                
+
                 if (Math.abs(scrollY - snapTargetY) > 5) {
                     if (typeof lenis !== 'undefined') {
                         lenis.scrollTo(snapTargetY, { duration: 1.5 });
                     }
                 }
-            }, 50); 
+            }, 50);
         }
     }, { passive: true });
 }
 
-// FOOTER CURSOR BUTTON 
+// footer cursor button
 function initFooterCursorBtn() {
     const footerSection = document.getElementById('footerSection');
     const footerZone = document.getElementById('footerCursorZone');
     const footerCursorBtn = document.getElementById('footerCursorBtn');
-    const textWrap = document.querySelector('.footer-text-wrap');
+    const header = document.querySelector('header.navbar');
 
     if (!footerZone || !footerCursorBtn || window.innerWidth <= 1024) return;
 
@@ -267,11 +268,18 @@ function initFooterCursorBtn() {
     }
     requestAnimationFrame(animateCursor);
 
+    function isMouseOverHeader(clientY) {
+        if (!header) return false;
+        const headerRect = header.getBoundingClientRect();
+        return clientY >= headerRect.top && clientY <= headerRect.bottom;
+    }
+
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
 
         const zoneRect = footerZone.getBoundingClientRect();
+        const textWrap = document.querySelector('.footer-text-wrap');
 
         let triggerTop = zoneRect.top;
         if (textWrap) {
@@ -283,7 +291,9 @@ function initFooterCursorBtn() {
 
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
 
-        if (isInZone && isTextRevealed) {
+        const overHeader = isMouseOverHeader(e.clientY);
+
+        if (isInZone && isTextRevealed && !overHeader) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
 
@@ -300,6 +310,7 @@ function initFooterCursorBtn() {
 
     window.addEventListener('scroll', () => {
         const zoneRect = footerZone.getBoundingClientRect();
+        const textWrap = document.querySelector('.footer-text-wrap');
 
         let triggerTop = zoneRect.top;
         if (textWrap) {
@@ -310,8 +321,9 @@ function initFooterCursorBtn() {
             && mouseY >= triggerTop && mouseY <= zoneRect.bottom;
 
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
+        const overHeader = isMouseOverHeader(mouseY);
 
-        if (isInZone && isTextRevealed) {
+        if (isInZone && isTextRevealed && !overHeader) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
         } else {

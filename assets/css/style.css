@@ -362,7 +362,7 @@ header.navbar {
 }
 
 .desc-text {
-  font-size: clamp(16px, 1.5vw, 25px);
+  font-size: clamp(18px, 1.6vw, 28px);
   line-height: 1.4;
   font-weight: 400;
   color: #757575;
@@ -894,7 +894,7 @@ header.navbar {
 }
 
 .quote-text {
-  font-size: clamp(16px, 1.5vw, 25px);
+  font-size: clamp(18px, 1.6vw, 28px);
   line-height: 1.5;
   color: #111111;
   font-weight: 400;
@@ -1158,7 +1158,7 @@ header.navbar {
 }
 
 .blog-title {
-  font-size: clamp(16px, 1.5vw, 25px);
+  font-size: clamp(18px, 1.6vw, 28px);
   font-weight: 500;
   color: #111111;
   line-height: 1.4;
