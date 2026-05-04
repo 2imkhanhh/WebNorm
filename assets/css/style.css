@@ -507,15 +507,22 @@ header.navbar {
   overflow: hidden;
 }
 
+.ps-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+  z-index: 5;
+  margin-top: 10vh; 
+}
+
 .ps-counter-top {
-  position: absolute;
-  top: 12vh;
-  left: calc(27.5vw + 16px);
+  margin-left: calc(30vw + 16px); 
+  margin-bottom: 0; 
   color: #ffffff;
   font-family: 'AeonikPro', sans-serif;
   display: flex;
   align-items: baseline;
-  z-index: 10;
 }
 
 .ps-counter-top .ps-num-current {
@@ -540,9 +547,6 @@ header.navbar {
   display: flex;
   align-items: center;
   position: relative;
-  z-index: 5;
-  margin-top: 18vh;
-  padding-bottom: 8vh;
 }
 
 .ps-sticky-wrap::after {
@@ -563,13 +567,13 @@ header.navbar {
   display: flex;
   align-items: center;
   height: 100%;
-  padding-left: 27.5vw;
-  padding-right: 27.5vw;
+  padding-left: 30vw; 
+  padding-right: 30vw; 
   will-change: transform;
 }
 
 .ps-project-item {
-  flex: 0 0 45vw;
+  flex: 0 0 40vw; 
   height: auto;
   display: flex;
   flex-direction: column;
@@ -585,7 +589,7 @@ header.navbar {
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
   box-sizing: border-box;
 }
 
@@ -1641,8 +1645,8 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    left: calc(17.5vw + 16px);
-    top: 35vh;
+    margin-left: calc(17.5vw + 16px); 
+    margin-bottom: 24px;
   }
 
   .ps-counter-top .ps-num-current {
@@ -1663,9 +1667,9 @@ html.lenis body {
   }
 
   .ps-horizontal-viewport {
-    margin-top: 0;
+    margin-top: 0; 
     padding-bottom: 0;
-    transform: translateY(10vh);
+    transform: none; 
   }
 
   .ps-sticky-wrap::after {
@@ -2133,8 +2137,8 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    left: calc(7.5vw + 10px);
-    top: 30vh;
+    margin-left: calc(7.5vw + 10px); /* Khớp với lề trái của khung ảnh trên Mobile */
+    margin-bottom: 16px; /* Thu hẹp khoảng cách một chút trên màn hình nhỏ */
   }
 
   .ps-counter-top .ps-num-current {
@@ -2147,9 +2151,9 @@ html.lenis body {
   }
 
   .ps-horizontal-viewport {
-    margin-top: 2vh;
+    margin-top: 0;
     padding-bottom: 0;
-    transform: translateY(8vh);
+    transform: none;
   }
 
   .ps-sticky-wrap::after {
