@@ -189,7 +189,7 @@ header.navbar {
 }
 
 .hero-tagline p {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 400;
   color: #757575;
   line-height: 0.2;
@@ -357,7 +357,7 @@ header.navbar {
 }
 
 .label-side {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   color: #757575;
 }
 
@@ -369,7 +369,7 @@ header.navbar {
 }
 
 .link-more {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 400;
   text-decoration: underline;
   text-underline-offset: 5px;
@@ -623,7 +623,7 @@ header.navbar {
 
 .ps-title {
   color: #ffffff;
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 600;
   transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -636,7 +636,7 @@ header.navbar {
 
 .ps-categories span {
   color: #FFFFFF;
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 400;
 }
 
@@ -652,7 +652,7 @@ header.navbar {
 }
 
 .si-label {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   color: #757575;
   font-weight: 400;
   display: inline-block;
@@ -677,7 +677,7 @@ header.navbar {
 }
 
 .si-desc {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   color: #757575;
   line-height: 1.5;
   font-weight: 400;
@@ -691,7 +691,7 @@ header.navbar {
 }
 
 .service-content-wrapper {
-  padding: 30px 0 20px 0;
+  padding: 50px 0 40px 0;
 }
 
 .service-divider {
@@ -719,7 +719,7 @@ header.navbar {
 }
 
 .service-title {
-  font-size: 2vw;
+  font-size: clamp(18px, 1.6vw, 28px);
   font-weight: 500;
   margin-bottom: 0;
   letter-spacing: -0.02em;
@@ -739,9 +739,9 @@ header.navbar {
 }
 
 .service-list li {
-  font-size: 1.5vw;
+  font-size: clamp(16px, 1.4vw, 22px);
   color: #BDBDBD;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   padding-left: 0;
   transition: color 0.6s ease;
 }
@@ -907,14 +907,14 @@ header.navbar {
 }
 
 .author-name {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 700;
   margin-bottom: 2px;
   color: #424242;
 }
 
 .author-position {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   color: #757575;
   margin: 0;
 }
@@ -1412,7 +1412,7 @@ header.navbar {
 }
 
 .contact-info p {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   line-height: 1.6;
   margin-bottom: 4px;
   font-weight: 400;
@@ -1420,7 +1420,7 @@ header.navbar {
 }
 
 .copyright p {
-  font-size: clamp(13px, 1.2vw, 18px);
+  font-size: clamp(16px, 1.4vw, 22px);
   color: #757575;
   margin-bottom: 0;
   line-height: 1;

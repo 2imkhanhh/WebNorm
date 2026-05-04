@@ -209,7 +209,7 @@ body.about-page {
 .about-intro-section .desc-text {
     color: #757575;
     line-height: 1.4;
-    font-size: clamp(16px, 1.5vw, 25px);
+    font-size: clamp(18px, 1.6vw, 28px);
     font-weight: 400;
 }
 
@@ -247,7 +247,7 @@ body.about-page {
 }
 
 .workflow-slogan {
-    font-size: clamp(16px, 1.5vw, 25px);
+    font-size: clamp(18px, 1.6vw, 28px);
     line-height: 1.5;
     color: #757575;
     font-weight: 500;
@@ -301,7 +301,7 @@ body.about-page {
 }
 
 .step-desc {
-    font-size: clamp(16px, 1.5vw, 25px);
+    font-size: clamp(18px, 1.6vw, 28px);
     line-height: 1.6;
     margin: 0.5rem 0;
     color: #BDBDBD;
@@ -369,7 +369,7 @@ body.about-page {
 }
 
 .member-name {
-    font-size: clamp(16px, 1.5vw, 25px);
+    font-size: clamp(18px, 1.6vw, 28px);
     font-weight: 700;
     margin-bottom: 5px;
     color: #111;
