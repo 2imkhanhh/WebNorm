@@ -2140,8 +2140,8 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    margin-left: calc(7.5vw + 10px); /* Khớp với lề trái của khung ảnh trên Mobile */
-    margin-bottom: 16px; /* Thu hẹp khoảng cách một chút trên màn hình nhỏ */
+    margin-left: calc(7.5vw + 10px); 
+    margin-bottom: 16px; 
   }
 
   .ps-counter-top .ps-num-current {

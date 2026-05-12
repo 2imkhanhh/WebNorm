@@ -206,9 +206,8 @@
 
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    e.preventDefault(); // Ngăn trình duyệt nhảy trang
+                    e.preventDefault(); 
 
-                    // 1. Đổi màu nút: Nút được bấm thì đậm, các nút khác thì nhạt
                     filterBtns.forEach(fBtn => {
                         fBtn.classList.remove('wh-dark');
                         fBtn.classList.add('wh-light');
@@ -216,24 +215,18 @@
                     btn.classList.remove('wh-light');
                     btn.classList.add('wh-dark');
 
-                    // 2. Lấy giá trị của bộ lọc
                     const filterValue = btn.getAttribute('data-filter');
 
-                    // 3. Lọc dự án bằng Inline Style (Chống lỗi Cache CSS)
                     projects.forEach(project => {
-                        // Lấy data-category của từng dự án (thêm || '' để đề phòng có thẻ quên ghi)
                         const category = project.getAttribute('data-category') || '';
 
                         if (filterValue === 'all' || category.includes(filterValue)) {
-                            // Hiện dự án (Thẻ project-card của bạn dùng display: flex)
                             project.style.display = 'flex'; 
                             
-                            // Trick nhỏ để reset lại hiệu ứng mượt mà khi hiện ra
                             project.style.animation = 'none';
-                            project.offsetHeight; // Ép trình duyệt load lại thay đổi
+                            project.offsetHeight;
                             project.style.animation = 'fadeIn 0.4s ease forwards';
                         } else {
-                            // Ẩn lập tức dự án đi
                             project.style.display = 'none';
                         }
                     });
