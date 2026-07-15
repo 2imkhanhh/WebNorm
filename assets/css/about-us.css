@@ -237,8 +237,8 @@ body.about-page {
 
 .workflow-sticky-zone {
     position: sticky;
-    top: 2vh;
-    padding: 50px 0 100px 0;
+    top: max(100px, calc(50vh - 340px));
+    padding: 0;
     overflow: hidden;
 }
 
@@ -469,7 +469,10 @@ body.about-page {
     .workflow-sticky-zone {
         position: relative;
         top: 0;
+        transform: none;
         padding: 0;
+        height: auto;
+        display: block;
     }
 
     .workflow-left-col {
@@ -562,7 +565,10 @@ body.about-page {
     .workflow-sticky-zone {
         position: relative;
         top: 0;
+        transform: none;
         padding: 0;
+        height: auto;
+        display: block;
     }
 
     .workflow-left-col {
