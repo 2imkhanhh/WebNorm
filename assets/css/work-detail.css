@@ -220,17 +220,16 @@ body.work-detail-page {
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    background-color: #FFFFFF;
-    color: #111111;
+    background-color: #111111;
+    color: #ffffff;
     font-family: 'AeonikPro', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px 24px;
+    font-size: clamp(12px, 0.9vw, 20px);
+    font-weight: 500;
+    padding: clamp(10px, 0.9vw, 20px) clamp(20px, 1.8vw, 38px);
     border-radius: 50px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -241,7 +240,7 @@ body.work-detail-page {
 }
 
 .btn-next-project i {
-    font-size: 18px;
+    font-size: clamp(16px, 1.5vw, 28px);
 }
 
 .project-credits-section,
