@@ -38,7 +38,6 @@ html,
 body {
   font-family: 'AeonikPro';
   font-weight: 400;
-  overflow-x: hidden;
 }
 
 body {
@@ -214,9 +213,9 @@ header.navbar {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(1.25);
-  width: 100vw;
-  height: 100vh;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 200vh;
   z-index: 5;
   background-color: transparent;
   pointer-events: auto;
