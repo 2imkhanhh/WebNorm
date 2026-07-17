@@ -8,7 +8,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="stylesheet" href="assets/css/work.css">
+    <link rel="stylesheet" href="assets/css/work.css?v=9">
     <link rel="stylesheet" href="assets/css/contact.css" />
 </head>
 
@@ -62,8 +62,8 @@
 
     <section class="work-list-section">
         <div class="work-list-header">
-            <a href="#" class="view-list-btn">
-                <i class='bx bx-menu'></i> DANH SÁCH
+            <a href="#" class="view-list-btn" id="viewToggleBtn">
+                <i class='bx bx-menu' id="viewToggleIcon"></i> <span id="viewToggleText">DANH SÁCH</span>
             </a>
         </div>
 
@@ -233,6 +233,34 @@
                     });
                 });
             });
+
+            // View Toggle Logic
+            const viewToggleBtn = document.getElementById('viewToggleBtn');
+            const viewToggleIcon = document.getElementById('viewToggleIcon');
+            const viewToggleText = document.getElementById('viewToggleText');
+            const workGrid = document.querySelector('.work-grid');
+
+            if (viewToggleBtn && workGrid) {
+                viewToggleBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    workGrid.classList.add('no-transition');
+                    workGrid.classList.toggle('list-view');
+                    
+                    if (workGrid.classList.contains('list-view')) {
+                        viewToggleText.textContent = 'LƯỚI';
+                        viewToggleIcon.className = 'bx bx-grid-alt';
+                    } else {
+                        viewToggleText.textContent = 'DANH SÁCH';
+                        viewToggleIcon.className = 'bx bx-menu';
+                    }
+                    
+                    workGrid.offsetHeight; // trigger reflow
+                    setTimeout(() => {
+                        workGrid.classList.remove('no-transition');
+                    }, 50);
+                });
+            }
         });
     </script>
 </body>
