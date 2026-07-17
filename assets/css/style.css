@@ -76,6 +76,11 @@ header.navbar {
   pointer-events: auto;
 }
 
+.norm-container {
+  padding-left: clamp(24px, 2.5vw, 60px) !important;
+  padding-right: clamp(24px, 2.5vw, 60px) !important;
+}
+
 .nav-link-item {
   font-size: clamp(13px, 1vw, 20px);
   font-weight: 500;
@@ -671,7 +676,6 @@ header.navbar {
 
 .services-intro-row {
   align-items: flex-start;
-  margin-left: -20px;
 }
 
 .si-label {
