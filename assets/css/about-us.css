@@ -136,13 +136,13 @@ body.about-page {
 }
 
 .solution-text-1 {
-    margin-left: 5%;
+    margin-left: 2%;
 }
 
 .solution-right-group {
     width: 100%;
     text-align: right;
-    padding-right: 10%;
+    padding-right: 13%;
 }
 
 .brand-line {
@@ -153,7 +153,7 @@ body.about-page {
     display: block;
     width: fit-content;
     margin-left: auto;
-    margin-right: 10%;
+    margin-right: 13%;
     padding-right: 1em;
     text-align: left;
 }
