@@ -74,17 +74,21 @@ a {
 }
 
 .loading-svg {
-  width: 45vw;
+  width: 35vw;
   height: auto;
 }
 
 .loading-step {
   fill: #E0E0E0;
-  transition: fill 0.3s ease-out;
+  stroke: #E0E0E0;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+  transition: fill 0.3s ease-out, stroke 0.3s ease-out;
 }
 
 .loading-step.filled {
   fill: #111111;
+  stroke: #111111;
 }
 
 /* navbar */
