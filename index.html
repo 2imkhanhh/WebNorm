@@ -13,6 +13,21 @@
 </head>
 
 <body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <svg class="loading-svg" width="739" height="300" viewBox="0 0 739 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <mask id="mask0_654_5" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="739" height="300">
+                <path d="M369.5 0C512.512 0 654.699 71.4345 733.016 132.613L739 137.21V298.703L720.737 291.159C598.259 240.472 480.423 233.398 371.151 233.398C370.635 233.516 370.016 233.517 369.5 233.517L367.85 233.398C257.134 233.516 107.621 248.606 18.8828 290.924L0 300V137.328L5.98438 132.73C84.3006 71.4338 226.488 6.15988e-05 369.5 0Z" fill="#E0E0E0"/>
+            </mask>
+            <g mask="url(#mask0_654_5)">
+                <rect class="loading-step" y="-106.78" width="185" height="447.458" fill="#E0E0E0"/>
+                <rect class="loading-step" x="184" y="-106.78" width="188" height="447.458" fill="#E0E0E0"/>
+                <rect class="loading-step" x="370" y="-106.78" width="186" height="447.458" fill="#E0E0E0"/>
+                <rect class="loading-step" x="553" y="-106.78" width="188" height="447.458" fill="#E0E0E0"/>
+            </g>
+        </svg>
+    </div>
+
     <header class="navbar navbar-expand-lg">
         <div class="navbar-inner">
             <a href="about-us.html" class="nav-link-item">About us</a>
@@ -1140,6 +1155,129 @@
                 }
             });
         });
+    </script>
+    <script>
+        (function() {
+            const preloader = document.getElementById('preloader');
+            if (!preloader) return;
+
+            const steps = preloader.querySelectorAll('.loading-step');
+            let currentStep = 0;
+            let isCompleted = false;
+
+            function fillStep(index) {
+                if (index < steps.length && index >= 0) {
+                    steps[index].classList.add('filled');
+                }
+            }
+
+            const mediaElements = Array.from(document.querySelectorAll('img, video, model-viewer'));
+            let totalWeight = 0;
+            let loadedWeight = 0;
+
+            const mediaData = mediaElements.map(media => {
+                let weight = 1;
+                if (media.tagName === 'VIDEO') weight = 20;
+                if (media.tagName === 'MODEL-VIEWER') weight = 40;
+                totalWeight += weight;
+                return { el: media, weight: weight, loaded: false };
+            });
+
+            let targetPercent = 0;
+            let visualPercent = 0;
+
+            function updateRealProgress() {
+                if (totalWeight === 0) {
+                    targetPercent = 1;
+                    return;
+                }
+                targetPercent = loadedWeight / totalWeight;
+            }
+
+            function animateProgress() {
+                if (isCompleted) return;
+                
+                let diff = targetPercent - visualPercent;
+                if (diff > 0) {
+                    visualPercent += Math.min(diff, 0.012); 
+                }
+
+                if (visualPercent >= 0.25 && currentStep < 1) {
+                    fillStep(0);
+                    currentStep = 1;
+                }
+                if (visualPercent >= 0.50 && currentStep < 2) {
+                    fillStep(1);
+                    currentStep = 2;
+                }
+                if (visualPercent >= 0.75 && currentStep < 3) {
+                    fillStep(2);
+                    currentStep = 3;
+                }
+
+                if (visualPercent >= 0.99 && targetPercent >= 1) {
+                    completeLoading();
+                } else {
+                    requestAnimationFrame(animateProgress);
+                }
+            }
+
+            function completeLoading() {
+                if (isCompleted) return;
+                isCompleted = true;
+                fillStep(0);
+                fillStep(1);
+                fillStep(2);
+                fillStep(3);
+                
+                setTimeout(() => {
+                    preloader.classList.add('loaded');
+                    setTimeout(() => { preloader.remove(); }, 500);
+                }, 500);
+            }
+
+            function markLoaded(item) {
+                if (!item.loaded) {
+                    item.loaded = true;
+                    loadedWeight += item.weight;
+                    updateRealProgress();
+                }
+            }
+
+            if (totalWeight > 0) {
+                mediaData.forEach(item => {
+                    const media = item.el;
+                    if (media.tagName === 'IMG') {
+                        if (media.complete) {
+                            markLoaded(item);
+                        } else {
+                            media.addEventListener('load', () => markLoaded(item), { once: true });
+                            media.addEventListener('error', () => markLoaded(item), { once: true });
+                        }
+                    } else if (media.tagName === 'VIDEO') {
+                        if (media.readyState >= 3) {
+                            markLoaded(item);
+                        } else {
+                            media.addEventListener('canplay', () => markLoaded(item), { once: true });
+                            media.addEventListener('error', () => markLoaded(item), { once: true });
+                        }
+                    } else if (media.tagName === 'MODEL-VIEWER') {
+                        media.addEventListener('load', () => markLoaded(item), { once: true });
+                        media.addEventListener('error', () => markLoaded(item), { once: true });
+                    }
+                });
+                updateRealProgress();
+                requestAnimationFrame(animateProgress);
+            } else {
+                targetPercent = 1;
+                requestAnimationFrame(animateProgress);
+            }
+
+            setTimeout(() => {
+                targetPercent = 1;
+            }, 30000);
+
+        })();
     </script>
 </body>
 

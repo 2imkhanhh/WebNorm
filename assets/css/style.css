@@ -53,6 +53,40 @@ a {
   color: inherit;
 }
 
+/* preloader */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-svg {
+  width: 45vw;
+  height: auto;
+}
+
+.loading-step {
+  fill: #E0E0E0;
+  transition: fill 0.3s ease-out;
+}
+
+.loading-step.filled {
+  fill: #111111;
+}
+
 /* navbar */
 header.navbar {
   background: transparent !important;
