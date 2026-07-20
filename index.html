@@ -1,3 +1,4 @@
+<!-- test -->
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -15,15 +16,19 @@
 <body>
     <!-- Preloader -->
     <div id="preloader">
-        <svg class="loading-svg" width="739" height="300" viewBox="0 0 739 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <mask id="mask0_654_5" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="739" height="300">
-                <path d="M369.5 0C512.512 0 654.699 71.4345 733.016 132.613L739 137.21V298.703L720.737 291.159C598.259 240.472 480.423 233.398 371.151 233.398C370.635 233.516 370.016 233.517 369.5 233.517L367.85 233.398C257.134 233.516 107.621 248.606 18.8828 290.924L0 300V137.328L5.98438 132.73C84.3006 71.4338 226.488 6.15988e-05 369.5 0Z" fill="#E0E0E0"/>
+        <svg class="loading-svg" width="739" height="300" viewBox="0 0 739 300" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <mask id="mask0_654_5" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="739"
+                height="300">
+                <path
+                    d="M369.5 0C512.512 0 654.699 71.4345 733.016 132.613L739 137.21V298.703L720.737 291.159C598.259 240.472 480.423 233.398 371.151 233.398C370.635 233.516 370.016 233.517 369.5 233.517L367.85 233.398C257.134 233.516 107.621 248.606 18.8828 290.924L0 300V137.328L5.98438 132.73C84.3006 71.4338 226.488 6.15988e-05 369.5 0Z"
+                    fill="#E0E0E0" />
             </mask>
             <g mask="url(#mask0_654_5)">
-                <rect class="loading-step" y="-106.78" width="185" height="447.458" fill="#E0E0E0"/>
-                <rect class="loading-step" x="184" y="-106.78" width="188" height="447.458" fill="#E0E0E0"/>
-                <rect class="loading-step" x="370" y="-106.78" width="186" height="447.458" fill="#E0E0E0"/>
-                <rect class="loading-step" x="553" y="-106.78" width="188" height="447.458" fill="#E0E0E0"/>
+                <rect class="loading-step" y="-106.78" width="185" height="447.458" fill="#E0E0E0" />
+                <rect class="loading-step" x="184" y="-106.78" width="188" height="447.458" fill="#E0E0E0" />
+                <rect class="loading-step" x="370" y="-106.78" width="186" height="447.458" fill="#E0E0E0" />
+                <rect class="loading-step" x="553" y="-106.78" width="188" height="447.458" fill="#E0E0E0" />
             </g>
         </svg>
     </div>
@@ -70,8 +75,9 @@
 
                 <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
                     <img src="assets/images/banner.png" alt="Placeholder" class="hero-img hero-img-placeholder">
-                    <model-viewer src="assets/images/ngoi.glb" alt="3D Banner" auto-rotate camera-controls disable-zoom disable-pan
-                        class="hero-3d-model" style="--poster-color: transparent;" shadow-intensity="1" camera-orbit="0deg 75deg 140%" max-camera-orbit="auto auto 200%"></model-viewer>
+                    <model-viewer src="assets/images/ngoi.glb" alt="3D Banner" auto-rotate camera-controls disable-zoom
+                        disable-pan class="hero-3d-model" style="--poster-color: transparent;" shadow-intensity="1"
+                        camera-orbit="0deg 75deg 140%" max-camera-orbit="auto auto 200%"></model-viewer>
                 </div>
 
                 <div class="col-auto hero-ctas d-flex gap-5">
@@ -1157,7 +1163,7 @@
         });
     </script>
     <script>
-        (function() {
+        (function () {
             const preloader = document.getElementById('preloader');
             if (!preloader) return;
 
@@ -1196,10 +1202,10 @@
 
             function animateProgress() {
                 if (isCompleted) return;
-                
+
                 let diff = targetPercent - visualPercent;
                 if (diff > 0) {
-                    visualPercent += Math.min(diff, 0.012); 
+                    visualPercent += Math.min(diff, 0.012);
                 }
 
                 if (visualPercent >= 0.25 && currentStep < 1) {
@@ -1229,7 +1235,7 @@
                 fillStep(1);
                 fillStep(2);
                 fillStep(3);
-                
+
                 setTimeout(() => {
                     preloader.classList.add('loaded');
                     setTimeout(() => { preloader.remove(); }, 500);
