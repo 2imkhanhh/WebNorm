@@ -41,7 +41,8 @@ body.about-page {
     cursor: pointer;
     animation: waveY var(--wave-time) ease-in-out infinite;
     animation-delay: calc(((9.5 - var(--i)) * var(--shift-time)) - (var(--wave-time) * 10));
-    transition: flex 0.8s ease-out, filter 0.8s ease, box-shadow 0.8s ease;
+    transition: flex 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    transform: translateZ(0);
     z-index: 1;
 }
 
@@ -50,7 +51,8 @@ body.about-page {
     height: 100%;
     display: block;
     object-fit: cover;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .gallery-track:has(.gallery-item.is-active) {
@@ -69,8 +71,7 @@ body.about-page {
 .gallery-item.is-active {
     flex: 0 0 30vw;
     z-index: 10;
-    transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s,
-        box-shadow 1.2s ease;
+    transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -90,8 +91,7 @@ body.about-page {
     .gallery-item:hover {
         flex: 0 0 30vw;
         z-index: 10;
-        transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s,
-            box-shadow 1.2s ease;
+        transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s;
     }
 }
 

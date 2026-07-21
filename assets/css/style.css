@@ -237,7 +237,7 @@ header.navbar {
   font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 400;
   color: #757575;
-  line-height: 0.2;
+  line-height: 0.5;
 }
 
 .hero-image-wrap {
