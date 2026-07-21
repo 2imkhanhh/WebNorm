@@ -2101,6 +2101,15 @@ html.lenis body {
     display: block;
   }
 
+  .hero-3d-model {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+
+  .loading-svg {
+    width: 60vw;
+  }
+
+
   .big-bottom-text {
     margin-top: 0;
     padding: 0 16px 20px 16px;
