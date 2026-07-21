@@ -2103,6 +2103,8 @@ html.lenis body {
 
   .hero-3d-model {
     transform: translate(-50%, -50%) scale(1.15);
+    -webkit-clip-path: inset(25% 0 35% 0);
+    clip-path: inset(25% 0 35% 0);
   }
 
   .loading-svg {
