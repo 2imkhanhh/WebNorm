@@ -11,6 +11,10 @@ if (hamburger && mobileMenu) {
 
     document.querySelectorAll('.mobile-menu-item').forEach(link => {
         link.addEventListener('click', () => {
+            const text = link.textContent.trim().toLowerCase();
+            if (text === 'contact' || text === 'liên hệ' || text === 'vn' || text === 'en') {
+                return;
+            }
             mobileMenu.classList.remove('open');
             hamburger.classList.remove('active');
             document.body.style.overflow = '';
@@ -489,7 +493,10 @@ function initContactPopup(triggers) {
     const closePopup = () => {
         overlay.classList.remove('active');
         sidebar.classList.remove('active');
-        document.body.style.overflow = '';
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (!(mobileMenu && mobileMenu.classList.contains('open'))) {
+            document.body.style.overflow = '';
+        }
     };
 
     closeBtn.addEventListener('click', closePopup);
