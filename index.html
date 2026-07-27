@@ -727,6 +727,19 @@
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const hero3dModel = document.querySelector('.hero-3d-model');
+            if (hero3dModel) {
+                const updateZoom = () => {
+                    if (window.innerWidth <= 1024) {
+                        hero3dModel.removeAttribute('disable-zoom');
+                    } else {
+                        hero3dModel.setAttribute('disable-zoom', '');
+                    }
+                };
+                updateZoom();
+                window.addEventListener('resize', updateZoom);
+            }
+
             // banner hover - disabled for 3D model
             /*
             const bannerImg = document.querySelector('.hero-img');
