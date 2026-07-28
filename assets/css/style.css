@@ -2115,7 +2115,7 @@ html.lenis body {
   .hero-3d-model {
     top: 15vh;
     height: 45vh;
-    transform: translate(-50%, -50%) scale(1.3);
+    transform: translate(-50%, -50%) scale(1.5);
     -webkit-clip-path: none;
     clip-path: none;
   }
@@ -2126,7 +2126,7 @@ html.lenis body {
 
 
   .big-bottom-text {
-    margin-top: 0;
+    margin-top: -50px;
     padding: 0 16px 20px 16px;
     z-index: 0;
   }
