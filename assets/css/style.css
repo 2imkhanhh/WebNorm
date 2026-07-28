@@ -1297,6 +1297,7 @@ header.navbar {
   display: flex;
   align-items: center;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .footer-text-wrap {
@@ -1568,6 +1569,14 @@ header.navbar {
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@supports (-webkit-hyphens: none) {
+  .footer-bg-video {
+    mix-blend-mode: screen;
+  }
 }
 
 /* .footer-video-overlay {
