@@ -1288,6 +1288,7 @@ header.navbar {
   position: relative;
   z-index: 20;
   transition: background-color 0.6s ease, color 0.6s ease;
+  isolation: isolate;
 }
 
 .footer-sticky {
@@ -1297,7 +1298,6 @@ header.navbar {
   display: flex;
   align-items: center;
   overflow: hidden;
-  isolation: isolate;
 }
 
 .footer-text-wrap {
@@ -1569,11 +1569,10 @@ header.navbar {
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
-  transform: translateZ(0);
-  will-change: transform;
 }
 
-@supports (-webkit-hyphens: none) {
+/* Chỉ áp dụng mix-blend-mode cho Safari để sửa lỗi nền đen, tránh giật lag trên Chrome */
+@supports (background: -webkit-named-image(i)) {
   .footer-bg-video {
     mix-blend-mode: screen;
   }
