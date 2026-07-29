@@ -1272,7 +1272,6 @@ header.navbar {
   position: relative;
   z-index: 20;
   transition: background-color 0.6s ease, color 0.6s ease;
-  isolation: isolate;
 }
 
 .footer-sticky {
