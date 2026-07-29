@@ -14,6 +14,11 @@
 
 <body>
     <div id="preloader">
+        <script>
+            if (sessionStorage.getItem('norm_preloader_shown')) {
+                document.getElementById('preloader').style.display = 'none';
+            }
+        </script>
         <svg class="loading-svg" width="739" height="300" viewBox="0 0 739 300" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <mask id="mask0_654_5" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="739"
@@ -1178,7 +1183,7 @@
     <script>
         (function () {
             const preloader = document.getElementById('preloader');
-            if (!preloader) return;
+            if (!preloader || preloader.style.display === 'none') return;
 
             const steps = preloader.querySelectorAll('.loading-step');
             let currentStep = 0;
@@ -1242,6 +1247,7 @@
             function completeLoading() {
                 if (isCompleted) return;
                 isCompleted = true;
+                sessionStorage.setItem('norm_preloader_shown', 'true');
                 fillStep(0);
                 fillStep(1);
                 fillStep(2);
