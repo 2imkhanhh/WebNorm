@@ -98,7 +98,7 @@ revealElements.forEach(revealTextEl => {
         });
     }
 
-    
+
     window.addEventListener('scroll', updateChars, { passive: true });
     window.addEventListener('resize', updateChars, { passive: true });
 
@@ -146,7 +146,6 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
-    const sectionsToDarken = document.querySelectorAll('.blog-slider-section, .members-section, .work-list-section, .explore-section, .project-credits-section, .news-grid-section');
 
     if (!footerSection || footerLines.length === 0) return;
 
@@ -199,14 +198,10 @@ function initFooterScrollText() {
 
         if (scrolledIntoFooter >= triggerDistance) {
             footerSection.classList.add('dark-mode');
-            sectionsToDarken.forEach(section => {
-                section.classList.add('dark-mode');
-            });
+            document.body.classList.add('dark-mode');
         } else {
             footerSection.classList.remove('dark-mode');
-            sectionsToDarken.forEach(section => {
-                section.classList.remove('dark-mode');
-            });
+            document.body.classList.remove('dark-mode');
         }
 
         let scrolledInside = Math.max(0, scrollY - footerTop);
