@@ -1296,6 +1296,7 @@ header.navbar {
   display: flex;
   align-items: center;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .footer-text-wrap {
@@ -1572,7 +1573,7 @@ header.navbar {
 }
 
 /* Chỉ áp dụng mix-blend-mode cho Safari để sửa lỗi nền đen, tránh giật lag trên Chrome */
-@supports (background: -webkit-named-image(i)) {
+@supports (-webkit-hyphens: none) {
   .footer-bg-video {
     mix-blend-mode: screen;
   }
