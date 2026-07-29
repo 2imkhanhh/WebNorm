@@ -34,18 +34,26 @@
   padding: 0;
 }
 
-html,
-body {
-  font-family: 'AeonikPro';
-  font-weight: 400;
+html {
+  overflow-x: clip;
+  max-width: 100%;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 body {
+  font-family: 'AeonikPro';
+  font-weight: 400;
   background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 8%);
   background-repeat: no-repeat;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: clip;
+  max-width: 100%;
+  position: relative;
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
 }
 
 a {
@@ -74,7 +82,7 @@ a {
 }
 
 .loading-svg {
-  width: 35vw;
+  width: 25vw;
   height: auto;
 }
 
@@ -207,6 +215,7 @@ header.navbar {
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow-x: clip;
 }
 
 .hero-section .container-fluid {
@@ -254,14 +263,15 @@ header.navbar {
 
 .hero-3d-model {
   position: absolute;
-  top: 50%;
+  top: 40vh;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
   height: 200vh;
-  z-index: 5;
+  z-index: 15;
   background-color: transparent;
   pointer-events: auto;
+  touch-action: pan-y !important;
 }
 
 .hero-img {
@@ -324,7 +334,7 @@ header.navbar {
   padding: 0 25px 110px 25px;
   position: relative;
   z-index: 0;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .big-bottom-text span {
@@ -561,6 +571,8 @@ header.navbar {
 .project-showcase {
   background-color: #111111;
   position: relative;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 .ps-sticky-wrap {
@@ -609,10 +621,12 @@ header.navbar {
 
 .ps-horizontal-viewport {
   width: 100vw;
+  max-width: 100%;
   height: max-content;
   display: flex;
   align-items: center;
   position: relative;
+  overflow-x: clip;
 }
 
 .ps-sticky-wrap::after {
@@ -1159,30 +1173,16 @@ header.navbar {
   margin-right: -1.5rem;
 }
 
+.blog-slider-section .link-more {
+  color: #111;
+}
+
 .blog-slider-section .link-more,
 .blog-slider-section .blog-title,
 .blog-slider-section .blog-title a,
 .blog-slider-section .nav-btn,
 .blog-slider-section .nav-btn i {
   transition: color 0.6s ease, border-color 0.6s ease, background-color 0.6s ease;
-}
-
-.blog-slider-section.dark-mode {
-  background-color: #111111;
-}
-
-.blog-slider-section.dark-mode .link-more,
-.blog-slider-section.dark-mode .blog-title,
-.blog-slider-section.dark-mode .blog-title a {
-  color: #ffffff !important;
-}
-
-.blog-slider-section.dark-mode .nav-btn i {
-  color: #ffffff !important;
-}
-
-.blog-slider-section.dark-mode .nav-btn {
-  border-color: #ffffff !important;
 }
 
 .blog-track {
@@ -1215,6 +1215,7 @@ header.navbar {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.5s ease;
 }
 
@@ -1566,6 +1567,14 @@ header.navbar {
   object-fit: cover;
   z-index: 0;
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@supports (background: -webkit-named-image(i)) {
+  .footer-bg-video {
+    mix-blend-mode: screen;
+  }
 }
 
 /* .footer-video-overlay {
@@ -1601,13 +1610,14 @@ html.lenis body {
   pointer-events: none;
 }
 
-@media (max-width: 1024px) and (min-width: 768px) {
+@media (max-width: 1024.98px) and (min-width: 768px) {
   .mobile-menu {
     display: block;
   }
 
   .nav-hamburger {
-    display: flex;
+    display: flex !important;
+    z-index: 9999 !important;
   }
 
   .navbar-inner {
@@ -1655,9 +1665,18 @@ html.lenis body {
     display: block;
   }
 
+  .hero-3d-model {
+    top: 20vh;
+    height: 45vh;
+    transform: translate(-50%, -50%) scale(1.8);
+    -webkit-clip-path: none;
+    clip-path: none;
+  }
+
   .big-bottom-text {
     margin-top: 0;
     padding: 0 24px 32px 24px;
+    z-index: 0;
   }
 
   .big-bottom-text span {
@@ -1994,6 +2013,11 @@ html.lenis body {
     margin-bottom: 0 !important;
   }
 
+  .blog-slider-container {
+    width: 100% !important;
+    margin-right: 0 !important;
+  }
+
   .blog-slider-section .blog-nav-btns.mt-5 {
     margin-top: 20px !important;
   }
@@ -2054,7 +2078,8 @@ html.lenis body {
   }
 
   .nav-hamburger {
-    display: flex;
+    display: flex !important;
+    z-index: 9999 !important;
   }
 
   .navbar-inner {
@@ -2102,9 +2127,11 @@ html.lenis body {
   }
 
   .hero-3d-model {
-    transform: translate(-50%, -50%) scale(1.15);
-    -webkit-clip-path: inset(25% 0 35% 0);
-    clip-path: inset(25% 0 35% 0);
+    top: 15vh;
+    height: 45vh;
+    transform: translate(-50%, -50%) scale(1.5);
+    -webkit-clip-path: none;
+    clip-path: none;
   }
 
   .loading-svg {
@@ -2113,8 +2140,9 @@ html.lenis body {
 
 
   .big-bottom-text {
-    margin-top: 0;
+    margin-top: -50px;
     padding: 0 16px 20px 16px;
+    z-index: 0;
   }
 
   .big-bottom-text span {
@@ -2129,6 +2157,7 @@ html.lenis body {
 
   .bbt-row-1 .stagger-word:first-child {
     align-self: flex-start;
+    margin-left: 5vw;
   }
 
   .bbt-row-1 .stagger-word:last-child {
@@ -2539,7 +2568,11 @@ html.lenis body {
 
   .blog-slider-section {
     padding-bottom: 5px !important;
-    ;
+  }
+
+  .blog-slider-container {
+    width: 100% !important;
+    margin-right: 0 !important;
   }
 
   .blog-slider-section .blog-nav-btns.mt-5 {
@@ -2770,3 +2803,74 @@ html.lenis body {
     font-size: 0.9rem;
   }
 } */
+/* Global Lights-off Effect */
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #111111;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.6s ease;
+}
+
+body.dark-mode::before {
+  opacity: 1;
+}
+
+body.dark-mode .si-desc,
+body.dark-mode .service-title,
+body.dark-mode .service-list,
+body.dark-mode .service-list li,
+body.dark-mode .testimonial-title,
+body.dark-mode .quote-text,
+body.dark-mode .author-name,
+body.dark-mode .author-position,
+body.dark-mode .nav-btn,
+body.dark-mode .testimonial-pagination .current,
+body.dark-mode .testimonial-pagination .total,
+body.dark-mode .si-statement,
+body.dark-mode .si-label,
+body.dark-mode .link-more,
+body.dark-mode .blog-title,
+body.dark-mode .blog-title a,
+body.dark-mode .service-number,
+body.dark-mode .ps-title,
+body.dark-mode .ps-categories span,
+body.dark-mode .ps-num-current,
+body.dark-mode .ps-num-total,
+body.dark-mode .social-title {
+  color: #ffffff;
+  transition: color 0.6s ease;
+}
+
+body.dark-mode .social-list a {
+  color: #ffffff;
+  transition: color 0.6s ease, transform 0.4s ease;
+}
+
+body.dark-mode .nav-btn {
+  border-color: #ffffff;
+  transition: border-color 0.6s ease;
+}
+
+body.dark-mode .progress-ring-circle {
+  stroke: #ffffff;
+  transition: stroke 0.6s ease;
+}
+
+body.dark-mode .blog-slider-section,
+body.dark-mode .footer-section,
+body.dark-mode .blog-intro-section,
+body.dark-mode .members-section,
+body.dark-mode .work-list-section,
+body.dark-mode .explore-section,
+body.dark-mode .project-credits-section,
+body.dark-mode .news-grid-section {
+  background-color: transparent !important;
+}

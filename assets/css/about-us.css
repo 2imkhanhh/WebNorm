@@ -1,6 +1,6 @@
+
 body.about-page {
     background: #FFFFFF;
-    overflow-x: hidden;
     min-height: auto;
 }
 
@@ -381,8 +381,8 @@ body.about-page {
     text-transform: none;
 }
 
-.members-section.dark-mode {
-    background-color: #111111;
+body.dark-mode .members-section {
+    background-color: transparent;
 }
 
 .members-section,
@@ -393,9 +393,9 @@ body.about-page {
     transition: color 0.6s ease, background-color 0.6s ease, border-color 0.6s ease;
 }
 
-.members-section.dark-mode .testimonial-title,
-.members-section.dark-mode .member-name,
-.members-section.dark-mode .member-role {
+body.dark-mode .members-section .testimonial-title,
+body.dark-mode .members-section .member-name,
+body.dark-mode .members-section .member-role {
     color: #ffffff !important;
 }
 

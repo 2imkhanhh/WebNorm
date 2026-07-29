@@ -7,14 +7,18 @@
     <title>Brand Design Agency</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.css" />
-    <link rel="stylesheet" href="assets/css/style.css?v=11" />
-    <link rel="stylesheet" href="assets/css/contact.css?v=2" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/contact.css" />
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 </head>
 
 <body>
-    <!-- Preloader -->
     <div id="preloader">
+        <script>
+            if (sessionStorage.getItem('norm_preloader_shown')) {
+                document.getElementById('preloader').style.display = 'none';
+            }
+        </script>
         <svg class="loading-svg" width="739" height="300" viewBox="0 0 739 300" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <mask id="mask0_654_5" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="739"
@@ -63,6 +67,10 @@
     </div>
 
     <section class="hero-section">
+        <model-viewer src="assets/images/norm.glb" alt="3D Banner" camera-controls disable-zoom
+            interaction-prompt="none" disable-pan class="hero-3d-model" style="--poster-color: transparent;"
+            shadow-intensity="1" camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
+            max-camera-orbit="30deg 90deg 140%"></model-viewer>
         <div class="container-fluid px-4 px-md-5 h-100">
             <div class="row h-100 align-items-end">
 
@@ -74,9 +82,6 @@
 
                 <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
                     <img src="assets/images/banner.png" alt="Placeholder" class="hero-img hero-img-placeholder">
-                    <model-viewer src="assets/images/ngoi.glb" alt="3D Banner" camera-controls disable-zoom interaction-prompt="none"
-                        disable-pan class="hero-3d-model" style="--poster-color: transparent;" shadow-intensity="1"
-                        camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 75deg 140%" max-camera-orbit="30deg 75deg 140%"></model-viewer>
                 </div>
 
                 <div class="col-auto hero-ctas d-flex gap-5">
@@ -553,7 +558,7 @@
     </section>
 
     <section class="blog-intro-section">
-        <div class="container-fluid px-4 px-md-5">
+        <div class="container-fluid norm-container">
             <div class="row services-intro-row">
 
                 <div class="col-12 col-lg-3 mb-4 mb-lg-0">
@@ -573,7 +578,7 @@
     <section class="blog-slider-section">
         <div class="container-fluid blog-custom-container">
             <div class="d-flex justify-content-end mb-4">
-                <a href="news.html" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">XEM THÊM
+                <a href="news.html" class="link-more text-uppercase" style="margin-top: 100px;">XEM THÊM
                     BÀI VIẾT</a>
             </div>
 
@@ -727,6 +732,19 @@
     <script src="assets/js/script.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const hero3dModel = document.querySelector('.hero-3d-model');
+            if (hero3dModel) {
+                const updateZoom = () => {
+                    if (window.innerWidth <= 1024) {
+                        hero3dModel.removeAttribute('disable-zoom');
+                    } else {
+                        hero3dModel.setAttribute('disable-zoom', '');
+                    }
+                };
+                updateZoom();
+                window.addEventListener('resize', updateZoom);
+            }
+
             // banner hover - disabled for 3D model
             /*
             const bannerImg = document.querySelector('.hero-img');
@@ -1164,7 +1182,7 @@
     <script>
         (function () {
             const preloader = document.getElementById('preloader');
-            if (!preloader) return;
+            if (!preloader || preloader.style.display === 'none') return;
 
             const steps = preloader.querySelectorAll('.loading-step');
             let currentStep = 0;
@@ -1176,14 +1194,12 @@
                 }
             }
 
-            const mediaElements = Array.from(document.querySelectorAll('img, video, model-viewer'));
+            const mediaElements = Array.from(document.querySelectorAll('model-viewer'));
             let totalWeight = 0;
             let loadedWeight = 0;
 
             const mediaData = mediaElements.map(media => {
-                let weight = 1;
-                if (media.tagName === 'VIDEO') weight = 20;
-                if (media.tagName === 'MODEL-VIEWER') weight = 40;
+                let weight = 40; // Trọng lượng cho mô hình 3D
                 totalWeight += weight;
                 return { el: media, weight: weight, loaded: false };
             });
@@ -1204,7 +1220,7 @@
 
                 let diff = targetPercent - visualPercent;
                 if (diff > 0) {
-                    visualPercent += Math.min(diff, 0.012);
+                    visualPercent += Math.min(diff, 0.015);
                 }
 
                 if (visualPercent >= 0.25 && currentStep < 1) {
@@ -1230,6 +1246,7 @@
             function completeLoading() {
                 if (isCompleted) return;
                 isCompleted = true;
+                sessionStorage.setItem('norm_preloader_shown', 'true');
                 fillStep(0);
                 fillStep(1);
                 fillStep(2);
@@ -1237,8 +1254,8 @@
 
                 setTimeout(() => {
                     preloader.classList.add('loaded');
-                    setTimeout(() => { preloader.remove(); }, 500);
-                }, 500);
+                    setTimeout(() => { preloader.remove(); }, 400);
+                }, 100);
             }
 
             function markLoaded(item) {
@@ -1280,7 +1297,7 @@
 
             setTimeout(() => {
                 targetPercent = 1;
-            }, 30000);
+            }, 8000);
 
         })();
     </script>

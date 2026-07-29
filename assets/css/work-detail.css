@@ -1,6 +1,6 @@
+
 body.work-detail-page {
     background: #FAFAFA;
-    overflow-x: hidden;
     min-height: auto;
 }
 
@@ -245,23 +245,23 @@ body.work-detail-page {
     transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease;
 }
 
-.project-credits-section.dark-mode {
-    background-color: #111111;
+body.dark-mode .project-credits-section {
+    background-color: transparent;
 }
 
-.project-credits-section.dark-mode .label-side {
+body.dark-mode .project-credits-section .label-side {
     color: #BDBDBD;
 }
 
-.project-credits-section.dark-mode .credit-role {
+body.dark-mode .project-credits-section .credit-role {
     color: #BDBDBD;
 }
 
-.project-credits-section.dark-mode .credit-name {
+body.dark-mode .project-credits-section .credit-name {
     color: #ffffff;
 }
 
-.project-credits-section.dark-mode .credit-divider {
+body.dark-mode .project-credits-section .credit-divider {
     border-color: #333333;
     opacity: 1;
 }
@@ -272,11 +272,11 @@ body.work-detail-page {
     transition: background-color 0.6s ease, color 0.6s ease;
 }
 
-.explore-section.dark-mode {
-    background-color: #111111;
+body.dark-mode .explore-section {
+    background-color: transparent;
 }
 
-.explore-section.dark-mode .explore-title {
+body.dark-mode .explore-section .explore-title {
     color: #ffffff;
 }
 

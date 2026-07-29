@@ -1,6 +1,6 @@
+
 body.news-page {
     background: #FAFAFA;
-    overflow-x: hidden;
     min-height: auto;
 }
 
@@ -119,30 +119,30 @@ body.news-page {
     transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease;
 }
 
-.news-grid-section.dark-mode {
-    background-color: #111111;
+body.dark-mode .news-grid-section {
+    background-color: transparent;
 }
 
-.news-grid-section.dark-mode .news-card-title a {
+body.dark-mode .news-grid-section .news-card-title a {
     color: #ffffff;
 }
 
-.news-grid-section.dark-mode .news-card-title a:hover {
+body.dark-mode .news-grid-section .news-card-title a:hover {
     color: #BDBDBD;
 }
 
-.news-grid-section.dark-mode .news-date {
+body.dark-mode .news-grid-section .news-date {
     color: #9e9e9e; 
 }
 
-.news-grid-section.dark-mode .load-more-btn,
-.news-grid-section.dark-mode .collapse-btn {
+body.dark-mode .news-grid-section .load-more-btn,
+body.dark-mode .news-grid-section .collapse-btn {
     background-color: #ffffff; 
     color: #111111;            
 }
 
-.news-grid-section.dark-mode .load-more-btn:hover,
-.news-grid-section.dark-mode .collapse-btn:hover {
+body.dark-mode .news-grid-section .load-more-btn:hover,
+body.dark-mode .news-grid-section .collapse-btn:hover {
     background-color: #444444; 
     color: #ffffff;           
 }
