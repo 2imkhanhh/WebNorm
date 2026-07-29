@@ -1587,13 +1587,14 @@ html.lenis body {
   pointer-events: none;
 }
 
-@media (max-width: 1024px) and (min-width: 768px) {
+@media (max-width: 1024.98px) and (min-width: 768px) {
   .mobile-menu {
     display: block;
   }
 
   .nav-hamburger {
-    display: flex;
+    display: flex !important;
+    z-index: 9999 !important;
   }
 
   .navbar-inner {
@@ -2049,7 +2050,8 @@ html.lenis body {
   }
 
   .nav-hamburger {
-    display: flex;
+    display: flex !important;
+    z-index: 9999 !important;
   }
 
   .navbar-inner {
