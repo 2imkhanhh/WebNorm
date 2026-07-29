@@ -37,12 +37,10 @@
 html {
   overflow-x: clip;
 }
+
 body {
   font-family: 'AeonikPro';
   font-weight: 400;
-}
-
-body {
   background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 8%);
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -2786,6 +2784,7 @@ body::before {
   z-index: -1;
   transition: opacity 0.6s ease;
 }
+
 body.dark-mode::before {
   opacity: 1;
 }
@@ -2811,23 +2810,25 @@ body.dark-mode .ps-title,
 body.dark-mode .ps-categories span,
 body.dark-mode .ps-num-current,
 body.dark-mode .ps-num-total,
-body.dark-mode .social-title,
+body.dark-mode .social-title {
+  color: #ffffff;
+  transition: color 0.6s ease;
+}
+
 body.dark-mode .social-list a {
-    color: #ffffff;
-    transition: color 0.6s ease;
+  color: #ffffff;
+  transition: color 0.6s ease, transform 0.4s ease;
 }
 
 body.dark-mode .nav-btn {
-    border-color: #ffffff;
-    transition: border-color 0.6s ease;
+  border-color: #ffffff;
+  transition: border-color 0.6s ease;
 }
 
 body.dark-mode .progress-ring-circle {
-    stroke: #ffffff;
-    transition: stroke 0.6s ease;
+  stroke: #ffffff;
+  transition: stroke 0.6s ease;
 }
-
-
 
 body.dark-mode .blog-slider-section,
 body.dark-mode .footer-section,
@@ -2837,6 +2838,5 @@ body.dark-mode .work-list-section,
 body.dark-mode .explore-section,
 body.dark-mode .project-credits-section,
 body.dark-mode .news-grid-section {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
-
