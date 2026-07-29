@@ -292,8 +292,10 @@ function initFooterCursorBtn() {
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
 
         const overHeader = isMouseOverHeader(e.clientY);
+        const contactOverlay = document.getElementById('contactOverlay');
+        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
 
-        if (isInZone && isTextRevealed && !overHeader) {
+        if (isInZone && isTextRevealed && !overHeader && !isContactOpen) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
 
@@ -322,8 +324,10 @@ function initFooterCursorBtn() {
 
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
         const overHeader = isMouseOverHeader(mouseY);
+        const contactOverlay = document.getElementById('contactOverlay');
+        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
 
-        if (isInZone && isTextRevealed && !overHeader) {
+        if (isInZone && isTextRevealed && !overHeader && !isContactOpen) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
         } else {

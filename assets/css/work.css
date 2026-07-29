@@ -135,7 +135,7 @@ body.work-page {
 .project-title {
     font-family: 'AeonikPro', sans-serif;
     font-size: clamp(18px, 1.6vw, 28px);
-    font-weight: 700;
+    font-weight: 600;
     color: #111111;
     margin: 0;
 }
@@ -185,14 +185,78 @@ body.work-page {
         opacity: 0;
         transform: translateY(15px);
     }
+
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: none;
     }
 }
 
 .project-card:not(.hidden) {
     animation: fadeIn 0.4s ease forwards;
+}
+
+/* List View Styles */
+.no-transition, .no-transition * {
+    transition: none !important;
+}
+
+.work-grid.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.work-grid.list-view .project-card {
+    position: relative;
+    padding: 32px 0;
+    border-bottom: 1px solid #EAEAEA;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.work-grid.list-view .project-card:first-child {
+    border-top: 1px solid #EAEAEA;
+}
+
+.work-grid.list-view .project-info {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.work-grid.list-view .project-img-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(180px, 20vw, 280px);
+    margin-bottom: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: z-index 0s 0.4s;
+    background-color: transparent !important;
+}
+
+.work-grid.list-view .project-card:hover .project-img-wrap {
+    z-index: 110;
+    transition: z-index 0s 0s;
+}
+
+.work-grid.list-view .project-img-wrap img {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.work-grid.list-view .project-card:hover .project-img-wrap img {
+    opacity: 1;
+    transform: scale(1);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.work-list-section.dark-mode .work-grid.list-view .project-card {
+    border-color: #333333;
 }
 
 /* TABLET */

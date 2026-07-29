@@ -53,6 +53,40 @@ a {
   color: inherit;
 }
 
+/* preloader */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-svg {
+  width: 45vw;
+  height: auto;
+}
+
+.loading-step {
+  fill: #E0E0E0;
+  transition: fill 0.3s ease-out;
+}
+
+.loading-step.filled {
+  fill: #111111;
+}
+
 /* navbar */
 header.navbar {
   background: transparent !important;
@@ -74,6 +108,11 @@ header.navbar {
   padding: 10px clamp(24px, 2.5vw, 60px);
   flex-wrap: nowrap;
   pointer-events: auto;
+}
+
+.norm-container {
+  padding-left: clamp(24px, 2.5vw, 60px) !important;
+  padding-right: clamp(24px, 2.5vw, 60px) !important;
 }
 
 .nav-link-item {
@@ -164,7 +203,6 @@ header.navbar {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
 }
 
 .hero-section .container-fluid {
@@ -172,6 +210,9 @@ header.navbar {
   display: flex;
   flex-direction: column;
   padding-bottom: 28px;
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .hero-section .row {
@@ -203,6 +244,22 @@ header.navbar {
   padding: 0;
 }
 
+.hero-img-placeholder {
+  visibility: hidden;
+}
+
+.hero-3d-model {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 200vh;
+  z-index: 5;
+  background-color: transparent;
+  pointer-events: auto;
+}
+
 .hero-img {
   width: 60vw;
   max-width: 1200px;
@@ -232,6 +289,7 @@ header.navbar {
   min-width: 160px;
   justify-content: flex-end;
   margin-right: -20px;
+  pointer-events: auto;
 }
 
 .cta-btn {
@@ -251,6 +309,9 @@ header.navbar {
 
 .hero-ctas-mobile {
   display: none;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .big-bottom-text {
@@ -258,7 +319,8 @@ header.navbar {
   margin-top: -100px;
   padding: 0 25px 110px 25px;
   position: relative;
-  z-index: 10;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .big-bottom-text span {
@@ -513,12 +575,12 @@ header.navbar {
   width: 100%;
   position: relative;
   z-index: 5;
-  margin-top: 10vh; 
+  margin-top: 10vh;
 }
 
 .ps-counter-top {
-  margin-left: calc(30vw + 16px); 
-  margin-bottom: 0; 
+  margin-left: calc(30vw + 16px);
+  margin-bottom: 0;
   color: #ffffff;
   font-family: 'AeonikPro', sans-serif;
   display: flex;
@@ -557,12 +619,12 @@ header.navbar {
   width: 100%;
   height: 40%;
   background-image: url('../images/norm-text.png');
-  background-repeat: no-repeat; 
-  background-size: cover; 
-  background-position: center bottom; 
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center bottom;
   z-index: 1;
   pointer-events: none;
-  mix-blend-mode: overlay; 
+  mix-blend-mode: overlay;
   opacity: 0.7;
 }
 
@@ -570,13 +632,13 @@ header.navbar {
   display: flex;
   align-items: center;
   height: 100%;
-  padding-left: 30vw; 
-  padding-right: 30vw; 
+  padding-left: 30vw;
+  padding-right: 30vw;
   will-change: transform;
 }
 
 .ps-project-item {
-  flex: 0 0 40vw; 
+  flex: 0 0 40vw;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -648,7 +710,6 @@ header.navbar {
 
 .services-intro-row {
   align-items: flex-start;
-  margin-left: -20px;
 }
 
 .si-label {
@@ -1165,7 +1226,7 @@ header.navbar {
   letter-spacing: -0.01em;
   margin-bottom: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1648,7 +1709,7 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    margin-left: calc(17.5vw + 16px); 
+    margin-left: calc(17.5vw + 16px);
     margin-bottom: 24px;
   }
 
@@ -1670,9 +1731,9 @@ html.lenis body {
   }
 
   .ps-horizontal-viewport {
-    margin-top: 0; 
+    margin-top: 0;
     padding-bottom: 0;
-    transform: none; 
+    transform: none;
   }
 
   .ps-sticky-wrap::after {
@@ -2140,8 +2201,8 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    margin-left: calc(7.5vw + 10px); 
-    margin-bottom: 16px; 
+    margin-left: calc(7.5vw + 10px);
+    margin-bottom: 16px;
   }
 
   .ps-counter-top .ps-num-current {

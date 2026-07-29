@@ -125,7 +125,7 @@ body.about-page {
 
 .solution-sticky-zone {
     position: sticky;
-    top: 30vh;
+    top: 20vh;
     width: 100%;
 }
 
@@ -136,13 +136,13 @@ body.about-page {
 }
 
 .solution-text-1 {
-    margin-left: 10%;
+    margin-left: 2%;
 }
 
 .solution-right-group {
     width: 100%;
     text-align: right;
-    padding-right: 5%;
+    padding-right: 13%;
 }
 
 .brand-line {
@@ -153,7 +153,7 @@ body.about-page {
     display: block;
     width: fit-content;
     margin-left: auto;
-    margin-right: 5%;
+    margin-right: 13%;
     padding-right: 1em;
     text-align: left;
 }
@@ -237,8 +237,8 @@ body.about-page {
 
 .workflow-sticky-zone {
     position: sticky;
-    top: 2vh;
-    padding: 50px 0 100px 0;
+    top: max(100px, calc(50vh - 340px));
+    padding: 0;
     overflow: hidden;
 }
 
@@ -338,16 +338,16 @@ body.about-page {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
 }
 
-.members-section{
+.members-section {
     padding-bottom: 100px;
 }
 
 .members-section .text-left {
-    padding-left: 20vw; 
+    padding-left: 20vw;
 }
 
 .members-section .text-right {
-    padding-right: 20vw; 
+    padding-right: 20vw;
 }
 
 .members-grid-container {
@@ -356,14 +356,14 @@ body.about-page {
 
 .member-card {
     margin-bottom: 20px;
-    width: 80%; 
-    margin-inline: auto; 
+    width: 80%;
+    margin-inline: auto;
 }
 
 .member-card img {
     width: 100%;
     object-fit: cover;
-    border-radius: 8px; 
+    border-radius: 8px;
     margin-bottom: 15px;
     filter: grayscale(0%);
 }
@@ -382,7 +382,7 @@ body.about-page {
 }
 
 .members-section.dark-mode {
-  background-color: #111111;
+    background-color: #111111;
 }
 
 .members-section,
@@ -390,13 +390,13 @@ body.about-page {
 .members-section .member-card,
 .members-section .member-name,
 .members-section .member-role {
-  transition: color 0.6s ease, background-color 0.6s ease, border-color 0.6s ease;
+    transition: color 0.6s ease, background-color 0.6s ease, border-color 0.6s ease;
 }
 
 .members-section.dark-mode .testimonial-title,
 .members-section.dark-mode .member-name,
 .members-section.dark-mode .member-role {
-  color: #ffffff !important;
+    color: #ffffff !important;
 }
 
 .solution-sticky-zone,
@@ -404,7 +404,7 @@ body.about-page {
 .members-section,
 .services-intro-section,
 .services-detail-section {
-    overflow-x: hidden;
+    overflow: hidden;
     width: 100%;
 }
 
@@ -469,7 +469,10 @@ body.about-page {
     .workflow-sticky-zone {
         position: relative;
         top: 0;
+        transform: none;
         padding: 0;
+        height: auto;
+        display: block;
     }
 
     .workflow-left-col {
@@ -562,7 +565,10 @@ body.about-page {
     .workflow-sticky-zone {
         position: relative;
         top: 0;
+        transform: none;
         padding: 0;
+        height: auto;
+        display: block;
     }
 
     .workflow-left-col {

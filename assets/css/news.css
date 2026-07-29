@@ -61,12 +61,13 @@ body.news-page {
 }
 
 .news-meta {
+    margin-top: clamp(12px, 1.5vw, 20px);
     margin-bottom: 6px;
 }
 
 .news-date {
     font-family: 'AeonikPro', sans-serif;
-    font-size: clamp(16px, 1.4vw, 22px);;
+    font-size: clamp(16px, 1.4vw, 22px);
     color: #BDBDBD;
     font-weight: 400;
 }

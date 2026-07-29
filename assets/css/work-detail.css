@@ -19,10 +19,6 @@ body.work-detail-page {
     margin: 0;
 }
 
-.intro-right-content {
-    padding-top: 190px;
-}
-
 .intro-desc {
     font-family: 'AeonikPro', sans-serif;
     font-size: clamp(16px, 1.2vw, 18px);
@@ -88,9 +84,7 @@ body.work-detail-page {
     margin-bottom: 80px;
 }
 
-.overview-content-row {
-    margin-left: -20px;
-}
+
 
 .overview-text {
     font-family: 'AeonikPro', sans-serif;
@@ -220,17 +214,16 @@ body.work-detail-page {
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    background-color: #FFFFFF;
-    color: #111111;
+    background-color: #111111;
+    color: #ffffff;
     font-family: 'AeonikPro', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px 24px;
+    font-size: clamp(12px, 0.9vw, 20px);
+    font-weight: 500;
+    padding: clamp(10px, 0.9vw, 20px) clamp(20px, 1.8vw, 38px);
     border-radius: 50px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -241,7 +234,7 @@ body.work-detail-page {
 }
 
 .btn-next-project i {
-    font-size: 18px;
+    font-size: clamp(16px, 1.5vw, 28px);
 }
 
 .project-credits-section,
@@ -269,8 +262,8 @@ body.work-detail-page {
 }
 
 .project-credits-section.dark-mode .credit-divider {
-    border-color: #333333; 
-    opacity: 1; 
+    border-color: #333333;
+    opacity: 1;
 }
 
 .explore-section,
@@ -299,7 +292,7 @@ body.work-detail-page {
     }
 
     .intro-right-content {
-        padding-top: 100px;
+        padding-top: 40px;
     }
 
     .intro-desc {
@@ -320,9 +313,7 @@ body.work-detail-page {
         padding-bottom: 80px;
     }
 
-    .overview-content-row {
-        margin-left: 0;
-    }
+
 
     .overview-text-block {
         margin-bottom: 60px;
@@ -392,18 +383,18 @@ body.work-detail-page {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        justify-content: space-between; 
+        justify-content: space-between;
         width: 100% !important;
         max-width: 100% !important;
-        gap: 0; 
+        gap: 0;
     }
 
     .meta-item {
-        flex: 0 0 auto; 
+        flex: 0 0 auto;
         min-width: 0;
         display: flex;
         flex-direction: column;
-        align-items: flex-start; 
+        align-items: flex-start;
     }
 
     .meta-label {
@@ -423,9 +414,7 @@ body.work-detail-page {
         padding-bottom: 60px;
     }
 
-    .overview-content-row {
-        margin-left: 0;
-    }
+
 
     .label-side {
         display: block;

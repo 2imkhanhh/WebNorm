@@ -7,9 +7,9 @@
     <title>Brand Design Agency</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.css" />
-    <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="stylesheet" href="assets/css/about-us.css">
-    <link rel="stylesheet" href="assets/css/contact.css" />
+    <link rel="stylesheet" href="assets/css/style.css?v=11" />
+    <link rel="stylesheet" href="assets/css/about-us.css?v=2">
+    <link rel="stylesheet" href="assets/css/contact.css?v=2" />
 </head>
 
 <body class="about-page">
@@ -583,7 +583,7 @@
 
             if (solutionSection && brandLine) {
                 const isMobile = window.innerWidth <= 765;
-                const snapDelay = isMobile ? 800 : 600;
+                const snapDelay = isMobile ? 200 : 150;
 
                 let targetSolutionProgress = 0;
                 let currentSolutionProgress = 0;
@@ -642,7 +642,11 @@
                                 snapTargetY = targetSolutionProgress <= 0.9 ? sectionTop : sectionTop + maxScroll;
                             }
                             if (Math.abs(scrollY - snapTargetY) > 5) {
-                                window.scrollTo({ top: snapTargetY, behavior: 'smooth' });
+                                if (typeof lenis !== 'undefined') {
+                                    lenis.scrollTo(snapTargetY, { duration: 1.0 });
+                                } else {
+                                    window.scrollTo({ top: snapTargetY, behavior: 'smooth' });
+                                }
                             }
                         }, snapDelay);
                     }
