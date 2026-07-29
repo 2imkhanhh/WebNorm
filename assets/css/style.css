@@ -74,17 +74,21 @@ a {
 }
 
 .loading-svg {
-  width: 45vw;
+  width: 35vw;
   height: auto;
 }
 
 .loading-step {
   fill: #E0E0E0;
-  transition: fill 0.3s ease-out;
+  stroke: #E0E0E0;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+  transition: fill 0.3s ease-out, stroke 0.3s ease-out;
 }
 
 .loading-step.filled {
   fill: #111111;
+  stroke: #111111;
 }
 
 /* navbar */
@@ -233,7 +237,7 @@ header.navbar {
   font-size: clamp(16px, 1.4vw, 22px);
   font-weight: 400;
   color: #757575;
-  line-height: 0.2;
+  line-height: 0.5;
 }
 
 .hero-image-wrap {
@@ -2096,6 +2100,17 @@ html.lenis body {
     margin: 80px 0;
     display: block;
   }
+
+  .hero-3d-model {
+    transform: translate(-50%, -50%) scale(1.15);
+    -webkit-clip-path: inset(25% 0 35% 0);
+    clip-path: inset(25% 0 35% 0);
+  }
+
+  .loading-svg {
+    width: 60vw;
+  }
+
 
   .big-bottom-text {
     margin-top: 0;
