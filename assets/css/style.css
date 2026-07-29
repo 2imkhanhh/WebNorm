@@ -1571,6 +1571,7 @@ header.navbar {
   will-change: transform;
 }
 
+/* Chỉ áp dụng mix-blend-mode cho Safari để sửa lỗi nền đen, tránh giật lag trên Chrome */
 @supports (background: -webkit-named-image(i)) {
   .footer-bg-video {
     mix-blend-mode: screen;
@@ -2865,7 +2866,6 @@ body.dark-mode .progress-ring-circle {
 }
 
 body.dark-mode .blog-slider-section,
-body.dark-mode .footer-section,
 body.dark-mode .blog-intro-section,
 body.dark-mode .members-section,
 body.dark-mode .work-list-section,
