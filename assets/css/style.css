@@ -1296,7 +1296,6 @@ header.navbar {
   display: flex;
   align-items: center;
   overflow: hidden;
-  isolation: isolate;
 }
 
 .footer-text-wrap {
@@ -1559,6 +1558,16 @@ header.navbar {
   object-position: bottom;
 }
 
+.footer-video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .footer-bg-video {
   position: absolute;
   top: 0;
@@ -1574,7 +1583,7 @@ header.navbar {
 
 /* Chỉ áp dụng mix-blend-mode cho Safari để sửa lỗi nền đen, tránh giật lag trên Chrome */
 @supports (-webkit-hyphens: none) {
-  .footer-bg-video {
+  .footer-video-wrapper {
     mix-blend-mode: screen;
   }
 }
