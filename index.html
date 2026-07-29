@@ -1190,14 +1190,12 @@
                 }
             }
 
-            const mediaElements = Array.from(document.querySelectorAll('img, video, model-viewer'));
+            const mediaElements = Array.from(document.querySelectorAll('model-viewer'));
             let totalWeight = 0;
             let loadedWeight = 0;
 
             const mediaData = mediaElements.map(media => {
-                let weight = 1;
-                if (media.tagName === 'VIDEO') weight = 20;
-                if (media.tagName === 'MODEL-VIEWER') weight = 40;
+                let weight = 40; // Trọng lượng cho mô hình 3D
                 totalWeight += weight;
                 return { el: media, weight: weight, loaded: false };
             });
@@ -1218,7 +1216,7 @@
 
                 let diff = targetPercent - visualPercent;
                 if (diff > 0) {
-                    visualPercent += Math.min(diff, 0.012);
+                    visualPercent += Math.min(diff, 0.015);
                 }
 
                 if (visualPercent >= 0.25 && currentStep < 1) {
@@ -1251,8 +1249,8 @@
 
                 setTimeout(() => {
                     preloader.classList.add('loaded');
-                    setTimeout(() => { preloader.remove(); }, 500);
-                }, 500);
+                    setTimeout(() => { preloader.remove(); }, 400);
+                }, 100);
             }
 
             function markLoaded(item) {
@@ -1294,7 +1292,7 @@
 
             setTimeout(() => {
                 targetPercent = 1;
-            }, 30000);
+            }, 8000);
 
         })();
     </script>
