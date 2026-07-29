@@ -1571,6 +1571,12 @@ header.navbar {
   will-change: transform;
 }
 
+@supports (background: -webkit-named-image(i)) {
+  .footer-bg-video {
+    mix-blend-mode: screen;
+  }
+}
+
 /* .footer-video-overlay {
   position: absolute;
   top: 0;
