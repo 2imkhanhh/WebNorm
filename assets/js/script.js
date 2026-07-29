@@ -11,10 +11,6 @@ if (hamburger && mobileMenu) {
 
     document.querySelectorAll('.mobile-menu-item').forEach(link => {
         link.addEventListener('click', () => {
-            const text = link.textContent.trim().toLowerCase();
-            if (text === 'contact' || text === 'liên hệ' || text === 'vn' || text === 'en') {
-                return;
-            }
             mobileMenu.classList.remove('open');
             hamburger.classList.remove('active');
             document.body.style.overflow = '';
@@ -98,7 +94,7 @@ revealElements.forEach(revealTextEl => {
         });
     }
 
-
+    
     window.addEventListener('scroll', updateChars, { passive: true });
     window.addEventListener('resize', updateChars, { passive: true });
 
@@ -146,6 +142,7 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
     const footerLines = document.querySelectorAll('.footer-line');
+    const sectionsToDarken = document.querySelectorAll('.blog-slider-section, .members-section, .work-list-section, .explore-section, .project-credits-section, .news-grid-section');
 
     if (!footerSection || footerLines.length === 0) return;
 
@@ -198,10 +195,14 @@ function initFooterScrollText() {
 
         if (scrolledIntoFooter >= triggerDistance) {
             footerSection.classList.add('dark-mode');
-            document.body.classList.add('dark-mode');
+            sectionsToDarken.forEach(section => {
+                section.classList.add('dark-mode');
+            });
         } else {
             footerSection.classList.remove('dark-mode');
-            document.body.classList.remove('dark-mode');
+            sectionsToDarken.forEach(section => {
+                section.classList.remove('dark-mode');
+            });
         }
 
         let scrolledInside = Math.max(0, scrollY - footerTop);
@@ -291,10 +292,8 @@ function initFooterCursorBtn() {
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
 
         const overHeader = isMouseOverHeader(e.clientY);
-        const contactOverlay = document.getElementById('contactOverlay');
-        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
 
-        if (isInZone && isTextRevealed && !overHeader && !isContactOpen) {
+        if (isInZone && isTextRevealed && !overHeader) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
 
@@ -323,10 +322,8 @@ function initFooterCursorBtn() {
 
         const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
         const overHeader = isMouseOverHeader(mouseY);
-        const contactOverlay = document.getElementById('contactOverlay');
-        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
 
-        if (isInZone && isTextRevealed && !overHeader && !isContactOpen) {
+        if (isInZone && isTextRevealed && !overHeader) {
             footerCursorBtn.classList.add('is-visible');
             footerZone.classList.add('force-hide-cursor');
         } else {
@@ -488,10 +485,7 @@ function initContactPopup(triggers) {
     const closePopup = () => {
         overlay.classList.remove('active');
         sidebar.classList.remove('active');
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (!(mobileMenu && mobileMenu.classList.contains('open'))) {
-            document.body.style.overflow = '';
-        }
+        document.body.style.overflow = '';
     };
 
     closeBtn.addEventListener('click', closePopup);

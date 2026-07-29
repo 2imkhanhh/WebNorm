@@ -1,6 +1,6 @@
-
 body.work-detail-page {
     background: #FAFAFA;
+    overflow-x: hidden;
     min-height: auto;
 }
 
@@ -17,6 +17,10 @@ body.work-detail-page {
     line-height: 1.2;
     letter-spacing: -0.02em;
     margin: 0;
+}
+
+.intro-right-content {
+    padding-top: 190px;
 }
 
 .intro-desc {
@@ -84,7 +88,9 @@ body.work-detail-page {
     margin-bottom: 80px;
 }
 
-
+.overview-content-row {
+    margin-left: -20px;
+}
 
 .overview-text {
     font-family: 'AeonikPro', sans-serif;
@@ -214,16 +220,17 @@ body.work-detail-page {
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    background-color: #111111;
-    color: #ffffff;
+    background-color: #FFFFFF;
+    color: #111111;
     font-family: 'AeonikPro', sans-serif;
-    font-size: clamp(12px, 0.9vw, 20px);
-    font-weight: 500;
-    padding: clamp(10px, 0.9vw, 20px) clamp(20px, 1.8vw, 38px);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px 24px;
     border-radius: 50px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -234,7 +241,7 @@ body.work-detail-page {
 }
 
 .btn-next-project i {
-    font-size: clamp(16px, 1.5vw, 28px);
+    font-size: 18px;
 }
 
 .project-credits-section,
@@ -245,25 +252,25 @@ body.work-detail-page {
     transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease;
 }
 
-body.dark-mode .project-credits-section {
-    background-color: transparent;
+.project-credits-section.dark-mode {
+    background-color: #111111;
 }
 
-body.dark-mode .project-credits-section .label-side {
+.project-credits-section.dark-mode .label-side {
     color: #BDBDBD;
 }
 
-body.dark-mode .project-credits-section .credit-role {
+.project-credits-section.dark-mode .credit-role {
     color: #BDBDBD;
 }
 
-body.dark-mode .project-credits-section .credit-name {
+.project-credits-section.dark-mode .credit-name {
     color: #ffffff;
 }
 
-body.dark-mode .project-credits-section .credit-divider {
-    border-color: #333333;
-    opacity: 1;
+.project-credits-section.dark-mode .credit-divider {
+    border-color: #333333; 
+    opacity: 1; 
 }
 
 .explore-section,
@@ -272,11 +279,11 @@ body.dark-mode .project-credits-section .credit-divider {
     transition: background-color 0.6s ease, color 0.6s ease;
 }
 
-body.dark-mode .explore-section {
-    background-color: transparent;
+.explore-section.dark-mode {
+    background-color: #111111;
 }
 
-body.dark-mode .explore-section .explore-title {
+.explore-section.dark-mode .explore-title {
     color: #ffffff;
 }
 
@@ -292,7 +299,7 @@ body.dark-mode .explore-section .explore-title {
     }
 
     .intro-right-content {
-        padding-top: 40px;
+        padding-top: 100px;
     }
 
     .intro-desc {
@@ -313,7 +320,9 @@ body.dark-mode .explore-section .explore-title {
         padding-bottom: 80px;
     }
 
-
+    .overview-content-row {
+        margin-left: 0;
+    }
 
     .overview-text-block {
         margin-bottom: 60px;
@@ -383,18 +392,18 @@ body.dark-mode .explore-section .explore-title {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        justify-content: space-between;
+        justify-content: space-between; 
         width: 100% !important;
         max-width: 100% !important;
-        gap: 0;
+        gap: 0; 
     }
 
     .meta-item {
-        flex: 0 0 auto;
+        flex: 0 0 auto; 
         min-width: 0;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: flex-start; 
     }
 
     .meta-label {
@@ -414,7 +423,9 @@ body.dark-mode .explore-section .explore-title {
         padding-bottom: 60px;
     }
 
-
+    .overview-content-row {
+        margin-left: 0;
+    }
 
     .label-side {
         display: block;
