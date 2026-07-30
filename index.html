@@ -958,7 +958,14 @@
                     }
                 }
 
-                window.addEventListener('scroll', onPsScroll, { passive: true });
+                if (typeof lenis !== 'undefined') {
+                    // If Lenis is active, hook directly into its raf loop to avoid 1-frame delay jitter
+                    lenis.on('scroll', updateCarousel);
+                } else {
+                    // Fallback to native scroll if Lenis is disabled/unavailable
+                    window.addEventListener('scroll', onPsScroll, { passive: true });
+                }
+                
                 window.addEventListener('resize', onPsScroll, { passive: true });
 
                 updateCarousel();
