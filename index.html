@@ -840,62 +840,31 @@
                     psTotal.textContent = '/' + String(totalProjects).padStart(2, '0');
                 }
 
-                const projectData = Array.from(projectItems).map((item, index) => ({
+                const projectData = Array.from(projectItems).map(item => ({
                     el: item,
                     infoWrap: item.querySelector('.ps-info-wrap'),
                     title: item.querySelector('.ps-title'),
-                    categories: item.querySelector('.ps-categories'),
-                    index: index,
-                    isMobileCleared: false
+                    categories: item.querySelector('.ps-categories')
                 }));
 
-                let cachedItemWidth = 0;
-                let cachedGap = 0;
-                let cachedItemTotalWidth = 0;
-                let cachedShowcaseTop = 0;
-                let cachedWindowHeight = 0;
-                let cachedWindowWidth = 0;
-                let cachedMaxScroll = 0;
-                let isMobile = false;
-
-                function calculateMetrics() {
-                    const newWidth = window.innerWidth;
-                    
-                    if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
-                        cachedWindowHeight = window.innerHeight;
-                    }
-                    cachedWindowWidth = newWidth;
-                    isMobile = cachedWindowWidth <= 1024;
-                    
-                    showcase.style.height = `${totalProjects * cachedWindowHeight}px`;
-                    const stickyWrap = showcase.querySelector('.ps-sticky-wrap');
-                    if (stickyWrap) stickyWrap.style.height = `${cachedWindowHeight}px`;
-                    
-                    if (projectItems.length > 0) {
-                        cachedItemWidth = projectItems[0].offsetWidth;
-                        cachedGap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
-                        cachedItemTotalWidth = cachedItemWidth + cachedGap;
-                    }
-                    
-                    // Recalculate robustly. getBoundingClientRect + scrollY handles any current scroll offset
-                    const rect = showcase.getBoundingClientRect();
-                    cachedShowcaseTop = rect.top + window.scrollY;
-                    cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
-                }
-                
-                calculateMetrics();
-                window.addEventListener('resize', calculateMetrics, { passive: true });
-
                 function updateCarousel() {
+                    const showcaseTop = showcase.offsetTop;
                     const scrollY = window.scrollY;
-                    
-                    let scrolledInside = scrollY - cachedShowcaseTop;
+                    const windowHeight = window.innerHeight;
+                    const windowWidth = window.innerWidth;
+
+                    let scrolledInside = scrollY - showcaseTop;
                     if (scrolledInside < 0) scrolledInside = 0;
-                    if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
 
-                    let progress = cachedMaxScroll > 0 ? scrolledInside / cachedMaxScroll : 0;
+                    const maxScroll = showcase.offsetHeight - windowHeight;
+                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
 
-                    const maxTranslate = cachedItemTotalWidth * (totalProjects - 1);
+                    let progress = maxScroll > 0 ? scrolledInside / maxScroll : 0;
+
+                    const itemWidth = projectItems[0].offsetWidth;
+                    const gap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
+                    const maxTranslate = (itemWidth + gap) * (totalProjects - 1);
+
                     const trackTranslateX = -(progress * maxTranslate);
                     
                     let activeIndex = Math.round(progress * (totalProjects - 1));
@@ -903,68 +872,48 @@
                         psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
                     }
 
-                    const viewportCenter = cachedWindowWidth / 2;
-                    const maxDist = cachedWindowWidth / 1.5;
-                    const paddingLeft = cachedWindowWidth * 0.3;
+                    const viewportCenter = windowWidth / 2;
+                    const maxDist = windowWidth / 1.5;
 
-                    // Write phase
-                    psTrack.style.transform = `translate3d(${trackTranslateX.toFixed(2)}px, 0, 0)`;
+                    // Write track position first so children get correct bounding rect
+                    psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
 
-                    projectData.forEach((data) => {
-                        const itemCenter = paddingLeft + (data.index * cachedItemTotalWidth) + trackTranslateX + (cachedItemWidth / 2);
+                    // Then update children
+                    projectData.forEach(data => {
+                        const rect = data.el.getBoundingClientRect();
+                        const itemCenter = rect.left + rect.width / 2;
                         const distance = Math.abs(viewportCenter - itemCenter);
 
-                        let scale;
-                        if (isMobile) {
-                            scale = 1 - (distance / maxDist) * 0.15;
-                            if (scale < 0.9) scale = 0.9;
-                            if (scale > 1) scale = 1;
-                        } else {
-                            scale = 1 - (distance / maxDist) * 0.45;
-                            if (scale < 0.65) scale = 0.65;
-                            if (scale > 1) scale = 1;
-                        }
+                        let scale = 1 - (distance / maxDist) * 0.45;
+                        if (scale < 0.65) scale = 0.65;
+                        if (scale > 1) scale = 1;
                         
-                        data.el.style.transform = `scale(${scale.toFixed(4)}) translateZ(0)`;
+                        // Force hardware acceleration to fix mobile lag
+                        data.el.style.transform = `scale(${scale}) translateZ(0)`;
 
                         if (data.infoWrap) {
-                            if (!isMobile) {
-                                data.isMobileCleared = false;
-                                let opacity = 1 - (distance / (cachedWindowWidth / 3));
+                            if (windowWidth > 1024) {
+                                let opacity = 1 - (distance / (windowWidth / 3));
                                 if (opacity < 0) opacity = 0;
 
-                                let translateY = (distance / cachedWindowWidth) * 50;
+                                let translateY = (distance / windowWidth) * 50;
 
-                                data.infoWrap.style.opacity = opacity.toFixed(3);
+                                data.infoWrap.style.opacity = opacity;
 
-                                if (data.title) data.title.style.transform = `translateY(${translateY.toFixed(2)}px)`;
-                                if (data.categories) data.categories.style.transform = `translateY(${translateY.toFixed(2)}px)`;
+                                if (data.title) data.title.style.transform = `translateY(${translateY * 0.5}px)`;
+                                if (data.categories) data.categories.style.transform = `translateY(${translateY}px)`;
                             } else {
-                                if (!data.isMobileCleared) {
-                                    data.infoWrap.style.opacity = '1';
-                                    if (data.title) data.title.style.transform = 'none';
-                                    if (data.categories) data.categories.style.transform = 'none';
-                                    data.isMobileCleared = true;
-                                }
+                                data.infoWrap.style.opacity = '1';
+                                if (data.title) data.title.style.transform = 'none';
+                                if (data.categories) data.categories.style.transform = 'none';
                             }
                         }
                     });
                 }
 
-                let isTicking = false;
-                function onScroll() {
-                    if (!isTicking) {
-                        window.requestAnimationFrame(() => {
-                            updateCarousel();
-                            isTicking = false;
-                        });
-                        isTicking = true;
-                    }
-                }
-
-                window.addEventListener('scroll', onScroll, { passive: true });
-                window.addEventListener('resize', onScroll, { passive: true });
-
+                window.addEventListener('scroll', updateCarousel, { passive: true });
+                window.addEventListener('resize', updateCarousel, { passive: true });
+                
                 updateCarousel();
             }
 
