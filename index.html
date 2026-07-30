@@ -842,12 +842,29 @@
 
                 showcase.style.height = `${totalProjects * 100}vh`;
 
-                const projectData = Array.from(projectItems).map(item => ({
+                const projectData = Array.from(projectItems).map((item, index) => ({
                     el: item,
                     infoWrap: item.querySelector('.ps-info-wrap'),
                     title: item.querySelector('.ps-title'),
-                    categories: item.querySelector('.ps-categories')
+                    categories: item.querySelector('.ps-categories'),
+                    index: index,
+                    isMobileCleared: false
                 }));
+
+                let cachedItemWidth = 0;
+                let cachedGap = 0;
+                let cachedItemTotalWidth = 0;
+
+                function calculateMetrics() {
+                    if (projectItems.length > 0) {
+                        cachedItemWidth = projectItems[0].offsetWidth;
+                        cachedGap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
+                        cachedItemTotalWidth = cachedItemWidth + cachedGap;
+                    }
+                }
+                
+                calculateMetrics();
+                window.addEventListener('resize', calculateMetrics, { passive: true });
 
                 function updateCarousel() {
                     const showcaseTop = showcase.offsetTop;
@@ -863,10 +880,7 @@
 
                     let progress = maxScroll > 0 ? scrolledInside / maxScroll : 0;
 
-                    const itemWidth = projectItems[0].offsetWidth;
-                    const gap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
-                    const maxTranslate = (itemWidth + gap) * (totalProjects - 1);
-
+                    const maxTranslate = cachedItemTotalWidth * (totalProjects - 1);
                     const trackTranslateX = -(progress * maxTranslate);
                     
                     let activeIndex = Math.round(progress * (totalProjects - 1));
@@ -876,16 +890,13 @@
 
                     const viewportCenter = windowWidth / 2;
                     const maxDist = windowWidth / 1.5;
+                    const paddingLeft = windowWidth * 0.3;
 
-                    // Pass 1: read all layouts
-                    const rects = projectData.map(data => data.el.getBoundingClientRect());
-
-                    // Pass 2: write all styles
+                    // Write phase
                     psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
 
-                    projectData.forEach((data, index) => {
-                        const rect = rects[index];
-                        const itemCenter = rect.left + rect.width / 2;
+                    projectData.forEach((data) => {
+                        const itemCenter = paddingLeft + (data.index * cachedItemTotalWidth) + trackTranslateX + (cachedItemWidth / 2);
                         const distance = Math.abs(viewportCenter - itemCenter);
 
                         let scale = 1 - (distance / maxDist) * 0.45;
@@ -895,6 +906,7 @@
 
                         if (data.infoWrap) {
                             if (windowWidth > 1024) {
+                                data.isMobileCleared = false;
                                 let opacity = 1 - (distance / (windowWidth / 3));
                                 if (opacity < 0) opacity = 0;
 
@@ -905,27 +917,19 @@
                                 if (data.title) data.title.style.transform = `translateY(${translateY * 0.5}px)`;
                                 if (data.categories) data.categories.style.transform = `translateY(${translateY}px)`;
                             } else {
-                                data.infoWrap.style.opacity = '1';
-                                if (data.title) data.title.style.transform = 'none';
-                                if (data.categories) data.categories.style.transform = 'none';
+                                if (!data.isMobileCleared) {
+                                    data.infoWrap.style.opacity = '1';
+                                    if (data.title) data.title.style.transform = 'none';
+                                    if (data.categories) data.categories.style.transform = 'none';
+                                    data.isMobileCleared = true;
+                                }
                             }
                         }
                     });
                 }
 
-                let isTicking = false;
-                function onScroll() {
-                    if (!isTicking) {
-                        window.requestAnimationFrame(() => {
-                            updateCarousel();
-                            isTicking = false;
-                        });
-                        isTicking = true;
-                    }
-                }
-
-                window.addEventListener('scroll', onScroll, { passive: true });
-                window.addEventListener('resize', onScroll, { passive: true });
+                window.addEventListener('scroll', updateCarousel, { passive: true });
+                window.addEventListener('resize', updateCarousel, { passive: true });
 
                 updateCarousel();
             }
