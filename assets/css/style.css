@@ -589,6 +589,8 @@ header.navbar {
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
 }
 
 .ps-content-wrapper {

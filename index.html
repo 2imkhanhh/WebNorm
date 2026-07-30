@@ -852,6 +852,7 @@
                 let cachedItemWidth = 0;
                 let cachedGap = 0;
                 let cachedItemTotalWidth = 0;
+                let cachedShowcaseTop = 0;
                 let cachedWindowHeight = 0;
                 let cachedWindowWidth = 0;
                 let cachedMaxScroll = 0;
@@ -876,6 +877,9 @@
                         cachedItemTotalWidth = cachedItemWidth + cachedGap;
                     }
                     
+                    // Recalculate robustly. getBoundingClientRect + scrollY handles any current scroll offset
+                    const rect = showcase.getBoundingClientRect();
+                    cachedShowcaseTop = rect.top + window.scrollY;
                     cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
                 }
                 
@@ -883,11 +887,9 @@
                 window.addEventListener('resize', calculateMetrics, { passive: true });
 
                 function updateCarousel() {
-                    // Use getBoundingClientRect to perfectly sync with the sticky position 
-                    // regardless of lazy-loaded images or address bar changes.
-                    const showcaseRectTop = showcase.getBoundingClientRect().top;
+                    const scrollY = window.scrollY;
                     
-                    let scrolledInside = -showcaseRectTop;
+                    let scrolledInside = scrollY - cachedShowcaseTop;
                     if (scrolledInside < 0) scrolledInside = 0;
                     if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
 
@@ -923,7 +925,6 @@
                             if (scale > 1) scale = 1;
                         }
                         
-                        // Hardware acceleration to prevent mobile rendering stutter
                         data.el.style.transform = `scale(${scale.toFixed(4)}) translateZ(0)`;
 
                         if (data.infoWrap) {
@@ -950,8 +951,15 @@
                     });
                 }
 
+                let isTicking = false;
                 function onScroll() {
-                    updateCarousel();
+                    if (!isTicking) {
+                        window.requestAnimationFrame(() => {
+                            updateCarousel();
+                            isTicking = false;
+                        });
+                        isTicking = true;
+                    }
                 }
 
                 window.addEventListener('scroll', onScroll, { passive: true });
