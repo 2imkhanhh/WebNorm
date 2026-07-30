@@ -851,40 +851,37 @@
                 let cachedWindowHeight = 0;
                 let cachedWindowWidth = 0;
                 let cachedMaxScroll = 0;
+                let cachedItemWidth = 0;
                 let cachedItemTotalWidth = 0;
-                let cachedItemCenters = [];
+                let cachedPaddingLeft = 0;
 
                 function calculateMetrics() {
                     const newWidth = window.innerWidth;
-                    
+
+                    // Only update height if width changes significantly, to prevent address-bar resize jumps on mobile
                     if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
                         cachedWindowHeight = window.innerHeight;
                     }
                     cachedWindowWidth = newWidth;
-                    
+
                     showcase.style.height = `${totalProjects * cachedWindowHeight}px`;
-                    
+                    const stickyWrap = showcase.querySelector('.ps-sticky-wrap');
+                    if (stickyWrap) stickyWrap.style.height = `${cachedWindowHeight}px`;
+
                     if (projectItems.length > 0) {
-                        const itemWidth = projectItems[0].offsetWidth;
+                        cachedItemWidth = projectItems[0].offsetWidth;
                         const gap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
-                        cachedItemTotalWidth = itemWidth + gap;
-                        
-                        const oldTransform = psTrack.style.transform;
-                        psTrack.style.transform = 'translate3d(0, 0, 0)';
-                        
-                        cachedItemCenters = projectData.map(data => {
-                            const rect = data.el.getBoundingClientRect();
-                            return rect.left + rect.width / 2;
-                        });
-                        
-                        psTrack.style.transform = oldTransform;
+                        cachedItemTotalWidth = cachedItemWidth + gap;
                     }
-                    
+                    // Read the track's left padding once here (layout-triggering calls
+                    // are cheap on resize, they were the problem when done every scroll tick)
+                    cachedPaddingLeft = parseFloat(window.getComputedStyle(psTrack).paddingLeft) || 0;
+
                     const rect = showcase.getBoundingClientRect();
                     cachedShowcaseTop = rect.top + window.scrollY;
                     cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
                 }
-                
+
                 calculateMetrics();
                 window.addEventListener('resize', calculateMetrics, { passive: true });
 
@@ -899,7 +896,7 @@
 
                     const maxTranslate = cachedItemTotalWidth * (totalProjects - 1);
                     const trackTranslateX = -(progress * maxTranslate);
-                    
+
                     let activeIndex = Math.round(progress * (totalProjects - 1));
                     if (psCurrent) {
                         psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
@@ -910,15 +907,20 @@
 
                     psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
 
-                    projectData.forEach((data, index) => {
-                        const initialCenter = cachedItemCenters[index];
-                        const itemCenter = initialCenter + trackTranslateX;
+                    // Compute each item's on-screen center mathematically instead of
+                    // calling getBoundingClientRect() here. Reading layout right after
+                    // writing the track's transform forced a synchronous reflow on
+                    // every single scroll event, which was the main cause of the
+                    // stutter/shake on mobile and tablet.
+                    projectData.forEach((data, i) => {
+                        const itemLeft = cachedPaddingLeft + i * cachedItemTotalWidth;
+                        const itemCenter = itemLeft + cachedItemWidth / 2 + trackTranslateX;
                         const distance = Math.abs(viewportCenter - itemCenter);
 
                         let scale = 1 - (distance / maxDist) * 0.45;
                         if (scale < 0.65) scale = 0.65;
                         if (scale > 1) scale = 1;
-                        
+
                         data.el.style.transform = `scale(${scale}) translateZ(0)`;
 
                         if (data.infoWrap) {
@@ -941,19 +943,25 @@
                     });
                 }
 
-                let isTicking = false;
-                window.addEventListener('scroll', () => {
-                    if (!isTicking) {
+                // Throttle scroll handling to once per animation frame instead of
+                // running updateCarousel() on every native scroll event (mobile
+                // browsers can fire dozens of these per frame during momentum
+                // scrolling, which was overloading the main thread and causing jank).
+                let psScrollTicking = false;
+                function onPsScroll() {
+                    if (!psScrollTicking) {
                         window.requestAnimationFrame(() => {
                             updateCarousel();
-                            isTicking = false;
+                            psScrollTicking = false;
                         });
-                        isTicking = true;
+                        psScrollTicking = true;
                     }
-                }, { passive: true });
-                
+                }
+
+                window.addEventListener('scroll', onPsScroll, { passive: true });
+                window.addEventListener('resize', onPsScroll, { passive: true });
+
                 updateCarousel();
-                window.addEventListener('resize', updateCarousel, { passive: true });
             }
 
             // testimonial slider
