@@ -912,9 +912,16 @@
                         const itemCenter = paddingLeft + (data.index * cachedItemTotalWidth) + trackTranslateX + (cachedItemWidth / 2);
                         const distance = Math.abs(viewportCenter - itemCenter);
 
-                        let scale = 1 - (distance / maxDist) * 0.45;
-                        if (scale < 0.65) scale = 0.65;
-                        if (scale > 1) scale = 1;
+                        let scale;
+                        if (isMobile) {
+                            scale = 1 - (distance / maxDist) * 0.15;
+                            if (scale < 0.9) scale = 0.9;
+                            if (scale > 1) scale = 1;
+                        } else {
+                            scale = 1 - (distance / maxDist) * 0.45;
+                            if (scale < 0.65) scale = 0.65;
+                            if (scale > 1) scale = 1;
+                        }
                         
                         // Hardware acceleration to prevent mobile rendering stutter
                         data.el.style.transform = `scale(${scale.toFixed(4)}) translateZ(0)`;
@@ -943,15 +950,8 @@
                     });
                 }
 
-                let isTicking = false;
                 function onScroll() {
-                    if (!isTicking) {
-                        window.requestAnimationFrame(() => {
-                            updateCarousel();
-                            isTicking = false;
-                        });
-                        isTicking = true;
-                    }
+                    updateCarousel();
                 }
 
                 window.addEventListener('scroll', onScroll, { passive: true });
