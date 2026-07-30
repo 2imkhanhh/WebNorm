@@ -696,9 +696,6 @@ header.navbar {
   justify-content: space-between;
   align-items: center;
   background-color: transparent;
-  /* No transition here: transform/opacity are driven 1:1 by scroll position
-     in JS every animation frame, so a CSS transition would constantly race
-     against the new target value instead of settling, which reads as jitter. */
   will-change: transform, opacity;
 }
 
