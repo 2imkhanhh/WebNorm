@@ -35,13 +35,14 @@
 }
 
 html {
-
+  overflow-x: clip;
   max-width: 100%;
   overscroll-behavior: none;
   overscroll-behavior-y: none;
 }
 
 body {
+  overflow-x: clip;
   font-family: 'AeonikPro';
   font-weight: 400;
   background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 8%);
