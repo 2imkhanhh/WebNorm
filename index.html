@@ -847,24 +847,49 @@
                     categories: item.querySelector('.ps-categories')
                 }));
 
+                let cachedShowcaseTop = 0;
+                let cachedWindowHeight = 0;
+                let cachedWindowWidth = 0;
+                let cachedMaxScroll = 0;
+                let cachedItemTotalWidth = 0;
+
+                function calculateMetrics() {
+                    const newWidth = window.innerWidth;
+                    
+                    // Only update height if width changes significantly, to prevent address-bar resize jumps on mobile
+                    if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
+                        cachedWindowHeight = window.innerHeight;
+                    }
+                    cachedWindowWidth = newWidth;
+                    
+                    showcase.style.height = `${totalProjects * cachedWindowHeight}px`;
+                    const stickyWrap = showcase.querySelector('.ps-sticky-wrap');
+                    if (stickyWrap) stickyWrap.style.height = `${cachedWindowHeight}px`;
+                    
+                    if (projectItems.length > 0) {
+                        const itemWidth = projectItems[0].offsetWidth;
+                        const gap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
+                        cachedItemTotalWidth = itemWidth + gap;
+                    }
+                    
+                    const rect = showcase.getBoundingClientRect();
+                    cachedShowcaseTop = rect.top + window.scrollY;
+                    cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
+                }
+                
+                calculateMetrics();
+                window.addEventListener('resize', calculateMetrics, { passive: true });
+
                 function updateCarousel() {
-                    const showcaseTop = showcase.offsetTop;
                     const scrollY = window.scrollY;
-                    const windowHeight = window.innerHeight;
-                    const windowWidth = window.innerWidth;
 
-                    let scrolledInside = scrollY - showcaseTop;
+                    let scrolledInside = scrollY - cachedShowcaseTop;
                     if (scrolledInside < 0) scrolledInside = 0;
+                    if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
 
-                    const maxScroll = showcase.offsetHeight - windowHeight;
-                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+                    let progress = cachedMaxScroll > 0 ? scrolledInside / cachedMaxScroll : 0;
 
-                    let progress = maxScroll > 0 ? scrolledInside / maxScroll : 0;
-
-                    const itemWidth = projectItems[0].offsetWidth;
-                    const gap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
-                    const maxTranslate = (itemWidth + gap) * (totalProjects - 1);
-
+                    const maxTranslate = cachedItemTotalWidth * (totalProjects - 1);
                     const trackTranslateX = -(progress * maxTranslate);
                     
                     let activeIndex = Math.round(progress * (totalProjects - 1));
@@ -872,8 +897,8 @@
                         psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
                     }
 
-                    const viewportCenter = windowWidth / 2;
-                    const maxDist = windowWidth / 1.5;
+                    const viewportCenter = cachedWindowWidth / 2;
+                    const maxDist = cachedWindowWidth / 1.5;
 
                     // Write track position first so children get correct bounding rect
                     psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
@@ -892,11 +917,11 @@
                         data.el.style.transform = `scale(${scale}) translateZ(0)`;
 
                         if (data.infoWrap) {
-                            if (windowWidth > 1024) {
-                                let opacity = 1 - (distance / (windowWidth / 3));
+                            if (cachedWindowWidth > 1024) {
+                                let opacity = 1 - (distance / (cachedWindowWidth / 3));
                                 if (opacity < 0) opacity = 0;
 
-                                let translateY = (distance / windowWidth) * 50;
+                                let translateY = (distance / cachedWindowWidth) * 50;
 
                                 data.infoWrap.style.opacity = opacity;
 
