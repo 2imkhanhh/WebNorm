@@ -852,7 +852,6 @@
                 let cachedItemWidth = 0;
                 let cachedGap = 0;
                 let cachedItemTotalWidth = 0;
-                let cachedShowcaseTop = 0;
                 let cachedWindowHeight = 0;
                 let cachedWindowWidth = 0;
                 let cachedMaxScroll = 0;
@@ -861,14 +860,12 @@
                 function calculateMetrics() {
                     const newWidth = window.innerWidth;
                     
-                    // On mobile, only update height if width changes significantly (e.g. rotation) to avoid address bar jumping
                     if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
                         cachedWindowHeight = window.innerHeight;
                     }
                     cachedWindowWidth = newWidth;
                     isMobile = cachedWindowWidth <= 1024;
                     
-                    // Lock heights in pixels to prevent mobile address bar jump (earthquake)
                     showcase.style.height = `${totalProjects * cachedWindowHeight}px`;
                     const stickyWrap = showcase.querySelector('.ps-sticky-wrap');
                     if (stickyWrap) stickyWrap.style.height = `${cachedWindowHeight}px`;
@@ -879,17 +876,18 @@
                         cachedItemTotalWidth = cachedItemWidth + cachedGap;
                     }
                     
-                    cachedShowcaseTop = showcase.offsetTop;
-                    cachedMaxScroll = showcase.offsetHeight - cachedWindowHeight;
+                    cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
                 }
                 
                 calculateMetrics();
                 window.addEventListener('resize', calculateMetrics, { passive: true });
 
                 function updateCarousel() {
-                    const scrollY = window.scrollY;
-
-                    let scrolledInside = scrollY - cachedShowcaseTop;
+                    // Use getBoundingClientRect to perfectly sync with the sticky position 
+                    // regardless of lazy-loaded images or address bar changes.
+                    const showcaseRectTop = showcase.getBoundingClientRect().top;
+                    
+                    let scrolledInside = -showcaseRectTop;
                     if (scrolledInside < 0) scrolledInside = 0;
                     if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
 
@@ -908,7 +906,7 @@
                     const paddingLeft = cachedWindowWidth * 0.3;
 
                     // Write phase
-                    psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
+                    psTrack.style.transform = `translate3d(${trackTranslateX.toFixed(2)}px, 0, 0)`;
 
                     projectData.forEach((data) => {
                         const itemCenter = paddingLeft + (data.index * cachedItemTotalWidth) + trackTranslateX + (cachedItemWidth / 2);
@@ -917,7 +915,9 @@
                         let scale = 1 - (distance / maxDist) * 0.45;
                         if (scale < 0.65) scale = 0.65;
                         if (scale > 1) scale = 1;
-                        data.el.style.transform = `scale(${scale})`;
+                        
+                        // Hardware acceleration to prevent mobile rendering stutter
+                        data.el.style.transform = `scale(${scale.toFixed(4)}) translateZ(0)`;
 
                         if (data.infoWrap) {
                             if (!isMobile) {
@@ -927,10 +927,10 @@
 
                                 let translateY = (distance / cachedWindowWidth) * 50;
 
-                                data.infoWrap.style.opacity = opacity;
+                                data.infoWrap.style.opacity = opacity.toFixed(3);
 
-                                if (data.title) data.title.style.transform = `translateY(${translateY * 0.5}px)`;
-                                if (data.categories) data.categories.style.transform = `translateY(${translateY}px)`;
+                                if (data.title) data.title.style.transform = `translateY(${translateY.toFixed(2)}px)`;
+                                if (data.categories) data.categories.style.transform = `translateY(${translateY.toFixed(2)}px)`;
                             } else {
                                 if (!data.isMobileCleared) {
                                     data.infoWrap.style.opacity = '1';
@@ -943,8 +943,19 @@
                     });
                 }
 
-                window.addEventListener('scroll', updateCarousel, { passive: true });
-                window.addEventListener('resize', updateCarousel, { passive: true });
+                let isTicking = false;
+                function onScroll() {
+                    if (!isTicking) {
+                        window.requestAnimationFrame(() => {
+                            updateCarousel();
+                            isTicking = false;
+                        });
+                        isTicking = true;
+                    }
+                }
+
+                window.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', onScroll, { passive: true });
 
                 updateCarousel();
             }
