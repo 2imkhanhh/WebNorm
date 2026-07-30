@@ -35,7 +35,7 @@
 }
 
 html {
-  overflow-x: clip;
+
   max-width: 100%;
   overscroll-behavior: none;
   overscroll-behavior-y: none;
@@ -49,7 +49,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: clip;
+
   max-width: 100%;
   position: relative;
   overscroll-behavior: none;
@@ -215,7 +215,7 @@ header.navbar {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x: clip;
+
 }
 
 .hero-section .container-fluid {
@@ -571,7 +571,7 @@ header.navbar {
 .project-showcase {
   background-color: #111111;
   position: relative;
-  overflow-x: clip;
+
   max-width: 100%;
 }
 
@@ -626,7 +626,7 @@ header.navbar {
   display: flex;
   align-items: center;
   position: relative;
-  overflow-x: clip;
+
 }
 
 .ps-sticky-wrap::after {

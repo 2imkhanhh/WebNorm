@@ -523,6 +523,7 @@ function initContactPopup(triggers) {
 const lenis = new Lenis({
     lerp: 0.05,
     smoothWheel: true,
+    syncTouch: true,
     wheelMultiplier: 1.1,
 });
 

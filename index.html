@@ -860,7 +860,7 @@
 
                     // Only update height if width changes significantly, to prevent address-bar resize jumps on mobile
                     if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
-                        cachedWindowHeight = window.innerHeight;
+                        const dummy = document.createElement('div'); dummy.style.height = '100vh'; dummy.style.position = 'absolute'; dummy.style.visibility = 'hidden'; document.body.appendChild(dummy); cachedWindowHeight = dummy.offsetHeight; document.body.removeChild(dummy);
                     }
                     cachedWindowWidth = newWidth;
 
