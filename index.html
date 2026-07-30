@@ -840,8 +840,6 @@
                     psTotal.textContent = '/' + String(totalProjects).padStart(2, '0');
                 }
 
-                showcase.style.height = `${totalProjects * 100}vh`;
-
                 const projectData = Array.from(projectItems).map((item, index) => ({
                     el: item,
                     infoWrap: item.querySelector('.ps-info-wrap'),
@@ -854,31 +852,48 @@
                 let cachedItemWidth = 0;
                 let cachedGap = 0;
                 let cachedItemTotalWidth = 0;
+                let cachedShowcaseTop = 0;
+                let cachedWindowHeight = 0;
+                let cachedWindowWidth = 0;
+                let cachedMaxScroll = 0;
+                let isMobile = false;
 
                 function calculateMetrics() {
+                    const newWidth = window.innerWidth;
+                    
+                    // On mobile, only update height if width changes significantly (e.g. rotation) to avoid address bar jumping
+                    if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
+                        cachedWindowHeight = window.innerHeight;
+                    }
+                    cachedWindowWidth = newWidth;
+                    isMobile = cachedWindowWidth <= 1024;
+                    
+                    // Lock heights in pixels to prevent mobile address bar jump (earthquake)
+                    showcase.style.height = `${totalProjects * cachedWindowHeight}px`;
+                    const stickyWrap = showcase.querySelector('.ps-sticky-wrap');
+                    if (stickyWrap) stickyWrap.style.height = `${cachedWindowHeight}px`;
+                    
                     if (projectItems.length > 0) {
                         cachedItemWidth = projectItems[0].offsetWidth;
                         cachedGap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
                         cachedItemTotalWidth = cachedItemWidth + cachedGap;
                     }
+                    
+                    cachedShowcaseTop = showcase.offsetTop;
+                    cachedMaxScroll = showcase.offsetHeight - cachedWindowHeight;
                 }
                 
                 calculateMetrics();
                 window.addEventListener('resize', calculateMetrics, { passive: true });
 
                 function updateCarousel() {
-                    const showcaseTop = showcase.offsetTop;
                     const scrollY = window.scrollY;
-                    const windowHeight = window.innerHeight;
-                    const windowWidth = window.innerWidth;
 
-                    let scrolledInside = scrollY - showcaseTop;
+                    let scrolledInside = scrollY - cachedShowcaseTop;
                     if (scrolledInside < 0) scrolledInside = 0;
+                    if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
 
-                    const maxScroll = showcase.offsetHeight - windowHeight;
-                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
-
-                    let progress = maxScroll > 0 ? scrolledInside / maxScroll : 0;
+                    let progress = cachedMaxScroll > 0 ? scrolledInside / cachedMaxScroll : 0;
 
                     const maxTranslate = cachedItemTotalWidth * (totalProjects - 1);
                     const trackTranslateX = -(progress * maxTranslate);
@@ -888,9 +903,9 @@
                         psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
                     }
 
-                    const viewportCenter = windowWidth / 2;
-                    const maxDist = windowWidth / 1.5;
-                    const paddingLeft = windowWidth * 0.3;
+                    const viewportCenter = cachedWindowWidth / 2;
+                    const maxDist = cachedWindowWidth / 1.5;
+                    const paddingLeft = cachedWindowWidth * 0.3;
 
                     // Write phase
                     psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
@@ -905,12 +920,12 @@
                         data.el.style.transform = `scale(${scale})`;
 
                         if (data.infoWrap) {
-                            if (windowWidth > 1024) {
+                            if (!isMobile) {
                                 data.isMobileCleared = false;
-                                let opacity = 1 - (distance / (windowWidth / 3));
+                                let opacity = 1 - (distance / (cachedWindowWidth / 3));
                                 if (opacity < 0) opacity = 0;
 
-                                let translateY = (distance / windowWidth) * 50;
+                                let translateY = (distance / cachedWindowWidth) * 50;
 
                                 data.infoWrap.style.opacity = opacity;
 
