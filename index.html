@@ -655,6 +655,7 @@
         <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
 
             <video class="footer-bg-video" autoplay loop muted playsinline>
+                <source src="assets/images/video_norm_ios.mov" type="video/quicktime">
                 <source src="assets/images/video_norm.webm" type="video/webm">
                 Trình duyệt của bạn không hỗ trợ thẻ video.
             </video>
@@ -841,10 +842,18 @@
 
                 showcase.style.height = `${totalProjects * 100}vh`;
 
+                const projectData = Array.from(projectItems).map(item => ({
+                    el: item,
+                    infoWrap: item.querySelector('.ps-info-wrap'),
+                    title: item.querySelector('.ps-title'),
+                    categories: item.querySelector('.ps-categories')
+                }));
+
                 function updateCarousel() {
                     const showcaseTop = showcase.offsetTop;
                     const scrollY = window.scrollY;
                     const windowHeight = window.innerHeight;
+                    const windowWidth = window.innerWidth;
 
                     let scrolledInside = scrollY - showcaseTop;
                     if (scrolledInside < 0) scrolledInside = 0;
@@ -859,53 +868,64 @@
                     const maxTranslate = (itemWidth + gap) * (totalProjects - 1);
 
                     const trackTranslateX = -(progress * maxTranslate);
-                    psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
-
+                    
                     let activeIndex = Math.round(progress * (totalProjects - 1));
                     if (psCurrent) {
                         psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
                     }
 
-                    const viewportCenter = window.innerWidth / 2;
+                    const viewportCenter = windowWidth / 2;
+                    const maxDist = windowWidth / 1.5;
 
-                    projectItems.forEach((item) => {
-                        const rect = item.getBoundingClientRect();
+                    // Pass 1: read all layouts
+                    const rects = projectData.map(data => data.el.getBoundingClientRect());
+
+                    // Pass 2: write all styles
+                    psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
+
+                    projectData.forEach((data, index) => {
+                        const rect = rects[index];
                         const itemCenter = rect.left + rect.width / 2;
-                        const viewportCenter = window.innerWidth / 2;
                         const distance = Math.abs(viewportCenter - itemCenter);
 
-                        const maxDist = window.innerWidth / 1.5;
                         let scale = 1 - (distance / maxDist) * 0.45;
                         if (scale < 0.65) scale = 0.65;
                         if (scale > 1) scale = 1;
-                        item.style.transform = `scale(${scale})`;
+                        data.el.style.transform = `scale(${scale})`;
 
-                        const infoWrap = item.querySelector('.ps-info-wrap');
-                        const title = item.querySelector('.ps-title');
-                        const categories = item.querySelector('.ps-categories');
-
-                        if (infoWrap) {
-                            if (window.innerWidth > 1024) {
-                                let opacity = 1 - (distance / (window.innerWidth / 3));
+                        if (data.infoWrap) {
+                            if (windowWidth > 1024) {
+                                let opacity = 1 - (distance / (windowWidth / 3));
                                 if (opacity < 0) opacity = 0;
 
-                                let translateY = (distance / window.innerWidth) * 50;
+                                let translateY = (distance / windowWidth) * 50;
 
-                                infoWrap.style.opacity = opacity;
+                                data.infoWrap.style.opacity = opacity;
 
-                                if (title) title.style.transform = `translateY(${translateY * 0.5}px)`;
-                                if (categories) categories.style.transform = `translateY(${translateY}px)`;
+                                if (data.title) data.title.style.transform = `translateY(${translateY * 0.5}px)`;
+                                if (data.categories) data.categories.style.transform = `translateY(${translateY}px)`;
                             } else {
-                                infoWrap.style.opacity = '1';
-                                if (title) title.style.transform = 'none';
-                                if (categories) categories.style.transform = 'none';
+                                data.infoWrap.style.opacity = '1';
+                                if (data.title) data.title.style.transform = 'none';
+                                if (data.categories) data.categories.style.transform = 'none';
                             }
                         }
                     });
                 }
 
-                window.addEventListener('scroll', updateCarousel, { passive: true });
-                window.addEventListener('resize', updateCarousel, { passive: true });
+                let isTicking = false;
+                function onScroll() {
+                    if (!isTicking) {
+                        window.requestAnimationFrame(() => {
+                            updateCarousel();
+                            isTicking = false;
+                        });
+                        isTicking = true;
+                    }
+                }
+
+                window.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', onScroll, { passive: true });
 
                 updateCarousel();
             }
