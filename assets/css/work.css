@@ -1,4 +1,3 @@
-
 body.work-page {
     background: #FFFFFF;
     min-height: auto;
@@ -198,7 +197,8 @@ body.dark-mode .work-list-section .project-img-wrap {
 }
 
 /* List View Styles */
-.no-transition, .no-transition * {
+.no-transition,
+.no-transition * {
     transition: none !important;
 }
 
@@ -301,7 +301,7 @@ body.dark-mode .work-list-section .work-grid.list-view .project-card {
     .work-list-section {
         padding-left: 20px;
         padding-right: 20px;
-        padding-bottom: 80px;
+        padding-bottom: 0;
     }
 
     .work-grid {

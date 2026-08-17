@@ -219,10 +219,6 @@ header.navbar {
   flex-shrink: 0;
 }
 
-.nav-hamburger.active {
-  /* Prevent jumping to top corner */
-}
-
 .nav-hamburger span {
   display: block;
   width: 22px;
@@ -652,11 +648,13 @@ header.navbar {
 }
 
 .ps-counter-top {
-  margin-left: calc(30vw + 16px);
+  margin-left: 30vw;
+  width: 40vw;
   margin-bottom: 0;
   color: #ffffff;
   font-family: 'AeonikPro', sans-serif;
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
 }
 
@@ -666,6 +664,12 @@ header.navbar {
   line-height: 0.8;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
+}
+
+.ps-view-all {
+  color: #ffffff !important;
+  font-family: 'AeonikPro', sans-serif;
+  font-size: clamp(14px, 1.2vw, 18px); /* slightly smaller than normal link-more maybe */
 }
 
 .ps-counter-top .ps-num-total {
@@ -1785,7 +1789,8 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    margin-left: calc(17.5vw + 16px);
+    margin-left: 17.5vw;
+    width: 65vw;
     margin-bottom: 24px;
   }
 
@@ -2298,7 +2303,8 @@ html.lenis body {
   }
 
   .ps-counter-top {
-    margin-left: calc(7.5vw + 10px);
+    margin-left: 7.5vw;
+    width: 85vw;
     margin-bottom: 16px;
   }
 

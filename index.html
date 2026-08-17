@@ -153,8 +153,11 @@
         <div class="ps-sticky-wrap">
             <div class="ps-content-wrapper">
                 <div class="ps-counter-top">
-                    <span class="ps-num-current" id="psCurrent">01</span>
-                    <span class="ps-num-total" id="psTotal">/06</span>
+                    <div>
+                        <span class="ps-num-current" id="psCurrent">01</span>
+                        <span class="ps-num-total" id="psTotal">/06</span>
+                    </div>
+                    <a href="work.html" class="link-more text-uppercase ps-view-all">XEM TOÀN BỘ DỰ ÁN</a>
                 </div>
 
                 <div class="ps-horizontal-viewport">
@@ -965,7 +968,7 @@
                     // Fallback to native scroll if Lenis is disabled/unavailable
                     window.addEventListener('scroll', onPsScroll, { passive: true });
                 }
-                
+
                 window.addEventListener('resize', onPsScroll, { passive: true });
 
                 updateCarousel();
