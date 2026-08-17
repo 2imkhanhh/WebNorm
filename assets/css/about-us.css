@@ -40,7 +40,7 @@ body.about-page {
     cursor: pointer;
     animation: waveY var(--wave-time) ease-in-out infinite;
     animation-delay: calc(((9.5 - var(--i)) * var(--shift-time)) - (var(--wave-time) * 10));
-    transition: flex 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: flex 1s ease-in-out;
     transform: translateZ(0);
     z-index: 1;
 }
@@ -64,13 +64,13 @@ body.about-page {
 
 .gallery-track:has(.gallery-item.is-active) .gallery-item:not(.is-active) {
     flex: 0 0 var(--item-width);
-    transition: flex 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: flex 1s ease-in-out;
 }
 
 .gallery-item.is-active {
     flex: 0 0 30vw;
     z-index: 10;
-    transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s;
+    transition: flex 1.2s ease-in-out;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -84,13 +84,13 @@ body.about-page {
 
     .gallery-track:has(.gallery-item:hover) .gallery-item:not(:hover) {
         flex: 0 0 var(--item-width);
-        transition: flex 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        transition: flex 1s ease-in-out;
     }
 
     .gallery-item:hover {
         flex: 0 0 30vw;
         z-index: 10;
-        transition: flex 1.5s cubic-bezier(0.19, 1, 0.22, 1) 0.1s;
+        transition: flex 1.2s ease-in-out;
     }
 }
 
