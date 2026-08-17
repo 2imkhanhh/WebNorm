@@ -499,11 +499,30 @@ function initContactPopup(triggers) {
 
     const optionGroups = document.querySelectorAll('.contact-options');
     optionGroups.forEach(group => {
+        const isMultiSelect = group.classList.contains('group-1');
         const pills = group.querySelectorAll('.contact-pill');
         pills.forEach(pill => {
             pill.addEventListener('click', () => {
-                pills.forEach(p => p.classList.remove('active'));
-                pill.classList.add('active');
+                if (isMultiSelect) {
+                    const isKhac = pill.textContent.trim().toLowerCase() === 'khác';
+                    
+                    if (isKhac) {
+                        const wasActive = pill.classList.contains('active');
+                        pills.forEach(p => p.classList.remove('active'));
+                        if (!wasActive) {
+                            pill.classList.add('active');
+                        }
+                    } else {
+                        const khacPill = Array.from(pills).find(p => p.textContent.trim().toLowerCase() === 'khác');
+                        if (khacPill) {
+                            khacPill.classList.remove('active');
+                        }
+                        pill.classList.toggle('active');
+                    }
+                } else {
+                    pills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                }
             });
         });
     });
