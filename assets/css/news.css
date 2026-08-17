@@ -1,4 +1,3 @@
-
 body.news-page {
     background: #FAFAFA;
     min-height: auto;
@@ -6,7 +5,7 @@ body.news-page {
 
 .news-heading-section {
     padding-top: 180px;
-    padding-bottom: 100px; 
+    padding-bottom: 100px;
 }
 
 .container-fluid.custom-padding {
@@ -34,7 +33,7 @@ body.news-page {
 }
 
 .news-grid-section {
-    padding-bottom: 150px; 
+    padding-bottom: 150px;
 }
 
 .news-card {
@@ -46,18 +45,18 @@ body.news-page {
 .news-image-wrapper img {
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 2; 
-    object-fit: cover; 
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .news-grid-section .row {
-    --bs-gutter-x: 3rem; 
+    --bs-gutter-x: 3rem;
     --bs-gutter-y: 5rem;
 }
 
 .news-card:hover .news-image-wrapper img {
-    transform: scale(1.02); 
+    transform: scale(1.02);
 }
 
 .news-meta {
@@ -92,17 +91,18 @@ body.news-page {
 .load-more-wrap {
     display: flex;
     justify-content: center;
-    gap: 16px; 
-    margin-top: 80px; 
+    gap: 16px;
+    margin-top: 80px;
 }
 
-.load-more-btn, .collapse-btn {
+.load-more-btn,
+.collapse-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 16px 48px;
-    background-color: #E6E6E6; 
-    border-radius: 40px; 
+    background-color: #E6E6E6;
+    border-radius: 40px;
     font-family: 'AeonikPro', sans-serif;
     font-size: 13px;
     font-weight: 500;
@@ -132,23 +132,25 @@ body.dark-mode .news-grid-section .news-card-title a:hover {
 }
 
 body.dark-mode .news-grid-section .news-date {
-    color: #9e9e9e; 
+    color: #9e9e9e;
 }
 
 body.dark-mode .news-grid-section .load-more-btn,
 body.dark-mode .news-grid-section .collapse-btn {
-    background-color: #ffffff; 
-    color: #111111;            
+    background-color: #ffffff;
+    color: #111111;
 }
 
 body.dark-mode .news-grid-section .load-more-btn:hover,
 body.dark-mode .news-grid-section .collapse-btn:hover {
-    background-color: #444444; 
-    color: #ffffff;           
+    background-color: #444444;
+    color: #ffffff;
 }
 
 @media (hover: hover) and (pointer: fine) {
-    .load-more-btn:hover, .collapse-btn:hover {
+
+    .load-more-btn:hover,
+    .collapse-btn:hover {
         background-color: #111111;
         color: #ffffff;
     }
@@ -224,7 +226,8 @@ body.dark-mode .news-grid-section .collapse-btn:hover {
         margin-top: 48px;
     }
 
-    .load-more-btn, .collapse-btn {
+    .load-more-btn,
+    .collapse-btn {
         padding: 14px 36px;
         font-size: 12px;
         width: 100%;

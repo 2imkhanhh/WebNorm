@@ -264,7 +264,6 @@ body.dark-mode .work-list-section .work-grid.list-view .project-card {
     border-color: #333333;
 }
 
-/* TABLET */
 @media (max-width: 1024px) and (min-width: 768px) {
     .work-hero-section {
         padding-top: 140px;

@@ -120,8 +120,6 @@ header.navbar {
   padding: 10px clamp(24px, 2.5vw, 60px);
   flex-wrap: nowrap;
   pointer-events: auto;
-
-  /* Pill-shaped glassmorphism navbar */
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -669,7 +667,7 @@ header.navbar {
 .ps-view-all {
   color: #ffffff !important;
   font-family: 'AeonikPro', sans-serif;
-  font-size: clamp(14px, 1.2vw, 18px); /* slightly smaller than normal link-more maybe */
+  font-size: clamp(14px, 1.2vw, 18px);
 }
 
 .ps-counter-top .ps-num-total {
@@ -2129,7 +2127,6 @@ html.lenis body {
   }
 }
 
-/* MOBILE (≤ 765px) */
 @media (max-width: 765px) {
   .mobile-menu {
     display: block;
