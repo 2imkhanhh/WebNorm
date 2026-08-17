@@ -533,3 +533,37 @@ function raf(time) {
 }
 
 requestAnimationFrame(raf);
+
+// dynamic header color on dark sections
+function initDynamicHeader() {
+    const header = document.querySelector('header.navbar');
+    const darkSections = document.querySelectorAll('.project-showcase, .footer-section, .final-footer-section');
+
+    if (!header || darkSections.length === 0) return;
+
+    function checkHeaderBackground() {
+        const headerRect = header.getBoundingClientRect();
+        const headerCenter = headerRect.top + headerRect.height / 2;
+
+        let isDark = false;
+        darkSections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
+                isDark = true;
+            }
+        });
+
+        if (isDark || document.body.classList.contains('dark-mode')) {
+            header.classList.add('navbar-dark');
+        } else {
+            header.classList.remove('navbar-dark');
+        }
+    }
+
+    window.addEventListener('scroll', checkHeaderBackground, { passive: true });
+    window.addEventListener('resize', checkHeaderBackground, { passive: true });
+    
+    setTimeout(checkHeaderBackground, 100);
+}
+
+document.addEventListener('DOMContentLoaded', initDynamicHeader);

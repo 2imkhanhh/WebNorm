@@ -240,6 +240,24 @@ header.navbar {
   transform: translateY(-8px) rotate(-45deg);
 }
 
+/* navbar dark mode override */
+.navbar-dark .nav-link-item,
+.navbar-dark .lang-toggle {
+  color: #ffffff !important;
+}
+
+.navbar-dark .nav-link-item:not(.lang-toggle)::after {
+  background-color: #ffffff;
+}
+
+.navbar-dark .navbar-logo img {
+  filter: brightness(0) invert(1);
+}
+
+.navbar-dark .nav-hamburger span {
+  background: #ffffff;
+}
+
 /* HERO SECTION */
 .hero-section {
   flex: 1;
