@@ -241,20 +241,20 @@ header.navbar {
 }
 
 /* navbar dark mode override */
-.navbar-dark .nav-link-item,
-.navbar-dark .lang-toggle {
+.navbar-dark:not(:has(.nav-hamburger.active)) .nav-link-item,
+.navbar-dark:not(:has(.nav-hamburger.active)) .lang-toggle {
   color: #ffffff !important;
 }
 
-.navbar-dark .nav-link-item:not(.lang-toggle)::after {
+.navbar-dark:not(:has(.nav-hamburger.active)) .nav-link-item:not(.lang-toggle)::after {
   background-color: #ffffff;
 }
 
-.navbar-dark .navbar-logo img {
+.navbar-dark:not(:has(.nav-hamburger.active)) .navbar-logo img {
   filter: brightness(0) invert(1);
 }
 
-.navbar-dark .nav-hamburger span {
+.navbar-dark:not(:has(.nav-hamburger.active)) .nav-hamburger span {
   background: #ffffff;
 }
 
