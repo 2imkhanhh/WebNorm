@@ -430,8 +430,7 @@
             </div>
 
             <div class="load-more-wrap">
-                <a href="#" class="collapse-btn" style="display: none;">THU GỌN</a>
-                <a href="#" class="load-more-btn">TẢI THÊM</a>
+                <a href="#" class="load-more-btn">XEM THÊM</a>
             </div>
         </div>
     </section>
@@ -540,7 +539,6 @@
         document.addEventListener("DOMContentLoaded", function() {
             const articles = document.querySelectorAll('.news-grid-section .row > .col-12');
             const loadMoreBtn = document.querySelector('.load-more-btn');
-            const collapseBtn = document.querySelector('.collapse-btn');
             
             const initialItems = 9; 
             let currentItems = initialItems; 
@@ -557,10 +555,8 @@
 
                 if (currentItems >= articles.length) {
                     if (loadMoreBtn) loadMoreBtn.style.display = 'none';
-                    if (collapseBtn) collapseBtn.style.display = 'inline-flex';
                 } else {
                     if (loadMoreBtn) loadMoreBtn.style.display = 'inline-flex';
-                    if (collapseBtn) collapseBtn.style.display = 'none';
                 }
             }
 
@@ -577,21 +573,6 @@
                         currentItems = articles.length;
                     }
                     updateDisplay();
-                });
-            }
-
-            if (collapseBtn) {
-                collapseBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    currentItems = initialItems; 
-                    updateDisplay();
-
-                    const gridSection = document.querySelector('.news-grid-section');
-                    window.scrollTo({
-                        top: gridSection.offsetTop - 100, 
-                        behavior: 'smooth'
-                    });
                 });
             }
         });
