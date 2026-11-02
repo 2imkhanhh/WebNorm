@@ -1,0 +1,247 @@
+
+body.news-detail-page {
+    background: #FAFAFA;
+    min-height: auto;
+}
+
+.article-section {
+    padding-top: 180px; 
+    padding-bottom: 120px;
+}
+
+.article-date {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(16px, 1.4vw, 22px);
+    color: #BDBDBD;
+    margin-bottom: 20px;
+    letter-spacing: 0.01em;
+}
+
+.article-title {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: clamp(32px, 3.5vw, 44px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: #111111;
+    margin-bottom: 60px;
+    letter-spacing: -0.02em;
+}
+
+.article-meta-bar {
+    margin-bottom: 60px;
+    gap: 24px; 
+}
+
+.author-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 16px;
+}
+
+.author-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.author-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111111;
+    margin: 0 0 4px 0;
+}
+
+.author-role {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+}
+
+.share-actions {
+    gap: 12px;
+}
+
+.share-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #757575;
+    margin-right: 8px;
+}
+
+.share-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid #DEDEDE;
+    border-radius: 50%;
+    color: #111111;
+    text-decoration: none;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.share-icon.text-icon {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.share-icon:hover {
+    background-color: #111111;
+    border-color: #111111;
+    color: #ffffff;
+}
+
+.article-content {
+    color: #1a1a1a;
+}
+
+.article-content p {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    margin-bottom: 24px;
+    color: #111111;
+}
+
+.article-content h3 {
+    font-family: 'AeonikPro', sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    color: #111111;
+    margin-top: 48px;
+    margin-bottom: 20px;
+}
+
+.article-image-container {
+    width: 100%;
+    margin-top: 40px;    
+    margin-bottom: 20px; 
+    border-radius: 8px;  
+    overflow: hidden;
+}
+
+.article-fluid-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+@media (max-width: 1024px) and (min-width: 768px) {
+    .article-section {
+        padding-top: 130px;
+        padding-bottom: 80px;
+    }
+
+    .article-title {
+        font-size: clamp(28px, 4vw, 38px);
+        margin-bottom: 40px;
+    }
+
+    .article-meta-bar {
+        margin-bottom: 40px;
+        gap: 20px;
+    }
+
+    .author-avatar {
+        width: 48px;
+        height: 48px;
+    }
+
+    .article-content p {
+        font-size: 16px;
+    }
+
+    .article-content h3 {
+        font-size: 18px;
+        margin-top: 36px;
+    }
+
+    .article-image-container {
+        margin-top: 32px;
+        margin-bottom: 16px;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .article-section {
+        padding-top: 100px;
+        padding-bottom: 60px;
+    }
+
+    .article-date {
+        margin-bottom: 14px;
+    }
+
+    .article-title {
+        font-size: clamp(24px, 7vw, 32px);
+        line-height: 1.3;
+        margin-bottom: 32px;
+        letter-spacing: -0.01em;
+    }
+
+    .article-meta-bar {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .author-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .author-name {
+        font-size: 15px;
+    }
+
+    .author-role {
+        font-size: 13px;
+    }
+
+    .share-actions {
+        gap: 8px;
+    }
+
+    .share-text {
+        font-size: 13px;
+        margin-right: 4px;
+    }
+
+    .share-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .share-icon.text-icon {
+        font-size: 13px;
+    }
+
+    .article-content p {
+        font-size: 15px;
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    .article-content h3 {
+        font-size: 17px;
+        margin-top: 32px;
+        margin-bottom: 16px;
+    }
+
+    .article-image-container {
+        margin-top: 28px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+    }
+}
