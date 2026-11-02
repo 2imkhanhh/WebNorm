@@ -460,13 +460,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (contactTriggers.length === 0) return;
 
-    fetch('contact.html')
-        .then(response => response.text())
-        .then(html => {
-            document.body.insertAdjacentHTML('beforeend', html);
-            initContactPopup(contactTriggers);
-        })
-        .catch(err => console.error('Lỗi', err));
+    if (document.getElementById('contactSidebar')) {
+        initContactPopup(contactTriggers);
+    } else {
+        fetch('contact.html')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.text();
+            })
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+                initContactPopup(contactTriggers);
+            })
+            .catch(err => console.error('Lỗi load contact:', err));
+    }
 });
 
 function initContactPopup(triggers) {

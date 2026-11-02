@@ -1,0 +1,1278 @@
+@extends('layouts.app')
+
+@section('title', 'Brand Design Agency')
+
+@push('styles')
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+@endpush
+
+@section('preloader')
+<div id="preloader">
+        <script>
+            if (sessionStorage.getItem('norm_preloader_shown')) {
+                document.getElementById('preloader').style.display = 'none';
+            }
+        </script>
+        <svg class="loading-svg" width="739" height="300" viewBox="0 0 739 300" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <mask id="mask0_654_5" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="739"
+                height="300">
+                <path
+                    d="M369.5 0C512.512 0 654.699 71.4345 733.016 132.613L739 137.21V298.703L720.737 291.159C598.259 240.472 480.423 233.398 371.151 233.398C370.635 233.516 370.016 233.517 369.5 233.517L367.85 233.398C257.134 233.516 107.621 248.606 18.8828 290.924L0 300V137.328L5.98438 132.73C84.3006 71.4338 226.488 6.15988e-05 369.5 0Z"
+                    fill="#E0E0E0" />
+            </mask>
+            <g mask="url(#mask0_654_5)">
+                <rect class="loading-step" y="-106.78" width="185" height="447.458" fill="#E0E0E0" />
+                <rect class="loading-step" x="184" y="-106.78" width="188" height="447.458" fill="#E0E0E0" />
+                <rect class="loading-step" x="370" y="-106.78" width="186" height="447.458" fill="#E0E0E0" />
+                <rect class="loading-step" x="553" y="-106.78" width="188" height="447.458" fill="#E0E0E0" />
+            </g>
+        </svg>
+    </div>
+@endsection
+
+@section('content')
+<section class="hero-section">
+        <model-viewer src="{{ asset('assets/images/norm.glb') }}" alt="3D Banner" camera-controls disable-zoom
+            interaction-prompt="none" disable-pan class="hero-3d-model" style="--poster-color: transparent;"
+            shadow-intensity="1" camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
+            max-camera-orbit="30deg 90deg 140%"></model-viewer>
+        <div class="container-fluid px-4 px-md-5 h-100">
+            <div class="row h-100 align-items-end">
+
+                <div class="col-auto hero-tagline">
+                    <p>Brand Design Agency</p>
+                    <p>Based In Vietnam</p>
+                    <p>Culture Your Brand</p>
+                </div>
+
+                <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
+                    <img src="{{ asset('assets/images/banner.png') }}" alt="Placeholder" class="hero-img hero-img-placeholder">
+                </div>
+
+                <div class="col-auto hero-ctas d-flex gap-5">
+                    <a href="{{ route('work') }}" class="cta-btn">XEM DỰ ÁN</a>
+                    <a href="#" class="cta-btn">LIÊN HỆ</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="big-bottom-text">
+            <div class="bbt-row bbt-row-1">
+                <span class="stagger-word" data-word-index="0">NHẬN DIỆN</span>
+                <span class="stagger-word" data-word-index="1">CHIẾN LƯỢC</span>
+            </div>
+            <div class="bbt-row bbt-row-2">
+                <span class="stagger-word" data-word-index="2">VĂN HOÁ</span>
+            </div>
+        </div>
+
+        <div class="hero-ctas-mobile">
+            <a href="{{ route('work') }}" class="cta-btn">XEM DỰ ÁN</a>
+            <a href="#" class="cta-btn">LIÊN HỆ</a>
+        </div>
+
+    </section>
+
+    <section class="intro-section">
+        <div class="container-fluid norm-container">
+            <div class="reveal-wrapper">
+                <p class="reveal-text">
+                    Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ
+                    ràng, nhất quán và phù hợp với định hướng kinh doanh.
+                </p>
+            </div>
+
+            <div class="row align-items-start" style="margin-top: 150px; margin-bottom: 100px;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <video class="w-100 d-block" style="border-radius: 8px;" autoplay loop muted playsinline>
+                        <source src="{{ asset('assets/images/main-feature.mp4') }}" type="video/mp4">
+                        Trình duyệt của bạn không hỗ trợ thẻ video.
+                    </video>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+
+            <div class="row align-items-start content-footer" style="margin-bottom: 200px;">
+                <div class="col-md-3">
+                    <span class="si-label">• Về chúng tôi</span>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="desc-text m-0">
+                        Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về
+                        chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn
+                        tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.
+                    </p>
+                </div>
+
+                <div class="col-md-3 text-start text-md-end mt-4 mt-md-0">
+                    <a href="#" class="link-more">ĐỌC THÊM</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="project-showcase" id="projectShowcase">
+        <div class="ps-sticky-wrap">
+            <div class="ps-content-wrapper">
+                <div class="ps-counter-top">
+                    <div>
+                        <span class="ps-num-current" id="psCurrent">01</span>
+                        <span class="ps-num-total" id="psTotal">/05</span>
+                    </div>
+                    <a href="{{ route('work') }}" class="link-more text-uppercase ps-view-all">XEM TOÀN BỘ DỰ ÁN</a>
+                </div>
+
+                <div class="ps-horizontal-viewport">
+                    <div class="ps-horizontal-track" id="psTrack">
+
+                        <div class="ps-project-item">
+                            <div class="ps-card-inner">
+                                <div class="ps-img-wrap">
+                                    <img src="{{ asset('assets/images/project1.png') }}" alt="Nhận diện">
+                                </div>
+                                <div class="ps-info-wrap">
+                                    <div class="ps-title">Nhận diện</div>
+                                    <div class="ps-categories">
+                                        <span>Brand identity</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ps-project-item">
+                            <div class="ps-card-inner">
+                                <div class="ps-img-wrap">
+                                    <img src="{{ asset('assets/images/project2.png') }}" alt="Website">
+                                </div>
+                                <div class="ps-info-wrap">
+                                    <div class="ps-title">Website</div>
+                                    <div class="ps-categories">
+                                        <span>UI/UX Design</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ps-project-item">
+                            <div class="ps-card-inner">
+                                <div class="ps-img-wrap">
+                                    <img src="{{ asset('assets/images/project3.png') }}" alt="Nổi bật">
+                                </div>
+                                <div class="ps-info-wrap">
+                                    <div class="ps-title">Nổi bật</div>
+                                    <div class="ps-categories">
+                                        <span>Brand identity</span>
+                                        <span>UI/UX</span>
+                                        <span>Social Stategy</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ps-project-item">
+                            <div class="ps-card-inner">
+                                <div class="ps-img-wrap">
+                                    <img src="{{ asset('assets/images/project4.png') }}" alt="Nổi bật 2">
+                                </div>
+                                <div class="ps-info-wrap">
+                                    <div class="ps-title">Nổi bật 2</div>
+                                    <div class="ps-categories">
+                                        <span>Social Stategy</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ps-project-item">
+                            <div class="ps-card-inner">
+                                <div class="ps-img-wrap">
+                                    <img src="{{ asset('assets/images/project4.png') }}" alt="Website">
+                                </div>
+                                <div class="ps-info-wrap">
+                                    <div class="ps-title">Website</div>
+                                    <div class="ps-categories">
+                                        <span>Web Development</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-intro-section">
+        <div class="container-fluid norm-container">
+            <div class="row services-intro-row">
+                <div class="col-12 col-lg-2 mb-4 mb-lg-0">
+                    <span class="si-label">• Dịch vụ</span>
+                </div>
+
+                <div class="col-12 col-lg-7 mb-4 mb-lg-0">
+                    <h2 class="si-statement reveal-text-multi">
+                        Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác
+                        biệt và tăng trưởng.
+                    </h2>
+                </div>
+
+                <div class="col-12 col-lg-3 d-flex justify-content-lg-end">
+                    <p class="si-desc">
+                        Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-detail-section">
+        <div class="container-fluid px-4">
+            <div class="service-item" id="service-01">
+                <div class="row">
+                    <div class="col-lg-2 d-none d-lg-block"></div>
+                    <div class="col-12 col-lg-10">
+                        <hr class="service-divider">
+                        <div class="service-content-wrapper">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-7">
+                                    <div class="d-flex align-items-end service-header-row">
+                                        <div class="service-number-box">
+                                            <span class="service-number">01/</span>
+                                        </div>
+                                        <h3 class="service-title">Thiết kế từ chiến lược</h3>
+                                    </div>
+                                    <div class="d-flex service-body-row">
+                                        <div class="service-number-box"></div>
+                                        <div class="service-text-box">
+                                            <ul class="service-list">
+                                                <li>Định vị thương hiệu</li>
+                                                <li>Câu chuyện thương hiệu</li>
+                                                <li>Đặt tên thương hiệu</li>
+                                                <li>Bản sắc thương hiệu</li>
+                                                <li>Thông điệp thương hiệu</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-5 mt-4 mt-md-0">
+                                    <div class="service-image-viewport">
+                                        <img src="{{ asset('assets/images/project1.png') }}" alt="Dịch vụ 1" class="service-img">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-item" id="service-02">
+                <div class="row">
+                    <div class="col-lg-2 d-none d-lg-block"></div>
+                    <div class="col-12 col-lg-10">
+                        <hr class="service-divider">
+                        <div class="service-content-wrapper">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-7">
+                                    <div class="d-flex align-items-end service-header-row">
+                                        <div class="service-number-box">
+                                            <span class="service-number">02/</span>
+                                        </div>
+                                        <h3 class="service-title">Thiết kế nhận diện thương hiệu</h3>
+                                    </div>
+                                    <div class="d-flex service-body-row">
+                                        <div class="service-number-box"></div>
+                                        <div class="service-text-box">
+                                            <ul class="service-list">
+                                                <li>Thiết kế logo</li>
+                                                <li>Hệ thống nhận diện thương hiệu</li>
+                                                <li>Bộ nhận diện ứng dụng</li>
+                                                <li>Cẩm nang thương hiệu</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-5 mt-4 mt-md-0">
+                                    <div class="service-image-viewport">
+                                        <img src="{{ asset('assets/images/project2.png') }}" alt="Dịch vụ 2" class="service-img">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-item" id="service-03">
+                <div class="row">
+                    <div class="col-lg-2 d-none d-lg-block"></div>
+                    <div class="col-12 col-lg-10">
+                        <hr class="service-divider">
+                        <div class="service-content-wrapper">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-7">
+                                    <div class="d-flex align-items-end service-header-row">
+                                        <div class="service-number-box">
+                                            <span class="service-number">03/</span>
+                                        </div>
+                                        <h3 class="service-title">Thiết kế không gian số</h3>
+                                    </div>
+                                    <div class="d-flex service-body-row">
+                                        <div class="service-number-box"></div>
+                                        <div class="service-text-box">
+                                            <ul class="service-list">
+                                                <li>Thiết kế UI/UX</li>
+                                                <li>Thiết kế Website</li>
+                                                <li>Ứng dụng di động</li>
+                                                <li>Tối ưu trải nghiệm</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-5 mt-4 mt-md-0">
+                                    <div class="service-image-viewport">
+                                        <img src="{{ asset('assets/images/project3.png') }}" alt="Dịch vụ 3" class="service-img">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="service-item" id="service-04">
+                <div class="row">
+                    <div class="col-lg-2 d-none d-lg-block"></div>
+                    <div class="col-12 col-lg-10">
+                        <hr class="service-divider">
+                        <div class="service-content-wrapper">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-md-7">
+                                    <div class="d-flex align-items-end service-header-row">
+                                        <div class="service-number-box">
+                                            <span class="service-number">04/</span>
+                                        </div>
+                                        <h3 class="service-title">Sản xuất nội dung</h3>
+                                    </div>
+                                    <div class="d-flex service-body-row">
+                                        <div class="service-number-box"></div>
+                                        <div class="service-text-box">
+                                            <ul class="service-list">
+                                                <li>Chụp ảnh doanh nghiệp</li>
+                                                <li>Sản xuất Video quảng cáo</li>
+                                                <li>Nội dung truyền thông</li>
+                                                <li>Quản trị Fanpage</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-5 mt-4 mt-md-0">
+                                    <div class="service-image-viewport">
+                                        <img src="{{ asset('assets/images/project4.png') }}" alt="Dịch vụ 4" class="service-img">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="testimonial-section">
+        <div class="container-fluid px-4 px-md-5">
+            <div class="row">
+                <div class="col-12 testimonial-title-container" id="testimonialTitleWrap">
+                    <h2 class="testimonial-title text-left scroll-slide-left">
+                        <span class="quote-mark">“</span>TRẢI NGHIỆM
+                    </h2>
+
+                    <h2 class="testimonial-title text-right scroll-slide-right">
+                        KHÁCH HÀNG
+                    </h2>
+                </div>
+            </div>
+
+            <div class="testimonial-main-content">
+                <div class="testi-slider-container">
+                    <div class="testi-track" id="testiTrack">
+                        <div class="testi-slide active">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="{{ asset('assets/images/avatar.png') }}" alt="Nguyễn Minh Anh">
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            "Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định
+                                            hướng rõ ràng.
+                                            Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến
+                                            lược đến hệ thống nhận diện.
+                                            Trong suốt quá trình làm việc, mọi thứ được triển khai rất bài bản và minh
+                                            bạch. Kết quả cuối cùng
+                                            không chỉ là một bộ nhận diện đẹp mà còn là một nền tảng thương hiệu rõ ràng
+                                            để doanh nghiệp phát triển lâu dài.
+                                            Chúng tôi thật sự hài lòng với sự hợp tác này."
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">Nguyễn Minh Anh</h4>
+                                            <p class="author-position">Giám đốc Marketing</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testi-slide">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="{{ asset('assets/images/project2.png') }}" alt="Khách hàng 2">
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            "Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn
+                                            tru.
+                                            Chúng tôi đánh giá cao sự sáng tạo và khả năng thấu hiểu thị trường của đội
+                                            ngũ.
+                                            Bộ nhận diện mới đã giúp doanh số tăng trưởng rõ rệt trong quý vừa qua."
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">Trần Văn B</h4>
+                                            <p class="author-position">CEO Tiên Phong</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="testi-slide">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="{{ asset('assets/images/project3.png') }}" alt="Khách hàng 3">
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            "Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến
+                                            lược rất sát thực tế.
+                                            Rất mong được tiếp tục đồng hành trong các dự án tương lai."
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">Lê Thị C</h4>
+                                            <p class="author-position">Founder Nem.A</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-footer">
+                <div class="row align-items-center">
+                    <div class="col-md-4 d-none d-md-block"></div>
+                    <div class="col-md-6 d-flex align-items-center gap-4">
+                        <div class="testimonial-pagination">
+                            <span class="current">01</span><span class="total">/06</span>
+                        </div>
+                        <div class="testimonial-nav-btns">
+                            <button class="nav-btn prev" aria-label="Previous">
+                                <span class="icon-wrap">
+                                    <i class='bx bx-left-arrow-alt icon-main'></i>
+                                    <i class='bx bx-left-arrow-alt icon-alt'></i>
+                                </span>
+                            </button>
+
+                            <div class="next-btn-wrapper">
+                                <svg class="progress-ring" width="56" height="56" viewBox="0 0 56 56"
+                                    style="overflow: visible;">
+                                    <circle class="progress-ring-bg" stroke="#E0E0E0" stroke-width="1"
+                                        fill="transparent" r="27" cx="28" cy="28" />
+                                    <circle class="progress-ring-circle" stroke="#111111" stroke-width="1.5"
+                                        fill="transparent" r="27" cx="28" cy="28" />
+                                </svg>
+                                <button class="nav-btn next" aria-label="Next">
+                                    <span class="icon-wrap">
+                                        <i class='bx bx-right-arrow-alt icon-main'></i>
+                                        <i class='bx bx-right-arrow-alt icon-alt'></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="blog-intro-section">
+        <div class="container-fluid norm-container">
+            <div class="row services-intro-row">
+
+                <div class="col-12 col-lg-3 mb-4 mb-lg-0">
+                    <span class="si-label">• Blog</span>
+                </div>
+
+                <div class="col-12 col-lg-9 mb-4 mb-lg-0">
+                    <h2 class="si-statement reveal-text-multi">
+                        Chia sẻ góc nhìn về thương hiệu, thiết kế và chiến lược giúp doanh nghiệp phát triển bền vững.
+                    </h2>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-slider-section">
+        <div class="container-fluid blog-custom-container">
+            <div class="d-flex justify-content-end mb-4">
+                <a href="{{ route('news') }}" class="link-more text-uppercase" style="margin-top: 100px;">XEM THÊM
+                    BÀI VIẾT</a>
+            </div>
+
+            <div class="blog-slider-container">
+                <div class="blog-track" id="blogTrack">
+                    <div class="blog-card">
+                        <div class="blog-img-wrap">
+                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
+                                <img src="{{ asset('assets/images/project1.png') }}" alt="Blog 1">
+                            </a>
+                        </div>
+                        <h3 class="blog-title">
+                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
+                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            </a>
+                        </h3>
+                    </div>
+
+                    <div class="blog-card">
+                        <div class="blog-img-wrap">
+                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
+                                <img src="{{ asset('assets/images/project2.png') }}" alt="Blog 2">
+                            </a>
+                        </div>
+                        <h3 class="blog-title">
+                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
+                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            </a>
+                        </h3>
+                    </div>
+
+                    <div class="blog-card">
+                        <div class="blog-img-wrap">
+                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
+                                <img src="{{ asset('assets/images/project3.png') }}" alt="Blog 3">
+                            </a>
+                        </div>
+                        <h3 class="blog-title">
+                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
+                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            </a>
+                        </h3>
+                    </div>
+
+                    <div class="blog-card">
+                        <div class="blog-img-wrap">
+                            <a href="#" class="d-block w-100 h-100">
+                                <img src="{{ asset('assets/images/project4.png') }}" alt="Blog 4">
+                            </a>
+                        </div>
+                        <h3 class="blog-title">
+                            <a href="#" class="text-decoration-none" style="color: inherit;">
+                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-nav-btns mt-5 d-flex justify-content-end gap-3 pe-lg-4">
+                <button class="nav-btn blog-prev" id="blogPrev" ontouchstart="">
+                    <i class='bx bx-left-arrow-alt'></i>
+                </button>
+
+                <button class="nav-btn blog-next" id="blogNext" ontouchstart="">
+                    <i class='bx bx-right-arrow-alt'></i>
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer-section" id="footerSection">
+        <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
+
+            <video class="footer-bg-video" autoplay loop muted playsinline>
+                <source src="{{ asset('assets/images/video_norm_ios.mov') }}" type="video/quicktime">
+                <source src="{{ asset('assets/images/video_norm.webm') }}" type="video/webm">
+                Trình duyệt của bạn không hỗ trợ thẻ video.
+            </video>
+            <div class="footer-video-overlay"></div>
+            <div class="container-fluid px-4 px-md-5 w-100" style="position: relative; z-index: 2;">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="footer-text-wrap">
+                            <div class="footer-line">
+                                <span class="text-old">TỪ NHỮNG</span>
+                                <span class="text-new">ĐẾN MỘT</span>
+                            </div>
+                            <div class="footer-line">
+                                <span class="text-old">Ý TƯỞNG</span>
+                                <span class="text-new">THƯƠNG HIỆU</span>
+                            </div>
+                            <div class="footer-line">
+                                <span class="text-old">BAN ĐẦU</span>
+                                <span class="text-new">ĐÁNG NHỚ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-start text-md-end mt-5 mt-md-0 footer-real-btn-col">
+                        <a href="#" class="footer-btn">
+                            CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="footer-cursor-btn" id="footerCursorBtn">
+        CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+    </a>
+@endsection
+
+@push('scripts')
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const hero3dModel = document.querySelector('.hero-3d-model');
+            if (hero3dModel) {
+                const updateZoom = () => {
+                    if (window.innerWidth <= 1024) {
+                        hero3dModel.removeAttribute('disable-zoom');
+                    } else {
+                        hero3dModel.setAttribute('disable-zoom', '');
+                    }
+                };
+                updateZoom();
+                window.addEventListener('resize', updateZoom);
+            }
+
+            // banner hover
+            /*
+            const bannerImg = document.querySelector('.hero-img');
+            if (bannerImg) {
+                const banners = [
+                    'assets/images/banner.png',
+                    'assets/images/banner2.png',
+                    'assets/images/banner3.png',
+                ];
+                let bannerIndex = 0;
+                let bannerIntervalId = null;
+
+                bannerImg.addEventListener('mouseenter', () => {
+                    bannerIntervalId = setInterval(() => {
+                        bannerIndex = (bannerIndex + 1) % banners.length;
+                        bannerImg.src = banners[bannerIndex];
+                    }, 400);
+                });
+
+                bannerImg.addEventListener('mouseleave', () => {
+                    clearInterval(bannerIntervalId);
+                    bannerIntervalId = null;
+                });
+            }
+            */
+
+            // animation text
+            function splitIntoChars(el) {
+                const text = el.textContent;
+                const wordIndex = parseInt(el.dataset.wordIndex);
+                const wordDelay = wordIndex * 80;
+
+                el.innerHTML = '';
+                el.style.display = 'inline-block';
+                el.style.overflow = 'visible';
+
+                [...text].forEach((char, i) => {
+                    const wrapper = document.createElement('span');
+                    wrapper.className = 'char-clip';
+
+                    const inner = document.createElement('span');
+                    inner.className = 'stagger-char';
+                    inner.textContent = char === ' ' ? '\u00A0' : char;
+                    inner.style.animationDelay = `${wordDelay + i * 60}ms`;
+
+                    wrapper.appendChild(inner);
+                    el.appendChild(wrapper);
+                });
+            }
+
+            const staggerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                        staggerObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.4 });
+
+            document.querySelectorAll('.stagger-word').forEach(el => {
+                splitIntoChars(el);
+                staggerObserver.observe(el);
+            });
+
+            // animation testimonial
+            const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right');
+            if (animatedTexts.length > 0) {
+                const textObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                        } else {
+                            entry.target.classList.remove('is-visible');
+                        }
+                    });
+                }, { threshold: 0.5, rootMargin: "0px" });
+
+                animatedTexts.forEach(text => textObserver.observe(text));
+            }
+
+            // project showcase 
+            const showcase = document.getElementById('projectShowcase');
+            const psTrack = document.getElementById('psTrack');
+            const projectItems = document.querySelectorAll('.ps-project-item');
+            const psCurrent = document.getElementById('psCurrent');
+            const psTotal = document.getElementById('psTotal');
+
+            if (showcase && psTrack && projectItems.length > 0) {
+                const totalProjects = projectItems.length;
+
+                if (psTotal) {
+                    psTotal.textContent = '/' + String(totalProjects).padStart(2, '0');
+                }
+
+                const projectData = Array.from(projectItems).map(item => ({
+                    el: item,
+                    infoWrap: item.querySelector('.ps-info-wrap'),
+                    title: item.querySelector('.ps-title'),
+                    categories: item.querySelector('.ps-categories')
+                }));
+
+                let cachedShowcaseTop = 0;
+                let cachedWindowHeight = 0;
+                let cachedWindowWidth = 0;
+                let cachedMaxScroll = 0;
+                let cachedItemWidth = 0;
+                let cachedItemTotalWidth = 0;
+                let cachedPaddingLeft = 0;
+
+                function calculateMetrics() {
+                    const newWidth = window.innerWidth;
+
+                    if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
+                        const dummy = document.createElement('div'); dummy.style.height = '100vh'; dummy.style.position = 'absolute'; dummy.style.visibility = 'hidden'; document.body.appendChild(dummy); cachedWindowHeight = dummy.offsetHeight; document.body.removeChild(dummy);
+                    }
+                    cachedWindowWidth = newWidth;
+
+                    showcase.style.height = `${totalProjects * cachedWindowHeight}px`;
+                    const stickyWrap = showcase.querySelector('.ps-sticky-wrap');
+                    if (stickyWrap) stickyWrap.style.height = `${cachedWindowHeight}px`;
+
+                    if (projectItems.length > 0) {
+                        cachedItemWidth = projectItems[0].offsetWidth;
+                        const gap = parseFloat(window.getComputedStyle(projectItems[0]).marginRight) || 0;
+                        cachedItemTotalWidth = cachedItemWidth + gap;
+                    }
+                    cachedPaddingLeft = parseFloat(window.getComputedStyle(psTrack).paddingLeft) || 0;
+
+                    const rect = showcase.getBoundingClientRect();
+                    cachedShowcaseTop = rect.top + window.scrollY;
+                    cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
+                }
+
+                calculateMetrics();
+                window.addEventListener('resize', calculateMetrics, { passive: true });
+
+                function updateCarousel() {
+                    const scrollY = window.scrollY;
+
+                    let scrolledInside = scrollY - cachedShowcaseTop;
+                    if (scrolledInside < 0) scrolledInside = 0;
+                    if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
+
+                    let progress = cachedMaxScroll > 0 ? scrolledInside / cachedMaxScroll : 0;
+
+                    const maxTranslate = cachedItemTotalWidth * (totalProjects - 1);
+                    const trackTranslateX = -(progress * maxTranslate);
+
+                    let activeIndex = Math.round(progress * (totalProjects - 1));
+                    if (psCurrent) {
+                        psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
+                    }
+
+                    const viewportCenter = cachedWindowWidth / 2;
+                    const maxDist = cachedWindowWidth / 1.5;
+
+                    psTrack.style.transform = `translate3d(${trackTranslateX}px, 0, 0)`;
+
+                    projectData.forEach((data, i) => {
+                        const itemLeft = cachedPaddingLeft + i * cachedItemTotalWidth;
+                        const itemCenter = itemLeft + cachedItemWidth / 2 + trackTranslateX;
+                        const distance = Math.abs(viewportCenter - itemCenter);
+
+                        let scale = 1 - (distance / maxDist) * 0.45;
+                        if (scale < 0.65) scale = 0.65;
+                        if (scale > 1) scale = 1;
+
+                        data.el.style.transform = `scale(${scale}) translateZ(0)`;
+
+                        if (data.infoWrap) {
+                            if (cachedWindowWidth > 1024) {
+                                let opacity = 1 - (distance / (cachedWindowWidth / 3));
+                                if (opacity < 0) opacity = 0;
+
+                                let translateY = (distance / cachedWindowWidth) * 50;
+
+                                data.infoWrap.style.opacity = opacity;
+
+                                if (data.title) data.title.style.transform = `translateY(${translateY * 0.5}px)`;
+                                if (data.categories) data.categories.style.transform = `translateY(${translateY}px)`;
+                            } else {
+                                data.infoWrap.style.opacity = '1';
+                                if (data.title) data.title.style.transform = 'none';
+                                if (data.categories) data.categories.style.transform = 'none';
+                            }
+                        }
+                    });
+                }
+
+                let psScrollTicking = false;
+                function onPsScroll() {
+                    if (!psScrollTicking) {
+                        window.requestAnimationFrame(() => {
+                            updateCarousel();
+                            psScrollTicking = false;
+                        });
+                        psScrollTicking = true;
+                    }
+                }
+
+                if (typeof lenis !== 'undefined') {
+                    lenis.on('scroll', updateCarousel);
+                } else {
+                    window.addEventListener('scroll', onPsScroll, { passive: true });
+                }
+
+                window.addEventListener('resize', onPsScroll, { passive: true });
+
+                updateCarousel();
+            }
+
+            // testimonial slider
+            function initTestimonialSlider() {
+                const track = document.getElementById('testiTrack');
+                const prevBtn = document.querySelector('.testimonial-nav-btns .prev');
+                const nextBtn = document.querySelector('.next-btn-wrapper');
+                const currentElem = document.querySelector('.testimonial-pagination .current');
+                const totalElem = document.querySelector('.testimonial-pagination .total');
+                const progressCircle = document.querySelector('.progress-ring-circle');
+                const sliderContainer = document.querySelector('.testi-slider-container');
+                const testimonialSection = document.querySelector('.testimonial-section');
+
+                let initialSlides = Array.from(document.querySelectorAll('.testi-slide'));
+                if (!track || initialSlides.length === 0) return;
+
+                initialSlides.forEach((slide, index) => {
+                    slide.dataset.index = index + 1;
+                });
+
+                if (totalElem) {
+                    totalElem.textContent = '/' + String(initialSlides.length).padStart(2, '0');
+                }
+
+                if (initialSlides.length > 1) {
+                    track.insertBefore(initialSlides[initialSlides.length - 1], initialSlides[0]);
+                }
+
+                let isAnimating = false;
+                let isInView = false;
+                let isScrolling = false;
+                let scrollTimeout;
+
+                const intervalTime = 5000;
+                const transitionTime = 600;
+                let currentProgressTime = 0;
+                let lastFrameTime = 0;
+                let animationFrameId;
+
+                let progressState = 'filling';
+                let rewindProgressTime = 0;
+                const rewindDuration = 400;
+
+                function getCircumference() {
+                    return 2 * Math.PI * 27;
+                }
+                let circleCircumference = getCircumference();
+
+                function alignFooter() {
+                    const activeSlide = track.querySelector('.testi-slide.active');
+                    if (!activeSlide) return;
+
+                    const avatarEl = activeSlide.querySelector('.testimonial-avatar');
+                    const footerWrap = document.querySelector('.testimonial-footer .gap-4');
+                    const currentNumberText = document.querySelector('.testimonial-pagination .current');
+
+                    if (avatarEl && footerWrap && currentNumberText) {
+                        footerWrap.style.marginLeft = '0px';
+                        footerWrap.offsetHeight;
+
+                        const avatarRight = avatarEl.getBoundingClientRect().right;
+                        const numberRight = currentNumberText.getBoundingClientRect().right;
+                        const diff = avatarRight - numberRight;
+
+                        if (window.innerWidth >= 768) {
+                            footerWrap.style.marginLeft = `${diff}px`;
+                        }
+                    }
+                }
+
+                function updateCarousel(instant = true) {
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    if (currentSlides.length === 0) return;
+
+                    const activeIndex = currentSlides.length > 1 ? 1 : 0;
+
+                    if (currentElem) {
+                        currentElem.textContent = String(currentSlides[activeIndex].dataset.index).padStart(2, '0');
+                    }
+
+                    currentSlides.forEach((slide, index) => {
+                        slide.classList.toggle('active', index === activeIndex);
+                    });
+
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = currentSlides[0].offsetWidth;
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+                    const translateX = centerOffset - (activeIndex * slideWidth);
+
+                    if (instant) track.style.transition = 'none';
+                    track.style.transform = `translate3d(${translateX}px, 0, 0)`;
+
+                    if (instant) {
+                        track.offsetHeight;
+                        alignFooter();
+                    }
+                }
+
+                document.fonts.ready.then(() => {
+                    alignFooter();
+                });
+
+                // next slide
+                function moveToNextSlide() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = currentSlides[0].offsetWidth;
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+
+                    currentSlides.forEach(s => s.classList.remove('active'));
+                    if (currentSlides[2]) currentSlides[2].classList.add('active');
+                    if (currentElem && currentSlides[2]) currentElem.textContent = String(currentSlides[2].dataset.index).padStart(2, '0');
+
+                    track.style.transition = `transform ${transitionTime}ms ease-in-out`;
+                    track.style.transform = `translate3d(${centerOffset - (slideWidth * 2)}px, 0, 0)`;
+
+                    setTimeout(() => {
+                        track.appendChild(currentSlides[0]);
+
+                        track.style.transition = 'none';
+                        track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
+                        isAnimating = false;
+                    }, transitionTime);
+
+                    progressState = 'rewinding';
+                    rewindProgressTime = 0;
+                }
+
+                // prev slide
+                function moveToPrevSlide() {
+                    if (isAnimating) return;
+                    isAnimating = true;
+
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = currentSlides[0].offsetWidth;
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+
+                    currentSlides.forEach(s => s.classList.remove('active'));
+                    currentSlides[0].classList.add('active');
+                    if (currentElem) currentElem.textContent = String(currentSlides[0].dataset.index).padStart(2, '0');
+
+                    track.style.transition = `transform ${transitionTime}ms ease-in-out`;
+                    track.style.transform = `translate3d(${centerOffset}px, 0, 0)`;
+
+                    setTimeout(() => {
+                        const lastSlide = currentSlides[currentSlides.length - 1];
+                        track.insertBefore(lastSlide, currentSlides[0]);
+
+                        track.style.transition = 'none';
+                        track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
+                        isAnimating = false;
+                    }, transitionTime);
+
+                    progressState = 'rewinding';
+                    rewindProgressTime = 0;
+                }
+
+                // auto play
+                function progressLoop(currentTime) {
+                    if (!lastFrameTime) lastFrameTime = currentTime;
+                    let deltaTime = currentTime - lastFrameTime;
+                    if (deltaTime > 100) deltaTime = 16;
+                    lastFrameTime = currentTime;
+
+                    if (isInView && !isScrolling) {
+                        if (progressState === 'filling') {
+                            currentProgressTime += deltaTime;
+
+                            if (currentProgressTime >= intervalTime) {
+                                moveToNextSlide();
+                            }
+
+                            if (progressCircle) {
+                                const progressRatio = Math.min(currentProgressTime / intervalTime, 1);
+                                const offset = circleCircumference - (progressRatio * circleCircumference);
+                                progressCircle.style.strokeDashoffset = offset;
+                            }
+                        }
+                        else if (progressState === 'rewinding') {
+                            rewindProgressTime += deltaTime;
+
+                            if (rewindProgressTime >= rewindDuration) {
+                                progressState = 'filling';
+                                currentProgressTime = 0;
+                                rewindProgressTime = 0;
+
+                                if (progressCircle) {
+                                    progressCircle.style.strokeDashoffset = circleCircumference;
+                                }
+                            } else {
+                                if (progressCircle) {
+                                    const rewindRatio = Math.min(rewindProgressTime / rewindDuration, 1);
+                                    const offset = rewindRatio * circleCircumference;
+                                    progressCircle.style.strokeDashoffset = offset;
+                                }
+                            }
+                        }
+                    }
+                    animationFrameId = requestAnimationFrame(progressLoop);
+                }
+
+                if (progressCircle) {
+                    progressCircle.style.transition = 'none';
+                    progressCircle.style.strokeDasharray = `${circleCircumference} ${circleCircumference}`;
+                    progressCircle.style.strokeDashoffset = circleCircumference;
+                }
+
+                window.addEventListener('scroll', () => {
+                    isScrolling = true;
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(() => {
+                        isScrolling = false;
+                        lastFrameTime = performance.now();
+                    }, 150);
+                }, { passive: true });
+
+                window.addEventListener('resize', () => {
+                    updateCarousel(true);
+                }, { passive: true });
+
+                if (testimonialSection) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            isInView = entry.isIntersecting;
+                            if (isInView) {
+                                lastFrameTime = performance.now();
+                            }
+                        });
+                    }, { threshold: 0 });
+                    observer.observe(testimonialSection);
+                } else {
+                    isInView = true;
+                }
+
+                updateCarousel(true);
+                animationFrameId = requestAnimationFrame(progressLoop);
+
+                if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
+                if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
+            }
+            initTestimonialSlider();
+        });
+    </script>
+
+    <!-- 3D model -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modelViewer = document.querySelector('.hero-3d-model');
+            if (!modelViewer) return;
+
+            let isCtrlPressed = false;
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Control' && !isCtrlPressed) {
+                    isCtrlPressed = true;
+                    modelViewer.removeAttribute('disable-zoom');
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'Control') {
+                    isCtrlPressed = false;
+                    modelViewer.setAttribute('disable-zoom', '');
+                }
+            });
+        });
+    </script>
+    <script>
+        (function () {
+            const preloader = document.getElementById('preloader');
+            if (!preloader || preloader.style.display === 'none') return;
+
+            const steps = preloader.querySelectorAll('.loading-step');
+            let currentStep = 0;
+            let isCompleted = false;
+
+            function fillStep(index) {
+                if (index < steps.length && index >= 0) {
+                    steps[index].classList.add('filled');
+                }
+            }
+
+            const mediaElements = Array.from(document.querySelectorAll('model-viewer'));
+            let totalWeight = 0;
+            let loadedWeight = 0;
+
+            const mediaData = mediaElements.map(media => {
+                let weight = 40;
+                totalWeight += weight;
+                return { el: media, weight: weight, loaded: false };
+            });
+
+            let targetPercent = 0;
+            let visualPercent = 0;
+
+            function updateRealProgress() {
+                if (totalWeight === 0) {
+                    targetPercent = 1;
+                    return;
+                }
+                targetPercent = loadedWeight / totalWeight;
+            }
+
+            function animateProgress() {
+                if (isCompleted) return;
+
+                let diff = targetPercent - visualPercent;
+                if (diff > 0) {
+                    visualPercent += Math.min(diff, 0.015);
+                }
+
+                if (visualPercent >= 0.25 && currentStep < 1) {
+                    fillStep(0);
+                    currentStep = 1;
+                }
+                if (visualPercent >= 0.50 && currentStep < 2) {
+                    fillStep(1);
+                    currentStep = 2;
+                }
+                if (visualPercent >= 0.75 && currentStep < 3) {
+                    fillStep(2);
+                    currentStep = 3;
+                }
+
+                if (visualPercent >= 0.99 && targetPercent >= 1) {
+                    completeLoading();
+                } else {
+                    requestAnimationFrame(animateProgress);
+                }
+            }
+
+            function completeLoading() {
+                if (isCompleted) return;
+                isCompleted = true;
+                sessionStorage.setItem('norm_preloader_shown', 'true');
+                fillStep(0);
+                fillStep(1);
+                fillStep(2);
+                fillStep(3);
+
+                setTimeout(() => {
+                    preloader.classList.add('loaded');
+                    setTimeout(() => { preloader.remove(); }, 400);
+                }, 100);
+            }
+
+            function markLoaded(item) {
+                if (!item.loaded) {
+                    item.loaded = true;
+                    loadedWeight += item.weight;
+                    updateRealProgress();
+                }
+            }
+
+            if (totalWeight > 0) {
+                mediaData.forEach(item => {
+                    const media = item.el;
+                    if (media.tagName === 'IMG') {
+                        if (media.complete) {
+                            markLoaded(item);
+                        } else {
+                            media.addEventListener('load', () => markLoaded(item), { once: true });
+                            media.addEventListener('error', () => markLoaded(item), { once: true });
+                        }
+                    } else if (media.tagName === 'VIDEO') {
+                        if (media.readyState >= 3) {
+                            markLoaded(item);
+                        } else {
+                            media.addEventListener('canplay', () => markLoaded(item), { once: true });
+                            media.addEventListener('error', () => markLoaded(item), { once: true });
+                        }
+                    } else if (media.tagName === 'MODEL-VIEWER') {
+                        media.addEventListener('load', () => markLoaded(item), { once: true });
+                        media.addEventListener('error', () => markLoaded(item), { once: true });
+                    }
+                });
+                updateRealProgress();
+                requestAnimationFrame(animateProgress);
+            } else {
+                targetPercent = 1;
+                requestAnimationFrame(animateProgress);
+            }
+
+            setTimeout(() => {
+                targetPercent = 1;
+            }, 8000);
+
+        })();
+    </script>
+@endpush
