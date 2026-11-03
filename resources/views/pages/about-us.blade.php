@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-<section class="about-hero-gallery">
+    <section class="about-hero-gallery">
         <div class="gallery-track" id="galleryTrack">
             <div class="gallery-item"><img src="{{ asset('assets/images/gallery1.jpg') }}" alt="Gallery 1"></div>
             <div class="gallery-item"><img src="{{ asset('assets/images/gallery2.jpg') }}" alt="Gallery 2"></div>
@@ -206,7 +206,8 @@
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project1.png') }}" alt="Dịch vụ 1" class="service-img">
+                                        <img src="{{ asset('assets/images/project1.png') }}" alt="Dịch vụ 1"
+                                            class="service-img">
                                     </div>
                                 </div>
                             </div>
@@ -243,7 +244,8 @@
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project2.png') }}" alt="Dịch vụ 2" class="service-img">
+                                        <img src="{{ asset('assets/images/project2.png') }}" alt="Dịch vụ 2"
+                                            class="service-img">
                                     </div>
                                 </div>
                             </div>
@@ -280,7 +282,8 @@
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project3.png') }}" alt="Dịch vụ 3" class="service-img">
+                                        <img src="{{ asset('assets/images/project3.png') }}" alt="Dịch vụ 3"
+                                            class="service-img">
                                     </div>
                                 </div>
                             </div>
@@ -317,7 +320,8 @@
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project4.png') }}" alt="Dịch vụ 4" class="service-img">
+                                        <img src="{{ asset('assets/images/project4.png') }}" alt="Dịch vụ 4"
+                                            class="service-img">
                                     </div>
                                 </div>
                             </div>
@@ -407,10 +411,10 @@
         </div>
     </section>
 
-    @endsection
+@endsection
 
 @push('scripts')
-<script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const track = document.getElementById('galleryTrack');
             if (track) {
@@ -444,7 +448,8 @@
             });
 
             let hasScrolled = false;
-            const animatedTexts = document.querySelectorAll('.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
+            const animatedTexts = document.querySelectorAll(
+                '.scroll-slide-left, .scroll-slide-right, .scroll-slide-up');
 
             function initTextObserver() {
                 if (animatedTexts.length === 0) return;
@@ -456,7 +461,9 @@
                             entry.target.classList.remove('is-visible');
                         }
                     });
-                }, { threshold: 0.2 });
+                }, {
+                    threshold: 0.2
+                });
                 animatedTexts.forEach(text => textObserver.observe(text));
             }
 
@@ -465,7 +472,10 @@
                     hasScrolled = true;
                     initTextObserver();
                 }
-            }, { once: false, passive: true });
+            }, {
+                once: false,
+                passive: true
+            });
 
             const solutionSection = document.getElementById('solutionSection');
             const brandLine = document.querySelector('.brand-line');
@@ -526,20 +536,29 @@
                         solutionSnapTimeout = setTimeout(() => {
                             let snapTargetY;
                             if (scrollDirection === 'down') {
-                                snapTargetY = targetSolutionProgress >= 0.1 ? sectionTop + maxScroll : sectionTop;
+                                snapTargetY = targetSolutionProgress >= 0.1 ? sectionTop +
+                                    maxScroll : sectionTop;
                             } else {
-                                snapTargetY = targetSolutionProgress <= 0.9 ? sectionTop : sectionTop + maxScroll;
+                                snapTargetY = targetSolutionProgress <= 0.9 ? sectionTop :
+                                    sectionTop + maxScroll;
                             }
                             if (Math.abs(scrollY - snapTargetY) > 5) {
                                 if (typeof lenis !== 'undefined') {
-                                    lenis.scrollTo(snapTargetY, { duration: 1.0 });
+                                    lenis.scrollTo(snapTargetY, {
+                                        duration: 1.0
+                                    });
                                 } else {
-                                    window.scrollTo({ top: snapTargetY, behavior: 'smooth' });
+                                    window.scrollTo({
+                                        top: snapTargetY,
+                                        behavior: 'smooth'
+                                    });
                                 }
                             }
                         }, snapDelay);
                     }
-                }, { passive: true });
+                }, {
+                    passive: true
+                });
             }
 
             const workflowSection = document.getElementById('workflowSection');
@@ -583,7 +602,9 @@
                         workflowTrack.style.transform = '';
                         calculateActiveWorkflowStep();
                     }
-                }, { passive: true });
+                }, {
+                    passive: true
+                });
 
                 function renderWorkflowSmooth() {
                     if (isDesktop) {
@@ -621,7 +642,8 @@
                             const windowHeight = window.innerHeight;
                             const scrollY = window.scrollY;
                             const maxScroll = workflowSection.offsetHeight - windowHeight;
-                            let scrolledInside = Math.max(0, Math.min(scrollY - sectionTop, maxScroll));
+                            let scrolledInside = Math.max(0, Math.min(scrollY - sectionTop,
+                                maxScroll));
                             if (maxScroll > 0) {
                                 targetWfProgress = scrolledInside / maxScroll;
                             }
@@ -629,7 +651,9 @@
                         });
                         isTicking = true;
                     }
-                }, { passive: true });
+                }, {
+                    passive: true
+                });
 
                 calculateActiveWorkflowStep();
             }
