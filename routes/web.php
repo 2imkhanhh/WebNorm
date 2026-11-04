@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
 use Illuminate\Support\Facades\Route;
 
 // Client Routes (Blade Views)
@@ -26,3 +27,20 @@ Route::get('/news', function () {
 Route::get('/news/detail', function () {
     return view('pages.news-detail');
 })->name('news.detail');
+
+// Admin Authentication Routes
+Route::prefix('admin')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+    // Protected Admin Studio Routes (Requires Auth)
+    Route::middleware('auth')->group(function () {
+        Route::get('/', function () {
+            return redirect()->route('admin.studio');
+        });
+        Route::get('/studio', function () {
+            return view('admin.studio');
+        })->name('admin.studio');
+    });
+});

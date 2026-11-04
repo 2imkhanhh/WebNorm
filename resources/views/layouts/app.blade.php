@@ -77,6 +77,43 @@
 
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
     <script src="{{ asset('assets/js/script.js') }}"></script>
+
+    <!-- Realtime Bridge Listener for Website Studio -->
+    <script>
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'STUDIO_LIVE_UPDATE') {
+                const { fieldKey, value } = event.data;
+
+                // Handle footer words animation
+                if (fieldKey === 'footer_line1_old') {
+                    const el = document.querySelector('.footer-line:nth-child(1) .text-old');
+                    if (el) el.textContent = value;
+                } else if (fieldKey === 'footer_line1_new') {
+                    const el = document.querySelector('.footer-line:nth-child(1) .text-new');
+                    if (el) el.textContent = value;
+                } else if (fieldKey === 'footer_line2_old') {
+                    const el = document.querySelector('.footer-line:nth-child(2) .text-old');
+                    if (el) el.textContent = value;
+                } else if (fieldKey === 'footer_line2_new') {
+                    const el = document.querySelector('.footer-line:nth-child(2) .text-new');
+                    if (el) el.textContent = value;
+                } else if (fieldKey === 'footer_line3_old') {
+                    const el = document.querySelector('.footer-line:nth-child(3) .text-old');
+                    if (el) el.textContent = value;
+                } else if (fieldKey === 'footer_line3_new') {
+                    const el = document.querySelector('.footer-line:nth-child(3) .text-new');
+                    if (el) el.textContent = value;
+                } else if (fieldKey === 'page_title') {
+                    document.title = value;
+                } else {
+                    // Try generic matching with data-studio-key or class
+                    const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);
+                    if (target) target.textContent = value;
+                }
+            }
+        });
+    </script>
+
     @stack('scripts')
 </body>
 
