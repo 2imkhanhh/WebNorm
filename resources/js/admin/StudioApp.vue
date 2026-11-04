@@ -21,17 +21,27 @@
         </div>
       </div>
 
-      <!-- Center: Device Switcher -->
+      <!-- Center: Device Switcher & Zoom Scale -->
       <div class="topbar-center">
-        <button
-          v-for="d in devices"
-          :key="d.id"
-          class="device-btn"
-          :class="{ active: currentDevice === d.id }"
-          @click="currentDevice = d.id"
-        >
-          <i :class="d.icon"></i> {{ d.label }}
-        </button>
+        <div class="device-switch-group">
+          <button v-for="d in devices" :key="d.id" class="device-btn" :class="{ active: currentDevice === d.id }"
+            @click="setDevice(d.id)">
+            <i :class="d.icon"></i> {{ d.label }}
+          </button>
+        </div>
+
+        <div class="zoom-controls">
+          <button class="zoom-btn" title="Thu nhỏ" @click="zoomOut">
+            <i class="bx bx-minus"></i>
+          </button>
+          <span class="zoom-text">{{ Math.round(zoomLevel * 100) }}%</span>
+          <button class="zoom-btn" title="Phóng to" @click="zoomIn">
+            <i class="bx bx-plus"></i>
+          </button>
+          <button class="zoom-reset-btn" title="Tự động thu phóng vừa vặn khung" @click="zoomFit">
+            Fit
+          </button>
+        </div>
       </div>
 
       <!-- Right: Actions -->
@@ -59,7 +69,8 @@
     <!-- Workspace 2 Columns -->
     <main class="studio-workspace">
       <!-- Left Column: Controls (Vue) -->
-      <aside class="studio-sidebar">
+      <aside class="studio-sidebar" :class="{ compact: sidebarWidth < 380, wide: sidebarWidth > 550 }"
+        :style="{ width: sidebarWidth + 'px' }">
         <div class="sidebar-header">
           <h2 class="sidebar-title">Nội dung • {{ currentPageData.name }}</h2>
           <p class="sidebar-subtitle">Chỉnh sửa nội dung thời gian thực, bên phải sẽ cập nhật tức thì.</p>
@@ -67,18 +78,11 @@
 
         <div class="sidebar-sections">
           <!-- Accordion Section Cards -->
-          <div
-            v-for="(section, sIndex) in currentPageData.sections"
-            :key="section.id"
-            class="section-card"
-            :class="{ active: openSectionId === section.id }"
-          >
+          <div v-for="(section, sIndex) in currentPageData.sections" :key="section.id" class="section-card"
+            :class="{ active: openSectionId === section.id }">
             <div class="section-header" @click="toggleSection(section.id)">
               <div class="section-title-wrap">
-                <i
-                  class="bx"
-                  :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"
-                ></i>
+                <i class="bx" :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
                 <span>{{ section.title }}</span>
               </div>
               <span class="section-badge">Khối {{ sIndex + 1 }}</span>
@@ -86,40 +90,21 @@
 
             <!-- Accordion Body -->
             <div v-show="openSectionId === section.id" class="section-body">
-              <div
-                v-for="field in section.fields"
-                :key="field.key"
-                class="field-group"
-              >
+              <div v-for="field in section.fields" :key="field.key" class="field-group">
                 <label class="field-label">{{ field.label }}</label>
 
                 <!-- Text Input -->
-                <input
-                  v-if="field.type === 'text'"
-                  v-model="field.value"
-                  type="text"
-                  class="field-input"
-                  @input="onFieldChange(section.id, field.key, field.value)"
-                />
+                <input v-if="field.type === 'text'" v-model="field.value" type="text" class="field-input"
+                  @input="onFieldChange(section.id, field.key, field.value)" />
 
                 <!-- Textarea -->
-                <textarea
-                  v-else-if="field.type === 'textarea'"
-                  v-model="field.value"
-                  class="field-textarea"
-                  :rows="field.rows || 3"
-                  @input="onFieldChange(section.id, field.key, field.value)"
-                ></textarea>
+                <textarea v-else-if="field.type === 'textarea'" v-model="field.value" class="field-textarea"
+                  :rows="field.rows || 3" @input="onFieldChange(section.id, field.key, field.value)"></textarea>
 
                 <!-- Image URL Input -->
                 <div v-else-if="field.type === 'image'" class="image-field-wrap">
-                  <input
-                    v-model="field.value"
-                    type="text"
-                    class="field-input"
-                    placeholder="assets/images/..."
-                    @input="onFieldChange(section.id, field.key, field.value)"
-                  />
+                  <input v-model="field.value" type="text" class="field-input" placeholder="assets/images/..."
+                    @input="onFieldChange(section.id, field.key, field.value)" />
                   <div v-if="field.value" class="image-preview-thumb">
                     <img :src="field.value.startsWith('http') ? field.value : '/' + field.value" alt="Preview" />
                   </div>
@@ -130,19 +115,24 @@
         </div>
       </aside>
 
+      <!-- Resizer Handle Bar -->
+      <div class="resizer-bar" :class="{ dragging: isResizing }" @mousedown="startResize">
+        <div class="resizer-pill" title="Kéo để thay đổi độ rộng cột">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+
       <!-- Right Column: Live Preview Iframe -->
-      <section class="studio-preview">
-        <div class="preview-frame-container" :class="currentDevice">
-          <iframe
-            ref="previewIframe"
-            :src="iframeSrc"
-            class="live-iframe"
-            @load="onIframeLoaded"
-          ></iframe>
+      <section class="studio-preview" ref="previewAreaRef">
+        <div class="preview-frame-container" :class="[currentDevice, { 'desktop-scaled': currentDevice === 'desktop' }]"
+          :style="frameContainerStyle">
+          <iframe ref="previewIframe" :src="iframeSrc" class="live-iframe" @load="onIframeLoaded"></iframe>
         </div>
         <div class="preview-footer-note">
           <i class="bx bx-broadcast"></i>
-          <span>Live Realtime Preview • Vue 3 syncs with Blade frame</span>
+          <span>Live Realtime Preview • Standard Desktop Viewport (1440px) scaled to fit</span>
         </div>
       </section>
     </main>
@@ -150,7 +140,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 
 // Devices list
 const devices = [
@@ -164,6 +154,107 @@ const currentUser = ref(window.__STUDIO_USER__ || 'Admin');
 const isSaving = ref(false);
 const hasUnsavedChanges = ref(false);
 const previewIframe = ref(null);
+const previewAreaRef = ref(null);
+
+// Zoom & Viewport Scaling
+const zoomLevel = ref(0.85); // Default scaled so 1440px desktop fits perfectly
+const isAutoFit = ref(true);
+
+const setDevice = (device) => {
+  currentDevice.value = device;
+  if (device === 'desktop') {
+    calculateAutoFit();
+  } else {
+    zoomLevel.value = 1;
+  }
+};
+
+const calculateAutoFit = () => {
+  if (currentDevice.value !== 'desktop' || !previewAreaRef.value) return;
+  // Available width in preview area minus 48px padding
+  const availableWidth = previewAreaRef.value.clientWidth - 48;
+  const standardDesktopWidth = 1440;
+  // Scale down so 1440px desktop fits into available preview width (keep minimum legible 0.5)
+  const fitScale = Math.min(1, Math.max(0.5, availableWidth / standardDesktopWidth));
+  zoomLevel.value = Math.round(fitScale * 100) / 100;
+};
+
+const zoomIn = () => {
+  isAutoFit.value = false;
+  zoomLevel.value = Math.min(1.5, Math.round((zoomLevel.value + 0.05) * 100) / 100);
+};
+
+const zoomOut = () => {
+  isAutoFit.value = false;
+  zoomLevel.value = Math.max(0.4, Math.round((zoomLevel.value - 0.05) * 100) / 100);
+};
+
+const zoomFit = () => {
+  isAutoFit.value = true;
+  calculateAutoFit();
+};
+
+const frameContainerStyle = computed(() => {
+  if (currentDevice.value === 'desktop') {
+    const scale = zoomLevel.value;
+    const desktopWidth = 1440;
+    // Standard viewport height scaled, container expands as user scrolls inside iframe
+    const desktopHeight = 900;
+    return {
+      width: `${desktopWidth}px`,
+      height: `${desktopHeight}px`,
+      transform: `scale(${scale})`,
+      transformOrigin: 'top center',
+      marginBottom: `-${desktopHeight * (1 - scale)}px`,
+      marginRight: `-${desktopWidth * (1 - scale) / 2}px`,
+      marginLeft: `-${desktopWidth * (1 - scale) / 2}px`,
+    };
+  }
+  return {};
+});
+
+// Resizable sidebar width
+const sidebarWidth = ref(440);
+const isResizing = ref(false);
+
+const startResize = (e) => {
+  e.preventDefault();
+  isResizing.value = true;
+  document.body.style.cursor = 'col-resize';
+  document.body.style.userSelect = 'none';
+
+  // Prevent iframe from swallowing mousemove events while dragging
+  if (previewIframe.value) {
+    previewIframe.value.style.pointerEvents = 'none';
+  }
+
+  window.addEventListener('mousemove', handleResize);
+  window.addEventListener('mouseup', stopResize);
+};
+
+const handleResize = (e) => {
+  if (!isResizing.value) return;
+  // Constrain width between 320px and 750px (or 60% of viewport)
+  const maxWidth = Math.min(window.innerWidth * 0.65, 800);
+  const newWidth = Math.max(320, Math.min(e.clientX, maxWidth));
+  sidebarWidth.value = newWidth;
+  if (isAutoFit.value) {
+    calculateAutoFit();
+  }
+};
+
+const stopResize = () => {
+  isResizing.value = false;
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+
+  if (previewIframe.value) {
+    previewIframe.value.style.pointerEvents = '';
+  }
+
+  window.removeEventListener('mousemove', handleResize);
+  window.removeEventListener('mouseup', stopResize);
+};
 
 // Pages & their editable sections
 const pages = ref([
@@ -346,6 +437,13 @@ const handleLogout = () => {
   document.body.appendChild(form);
   form.submit();
 };
+
+onMounted(() => {
+  calculateAutoFit();
+  window.addEventListener('resize', () => {
+    if (isAutoFit.value) calculateAutoFit();
+  });
+});
 </script>
 
 <style scoped>
@@ -464,14 +562,75 @@ const handleLogout = () => {
   pointer-events: none;
 }
 
-/* Center device switcher */
+/* Center device switcher & Zoom controls */
 .topbar-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.device-switch-group {
   display: flex;
   align-items: center;
   background: #f1f5f9;
   padding: 3px;
   border-radius: 8px;
   gap: 2px;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 3px 6px;
+  gap: 4px;
+}
+
+.zoom-btn {
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+}
+
+.zoom-btn:hover {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.zoom-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  min-width: 38px;
+  text-align: center;
+  user-select: none;
+}
+
+.zoom-reset-btn {
+  background: #e2e8f0;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.zoom-reset-btn:hover {
+  background: #6366f1;
+  color: #ffffff;
 }
 
 .device-btn {
@@ -601,14 +760,71 @@ const handleLogout = () => {
 
 /* Left Column */
 .studio-sidebar {
-  width: 440px;
-  min-width: 400px;
-  max-width: 500px;
+  min-width: 320px;
+  max-width: 800px;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex-shrink: 0;
+  transition: width 0.05s ease-out;
+}
+
+/* Resizer Handle Bar */
+.resizer-bar {
+  width: 14px;
+  margin-left: -7px;
+  margin-right: -7px;
+  z-index: 40;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  position: relative;
+  transition: background-color 0.2s;
+}
+
+.resizer-bar:hover,
+.resizer-bar.dragging {
+  background-color: rgba(99, 102, 241, 0.08);
+}
+
+.resizer-pill {
+  width: 16px;
+  height: 42px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+}
+
+.resizer-bar:hover .resizer-pill,
+.resizer-bar.dragging .resizer-pill {
+  border-color: #6366f1;
+  background: #f5f3ff;
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.25);
+  transform: scale(1.05);
+}
+
+.resizer-pill .dot {
+  width: 3px;
+  height: 3px;
+  background-color: #64748b;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.resizer-bar:hover .resizer-pill .dot,
+.resizer-bar.dragging .resizer-pill .dot {
+  background-color: #6366f1;
 }
 
 .sidebar-header {
@@ -616,11 +832,69 @@ const handleLogout = () => {
   border-bottom: 1px solid #f1f5f9;
 }
 
-.sidebar-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 4px;
+/* Compact mode when dragged small */
+.studio-sidebar.compact .sidebar-header {
+  padding: 14px 16px 12px;
+}
+
+.studio-sidebar.compact .sidebar-title {
+  font-size: 15px;
+}
+
+.studio-sidebar.compact .sidebar-subtitle {
+  font-size: 11px;
+}
+
+.studio-sidebar.compact .sidebar-sections {
+  padding: 12px 14px;
+  gap: 8px;
+}
+
+.studio-sidebar.compact .section-header {
+  padding: 10px 12px;
+}
+
+.studio-sidebar.compact .section-title-wrap {
+  font-size: 12px;
+  gap: 6px;
+}
+
+.studio-sidebar.compact .section-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+}
+
+.studio-sidebar.compact .section-body {
+  padding: 12px;
+  gap: 10px;
+}
+
+.studio-sidebar.compact .field-label {
+  font-size: 11px;
+}
+
+.studio-sidebar.compact .field-input,
+.studio-sidebar.compact .field-textarea {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* Wide mode when dragged large */
+.studio-sidebar.wide .sidebar-title {
+  font-size: 20px;
+}
+
+.studio-sidebar.wide .section-title-wrap {
+  font-size: 14.5px;
+}
+
+.studio-sidebar.wide .field-label {
+  font-size: 13px;
+}
+
+.studio-sidebar.wide .field-input,
+.studio-sidebar.wide .field-textarea {
+  font-size: 14px;
 }
 
 .sidebar-subtitle {
@@ -744,26 +1018,24 @@ const handleLogout = () => {
   background: #cbd5e1;
   padding: 24px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  overflow: hidden;
+  overflow: auto;
   position: relative;
 }
 
 .preview-frame-container {
-  width: 100%;
-  height: 100%;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
   overflow: hidden;
-  transition: width 0.3s ease, height 0.3s ease;
+  transition: transform 0.2s ease-out;
   position: relative;
 }
 
 .preview-frame-container.desktop {
-  width: 100%;
-  height: 100%;
+  /* Dynamic scale computed via frameContainerStyle */
+  max-width: none;
 }
 
 .preview-frame-container.tablet {
@@ -799,4 +1071,3 @@ const handleLogout = () => {
   pointer-events: none;
 }
 </style>
-
