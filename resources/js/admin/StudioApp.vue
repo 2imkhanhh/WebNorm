@@ -4,9 +4,10 @@
     <header class="studio-topbar">
       <div class="topbar-left">
         <a href="/admin/studio" class="studio-brand">
-          <span class="brand-badge">B</span>
+          <span class="brand-logo-badge">
+            <img :src="logoUrl" alt="Norm Logo" class="brand-logo-img" />
+          </span>
           <span>Website Studio</span>
-          <span class="pro-pill">VUE 3</span>
         </a>
 
         <!-- Page selector -->
@@ -21,25 +22,12 @@
         </div>
       </div>
 
-      <!-- Center: Device Switcher & Zoom Scale -->
+      <!-- Center: Device Switcher -->
       <div class="topbar-center">
         <div class="device-switch-group">
           <button v-for="d in devices" :key="d.id" class="device-btn" :class="{ active: currentDevice === d.id }"
             @click="setDevice(d.id)">
             <i :class="d.icon"></i> {{ d.label }}
-          </button>
-        </div>
-
-        <div class="zoom-controls">
-          <button class="zoom-btn" title="Thu nhỏ" @click="zoomOut">
-            <i class="bx bx-minus"></i>
-          </button>
-          <span class="zoom-text">{{ Math.round(zoomLevel * 100) }}%</span>
-          <button class="zoom-btn" title="Phóng to" @click="zoomIn">
-            <i class="bx bx-plus"></i>
-          </button>
-          <button class="zoom-reset-btn" title="Tự động thu phóng vừa vặn khung" @click="zoomFit">
-            Fit
           </button>
         </div>
       </div>
@@ -48,20 +36,48 @@
       <div class="topbar-right">
         <div class="status-indicator">
           <span class="status-dot" :class="{ unsaved: hasUnsavedChanges }"></span>
-          <span>{{ hasUnsavedChanges ? 'Có thay đổi chưa lưu' : 'Đã đồng bộ Live Preview' }}</span>
+          <span>{{ hasUnsavedChanges ? 'Có thay đổi chưa lưu' : 'Đã tải cấu hình' }}</span>
         </div>
 
-        <button class="btn-draft" @click="resetCurrentPage">Khôi phục</button>
+        <button class="btn-draft" :disabled="isSavingDraft" @click="saveDraft">
+          <span v-if="isSavingDraft">Đang lưu...</span>
+          <span v-else>Lưu nháp</span>
+        </button>
         <button class="btn-publish" :disabled="isSaving" @click="saveChanges">
           <span v-if="isSaving">Đang lưu...</span>
           <span v-else>Xuất bản</span>
         </button>
 
-        <div class="user-dropdown">
-          <span>{{ currentUser }}</span>
-          <button class="btn-logout" title="Đăng xuất" @click="handleLogout">
-            <i class="bx bx-log-out"></i>
-          </button>
+        <div class="user-menu-wrapper" ref="userMenuRef">
+          <div class="user-trigger" @click="toggleUserMenu">
+            <div class="user-avatar">
+              <i class="bx bx-user"></i>
+            </div>
+            <span class="user-name">{{ currentUser }}</span>
+            <i class="bx bx-chevron-down user-arrow" :class="{ open: isUserMenuOpen }"></i>
+          </div>
+
+          <!-- Dropdown Menu -->
+          <transition name="dropdown-fade">
+            <div v-if="isUserMenuOpen" class="user-dropdown-popover">
+              <a :href="selectedPageSlug" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
+                <i class="bx bx-file-blank"></i>
+                <span>Xem bản nháp</span>
+              </a>
+
+              <a href="/" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
+                <i class="bx bx-globe"></i>
+                <span>Mở website đã xuất bản</span>
+              </a>
+
+              <div class="dropdown-divider"></div>
+
+              <button class="dropdown-item danger" @click="handleLogout">
+                <i class="bx bx-log-out"></i>
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          </transition>
         </div>
       </div>
     </header>
@@ -151,8 +167,22 @@ const devices = [
 
 const currentDevice = ref('desktop');
 const currentUser = ref(window.__STUDIO_USER__ || 'Admin');
+const logoUrl = ref('/assets/images/logo.png');
 const isSaving = ref(false);
+const isSavingDraft = ref(false);
 const hasUnsavedChanges = ref(false);
+const isUserMenuOpen = ref(false);
+const userMenuRef = ref(null);
+
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value;
+};
+
+const handleClickOutside = (e) => {
+  if (userMenuRef.value && !userMenuRef.value.contains(e.target)) {
+    isUserMenuOpen.value = false;
+  }
+};
 const previewIframe = ref(null);
 const previewAreaRef = ref(null);
 
@@ -354,7 +384,7 @@ const pages = ref([
 ]);
 
 const selectedPageSlug = ref('/');
-const openSectionId = ref('hero');
+const openSectionId = ref(null);
 
 // Current page object
 const currentPageData = computed(() => {
@@ -371,13 +401,9 @@ const toggleSection = (id) => {
   openSectionId.value = openSectionId.value === id ? null : id;
 };
 
-// Switch active accordion on page change
+// Reset active accordion on page change
 watch(selectedPageSlug, () => {
-  nextTick(() => {
-    if (currentPageData.value.sections && currentPageData.value.sections.length > 0) {
-      openSectionId.value = currentPageData.value.sections[0].id;
-    }
-  });
+  openSectionId.value = null;
 });
 
 // PostMessage Realtime sync to Blade Iframe
@@ -399,6 +425,16 @@ const onFieldChange = (sectionId, fieldKey, value) => {
 
 const onIframeLoaded = () => {
   // Can send initial handshake or sync if needed
+};
+
+// Save Draft
+const saveDraft = () => {
+  isSavingDraft.value = true;
+  setTimeout(() => {
+    isSavingDraft.value = false;
+    hasUnsavedChanges.value = false;
+    alert('Đã lưu bản nháp thành công!');
+  }, 500);
 };
 
 // Reset page
@@ -443,6 +479,11 @@ onMounted(() => {
   window.addEventListener('resize', () => {
     if (isAutoFit.value) calculateAutoFit();
   });
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
 });
 </script>
 
@@ -475,9 +516,10 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  z-index: 50;
+  padding: 0 32px 0 20px;
+  z-index: 100;
   flex-shrink: 0;
+  position: relative;
 }
 
 .topbar-left {
@@ -498,27 +540,24 @@ onMounted(() => {
   border-right: 1px solid #e2e8f0;
 }
 
-.brand-badge {
-  background: #6366f1;
-  color: #fff;
-  width: 28px;
-  height: 28px;
+
+.brand-logo-badge {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
+  overflow: hidden;
 }
 
-.pro-pill {
-  background: #e0e7ff;
-  color: #4338ca;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #c7d2fe;
+
+.brand-logo-img {
+  width: 20px;
+  height: auto;
+  display: block;
 }
 
 .page-select-wrap {
@@ -685,24 +724,26 @@ onMounted(() => {
 }
 
 .btn-draft {
-  background: #fff;
-  border: 1px solid #cbd5e1;
-  padding: 7px 14px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  padding: 7px 15px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
-  color: #334155;
+  color: #374151;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-draft:hover {
-  background: #f8fafc;
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #111827;
 }
 
 .btn-publish {
-  background: #6366f1;
-  border: none;
+  background: #111827;
+  border: 1px solid #111827;
   padding: 7px 18px;
   border-radius: 8px;
   font-size: 13px;
@@ -710,10 +751,18 @@ onMounted(() => {
   color: #ffffff;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-publish:hover {
-  background: #4f46e5;
+  background: #23272f;
+  border-color: #23272f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.15);
+}
+
+.btn-publish:active {
+  transform: translateY(0);
 }
 
 .btn-publish:disabled {
@@ -721,33 +770,151 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
-.user-dropdown {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  font-size: 13px;
-  color: #334155;
+/* User Profile Trigger & Dropdown Menu */
+.user-menu-wrapper {
+  position: relative;
   margin-left: 6px;
 }
 
-.btn-logout {
-  background: transparent;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  font-size: 16px;
+.user-trigger {
   display: flex;
   align-items: center;
-  padding: 2px;
-  transition: transform 0.2s;
+  gap: 7px;
+  padding: 3px 8px 3px 4px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
 }
 
-.btn-logout:hover {
-  transform: scale(1.1);
+.user-trigger:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.user-trigger:hover .user-avatar {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.01em;
+}
+
+.user-arrow {
+  font-size: 12px;
+  color: #94a3b8;
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.user-arrow.open {
+  transform: rotate(180deg);
+  color: #334155;
+}
+
+/* Dropdown popover */
+.user-dropdown-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
+  min-width: 200px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+  padding: 6px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 4px 0;
+}
+
+.dropdown-item {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1e293b;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dropdown-item i {
+  font-size: 17px;
+  color: #475569;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.dropdown-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.dropdown-item:hover i {
+  color: #0f172a;
+}
+
+.dropdown-item.danger {
+  color: #dc2626;
+}
+
+.dropdown-item.danger i {
+  color: #dc2626;
+}
+
+.dropdown-item.danger:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.dropdown-item.danger:hover i {
+  color: #b91c1c;
+}
+
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.dropdown-fade-enter-from,
+.dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
 }
 
 /* Workspace 2 Columns */

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +28,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 50%, rgba(253, 255, 142, 0.05) 0%, transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 25%);
         }
@@ -47,11 +48,22 @@
             margin-bottom: 32px;
         }
 
-        .brand-logo {
-            width: 48px;
-            height: auto;
+        .brand-logo-wrap {
+            width: 60px;
+            height: 60px;
+            background: #ffffff;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 16px;
-            filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.1));
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.12);
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: auto;
+            display: block;
         }
 
         .brand-title {
@@ -107,11 +119,12 @@
             align-items: center;
         }
 
-        .input-wrap i {
+        .input-wrap .input-icon-left {
             position: absolute;
             left: 14px;
             color: #646a73;
             font-size: 18px;
+            pointer-events: none;
         }
 
         .form-control {
@@ -119,7 +132,7 @@
             background: #1c1f24;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 13px 14px 13px 42px;
+            padding: 13px 42px 13px 42px;
             color: #fff;
             font-size: 14px;
             outline: none;
@@ -130,6 +143,26 @@
             border-color: #FDFF8E;
             background: #22262c;
             box-shadow: 0 0 0 3px rgba(253, 255, 142, 0.15);
+        }
+
+        .toggle-password-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #8a8f98;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password-btn:hover {
+            color: #ffffff;
         }
 
         .form-meta {
@@ -203,21 +236,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-card">
         <div class="brand-header">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Norm" class="brand-logo">
+            <div class="brand-logo-wrap">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="Norm" class="brand-logo">
+            </div>
             <h1 class="brand-title">Website Studio</h1>
-            <p class="brand-subtitle">Đăng nhập tài khoản quản trị viên</p>
         </div>
 
-        @if(session('status'))
-            <div class="alert-status">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        @if($errors->any())
+        @if ($errors->any())
             <div class="alert-error">
                 <i class='bx bx-error-circle'></i>
                 <span>{{ $errors->first() }}</span>
@@ -230,38 +259,45 @@
             <div class="form-group">
                 <label for="email" class="form-label">Email quản trị</label>
                 <div class="input-wrap">
-                    <i class='bx bx-envelope'></i>
-                    <input type="email" id="email" name="email" class="form-control" value="{{ old('email', 'admin@norm.vn') }}" required autofocus placeholder="admin@norm.vn">
+                    <i class='bx bx-envelope input-icon-left'></i>
+                    <input type="email" id="email" name="email" class="form-control"
+                        value="{{ old('email', 'admin@norm.vn') }}" required autofocus placeholder="admin@norm.vn">
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 28px;">
                 <label for="password" class="form-label">Mật khẩu</label>
                 <div class="input-wrap">
-                    <i class='bx bx-lock-alt'></i>
-                    <input type="password" id="password" name="password" class="form-control" value="admin123" required placeholder="••••••••">
+                    <i class='bx bx-lock-alt input-icon-left'></i>
+                    <input type="password" id="password" name="password" class="form-control" value="admin123" required
+                        placeholder="••••••••">
+                    <button type="button" class="toggle-password-btn" id="togglePassword" aria-label="Hiện/ẩn mật khẩu">
+                        <i class='bx bx-hide' id="eyeIcon"></i>
+                    </button>
                 </div>
-            </div>
-
-            <div class="form-meta">
-                <label class="checkbox-label">
-                    <input type="checkbox" name="remember" checked>
-                    <span>Ghi nhớ đăng nhập</span>
-                </label>
             </div>
 
             <button type="submit" class="btn-submit">
-                <span>Vào trang quản trị</span>
+                <span>Đăng nhập</span>
                 <i class='bx bx-right-arrow-alt'></i>
             </button>
         </form>
-
-        <div class="back-link">
-            <a href="{{ route('home') }}">
-                <i class='bx bx-arrow-back'></i> Quay lại trang chủ Norm
-            </a>
-        </div>
     </div>
-</body>
-</html>
 
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        if (togglePassword && passwordInput && eyeIcon) {
+            togglePassword.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                eyeIcon.className = isPassword ? 'bx bx-show' : 'bx bx-hide';
+            });
+        }
+    </script>
+</body>
+</body>
+
+</html>
