@@ -29,8 +29,9 @@ Route::get('/news/detail', function () {
 })->name('news.detail');
 
 // Admin Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::prefix('admin')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
