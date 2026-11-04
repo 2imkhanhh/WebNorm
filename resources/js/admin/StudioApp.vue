@@ -357,6 +357,16 @@ const handleLogout = () => {
   background-color: #f0f2f5;
   color: #1a1d20;
   overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.studio-root input,
+.studio-root textarea,
+.studio-root select,
+.studio-root button {
+  font-family: inherit;
 }
 
 /* Topbar */
