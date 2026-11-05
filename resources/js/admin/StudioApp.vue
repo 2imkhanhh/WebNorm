@@ -82,51 +82,235 @@
       </div>
     </header>
 
-    <!-- Workspace 2 Columns -->
+    <!-- Workspace Columns -->
     <main class="studio-workspace">
-      <!-- Left Column: Controls (Vue) -->
+      <!-- 1. Leftmost Icon Navigation Sidebar -->
+      <nav class="studio-nav-rail">
+        <!-- Top overview item -->
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'overview' }"
+          @click="selectNavTab('overview')" title="Tổng quan">
+          <i class="bx bx-grid-alt"></i>
+          <span>Tổng quan</span>
+        </button>
+
+        <div class="nav-rail-divider"></div>
+
+        <div class="nav-rail-section-label">NỘI DUNG</div>
+
+        <!-- Content nav items -->
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'pages' }"
+          @click="selectNavTab('pages')" title="Chỉnh sửa trang">
+          <i class="bx bx-edit-alt"></i>
+          <span>Chỉnh sửa</span>
+        </button>
+
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'projects' }"
+          @click="selectNavTab('projects')" title="Dự án (Work)">
+          <i class="bx bx-briefcase-alt"></i>
+          <span>Dự án</span>
+        </button>
+
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'services' }"
+          @click="selectNavTab('services')" title="Dịch vụ">
+          <i class="bx bx-layer"></i>
+          <span>Dịch vụ</span>
+        </button>
+
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'news' }"
+          @click="selectNavTab('news')" title="Tin tức & Bài viết">
+          <i class="bx bx-news"></i>
+          <span>Bài viết</span>
+        </button>
+
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'reviews' }"
+          @click="selectNavTab('reviews')" title="Đánh giá khách hàng">
+          <i class="bx bx-star"></i>
+          <span>Reviews</span>
+        </button>
+
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'leads' }"
+          @click="selectNavTab('leads')" title="Khách hàng liên hệ">
+          <i class="bx bx-envelope"></i>
+          <span>Liên hệ</span>
+        </button>
+
+        <button class="nav-rail-item" :class="{ active: currentNavTab === 'media' }"
+          @click="selectNavTab('media')" title="Thư viện hình ảnh">
+          <i class="bx bx-image-alt"></i>
+          <span>Thư viện</span>
+        </button>
+      </nav>
+
+      <!-- 2. Controls Panel (Sub-Sidebar) -->
       <aside class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
-        <div class="sidebar-header">
-          <h2 class="sidebar-title">Nội dung • {{ currentPageData.name }}</h2>
-          <p class="sidebar-subtitle">Chỉnh sửa nội dung thời gian thực, bên phải sẽ cập nhật tức thì.</p>
-        </div>
+        <!-- Tab: Chỉnh sửa trang trực quan (Current Studio) -->
+        <template v-if="currentNavTab === 'pages'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Nội dung • {{ currentPageData.name }}</h2>
+            <p class="sidebar-subtitle">Chỉnh sửa nội dung thời gian thực, bên phải sẽ cập nhật tức thì.</p>
+          </div>
 
-        <div class="sidebar-sections">
-          <!-- Accordion Section Cards -->
-          <div v-for="section in currentPageData.sections" :key="section.id" class="section-card"
-            :class="{ active: openSectionId === section.id }">
-            <div class="section-header" @click="toggleSection(section.id)">
-              <div class="section-title-wrap">
-                <i class="bx" :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
-                <span>{{ section.title }}</span>
+          <div class="sidebar-sections">
+            <!-- Accordion Section Cards -->
+            <div v-for="section in currentPageData.sections" :key="section.id" class="section-card"
+              :class="{ active: openSectionId === section.id }">
+              <div class="section-header" @click="toggleSection(section.id)">
+                <div class="section-title-wrap">
+                  <i class="bx" :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
+                  <span>{{ section.title }}</span>
+                </div>
               </div>
-            </div>
 
-            <!-- Accordion Body -->
-            <div v-show="openSectionId === section.id" class="section-body">
-              <div v-for="field in section.fields" :key="field.key" class="field-group">
-                <label class="field-label">{{ field.label }}</label>
+              <!-- Accordion Body -->
+              <div v-show="openSectionId === section.id" class="section-body">
+                <div v-for="field in section.fields" :key="field.key" class="field-group">
+                  <label class="field-label">{{ field.label }}</label>
 
-                <!-- Text Input -->
-                <input v-if="field.type === 'text'" v-model="field.value" type="text" class="field-input"
-                  @input="onFieldChange(section.id, field.key, field.value)" />
-
-                <!-- Textarea -->
-                <textarea v-else-if="field.type === 'textarea'" v-model="field.value" class="field-textarea"
-                  :rows="field.rows || 3" @input="onFieldChange(section.id, field.key, field.value)"></textarea>
-
-                <!-- Image URL Input -->
-                <div v-else-if="field.type === 'image'" class="image-field-wrap">
-                  <input v-model="field.value" type="text" class="field-input" placeholder="assets/images/..."
+                  <!-- Text Input -->
+                  <input v-if="field.type === 'text'" v-model="field.value" type="text" class="field-input"
                     @input="onFieldChange(section.id, field.key, field.value)" />
-                  <div v-if="field.value" class="image-preview-thumb">
-                    <img :src="field.value.startsWith('http') ? field.value : '/' + field.value" alt="Preview" />
+
+                  <!-- Textarea -->
+                  <textarea v-else-if="field.type === 'textarea'" v-model="field.value" class="field-textarea"
+                    :rows="field.rows || 3" @input="onFieldChange(section.id, field.key, field.value)"></textarea>
+
+                  <!-- Image URL Input -->
+                  <div v-else-if="field.type === 'image'" class="image-field-wrap">
+                    <input v-model="field.value" type="text" class="field-input" placeholder="assets/images/..."
+                      @input="onFieldChange(section.id, field.key, field.value)" />
+                    <div v-if="field.value" class="image-preview-thumb">
+                      <img :src="field.value.startsWith('http') ? field.value : '/' + field.value" alt="Preview" />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </template>
+
+        <!-- Tab: Tổng quan -->
+        <template v-else-if="currentNavTab === 'overview'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Tổng quan hệ thống</h2>
+            <p class="sidebar-subtitle">Thống kê dữ liệu và trạng thái trang web Norm.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="panel-stat-card">
+              <div class="stat-number">4</div>
+              <div class="stat-label">Trang chính hoạt động</div>
+            </div>
+            <div class="panel-stat-card">
+              <div class="stat-number">6</div>
+              <div class="stat-label">Dự án trong Portfolio</div>
+            </div>
+            <div class="panel-stat-card">
+              <div class="stat-number">3</div>
+              <div class="stat-label">Gói dịch vụ cốt lõi</div>
+            </div>
+            <div class="panel-stat-card">
+              <div class="stat-number">2</div>
+              <div class="stat-label">Đánh giá đối tác</div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Tab: Dự án (Portfolio) -->
+        <template v-else-if="currentNavTab === 'projects'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Quản lý Dự án (Work)</h2>
+            <p class="sidebar-subtitle">Danh sách các dự án hiển thị tại trang Portfolio.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="panel-list-item" v-for="(p, idx) in demoProjects" :key="idx">
+              <div class="item-thumb"><img :src="p.image" alt=""></div>
+              <div class="item-info">
+                <div class="item-name">{{ p.name }}</div>
+                <div class="item-meta">{{ p.category }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Tab: Dịch vụ -->
+        <template v-else-if="currentNavTab === 'services'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Dịch vụ cốt lõi</h2>
+            <p class="sidebar-subtitle">Các gói dịch vụ hiển thị tại trang chủ.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="panel-list-item" v-for="(s, idx) in demoServices" :key="idx">
+              <div class="item-badge">{{ s.number }}</div>
+              <div class="item-info">
+                <div class="item-name">{{ s.title }}</div>
+                <div class="item-meta">{{ s.desc }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Tab: Tin tức -->
+        <template v-else-if="currentNavTab === 'news'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Bài viết & Tin tức</h2>
+            <p class="sidebar-subtitle">Các bài viết chia sẻ góc nhìn thương hiệu.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="panel-list-item" v-for="(n, idx) in demoNews" :key="idx">
+              <div class="item-thumb"><img :src="n.image" alt=""></div>
+              <div class="item-info">
+                <div class="item-name">{{ n.title }}</div>
+                <div class="item-meta">{{ n.date }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Tab: Đánh giá -->
+        <template v-else-if="currentNavTab === 'reviews'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Đánh giá của đối tác</h2>
+            <p class="sidebar-subtitle">Slider nhận xét của khách hàng tại trang chủ.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="panel-list-item" v-for="(r, idx) in demoReviews" :key="idx">
+              <div class="item-avatar"><i class="bx bx-user"></i></div>
+              <div class="item-info">
+                <div class="item-name">{{ r.author }}</div>
+                <div class="item-meta">{{ r.role }}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Tab: Liên hệ -->
+        <template v-else-if="currentNavTab === 'leads'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Yêu cầu liên hệ / Báo giá</h2>
+            <p class="sidebar-subtitle">Khách hàng gửi qua Contact Drawer.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="panel-empty-state">
+              <i class="bx bx-inbox"></i>
+              <span>Chưa có liên hệ mới</span>
+            </div>
+          </div>
+        </template>
+
+        <!-- Tab: Thư viện -->
+        <template v-else-if="currentNavTab === 'media'">
+          <div class="sidebar-header">
+            <h2 class="sidebar-title">Thư viện tệp</h2>
+            <p class="sidebar-subtitle">Ảnh banner, mô hình 3D norm.glb và tư liệu.</p>
+          </div>
+          <div class="sidebar-panel-content">
+            <div class="media-grid">
+              <div class="media-card" v-for="(m, mIdx) in demoMedia" :key="mIdx">
+                <img :src="m.url" :alt="m.name">
+                <span>{{ m.name }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
       </aside>
 
       <!-- Resizer Handle Bar -->
@@ -158,6 +342,43 @@ const devices = [
   { id: 'tablet', label: 'Tablet', icon: 'bx bx-tab' },
   { id: 'mobile', label: 'Mobile', icon: 'bx bx-mobile-alt' },
 ];
+
+// Active Left Navigation Rail Tab
+const currentNavTab = ref('pages');
+const selectNavTab = (tabId) => {
+  currentNavTab.value = tabId;
+};
+
+// Demo datasets for quick reference
+const demoProjects = ref([
+  { name: 'Tiên Phong Identity', category: 'Brand identity', image: '/assets/images/project1.png' },
+  { name: 'Norm Digital Experience', category: 'UI/UX Design', image: '/assets/images/project2.png' },
+  { name: 'Heritage Brand Strategy', category: 'Packaging', image: '/assets/images/project3.png' },
+  { name: 'E-commerce Platform', category: 'Web Development', image: '/assets/images/project4.png' },
+]);
+
+const demoServices = ref([
+  { number: '01', title: 'Thiết kế từ chiến lược', desc: 'Định hình nền tảng bản sắc thương hiệu vững chắc.' },
+  { number: '02', title: 'Hệ thống nhận diện toàn diện', desc: 'Thiết kế hệ sinh thái nhận diện đồng bộ và khác biệt.' },
+  { number: '03', title: 'Trải nghiệm số & Tương tác', desc: 'Website và sản phẩm số tối ưu trải nghiệm người dùng.' },
+]);
+
+const demoNews = ref([
+  { title: 'Tái định vị thương hiệu kỷ nguyên số', date: '24/10/2026', image: '/assets/images/project1.png' },
+  { title: 'Thiết kế tối giản và sức hút thương hiệu', date: '18/10/2026', image: '/assets/images/project2.png' },
+]);
+
+const demoReviews = ref([
+  { author: 'Nguyễn Minh Anh', role: 'Giám đốc Marketing', text: 'Rất hài lòng với giải pháp nhận diện chuyên nghiệp của Norm.' },
+  { author: 'Trần Văn B', role: 'CEO Founder', text: 'Quy trình bài bản, sáng tạo và hiểu thị trường sâu sắc.' },
+]);
+
+const demoMedia = ref([
+  { name: 'banner.png', url: '/assets/images/banner.png' },
+  { name: 'project1.png', url: '/assets/images/project1.png' },
+  { name: 'project2.png', url: '/assets/images/project2.png' },
+  { name: 'project3.png', url: '/assets/images/project3.png' },
+]);
 
 const currentDevice = ref('desktop');
 const currentUser = ref(window.__STUDIO_USER__ || 'Admin');
@@ -911,7 +1132,7 @@ onUnmounted(() => {
   transform: translateY(-4px) scale(0.98);
 }
 
-/* Workspace 2 Columns */
+/* Workspace Columns */
 .studio-workspace {
   display: flex;
   flex: 1;
@@ -919,7 +1140,99 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* Left Column */
+/* 1. Leftmost Navigation Rail (Icon Sidebar) */
+.studio-nav-rail {
+  width: 72px;
+  background: #fafafa;
+  border-right: 1px solid #eaedf1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 3px;
+  flex-shrink: 0;
+  z-index: 30;
+  overflow-y: auto;
+}
+
+.nav-rail-item {
+  width: 58px;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.nav-rail-item i {
+  font-size: 20px;
+  color: #64748b;
+  transition: all 0.15s ease;
+}
+
+.nav-rail-item span {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.nav-rail-item:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.nav-rail-item:hover i {
+  color: #1e293b;
+}
+
+.nav-rail-item:hover span {
+  color: #1e293b;
+}
+
+.nav-rail-item.active {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.nav-rail-item.active i {
+  color: #0f172a;
+  transform: scale(1.05);
+}
+
+.nav-rail-item.active span {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.nav-rail-divider {
+  width: 44px;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 8px 0 6px;
+}
+
+.nav-rail-section-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+  user-select: none;
+}
+
+/* 2. Controls Panel (Sub-Sidebar) */
 .studio-sidebar {
   min-width: 320px;
   max-width: 800px;
@@ -929,6 +1242,166 @@ onUnmounted(() => {
   flex-direction: column;
   overflow: hidden;
   flex-shrink: 0;
+}
+
+/* Panel Content for non-editor tabs */
+.sidebar-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-stat-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.panel-stat-card .stat-number {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  min-width: 40px;
+}
+
+.panel-stat-card .stat-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.panel-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.panel-list-item:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.item-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f1f5f9;
+  flex-shrink: 0;
+}
+
+.item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #FDFF8E;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.item-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-meta {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.panel-empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-empty-state i {
+  font-size: 36px;
+  color: #cbd5e1;
+}
+
+.panel-empty-state span {
+  font-size: 13px;
+}
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.media-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.media-card img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+}
+
+.media-card span {
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Resizer Handle Bar */
