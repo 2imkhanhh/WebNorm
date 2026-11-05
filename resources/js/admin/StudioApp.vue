@@ -388,8 +388,19 @@ const devices = [
 
 // Active Left Navigation Rail Tab (Mặc định khi login vào là tab Tổng quan)
 const currentNavTab = ref('overview');
+const MIN_SIDEBAR_WIDTH = 260;
+
 const selectNavTab = (tabId) => {
   currentNavTab.value = tabId;
+  if (tabId !== 'overview') {
+    // Khi vào các tab có Live Preview, độ rộng mặc định ban đầu luôn là nhỏ nhất (320px)
+    sidebarWidth.value = MIN_SIDEBAR_WIDTH;
+    nextTick(() => {
+      if (isAutoFit.value) {
+        calculateAutoFit();
+      }
+    });
+  }
 };
 
 // Demo datasets for quick reference
@@ -459,11 +470,16 @@ const setDevice = (device) => {
 
 const calculateAutoFit = () => {
   if (currentDevice.value !== 'desktop' || !previewAreaRef.value) return;
-  // Available width in preview area minus 48px padding
+  // Available dimensions in preview area minus 48px padding
   const availableWidth = previewAreaRef.value.clientWidth - 48;
+  const availableHeight = previewAreaRef.value.clientHeight - 48;
   const standardDesktopWidth = 1440;
-  // Scale down so 1440px desktop fits into available preview width (keep minimum legible 0.5)
-  const fitScale = Math.min(1, Math.max(0.5, availableWidth / standardDesktopWidth));
+  const standardDesktopHeight = 780; // Giảm vừa phải từ 900px xuống 780px (không bị ngắn quá)
+
+  // Scale so 1440x780 fits nicely both horizontally and vertically
+  const scaleX = availableWidth / standardDesktopWidth;
+  const scaleY = availableHeight / standardDesktopHeight;
+  const fitScale = Math.min(1, Math.max(0.45, Math.min(scaleX, scaleY)));
   zoomLevel.value = Math.round(fitScale * 100) / 100;
 };
 
@@ -486,23 +502,26 @@ const frameContainerStyle = computed(() => {
   if (currentDevice.value === 'desktop') {
     const scale = zoomLevel.value;
     const desktopWidth = 1440;
-    // Standard viewport height scaled, container expands as user scrolls inside iframe
-    const desktopHeight = 900;
+    // Standard viewport height scaled vừa phải
+    const desktopHeight = 780;
+    const diffH = desktopHeight * (1 - scale);
+    const diffW = desktopWidth * (1 - scale);
     return {
       width: `${desktopWidth}px`,
       height: `${desktopHeight}px`,
       transform: `scale(${scale})`,
-      transformOrigin: 'top center',
-      marginBottom: `-${desktopHeight * (1 - scale)}px`,
-      marginRight: `-${desktopWidth * (1 - scale) / 2}px`,
-      marginLeft: `-${desktopWidth * (1 - scale) / 2}px`,
+      transformOrigin: 'center center',
+      marginTop: `-${diffH / 2}px`,
+      marginBottom: `-${diffH / 2}px`,
+      marginLeft: `-${diffW / 2}px`,
+      marginRight: `-${diffW / 2}px`,
     };
   }
   return {};
 });
 
-// Resizable sidebar width
-const sidebarWidth = ref(440);
+// Resizable sidebar width (độ rộng mặc định ban đầu luôn là nhỏ nhất: 260px)
+const sidebarWidth = ref(MIN_SIDEBAR_WIDTH);
 const isResizing = ref(false);
 
 const startResize = (e) => {
@@ -522,9 +541,11 @@ const startResize = (e) => {
 
 const handleResize = (e) => {
   if (!isResizing.value) return;
-  // Constrain width between 320px and 750px (or 60% of viewport)
+  // Thanh nav rail ngoài cùng rộng 72px
+  const navRailWidth = 72;
   const maxWidth = Math.min(window.innerWidth * 0.65, 800);
-  const newWidth = Math.max(320, Math.min(e.clientX, maxWidth));
+  const currentSidebarWidth = e.clientX - navRailWidth;
+  const newWidth = Math.max(MIN_SIDEBAR_WIDTH, Math.min(currentSidebarWidth, maxWidth));
   sidebarWidth.value = newWidth;
   if (isAutoFit.value) {
     calculateAutoFit();
@@ -1207,12 +1228,25 @@ onUnmounted(() => {
   justify-content: center;
   gap: 3px;
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 8px;
   color: #64748b;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   padding: 0;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-rail-item:focus,
+.nav-rail-item:focus-visible,
+.nav-rail-item:active {
+  outline: none;
+  box-shadow: none;
 }
 
 .nav-rail-item i {
@@ -1232,6 +1266,7 @@ onUnmounted(() => {
 
 .nav-rail-item:hover {
   background: #f1f5f9;
+  border-color: transparent;
   color: #1e293b;
 }
 
@@ -1247,6 +1282,15 @@ onUnmounted(() => {
   background: #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
   border: 1px solid #e2e8f0;
+  outline: none;
+}
+
+.nav-rail-item.active:focus,
+.nav-rail-item.active:focus-visible,
+.nav-rail-item.active:active {
+  outline: none;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .nav-rail-item.active i {
@@ -1278,7 +1322,7 @@ onUnmounted(() => {
 
 /* 2. Controls Panel (Sub-Sidebar) */
 .studio-sidebar {
-  min-width: 320px;
+  min-width: 260px;
   max-width: 800px;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
@@ -1292,10 +1336,10 @@ onUnmounted(() => {
 .sidebar-panel-content {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .panel-stat-card {
@@ -1506,12 +1550,12 @@ onUnmounted(() => {
 }
 
 .sidebar-header {
-  padding: 20px 24px 16px;
+  padding: 16px 18px 14px;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .sidebar-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #0f172a;
   letter-spacing: -0.02em;
@@ -1519,17 +1563,18 @@ onUnmounted(() => {
 }
 
 .sidebar-subtitle {
-  font-size: 12px;
+  font-size: 11.5px;
   color: #64748b;
+  line-height: 1.4;
 }
 
 .sidebar-sections {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 20px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 /* Section Accordion Card */
@@ -1547,7 +1592,7 @@ onUnmounted(() => {
 }
 
 .section-header {
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1563,8 +1608,8 @@ onUnmounted(() => {
 .section-title-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 13.5px;
+  gap: 8px;
+  font-size: 13px;
   font-weight: 600;
   color: #1e293b;
 }
@@ -1579,7 +1624,7 @@ onUnmounted(() => {
 }
 
 .section-body {
-  padding: 16px;
+  padding: 14px;
   background: #fcfdfe;
   border-top: 1px solid #f1f5f9;
   display: flex;
@@ -1636,10 +1681,10 @@ onUnmounted(() => {
 /* Right Column: Live Preview */
 .studio-preview {
   flex: 1;
-  background: #cbd5e1;
+  background: #f1f5f9;
   padding: 24px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   overflow: auto;
   position: relative;
@@ -1881,7 +1926,8 @@ onUnmounted(() => {
 .preview-frame-container {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   transition: transform 0.2s ease-out;
   position: relative;
@@ -1894,14 +1940,14 @@ onUnmounted(() => {
 
 .preview-frame-container.tablet {
   width: 768px;
-  height: 95%;
+  height: 85%;
   border-radius: 20px;
   border: 10px solid #1e293b;
 }
 
 .preview-frame-container.mobile {
   width: 375px;
-  height: 92%;
+  height: 85%;
   border-radius: 30px;
   border: 12px solid #1e293b;
 }
