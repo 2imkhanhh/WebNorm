@@ -459,27 +459,32 @@ const previewAreaRef = ref(null);
 const zoomLevel = ref(0.85); // Default scaled so 1440px desktop fits perfectly
 const isAutoFit = ref(true);
 
+const deviceSpecs = {
+  desktop: { width: 1440, height: 780 },
+  tablet: { width: 768, height: 1024 }, // Chuẩn màn hình Tablet / iPad portrait
+  mobile: { width: 375, height: 812 },  // Chuẩn màn hình Mobile / iPhone (tỷ lệ chuẩn, giúp tính đơn vị vh khớp 100% như trên điện thoại thật)
+};
+
 const setDevice = (device) => {
   currentDevice.value = device;
-  if (device === 'desktop') {
+  isAutoFit.value = true;
+  nextTick(() => {
     calculateAutoFit();
-  } else {
-    zoomLevel.value = 1;
-  }
+  });
 };
 
 const calculateAutoFit = () => {
-  if (currentDevice.value !== 'desktop' || !previewAreaRef.value) return;
+  if (!previewAreaRef.value) return;
+  const spec = deviceSpecs[currentDevice.value] || deviceSpecs.desktop;
+
   // Available dimensions in preview area minus 48px padding
   const availableWidth = previewAreaRef.value.clientWidth - 48;
   const availableHeight = previewAreaRef.value.clientHeight - 48;
-  const standardDesktopWidth = 1440;
-  const standardDesktopHeight = 780; // Giảm vừa phải từ 900px xuống 780px (không bị ngắn quá)
 
-  // Scale so 1440x780 fits nicely both horizontally and vertically
-  const scaleX = availableWidth / standardDesktopWidth;
-  const scaleY = availableHeight / standardDesktopHeight;
-  const fitScale = Math.min(1, Math.max(0.45, Math.min(scaleX, scaleY)));
+  // Scale so device frame fits nicely both horizontally and vertically
+  const scaleX = availableWidth / spec.width;
+  const scaleY = availableHeight / spec.height;
+  const fitScale = Math.min(1, Math.max(0.4, Math.min(scaleX, scaleY)));
   zoomLevel.value = Math.round(fitScale * 100) / 100;
 };
 
@@ -499,25 +504,22 @@ const zoomFit = () => {
 };
 
 const frameContainerStyle = computed(() => {
-  if (currentDevice.value === 'desktop') {
-    const scale = zoomLevel.value;
-    const desktopWidth = 1440;
-    // Standard viewport height scaled vừa phải
-    const desktopHeight = 780;
-    const diffH = desktopHeight * (1 - scale);
-    const diffW = desktopWidth * (1 - scale);
-    return {
-      width: `${desktopWidth}px`,
-      height: `${desktopHeight}px`,
-      transform: `scale(${scale})`,
-      transformOrigin: 'center center',
-      marginTop: `-${diffH / 2}px`,
-      marginBottom: `-${diffH / 2}px`,
-      marginLeft: `-${diffW / 2}px`,
-      marginRight: `-${diffW / 2}px`,
-    };
-  }
-  return {};
+  const spec = deviceSpecs[currentDevice.value] || deviceSpecs.desktop;
+  const scale = zoomLevel.value;
+  const devWidth = spec.width;
+  const devHeight = spec.height;
+  const diffH = devHeight * (1 - scale);
+  const diffW = devWidth * (1 - scale);
+  return {
+    width: `${devWidth}px`,
+    height: `${devHeight}px`,
+    transform: `scale(${scale})`,
+    transformOrigin: 'center center',
+    marginTop: `-${diffH / 2}px`,
+    marginBottom: `-${diffH / 2}px`,
+    marginLeft: `-${diffW / 2}px`,
+    marginRight: `-${diffW / 2}px`,
+  };
 });
 
 // Resizable sidebar width (độ rộng mặc định ban đầu luôn là nhỏ nhất: 260px)
@@ -1933,23 +1935,11 @@ onUnmounted(() => {
   position: relative;
 }
 
-.preview-frame-container.desktop {
-  /* Dynamic scale computed via frameContainerStyle */
-  max-width: none;
-}
-
-.preview-frame-container.tablet {
-  width: 768px;
-  height: 85%;
-  border-radius: 20px;
-  border: 10px solid #1e293b;
-}
-
+.preview-frame-container.desktop,
+.preview-frame-container.tablet,
 .preview-frame-container.mobile {
-  width: 375px;
-  height: 85%;
-  border-radius: 30px;
-  border: 12px solid #1e293b;
+  /* Dynamic scale & dimensions computed via frameContainerStyle */
+  max-width: none;
 }
 
 .live-iframe {
