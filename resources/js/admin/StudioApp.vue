@@ -10,8 +10,8 @@
           <span>Website Studio</span>
         </a>
 
-        <!-- Page selector -->
-        <div class="page-select-wrap">
+        <!-- Page selector (Show only when editing pages) -->
+        <div v-if="currentNavTab === 'pages'" class="page-select-wrap">
           <i class="bx bx-file page-select-icon"></i>
           <select v-model="selectedPageSlug" class="page-select">
             <option v-for="page in pages" :key="page.slug" :value="page.slug">
@@ -22,9 +22,9 @@
         </div>
       </div>
 
-      <!-- Center: Device Switcher -->
+      <!-- Center: Device Switcher (Show only when in Live Preview) -->
       <div class="topbar-center">
-        <div class="device-switch-group">
+        <div v-if="currentNavTab === 'pages'" class="device-switch-group">
           <button v-for="d in devices" :key="d.id" class="device-btn" :class="{ active: currentDevice === d.id }"
             @click="setDevice(d.id)">
             <i :class="d.icon"></i> {{ d.label }}
@@ -141,8 +141,8 @@
         </button>
       </nav>
 
-      <!-- 2. Controls Panel (Sub-Sidebar) -->
-      <aside class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
+      <!-- 2. Controls Panel (Sub-Sidebar) - Show only for content editor/media tabs -->
+      <aside v-if="currentNavTab !== 'overview'" class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
         <!-- Tab: Chỉnh sửa trang trực quan (Current Studio) -->
         <template v-if="currentNavTab === 'pages'">
           <div class="sidebar-header">
@@ -184,32 +184,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </template>
-
-        <!-- Tab: Tổng quan -->
-        <template v-else-if="currentNavTab === 'overview'">
-          <div class="sidebar-header">
-            <h2 class="sidebar-title">Tổng quan hệ thống</h2>
-            <p class="sidebar-subtitle">Thống kê dữ liệu và trạng thái trang web Norm.</p>
-          </div>
-          <div class="sidebar-panel-content">
-            <div class="panel-stat-card">
-              <div class="stat-number">4</div>
-              <div class="stat-label">Trang chính hoạt động</div>
-            </div>
-            <div class="panel-stat-card">
-              <div class="stat-number">6</div>
-              <div class="stat-label">Dự án trong Portfolio</div>
-            </div>
-            <div class="panel-stat-card">
-              <div class="stat-number">3</div>
-              <div class="stat-label">Gói dịch vụ cốt lõi</div>
-            </div>
-            <div class="panel-stat-card">
-              <div class="stat-number">2</div>
-              <div class="stat-label">Đánh giá đối tác</div>
             </div>
           </div>
         </template>
@@ -313,8 +287,8 @@
         </template>
       </aside>
 
-      <!-- Resizer Handle Bar -->
-      <div class="resizer-bar" :class="{ dragging: isResizing }" @mousedown="startResize">
+      <!-- Resizer Handle Bar (Show only when Sub-Sidebar is visible) -->
+      <div v-if="currentNavTab !== 'overview'" class="resizer-bar" :class="{ dragging: isResizing }" @mousedown="startResize">
         <div class="resizer-pill" title="Kéo để thay đổi độ rộng cột">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -322,8 +296,77 @@
         </div>
       </div>
 
-      <!-- Right Column: Live Preview Iframe -->
-      <section class="studio-preview" ref="previewAreaRef">
+      <!-- Main Content Area: Overview Dashboard OR Live Preview -->
+      <!-- A. Overview Dashboard View (As in User's screenshot) -->
+      <section v-if="currentNavTab === 'overview'" class="overview-dashboard-view">
+        <div class="overview-container">
+          <!-- Top Hero Card (Deep Navy Banner) -->
+          <div class="overview-hero-card">
+            <div class="hero-card-content">
+              <div class="hero-breadcrumbs">WEBSITE STUDIO / TỔNG QUAN</div>
+              <h1 class="hero-brand-name">Brand Design Agency • Norm</h1>
+              <p class="hero-tagline-text">Mọi thứ cần để giữ website chỉn chu, trong một nơi.</p>
+              
+              <div class="hero-badge-group">
+                <span class="status-pill published">
+                  <span class="dot"></span>
+                  Đã có bản xuất bản
+                </span>
+                <span class="status-pill draft">Chưa có bản nháp</span>
+              </div>
+            </div>
+
+            <div class="hero-card-action">
+              <a href="/" target="_blank" class="btn-open-site">
+                <span>Mở website</span>
+                <i class="bx bx-right-arrow-alt"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Bottom Metric Cards Grid (4 Cards in Norm Style) -->
+          <div class="overview-metrics-grid">
+            <div class="metric-card" @click="selectNavTab('pages')">
+              <div class="metric-icon-wrap">
+                <i class="bx bx-globe"></i>
+              </div>
+              <div class="metric-number">4</div>
+              <div class="metric-title">Trang nội dung</div>
+              <div class="metric-subtitle">Trang chủ, Dự án, Tin tức, Về chúng tôi</div>
+            </div>
+
+            <div class="metric-card" @click="selectNavTab('projects')">
+              <div class="metric-icon-wrap">
+                <i class="bx bx-briefcase-alt"></i>
+              </div>
+              <div class="metric-number">6</div>
+              <div class="metric-title">Dự án Showcase</div>
+              <div class="metric-subtitle">Dự án đang bật hiển thị</div>
+            </div>
+
+            <div class="metric-card" @click="selectNavTab('services')">
+              <div class="metric-icon-wrap">
+                <i class="bx bx-layer"></i>
+              </div>
+              <div class="metric-number">3</div>
+              <div class="metric-title">Dịch vụ cốt lõi</div>
+              <div class="metric-subtitle">Gói dịch vụ đang kích hoạt</div>
+            </div>
+
+            <div class="metric-card" @click="selectNavTab('reviews')">
+              <div class="metric-icon-wrap">
+                <i class="bx bx-star"></i>
+              </div>
+              <div class="metric-number">2</div>
+              <div class="metric-title">Đánh giá đối tác</div>
+              <div class="metric-subtitle">Lời chứng thực khách hàng</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- B. Right Column: Live Preview Iframe (For content editing tabs) -->
+      <section v-else class="studio-preview" ref="previewAreaRef">
         <div class="preview-frame-container" :class="[currentDevice, { 'desktop-scaled': currentDevice === 'desktop' }]"
           :style="frameContainerStyle">
           <iframe ref="previewIframe" :src="iframeSrc" class="live-iframe" @load="onIframeLoaded"></iframe>
@@ -343,8 +386,8 @@ const devices = [
   { id: 'mobile', label: 'Mobile', icon: 'bx bx-mobile-alt' },
 ];
 
-// Active Left Navigation Rail Tab
-const currentNavTab = ref('pages');
+// Active Left Navigation Rail Tab (Mặc định khi login vào là tab Tổng quan)
+const currentNavTab = ref('overview');
 const selectNavTab = (tabId) => {
   currentNavTab.value = tabId;
 };
@@ -1598,6 +1641,219 @@ onUnmounted(() => {
   justify-content: center;
   overflow: auto;
   position: relative;
+}
+
+/* Overview Dashboard Fullpage View (Exact Style of User's Image) */
+.overview-dashboard-view {
+  flex: 1;
+  background: #f8fafc;
+  overflow-y: auto;
+  padding: 32px 36px;
+  display: flex;
+  justify-content: center;
+}
+
+.overview-container {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Top Hero Dark Banner - Norm Identity */
+.overview-hero-card {
+  background: linear-gradient(135deg, #11141a 0%, #1c212a 100%);
+  border-radius: 20px;
+  padding: 34px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-hero-card::after {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(253, 255, 142, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 2;
+}
+
+.hero-breadcrumbs {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #FDFF8E;
+  text-transform: uppercase;
+}
+
+.hero-brand-name {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 2px 0;
+}
+
+.hero-tagline-text {
+  font-size: 13.5px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.hero-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-pill.published {
+  background: rgba(253, 255, 142, 0.15);
+  color: #FDFF8E;
+  border: 1px solid rgba(253, 255, 142, 0.3);
+}
+
+.status-pill.published .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #FDFF8E;
+}
+
+.status-pill.draft {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-card-action {
+  z-index: 2;
+}
+
+.btn-open-site {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FDFF8E;
+  color: #111111;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(253, 255, 142, 0.2);
+}
+
+.btn-open-site:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25);
+}
+
+.btn-open-site i {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btn-open-site:hover i {
+  transform: translateX(3px);
+}
+
+/* 4 Metric Cards Grid */
+.overview-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 1024px) {
+  .overview-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 22px 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  border-color: #0f172a;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.metric-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 18px;
+  background: #0f172a;
+  color: #FDFF8E;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover .metric-icon-wrap {
+  background: #000000;
+  transform: scale(1.05);
+}
+
+.metric-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.metric-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.metric-subtitle {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
 }
 
 .preview-frame-container {
