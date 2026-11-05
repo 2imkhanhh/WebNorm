@@ -85,8 +85,7 @@
     <!-- Workspace 2 Columns -->
     <main class="studio-workspace">
       <!-- Left Column: Controls (Vue) -->
-      <aside class="studio-sidebar" :class="{ compact: sidebarWidth < 380, wide: sidebarWidth > 550 }"
-        :style="{ width: sidebarWidth + 'px' }">
+      <aside class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
         <div class="sidebar-header">
           <h2 class="sidebar-title">Nội dung • {{ currentPageData.name }}</h2>
           <p class="sidebar-subtitle">Chỉnh sửa nội dung thời gian thực, bên phải sẽ cập nhật tức thì.</p>
@@ -94,14 +93,13 @@
 
         <div class="sidebar-sections">
           <!-- Accordion Section Cards -->
-          <div v-for="(section, sIndex) in currentPageData.sections" :key="section.id" class="section-card"
+          <div v-for="section in currentPageData.sections" :key="section.id" class="section-card"
             :class="{ active: openSectionId === section.id }">
             <div class="section-header" @click="toggleSection(section.id)">
               <div class="section-title-wrap">
                 <i class="bx" :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
                 <span>{{ section.title }}</span>
               </div>
-              <span class="section-badge">Khối {{ sIndex + 1 }}</span>
             </div>
 
             <!-- Accordion Body -->
@@ -145,10 +143,6 @@
         <div class="preview-frame-container" :class="[currentDevice, { 'desktop-scaled': currentDevice === 'desktop' }]"
           :style="frameContainerStyle">
           <iframe ref="previewIframe" :src="iframeSrc" class="live-iframe" @load="onIframeLoaded"></iframe>
-        </div>
-        <div class="preview-footer-note">
-          <i class="bx bx-broadcast"></i>
-          <span>Live Realtime Preview • Standard Desktop Viewport (1440px) scaled to fit</span>
         </div>
       </section>
     </main>
@@ -935,7 +929,6 @@ onUnmounted(() => {
   flex-direction: column;
   overflow: hidden;
   flex-shrink: 0;
-  transition: width 0.05s ease-out;
 }
 
 /* Resizer Handle Bar */
@@ -950,12 +943,12 @@ onUnmounted(() => {
   justify-content: center;
   user-select: none;
   position: relative;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s;
 }
 
 .resizer-bar:hover,
 .resizer-bar.dragging {
-  background-color: rgba(99, 102, 241, 0.08);
+  background-color: rgba(15, 23, 42, 0.05);
 }
 
 .resizer-pill {
@@ -969,29 +962,29 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+  transition: all 0.15s ease;
 }
 
 .resizer-bar:hover .resizer-pill,
 .resizer-bar.dragging .resizer-pill {
-  border-color: #6366f1;
-  background: #f5f3ff;
-  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.25);
+  border-color: #0f172a;
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.12);
   transform: scale(1.05);
 }
 
 .resizer-pill .dot {
   width: 3px;
   height: 3px;
-  background-color: #64748b;
+  background-color: #94a3b8;
   border-radius: 50%;
-  transition: background-color 0.2s;
+  transition: background-color 0.15s;
 }
 
 .resizer-bar:hover .resizer-pill .dot,
 .resizer-bar.dragging .resizer-pill .dot {
-  background-color: #6366f1;
+  background-color: #0f172a;
 }
 
 .sidebar-header {
@@ -999,69 +992,12 @@ onUnmounted(() => {
   border-bottom: 1px solid #f1f5f9;
 }
 
-/* Compact mode when dragged small */
-.studio-sidebar.compact .sidebar-header {
-  padding: 14px 16px 12px;
-}
-
-.studio-sidebar.compact .sidebar-title {
-  font-size: 15px;
-}
-
-.studio-sidebar.compact .sidebar-subtitle {
-  font-size: 11px;
-}
-
-.studio-sidebar.compact .sidebar-sections {
-  padding: 12px 14px;
-  gap: 8px;
-}
-
-.studio-sidebar.compact .section-header {
-  padding: 10px 12px;
-}
-
-.studio-sidebar.compact .section-title-wrap {
-  font-size: 12px;
-  gap: 6px;
-}
-
-.studio-sidebar.compact .section-badge {
-  font-size: 10px;
-  padding: 1px 5px;
-}
-
-.studio-sidebar.compact .section-body {
-  padding: 12px;
-  gap: 10px;
-}
-
-.studio-sidebar.compact .field-label {
-  font-size: 11px;
-}
-
-.studio-sidebar.compact .field-input,
-.studio-sidebar.compact .field-textarea {
-  padding: 6px 10px;
-  font-size: 12px;
-}
-
-/* Wide mode when dragged large */
-.studio-sidebar.wide .sidebar-title {
-  font-size: 20px;
-}
-
-.studio-sidebar.wide .section-title-wrap {
-  font-size: 14.5px;
-}
-
-.studio-sidebar.wide .field-label {
-  font-size: 13px;
-}
-
-.studio-sidebar.wide .field-input,
-.studio-sidebar.wide .field-textarea {
-  font-size: 14px;
+.sidebar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
 }
 
 .sidebar-subtitle {
@@ -1083,7 +1019,7 @@ onUnmounted(() => {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   background: #ffffff;
-  transition: all 0.2s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   overflow: hidden;
 }
 
