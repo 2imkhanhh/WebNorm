@@ -1,21 +1,24 @@
 <template>
-  <div class="sidebar-header">
-    <h2 class="sidebar-title">Quản lý Dự án (Work)</h2>
-    <p class="sidebar-subtitle">Danh sách các dự án hiển thị tại trang Portfolio.</p>
-  </div>
-  <div class="sidebar-panel-content">
-    <div class="panel-list-item" v-for="(p, idx) in projects" :key="idx">
-      <div class="item-thumb"><img :src="p.image" :alt="p.name" /></div>
-      <div class="item-info">
-        <div class="item-name">{{ p.name }}</div>
-        <div class="item-meta">{{ p.category }}</div>
+  <Layout>
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Quản lý Dự án (Work)</h2>
+      <p class="sidebar-subtitle">Danh sách các dự án hiển thị tại trang Portfolio.</p>
+    </div>
+    <div class="sidebar-panel-content">
+      <div class="panel-list-item" v-for="(p, idx) in projects" :key="idx">
+        <div class="item-thumb"><img :src="p.image" :alt="p.name" /></div>
+        <div class="item-info">
+          <div class="item-name">{{ p.name }}</div>
+          <div class="item-meta">{{ p.category }}</div>
+        </div>
       </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Layout from './Layout.vue';
 
 // Danh sách dữ liệu dự án quản lý riêng trong module Projects
 const projects = ref([

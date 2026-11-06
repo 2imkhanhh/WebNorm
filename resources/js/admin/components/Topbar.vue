@@ -1,28 +1,28 @@
 <template>
   <header class="studio-topbar">
     <div class="topbar-left">
-      <a href="/admin/studio" class="studio-brand">
+      <Link href="/admin/dashboard" class="studio-brand">
         <span class="brand-logo-badge">
           <img :src="logoUrl" alt="Norm Logo" class="brand-logo-img" />
         </span>
         <span>Website Studio</span>
-      </a>
+      </Link>
 
       <!-- Page selector (Show only when editing pages) -->
-      <div v-if="currentNavTab === 'pages'" class="page-select-wrap">
+      <div v-if="isPagesRoute" class="page-select-wrap">
         <i class="bx bx-file page-select-icon"></i>
         <select v-model="selectedPageSlug" class="page-select">
-          <option v-for="page in pageList" :key="page.slug" :value="page.slug">
-            {{ page.name }}
+          <option v-for="p in pageList" :key="p.slug" :value="p.slug">
+            {{ p.name }}
           </option>
         </select>
         <i class="bx bx-chevron-down page-select-arrow"></i>
       </div>
     </div>
 
-    <!-- Center: Device Switcher (Show only when in Live Preview) -->
+    <!-- Center: Device Switcher (Show only when in Pages editor) -->
     <div class="topbar-center">
-      <div v-if="currentNavTab === 'pages'" class="device-switch-group">
+      <div v-if="isPagesRoute" class="device-switch-group">
         <button
           v-for="d in devices"
           :key="d.id"
@@ -75,10 +75,10 @@
 
             <div class="dropdown-divider"></div>
 
-            <button class="dropdown-item danger" @click="handleLogout">
+            <Link href="/admin/logout" method="post" as="button" class="dropdown-item danger">
               <i class="bx bx-log-out"></i>
               <span>Đăng xuất</span>
-            </button>
+            </Link>
           </div>
         </transition>
       </div>
@@ -87,9 +87,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
-  currentNavTab,
   selectedPageSlug,
   devices,
   currentDevice,
@@ -101,6 +101,12 @@ import {
   saveChanges,
 } from '../composables/useAdmin';
 
+const page = usePage();
+
+const isPagesRoute = computed(() => {
+  return page.component === 'Pages';
+});
+
 // Danh sách trang phục vụ dropdown chuyển trang
 const pageList = [
   { name: 'Trang chủ', slug: '/' },
@@ -110,7 +116,10 @@ const pageList = [
 ];
 
 // Logic quản lý thông tin User & Menu Dropdown
-const currentUser = ref(window.__STUDIO_USER__ || 'Admin');
+const currentUser = computed(() => {
+  return page.props.auth?.user?.name || window.__STUDIO_USER__ || 'Admin';
+});
+
 const logoUrl = ref('/assets/images/logo.png');
 const isUserMenuOpen = ref(false);
 const userMenuRef = ref(null);
@@ -123,22 +132,6 @@ const handleClickOutside = (e) => {
   if (userMenuRef.value && !userMenuRef.value.contains(e.target)) {
     isUserMenuOpen.value = false;
   }
-};
-
-const handleLogout = () => {
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '/admin/logout';
-
-  const tokenInput = document.createElement('input');
-  tokenInput.type = 'hidden';
-  tokenInput.name = '_token';
-  const metaToken = document.querySelector('meta[name="csrf-token"]');
-  tokenInput.value = metaToken ? metaToken.content : '';
-
-  form.appendChild(tokenInput);
-  document.body.appendChild(form);
-  form.submit();
 };
 
 onMounted(() => {

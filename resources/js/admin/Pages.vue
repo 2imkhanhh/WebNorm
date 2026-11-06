@@ -1,73 +1,76 @@
 <template>
-  <div class="sidebar-header">
-    <h2 class="sidebar-title">{{ currentPageData.name }}</h2>
-  </div>
+  <Layout>
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">{{ currentPageData.name }}</h2>
+    </div>
 
-  <div class="sidebar-sections">
-    <!-- Accordion Section Cards -->
-    <div
-      v-for="section in currentPageData.sections"
-      :key="section.id"
-      class="section-card"
-      :class="{ active: openSectionId === section.id }"
-    >
-      <div class="section-header" @click="toggleSection(section.id)">
-        <div class="section-title-wrap">
-          <i
-            class="bx"
-            :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"
-          ></i>
-          <span>{{ section.title }}</span>
+    <div class="sidebar-sections">
+      <!-- Accordion Section Cards -->
+      <div
+        v-for="section in currentPageData.sections"
+        :key="section.id"
+        class="section-card"
+        :class="{ active: openSectionId === section.id }"
+      >
+        <div class="section-header" @click="toggleSection(section.id)">
+          <div class="section-title-wrap">
+            <i
+              class="bx"
+              :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"
+            ></i>
+            <span>{{ section.title }}</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Accordion Body -->
-      <div v-show="openSectionId === section.id" class="section-body">
-        <div v-for="field in section.fields" :key="field.key" class="field-group">
-          <label class="field-label">{{ field.label }}</label>
+        <!-- Accordion Body -->
+        <div v-show="openSectionId === section.id" class="section-body">
+          <div v-for="field in section.fields" :key="field.key" class="field-group">
+            <label class="field-label">{{ field.label }}</label>
 
-          <!-- Text Input -->
-          <input
-            v-if="field.type === 'text'"
-            v-model="field.value"
-            type="text"
-            class="field-input"
-            @input="onFieldChange(section.id, field.key, field.value)"
-          />
-
-          <!-- Textarea -->
-          <textarea
-            v-else-if="field.type === 'textarea'"
-            v-model="field.value"
-            class="field-textarea"
-            :rows="field.rows || 3"
-            @input="onFieldChange(section.id, field.key, field.value)"
-          ></textarea>
-
-          <!-- Image URL Input -->
-          <div v-else-if="field.type === 'image'" class="image-field-wrap">
+            <!-- Text Input -->
             <input
+              v-if="field.type === 'text'"
               v-model="field.value"
               type="text"
               class="field-input"
-              placeholder="assets/images/..."
               @input="onFieldChange(section.id, field.key, field.value)"
             />
-            <div v-if="field.value" class="image-preview-thumb">
-              <img
-                :src="field.value.startsWith('http') ? field.value : '/' + field.value"
-                alt="Preview"
+
+            <!-- Textarea -->
+            <textarea
+              v-else-if="field.type === 'textarea'"
+              v-model="field.value"
+              class="field-textarea"
+              :rows="field.rows || 3"
+              @input="onFieldChange(section.id, field.key, field.value)"
+            ></textarea>
+
+            <!-- Image URL Input -->
+            <div v-else-if="field.type === 'image'" class="image-field-wrap">
+              <input
+                v-model="field.value"
+                type="text"
+                class="field-input"
+                placeholder="assets/images/..."
+                @input="onFieldChange(section.id, field.key, field.value)"
               />
+              <div v-if="field.value" class="image-preview-thumb">
+                <img
+                  :src="field.value.startsWith('http') ? field.value : '/' + field.value"
+                  alt="Preview"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue';
+import Layout from './Layout.vue';
 import { selectedPageSlug, hasUnsavedChanges, previewIframe } from './composables/useAdmin';
 
 // Dữ liệu các trang và khối chỉnh sửa nội dung

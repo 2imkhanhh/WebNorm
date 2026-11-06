@@ -1,9 +1,15 @@
-import { createApp } from 'vue';
-import Dashboard from './Dashboard.vue';
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
 
-const appElement = document.getElementById('studio-app');
-if (appElement) {
-    const app = createApp(Dashboard);
-    app.mount('#studio-app');
-}
-
+createInertiaApp({
+  title: title => title ? `${title} - Norm Admin` : 'Norm Admin',
+  resolve: name => {
+    const pages = import.meta.glob('./*.vue', { eager: true });
+    return pages[`./${name}.vue`];
+  },
+  setup({ el, App, props, plugin }) {
+    createApp({ render: () => h(App, props) })
+      .use(plugin)
+      .mount(el);
+  },
+});

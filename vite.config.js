@@ -14,6 +14,9 @@ export default defineConfig({
         }),
         vue(),
     ],
+    optimizeDeps: {
+        include: ['@inertiajs/vue3'],
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],

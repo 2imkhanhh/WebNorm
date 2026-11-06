@@ -1,20 +1,6 @@
 import { ref, computed, nextTick } from 'vue';
 
-// 1. Navigation state
-export const currentNavTab = ref('overview');
-
-export const selectNavTab = (tabId) => {
-  currentNavTab.value = tabId;
-  if (tabId !== 'overview') {
-    nextTick(() => {
-      if (isAutoFit.value) {
-        calculateAutoFit();
-      }
-    });
-  }
-};
-
-// 2. Device preview state
+// 1. Device preview state
 export const devices = [
   { id: 'desktop', label: 'Desktop', icon: 'bx bx-desktop' },
   { id: 'tablet', label: 'Tablet', icon: 'bx bx-tab' },
@@ -28,12 +14,12 @@ export const deviceSpecs = {
   mobile: { width: 375, height: 812 },
 };
 
-// 3. Page selection & Iframe preview reference
+// 2. Page selection & Iframe preview reference
 export const selectedPageSlug = ref('/');
 export const previewIframe = ref(null);
 export const previewAreaRef = ref(null);
 
-// 4. Save & Changes state
+// 3. Save & Changes state
 export const hasUnsavedChanges = ref(false);
 export const isSaving = ref(false);
 export const isSavingDraft = ref(false);
@@ -56,7 +42,7 @@ export const saveChanges = () => {
   }, 600);
 };
 
-// 5. Scaling & Viewport calculation
+// 4. Scaling & Viewport calculation
 export const zoomLevel = ref(0.85);
 export const isAutoFit = ref(true);
 

@@ -1,20 +1,23 @@
 <template>
-  <div class="sidebar-header">
-    <h2 class="sidebar-title">Thư viện tệp</h2>
-    <p class="sidebar-subtitle">Ảnh banner, mô hình 3D norm.glb và tư liệu.</p>
-  </div>
-  <div class="sidebar-panel-content">
-    <div class="media-grid">
-      <div class="media-card" v-for="(m, mIdx) in mediaList" :key="mIdx">
-        <img :src="m.url" :alt="m.name" />
-        <span>{{ m.name }}</span>
+  <Layout>
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Thư viện tệp</h2>
+      <p class="sidebar-subtitle">Ảnh banner, mô hình 3D norm.glb và tư liệu.</p>
+    </div>
+    <div class="sidebar-panel-content">
+      <div class="media-grid">
+        <div class="media-card" v-for="(m, mIdx) in mediaList" :key="mIdx">
+          <img :src="m.url" :alt="m.name" />
+          <span>{{ m.name }}</span>
+        </div>
       </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Layout from './Layout.vue';
 
 // Danh sách tệp hình ảnh & assets quản lý riêng trong module Media
 const mediaList = ref([

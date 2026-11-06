@@ -8,111 +8,104 @@
       <!-- 1. Leftmost Icon Navigation Sidebar -->
       <nav class="studio-nav-rail">
         <!-- Top overview item -->
-        <button
+        <Link
+          href="/admin/dashboard"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'overview' }"
-          @click="onSelectNavTab('overview')"
+          :class="{ active: isCurrent('Dashboard') }"
           title="Tổng quan"
         >
           <i class="bx bx-grid-alt"></i>
           <span>Tổng quan</span>
-        </button>
+        </Link>
 
         <div class="nav-rail-divider"></div>
 
         <div class="nav-rail-section-label">NỘI DUNG</div>
 
         <!-- Content nav items -->
-        <button
+        <Link
+          href="/admin/pages"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'pages' }"
-          @click="onSelectNavTab('pages')"
+          :class="{ active: isCurrent('Pages') }"
           title="Chỉnh sửa trang"
         >
           <i class="bx bx-edit-alt"></i>
           <span>Chỉnh sửa</span>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/admin/projects"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'projects' }"
-          @click="onSelectNavTab('projects')"
+          :class="{ active: isCurrent('Projects') }"
           title="Dự án (Work)"
         >
           <i class="bx bx-briefcase-alt"></i>
           <span>Dự án</span>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/admin/services"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'services' }"
-          @click="onSelectNavTab('services')"
+          :class="{ active: isCurrent('Services') }"
           title="Dịch vụ"
         >
           <i class="bx bx-layer"></i>
           <span>Dịch vụ</span>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/admin/news"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'news' || currentNavTab === 'blogs' }"
-          @click="onSelectNavTab('news')"
+          :class="{ active: isCurrent('Blogs') }"
           title="Tin tức & Bài viết"
         >
           <i class="bx bx-news"></i>
           <span>Bài viết</span>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/admin/reviews"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'reviews' }"
-          @click="onSelectNavTab('reviews')"
+          :class="{ active: isCurrent('Reviews') }"
           title="Đánh giá khách hàng"
         >
           <i class="bx bx-star"></i>
           <span>Reviews</span>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/admin/leads"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'leads' || currentNavTab === 'contacts' }"
-          @click="onSelectNavTab('leads')"
+          :class="{ active: isCurrent('Contacts') }"
           title="Khách hàng liên hệ"
         >
           <i class="bx bx-envelope"></i>
           <span>Liên hệ</span>
-        </button>
+        </Link>
 
-        <button
+        <Link
+          href="/admin/media"
           class="nav-rail-item"
-          :class="{ active: currentNavTab === 'media' }"
-          @click="onSelectNavTab('media')"
+          :class="{ active: isCurrent('Media') }"
           title="Thư viện hình ảnh"
         >
           <i class="bx bx-image-alt"></i>
           <span>Thư viện</span>
-        </button>
+        </Link>
       </nav>
 
-      <!-- 2. Controls Panel (Sub-Sidebar) -->
+      <!-- 2. Controls Panel (Sub-Sidebar) - Shows for non-dashboard pages -->
       <aside
-        v-if="currentNavTab !== 'overview'"
+        v-if="!isDashboard"
         class="studio-sidebar"
         :style="{ width: sidebarWidth + 'px' }"
       >
-        <Pages v-if="currentNavTab === 'pages'" />
-        <Projects v-else-if="currentNavTab === 'projects'" />
-        <Services v-else-if="currentNavTab === 'services'" />
-        <Blogs v-else-if="currentNavTab === 'news' || currentNavTab === 'blogs'" />
-        <Reviews v-else-if="currentNavTab === 'reviews'" />
-        <Contacts v-else-if="currentNavTab === 'leads' || currentNavTab === 'contacts'" />
-        <Media v-else-if="currentNavTab === 'media'" />
-        <Settings v-else-if="currentNavTab === 'settings'" />
+        <slot />
       </aside>
 
       <!-- Resizer Handle Bar -->
       <div
-        v-if="currentNavTab !== 'overview'"
+        v-if="!isDashboard"
         class="resizer-bar"
         :class="{ dragging: isResizing }"
         @mousedown="startResize"
@@ -124,44 +117,53 @@
         </div>
       </div>
 
-      <!-- Main Content Area: Overview or Live Preview -->
-      <slot v-if="currentNavTab === 'overview'" name="overview" />
+      <!-- Main Content Area: Overview Dashboard OR Live Preview -->
+      <slot v-if="isDashboard" />
       <LivePreview v-else />
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, watch, nextTick, onMounted } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import Topbar from './components/Topbar.vue';
 import LivePreview from './components/LivePreview.vue';
-import Pages from './Pages.vue';
-import Projects from './Projects.vue';
-import Services from './Services.vue';
-import Blogs from './Blogs.vue';
-import Reviews from './Reviews.vue';
-import Contacts from './Contacts.vue';
-import Media from './Media.vue';
-import Settings from './Settings.vue';
 import {
-  currentNavTab,
-  selectNavTab,
   calculateAutoFit,
   isAutoFit,
   previewIframe,
 } from './composables/useAdmin';
 
-// Logic kéo thay đổi độ rộng cột (Sidebar resizer) quản lý riêng trong Layout
+const page = usePage();
+
+const isCurrent = (componentName) => {
+  return page.component === componentName;
+};
+
+const isDashboard = computed(() => {
+  return page.component === 'Dashboard';
+});
+
+// Logic kéo thay đổi độ rộng cột (Sidebar resizer)
 const MIN_SIDEBAR_WIDTH = 260;
 const sidebarWidth = ref(MIN_SIDEBAR_WIDTH);
 const isResizing = ref(false);
 
-const onSelectNavTab = (tabId) => {
-  selectNavTab(tabId);
-  if (tabId !== 'overview') {
-    sidebarWidth.value = MIN_SIDEBAR_WIDTH;
+// Reset độ rộng cột nhỏ nhất (260px) khi chuyển trang
+watch(
+  () => page.component,
+  (newComp) => {
+    if (newComp !== 'Dashboard') {
+      sidebarWidth.value = MIN_SIDEBAR_WIDTH;
+      nextTick(() => {
+        if (isAutoFit.value) {
+          calculateAutoFit();
+        }
+      });
+    }
   }
-};
+);
 
 const startResize = (e) => {
   e.preventDefault();

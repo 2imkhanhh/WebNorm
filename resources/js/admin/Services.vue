@@ -1,21 +1,24 @@
 <template>
-  <div class="sidebar-header">
-    <h2 class="sidebar-title">Dịch vụ cốt lõi</h2>
-    <p class="sidebar-subtitle">Các gói dịch vụ hiển thị tại trang chủ.</p>
-  </div>
-  <div class="sidebar-panel-content">
-    <div class="panel-list-item" v-for="(s, idx) in services" :key="idx">
-      <div class="item-badge">{{ s.number }}</div>
-      <div class="item-info">
-        <div class="item-name">{{ s.title }}</div>
-        <div class="item-meta">{{ s.desc }}</div>
+  <Layout>
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Dịch vụ cốt lõi</h2>
+      <p class="sidebar-subtitle">Các gói dịch vụ hiển thị tại trang chủ.</p>
+    </div>
+    <div class="sidebar-panel-content">
+      <div class="panel-list-item" v-for="(s, idx) in services" :key="idx">
+        <div class="item-badge">{{ s.number }}</div>
+        <div class="item-info">
+          <div class="item-name">{{ s.title }}</div>
+          <div class="item-meta">{{ s.desc }}</div>
+        </div>
       </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Layout from './Layout.vue';
 
 // Danh sách dữ liệu gói dịch vụ quản lý riêng trong module Services
 const services = ref([
