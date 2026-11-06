@@ -1,0 +1,48 @@
+/* Right Column: Live Preview */
+.studio-preview {
+  flex: 1;
+  background: #f1f5f9;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  position: relative;
+}
+
+.preview-frame-container {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.preview-frame-container.desktop,
+.preview-frame-container.tablet,
+.preview-frame-container.mobile {
+  /* Dynamic scale & dimensions computed via frameContainerStyle */
+  max-width: none;
+}
+
+.live-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.preview-footer-note {
+  position: absolute;
+  bottom: 8px;
+  left: 20px;
+  font-size: 11px;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+

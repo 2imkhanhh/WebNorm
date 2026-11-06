@@ -1,0 +1,231 @@
+.studio-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: #f0f2f5;
+  color: #1a1d20;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.studio-root input,
+.studio-root textarea,
+.studio-root select,
+.studio-root button {
+  font-family: inherit;
+}
+
+/* Workspace Columns */
+.studio-workspace {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+
+/* 1. Leftmost Navigation Rail (Icon Sidebar) */
+.studio-nav-rail {
+  width: 72px;
+  background: #fafafa;
+  border-right: 1px solid #eaedf1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+  gap: 3px;
+  flex-shrink: 0;
+  z-index: 30;
+  overflow-y: auto;
+}
+
+.nav-rail-item {
+  width: 58px;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  padding: 0;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-rail-item:focus,
+.nav-rail-item:focus-visible,
+.nav-rail-item:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.nav-rail-item i {
+  font-size: 20px;
+  color: #64748b;
+  transition: all 0.15s ease;
+}
+
+.nav-rail-item span {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #64748b;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.nav-rail-item:hover {
+  background: #f1f5f9;
+  border-color: transparent;
+  color: #1e293b;
+}
+
+.nav-rail-item:hover i {
+  color: #1e293b;
+}
+
+.nav-rail-item:hover span {
+  color: #1e293b;
+}
+
+.nav-rail-item.active {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
+  outline: none;
+}
+
+.nav-rail-item.active:focus,
+.nav-rail-item.active:focus-visible,
+.nav-rail-item.active:active {
+  outline: none;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.nav-rail-item.active i {
+  color: #0f172a;
+  transform: scale(1.05);
+}
+
+.nav-rail-item.active span {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.nav-rail-divider {
+  width: 44px;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 8px 0 6px;
+}
+
+.nav-rail-section-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+  user-select: none;
+}
+
+/* 2. Controls Panel (Sub-Sidebar) */
+.studio-sidebar {
+  min-width: 260px;
+  max-width: 800px;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sidebar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.sidebar-subtitle {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Resizer Handle Bar */
+.resizer-bar {
+  width: 14px;
+  margin-left: -7px;
+  margin-right: -7px;
+  z-index: 40;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  position: relative;
+  transition: background-color 0.15s;
+}
+
+.resizer-bar:hover,
+.resizer-bar.dragging {
+  background-color: rgba(15, 23, 42, 0.05);
+}
+
+.resizer-pill {
+  width: 16px;
+  height: 42px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+  transition: all 0.15s ease;
+}
+
+.resizer-bar:hover .resizer-pill,
+.resizer-bar.dragging .resizer-pill {
+  border-color: #0f172a;
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(15, 23, 42, 0.12);
+  transform: scale(1.05);
+}
+
+.resizer-pill .dot {
+  width: 3px;
+  height: 3px;
+  background-color: #94a3b8;
+  border-radius: 50%;
+  transition: background-color 0.15s;
+}
+
+.resizer-bar:hover .resizer-pill .dot,
+.resizer-bar.dragging .resizer-pill .dot {
+  background-color: #0f172a;
+}
+
