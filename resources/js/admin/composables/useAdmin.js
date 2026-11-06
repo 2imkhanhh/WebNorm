@@ -16,6 +16,7 @@ export const deviceSpecs = {
 
 // 2. Page selection & Iframe preview reference
 export const selectedPageSlug = ref('/');
+export const currentLanguage = ref('vi');
 export const previewIframe = ref(null);
 export const previewAreaRef = ref(null);
 

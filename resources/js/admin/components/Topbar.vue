@@ -18,6 +18,16 @@
         </select>
         <i class="bx bx-chevron-down page-select-arrow"></i>
       </div>
+
+      <!-- Language selector -->
+      <div class="lang-select-wrap">
+        <i class="bx bx-globe lang-select-icon"></i>
+        <select v-model="currentLanguage" class="lang-select" @change="onLanguageChange">
+          <option value="vi">VI</option>
+          <option value="en">EN</option>
+        </select>
+        <i class="bx bx-chevron-down lang-select-arrow"></i>
+      </div>
     </div>
 
     <!-- Center: Device Switcher (Show only when in Pages editor) -->
@@ -91,6 +101,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
   selectedPageSlug,
+  currentLanguage,
+  previewIframe,
   devices,
   currentDevice,
   setDevice,
@@ -131,6 +143,18 @@ const toggleUserMenu = () => {
 const handleClickOutside = (e) => {
   if (userMenuRef.value && !userMenuRef.value.contains(e.target)) {
     isUserMenuOpen.value = false;
+  }
+};
+
+const onLanguageChange = () => {
+  if (previewIframe.value && previewIframe.value.contentWindow) {
+    previewIframe.value.contentWindow.postMessage(
+      {
+        type: 'STUDIO_LANG_UPDATE',
+        lang: currentLanguage.value,
+      },
+      '*'
+    );
   }
 };
 
