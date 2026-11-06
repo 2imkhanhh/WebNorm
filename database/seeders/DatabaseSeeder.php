@@ -3,23 +3,497 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Setting;
+use App\Models\PageContent;
+use App\Models\Project;
+use App\Models\Service;
+use App\Models\Blog;
+use App\Models\Review;
+use App\Models\Media;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Admin User
+        User::firstOrCreate(
+            ['email' => 'admin@norm.vn'],
+            [
+                'name' => 'Admin Norm',
+                'password' => Hash::make('admin123'),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // 2. Settings (Thương hiệu, Liên hệ, 3D model, Mạng xã hội)
+        $settings = [
+            ['key' => 'site_name', 'value' => ['vi' => 'Brand Design Agency • Norm', 'en' => 'Brand Design Agency • Norm'], 'group' => 'general', 'description' => 'Tên thương hiệu website'],
+            ['key' => 'logo', 'value' => '/assets/images/logo.png', 'group' => 'general', 'description' => 'Ảnh logo chính'],
+            ['key' => 'model_3d', 'value' => '/assets/images/norm.glb', 'group' => 'general', 'description' => 'Đường dẫn mô hình 3D hero'],
+            ['key' => 'hotline', 'value' => '(+84)816 656718', 'group' => 'contact', 'description' => 'Số điện thoại hotline'],
+            ['key' => 'email', 'value' => 'info@norm.vn', 'group' => 'contact', 'description' => 'Địa chỉ email'],
+            ['key' => 'address', 'value' => ['vi' => "Số 110 Nguyễn Ngọc Nại, P. Phương Liệt, TP. Hà Nội", 'en' => "No. 110 Nguyen Ngoc Nai street,\nPhuong Liet ward, Ha Noi city, Vietnam"], 'group' => 'contact', 'description' => 'Địa chỉ văn phòng'],
+            ['key' => 'copyright', 'value' => '©2026 All Rights Reserved', 'group' => 'general', 'description' => 'Dòng bản quyền footer'],
+            ['key' => 'social_behance', 'value' => 'https://behance.net', 'group' => 'social', 'description' => 'Link Behance'],
+            ['key' => 'social_linkedin', 'value' => 'https://linkedin.com', 'group' => 'social', 'description' => 'Link LinkedIn'],
+            ['key' => 'social_instagram', 'value' => 'https://instagram.com', 'group' => 'social', 'description' => 'Link Instagram'],
+            ['key' => 'social_facebook', 'value' => 'https://facebook.com', 'group' => 'social', 'description' => 'Link Facebook'],
+            ['key' => 'social_dribbble', 'value' => 'https://dribbble.com', 'group' => 'social', 'description' => 'Link Dribbble'],
+        ];
+        foreach ($settings as $s) {
+            Setting::updateOrCreate(['key' => $s['key']], $s);
+        }
+
+        // 3. Page Contents (Các đoạn văn bản, tiêu đề tĩnh trên từng trang)
+        $contents = [
+            // TRANG CHỦ (/)
+            [
+                'page_slug' => '/',
+                'section_id' => 'hero',
+                'section_title' => 'Hero & Tiêu đề chính',
+                'field_key' => 'page_title',
+                'field_label' => 'Tiêu đề SEO / Title',
+                'field_type' => 'text',
+                'value' => ['vi' => 'Brand Design Agency', 'en' => 'Brand Design Agency'],
+                'sort_order' => 1,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'hero',
+                'section_title' => 'Hero & Tiêu đề chính',
+                'field_key' => 'hero_heading',
+                'field_label' => 'Tiêu đề lớn Hero (3 dòng)',
+                'field_type' => 'textarea',
+                'value' => ['vi' => "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ", 'en' => "IDENTITY\nSTRATEGY\nCULTURE"],
+                'sort_order' => 2,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'hero',
+                'section_title' => 'Hero & Tiêu đề chính',
+                'field_key' => 'hero_desc',
+                'field_label' => 'Mô tả ngắn trang chủ',
+                'field_type' => 'textarea',
+                'value' => [
+                    'vi' => 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.',
+                    'en' => 'We help businesses build clear, consistent brand identities aligned with their business direction.'
+                ],
+                'sort_order' => 3,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'showcase',
+                'section_title' => 'Khối dự án nổi bật',
+                'field_key' => 'showcase_label',
+                'field_label' => 'Nhãn tiêu đề khối',
+                'field_type' => 'text',
+                'value' => ['vi' => 'DỰ ÁN NỔI BẬT', 'en' => 'FEATURED PROJECTS'],
+                'sort_order' => 4,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'testimonials',
+                'section_title' => 'Khối Đánh giá khách hàng',
+                'field_key' => 'testi_title',
+                'field_label' => 'Tiêu đề khối',
+                'field_type' => 'text',
+                'value' => ['vi' => 'ĐÁNH GIÁ CỦA ĐỐI TÁC', 'en' => 'PARTNER TESTIMONIALS'],
+                'sort_order' => 5,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'footer_words',
+                'section_title' => 'Chữ lật chân trang (Footer Animation)',
+                'field_key' => 'footer_line1_old',
+                'field_label' => 'Dòng 1 (Trước)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'TỪ NHỮNG', 'en' => 'FROM AN'],
+                'sort_order' => 6,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'footer_words',
+                'section_title' => 'Chữ lật chân trang (Footer Animation)',
+                'field_key' => 'footer_line1_new',
+                'field_label' => 'Dòng 1 (Sau)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'ĐẾN MỘT', 'en' => 'INTO A'],
+                'sort_order' => 7,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'footer_words',
+                'section_title' => 'Chữ lật chân trang (Footer Animation)',
+                'field_key' => 'footer_line2_old',
+                'field_label' => 'Dòng 2 (Trước)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'Ý TƯỞNG', 'en' => 'IDEA'],
+                'sort_order' => 8,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'footer_words',
+                'section_title' => 'Chữ lật chân trang (Footer Animation)',
+                'field_key' => 'footer_line2_new',
+                'field_label' => 'Dòng 2 (Sau)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'THƯƠNG HIỆU', 'en' => 'BRAND'],
+                'sort_order' => 9,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'footer_words',
+                'section_title' => 'Chữ lật chân trang (Footer Animation)',
+                'field_key' => 'footer_line3_old',
+                'field_label' => 'Dòng 3 (Trước)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'BAN ĐẦU', 'en' => 'INITIAL'],
+                'sort_order' => 10,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'footer_words',
+                'section_title' => 'Chữ lật chân trang (Footer Animation)',
+                'field_key' => 'footer_line3_new',
+                'field_label' => 'Dòng 3 (Sau)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'ĐÁNG NHỚ', 'en' => 'MEMORABLE'],
+                'sort_order' => 11,
+            ],
+
+            // VỀ CHÚNG TÔI (/about-us)
+            [
+                'page_slug' => '/about-us',
+                'section_id' => 'about_intro',
+                'section_title' => 'Giới thiệu & Giải pháp',
+                'field_key' => 'about_heading',
+                'field_label' => 'Tiêu đề giải pháp',
+                'field_type' => 'text',
+                'value' => ['vi' => 'GIẢI PHÁP THIẾT KẾ CHO', 'en' => 'DESIGN SOLUTIONS FOR'],
+                'sort_order' => 12,
+            ],
+            [
+                'page_slug' => '/about-us',
+                'section_id' => 'about_intro',
+                'section_title' => 'Giới thiệu & Giải pháp',
+                'field_key' => 'about_slogan',
+                'field_label' => 'Slogan biến đổi',
+                'field_type' => 'text',
+                'value' => ['vi' => 'THƯƠNG HIỆU DOANH NGHIỆP', 'en' => 'ENTERPRISE BRANDS'],
+                'sort_order' => 13,
+            ],
+            [
+                'page_slug' => '/about-us',
+                'section_id' => 'about_workflow',
+                'section_title' => 'Quy trình làm việc (Workflow)',
+                'field_key' => 'step1_title',
+                'field_label' => 'Bước 1: Tên bước',
+                'field_type' => 'text',
+                'value' => ['vi' => 'Nghiên cứu & Định vị', 'en' => 'Research & Positioning'],
+                'sort_order' => 14,
+            ],
+            [
+                'page_slug' => '/about-us',
+                'section_id' => 'about_workflow',
+                'section_title' => 'Quy trình làm việc (Workflow)',
+                'field_key' => 'step2_title',
+                'field_label' => 'Bước 2: Tên bước',
+                'field_type' => 'text',
+                'value' => ['vi' => 'Xây dựng ý tưởng', 'en' => 'Concept Strategy'],
+                'sort_order' => 15,
+            ],
+            [
+                'page_slug' => '/about-us',
+                'section_id' => 'about_workflow',
+                'section_title' => 'Quy trình làm việc (Workflow)',
+                'field_key' => 'step3_title',
+                'field_label' => 'Bước 3: Tên bước',
+                'field_type' => 'text',
+                'value' => ['vi' => 'Thiết kế hoàn thiện', 'en' => 'Design & Execution'],
+                'sort_order' => 16,
+            ],
+
+            // DỰ ÁN (/work)
+            [
+                'page_slug' => '/work',
+                'section_id' => 'work_hero',
+                'section_title' => 'Banner Dự án & Bộ lọc',
+                'field_key' => 'filter_all',
+                'field_label' => 'Nút bộ lọc 1',
+                'field_type' => 'text',
+                'value' => ['vi' => 'TẤT CẢ DỰ ÁN', 'en' => 'ALL PROJECTS'],
+                'sort_order' => 17,
+            ],
+            [
+                'page_slug' => '/work',
+                'section_id' => 'work_hero',
+                'section_title' => 'Banner Dự án & Bộ lọc',
+                'field_key' => 'filter_featured',
+                'field_label' => 'Nút bộ lọc 2',
+                'field_type' => 'text',
+                'value' => ['vi' => 'NỔI BẬT', 'en' => 'FEATURED'],
+                'sort_order' => 18,
+            ],
+            [
+                'page_slug' => '/work',
+                'section_id' => 'work_hero',
+                'section_title' => 'Banner Dự án & Bộ lọc',
+                'field_key' => 'filter_identity',
+                'field_label' => 'Nút bộ lọc 3',
+                'field_type' => 'text',
+                'value' => ['vi' => 'NHẬN DIỆN', 'en' => 'IDENTITY'],
+                'sort_order' => 19,
+            ],
+            [
+                'page_slug' => '/work',
+                'section_id' => 'work_hero',
+                'section_title' => 'Banner Dự án & Bộ lọc',
+                'field_key' => 'filter_website',
+                'field_label' => 'Nút bộ lọc 4',
+                'field_type' => 'text',
+                'value' => ['vi' => 'WEBSITE', 'en' => 'WEBSITE'],
+                'sort_order' => 20,
+            ],
+
+            // BÀI VIẾT / TIN TỨC (/news)
+            [
+                'page_slug' => '/news',
+                'section_id' => 'news_header',
+                'section_title' => 'Tiêu đề trang Tin tức',
+                'field_key' => 'news_title1',
+                'field_label' => 'Dòng tiêu đề trái',
+                'field_type' => 'text',
+                'value' => ['vi' => 'TIN TỨC &', 'en' => 'NEWS &'],
+                'sort_order' => 21,
+            ],
+            [
+                'page_slug' => '/news',
+                'section_id' => 'news_header',
+                'section_title' => 'Tiêu đề trang Tin tức',
+                'field_key' => 'news_title2',
+                'field_label' => 'Dòng tiêu đề phải',
+                'field_type' => 'text',
+                'value' => ['vi' => 'GÓC NHÌN', 'en' => 'INSIGHTS'],
+                'sort_order' => 22,
+            ],
+        ];
+
+        foreach ($contents as $c) {
+            PageContent::updateOrCreate(
+                [
+                    'page_slug' => $c['page_slug'],
+                    'section_id' => $c['section_id'],
+                    'field_key' => $c['field_key']
+                ],
+                $c
+            );
+        }
+
+        // 4. Projects (Toàn bộ các dự án mẫu ban đầu từ HTML)
+        $projects = [
+            [
+                'title' => ['vi' => 'Nhận diện thương hiệu Tiên Phong', 'en' => 'Tien Phong Identity'],
+                'slug' => 'nhan-dien-tien-phong',
+                'category' => ['vi' => 'Brand identity', 'en' => 'Brand identity'],
+                'thumbnail' => '/assets/images/project1.png',
+                'client' => 'Tien Phong Corp',
+                'year' => '2026',
+                'description' => ['vi' => 'Thiết kế bộ nhận diện thương hiệu số toàn diện.', 'en' => 'Comprehensive digital brand identity design.'],
+                'is_featured' => true,
+                'sort_order' => 1,
+            ],
+            [
+                'title' => ['vi' => 'Website Trải nghiệm số Norm', 'en' => 'Norm Digital Experience Website'],
+                'slug' => 'website-trai-nghiem-so-norm',
+                'category' => ['vi' => 'UI/UX Design', 'en' => 'UI/UX Design'],
+                'thumbnail' => '/assets/images/project2.png',
+                'client' => 'Norm Studio',
+                'year' => '2026',
+                'description' => ['vi' => 'Trải nghiệm số và hệ thống tương tác hiện đại.', 'en' => 'Modern digital experience and interactive system.'],
+                'is_featured' => true,
+                'sort_order' => 2,
+            ],
+            [
+                'title' => ['vi' => 'Chiến lược & Nhận diện Nổi bật', 'en' => 'Featured Brand Identity & Strategy'],
+                'slug' => 'chien-luoc-nhan-dien-noi-bat',
+                'category' => ['vi' => 'Brand identity - UI/UX - Social Strategy', 'en' => 'Brand identity - UI/UX - Social Strategy'],
+                'thumbnail' => '/assets/images/project3.png',
+                'client' => 'Heritage JSC',
+                'year' => '2025',
+                'description' => ['vi' => 'Định vị chiến lược và thiết kế bao bì di sản.', 'en' => 'Strategic positioning and heritage packaging design.'],
+                'is_featured' => true,
+                'sort_order' => 3,
+            ],
+            [
+                'title' => ['vi' => 'Chiến dịch Social Strategy Nổi bật 2', 'en' => 'Featured Social Strategy 2'],
+                'slug' => 'chien-dich-social-strategy-2',
+                'category' => ['vi' => 'Social Strategy', 'en' => 'Social Strategy'],
+                'thumbnail' => '/assets/images/project4.png',
+                'client' => 'Vibe Media',
+                'year' => '2025',
+                'description' => ['vi' => 'Chiến dịch truyền thông thương hiệu sáng tạo.', 'en' => 'Creative brand communication campaign.'],
+                'is_featured' => true,
+                'sort_order' => 4,
+            ],
+            [
+                'title' => ['vi' => 'Nền tảng E-commerce Platform', 'en' => 'E-commerce Platform'],
+                'slug' => 'nen-tang-ecommerce-platform',
+                'category' => ['vi' => 'Web Development', 'en' => 'Web Development'],
+                'thumbnail' => '/assets/images/project4.png',
+                'client' => 'NextGen Retail',
+                'year' => '2025',
+                'description' => ['vi' => 'Nền tảng thương mại điện tử chuẩn mực tốc độ cao.', 'en' => 'High-performance standard e-commerce platform.'],
+                'is_featured' => false,
+                'sort_order' => 5,
+            ],
+        ];
+        foreach ($projects as $p) {
+            Project::updateOrCreate(['slug' => $p['slug']], $p);
+        }
+
+        // 5. Services (4 gói dịch vụ chuẩn từ HTML)
+        $services = [
+            [
+                'number' => '01',
+                'title' => ['vi' => 'Thiết kế từ chiến lược', 'en' => 'Strategy-led Design'],
+                'description' => ['vi' => 'Định vị thương hiệu, câu chuyện, đặt tên, bản sắc và thông điệp thương hiệu.', 'en' => 'Brand positioning, brand story, naming, identity and key messaging.'],
+                'icon' => '/assets/images/project1.png',
+                'sort_order' => 1,
+            ],
+            [
+                'number' => '02',
+                'title' => ['vi' => 'Thiết kế nhận diện thương hiệu', 'en' => 'Comprehensive Identity Design'],
+                'description' => ['vi' => 'Thiết kế logo, hệ thống nhận diện thương hiệu, bộ ứng dụng và cẩm nang thương hiệu.', 'en' => 'Logo design, brand identity system, application kit, and brand guidelines.'],
+                'icon' => '/assets/images/project2.png',
+                'sort_order' => 2,
+            ],
+            [
+                'number' => '03',
+                'title' => ['vi' => 'Thiết kế không gian số', 'en' => 'Digital Experience & UI/UX'],
+                'description' => ['vi' => 'Thiết kế UI/UX, Website thương hiệu, ứng dụng di động và tối ưu trải nghiệm tương tác.', 'en' => 'UI/UX design, brand website, mobile app, and interactive user experience.'],
+                'icon' => '/assets/images/project3.png',
+                'sort_order' => 3,
+            ],
+            [
+                'number' => '04',
+                'title' => ['vi' => 'Sản xuất nội dung', 'en' => 'Content Production'],
+                'description' => ['vi' => 'Chụp ảnh doanh nghiệp, sản xuất video quảng cáo, nội dung truyền thông và quản trị fanpage.', 'en' => 'Corporate photography, promotional video production, media content and fanpage management.'],
+                'icon' => '/assets/images/project4.png',
+                'sort_order' => 4,
+            ],
+        ];
+        foreach ($services as $srv) {
+            Service::updateOrCreate(['number' => $srv['number']], $srv);
+        }
+
+        // 6. Blogs (Các bài viết mẫu từ news.blade.php)
+        $blogs = [
+            [
+                'title' => [
+                    'vi' => 'Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo',
+                    'en' => 'Understanding Design Thinking to Stand Out in the Creative Industry'
+                ],
+                'slug' => 'hieu-ve-tu-duy-thiet-ke-design-thinking',
+                'category' => ['vi' => 'Tư duy sáng tạo', 'en' => 'Creative Thinking'],
+                'thumbnail' => '/assets/images/news1.png',
+                'excerpt' => [
+                    'vi' => 'Tư duy thiết kế giúp doanh nghiệp giải quyết các bài toán phức tạp bằng cách lấy người dùng làm trọng tâm.',
+                    'en' => 'Design thinking helps businesses solve complex problems by putting users at the center.'
+                ],
+                'published_at' => now()->subDays(5),
+                'status' => 'published',
+            ],
+            [
+                'title' => [
+                    'vi' => 'Tái định vị thương hiệu kỷ nguyên số',
+                    'en' => 'Brand Repositioning in the Digital Era'
+                ],
+                'slug' => 'tai-dinh-vi-thuong-hieu-ky-nguyen-so',
+                'category' => ['vi' => 'Chiến lược', 'en' => 'Strategy'],
+                'thumbnail' => '/assets/images/project2.png',
+                'excerpt' => [
+                    'vi' => 'Các nguyên tắc cốt lõi giúp doanh nghiệp làm mới hình ảnh trong mắt người dùng hiện đại.',
+                    'en' => 'Core principles helping businesses refresh their image in the modern consumer mindset.'
+                ],
+                'published_at' => now()->subDays(12),
+                'status' => 'published',
+            ],
+            [
+                'title' => [
+                    'vi' => 'Thiết kế tối giản và sức hút thương hiệu bền vững',
+                    'en' => 'Minimalist Design and Enduring Brand Appeal'
+                ],
+                'slug' => 'thiet-ke-toi-gian-va-suc-hut-thuong-hieu',
+                'category' => ['vi' => 'Thiết kế', 'en' => 'Design'],
+                'thumbnail' => '/assets/images/project3.png',
+                'excerpt' => [
+                    'vi' => 'Tại sao sự tối giản luôn là lựa chọn hàng đầu của các thương hiệu hàng đầu thế giới.',
+                    'en' => 'Why minimalism remains the premier choice of world-leading brands.'
+                ],
+                'published_at' => now()->subDays(18),
+                'status' => 'published',
+            ],
+        ];
+        foreach ($blogs as $b) {
+            Blog::updateOrCreate(['slug' => $b['slug']], $b);
+        }
+
+        // 7. Reviews (Trích xuất nguyên vẹn 3 đánh giá từ index.blade.php)
+        $reviews = [
+            [
+                'author' => 'Nguyễn Minh Anh',
+                'role' => ['vi' => 'Giám đốc Marketing', 'en' => 'Marketing Director'],
+                'content' => [
+                    'vi' => 'Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định hướng rõ ràng. Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến lược đến hệ thống nhận diện. Trong suốt quá trình làm việc, mọi thứ được triển khai rất bài bản và minh bạch. Kết quả cuối cùng không chỉ là một bộ nhận diện đẹp mà còn là một nền tảng thương hiệu rõ ràng để doanh nghiệp phát triển lâu dài. Chúng tôi thật sự hài lòng với sự hợp tác này.',
+                    'en' => 'We approached the agency when our brand lacked consistency and clear direction. The team helped us review the entire brand narrative, from strategy to identity system. Throughout the project, everything was executed methodically and transparently.'
+                ],
+                'avatar' => '/assets/images/avatar.png',
+                'rating' => 5,
+                'sort_order' => 1,
+            ],
+            [
+                'author' => 'Trần Văn B',
+                'role' => ['vi' => 'CEO Tiên Phong', 'en' => 'CEO Tien Phong'],
+                'content' => [
+                    'vi' => 'Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn tru. Chúng tôi đánh giá cao sự sáng tạo và khả năng thấu hiểu thị trường của đội ngũ. Bộ nhận diện mới đã giúp doanh số tăng trưởng rõ rệt trong quý vừa qua.',
+                    'en' => 'Very professional service. Seamless from ideation to execution. We highly value the team creative acumen and market understanding.'
+                ],
+                'avatar' => '/assets/images/project2.png',
+                'rating' => 5,
+                'sort_order' => 2,
+            ],
+            [
+                'author' => 'Lê Thị C',
+                'role' => ['vi' => 'Founder Nem.A', 'en' => 'Founder Nem.A'],
+                'content' => [
+                    'vi' => 'Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến lược rất sát thực tế. Rất mong được tiếp tục đồng hành trong các dự án tương lai.',
+                    'en' => 'A wonderful experience. The agency delivers not just beautiful designs but very practical strategic consultation.'
+                ],
+                'avatar' => '/assets/images/project3.png',
+                'rating' => 5,
+                'sort_order' => 3,
+            ],
+        ];
+        foreach ($reviews as $r) {
+            Review::updateOrCreate(['author' => $r['author']], $r);
+        }
+
+        // 8. Media
+        $mediaFiles = [
+            ['name' => 'banner.png', 'file_path' => '/assets/images/banner.png', 'file_type' => 'image', 'file_size' => 1024000],
+            ['name' => 'project1.png', 'file_path' => '/assets/images/project1.png', 'file_type' => 'image', 'file_size' => 840000],
+            ['name' => 'project2.png', 'file_path' => '/assets/images/project2.png', 'file_type' => 'image', 'file_size' => 760000],
+            ['name' => 'project3.png', 'file_path' => '/assets/images/project3.png', 'file_type' => 'image', 'file_size' => 920000],
+            ['name' => 'project4.png', 'file_path' => '/assets/images/project4.png', 'file_type' => 'image', 'file_size' => 950000],
+            ['name' => 'news1.png', 'file_path' => '/assets/images/news1.png', 'file_type' => 'image', 'file_size' => 640000],
+            ['name' => 'norm.glb', 'file_path' => '/assets/images/norm.glb', 'file_type' => 'model3d', 'file_size' => 4500000],
+        ];
+        foreach ($mediaFiles as $mf) {
+            Media::updateOrCreate(['name' => $mf['name']], $mf);
+        }
     }
 }

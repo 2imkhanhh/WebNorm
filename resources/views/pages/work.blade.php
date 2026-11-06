@@ -11,16 +11,16 @@
 <section class="work-hero-section">
         <div class="work-hero-container">
             <div class="wh-line">
-                <a href="#" class="wh-text wh-dark filter-btn" data-filter="all">TẤT CẢ DỰ ÁN</a>
+                <a href="#" class="wh-text wh-dark filter-btn" data-filter="all" data-studio-key="filter_all">@normVal($pageContents['filter_all'] ?? null, 'TẤT CẢ DỰ ÁN')</a>
             </div>
 
             <div class="wh-line wh-space-between">
-                <a href="#" class="wh-text wh-light filter-btn" data-filter="featured">NỔI BẬT</a>
-                <a href="#" class="wh-text wh-light filter-btn" data-filter="identity">NHẬN DIỆN</a>
+                <a href="#" class="wh-text wh-light filter-btn" data-filter="featured" data-studio-key="filter_featured">@normVal($pageContents['filter_featured'] ?? null, 'NỔI BẬT')</a>
+                <a href="#" class="wh-text wh-light filter-btn" data-filter="identity" data-studio-key="filter_identity">@normVal($pageContents['filter_identity'] ?? null, 'NHẬN DIỆN')</a>
             </div>
 
             <div class="wh-line wh-right">
-                <a href="#" class="wh-text wh-light filter-btn" data-filter="website">WEBSITE</a>
+                <a href="#" class="wh-text wh-light filter-btn" data-filter="website" data-studio-key="filter_website">@normVal($pageContents['filter_website'] ?? null, 'WEBSITE')</a>
             </div>
         </div>
     </section>
@@ -33,120 +33,19 @@
         </div>
 
         <div class="work-grid">
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="identity">
+            @forelse($projects as $p)
+            <a href="{{ route('work.detail', $p->slug) }}" class="project-card" data-category="{{ strtolower($p->getCategory()) }}">
                 <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project1.png') }}" alt="Tiên Phong" class="project-img">
+                    <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}" class="project-img">
                 </div>
                 <div class="project-info">
-                    <h3 class="project-title">Nhận diện</h3>
-                    <p class="project-category">Brand identity</p>
+                    <h3 class="project-title">{{ $p->getTitle() }}</h3>
+                    <p class="project-category">{{ $p->getCategory() }}</p>
                 </div>
             </a>
-
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="website">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project2.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Website</h3>
-                    <p class="project-category">UI/UX Design</p>
-                </div>
-            </a>
-
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="featured">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project3.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nổi bật</h3>
-                    <p class="project-category">Brand identity - UI/UX - Social Stategy</p>
-                </div>
-            </a>
-
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="featured">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project4.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nổi bật 2</h3>
-                    <p class="project-category">Social Stategy</p>
-                </div>
-            </a>
-
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="website">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project4.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Website </h3>
-                    <p class="project-category">Web Development</p>
-                </div>
-            </a>
-
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="identity">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project1.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nhận diện 2</h3>
-                    <p class="project-category">Brand identity</p>
-                </div>
-            </a>
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="website">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project2.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Website 2</h3>
-                    <p class="project-category">UI/UX Design</p>
-                </div>
-            </a>
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="featured">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project3.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nổi bật 3</h3>
-                    <p class="project-category">Brand identity - UI/UX</p>
-                </div>
-            </a>
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="identity">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project4.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nhận diện 3</h3>
-                    <p class="project-category">Brand identity</p>
-                </div>
-            </a>
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="website">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project1.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Website 3</h3>
-                    <p class="project-category">UI/UX Design</p>
-                </div>
-            </a>
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="featured">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project2.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nổi bật 4</h3>
-                    <p class="project-category">Social Strategy</p>
-                </div>
-            </a>
-            <a href="{{ route('work.detail') }}" class="project-card" data-category="identity">
-                <div class="project-img-wrap">
-                    <img src="{{ asset('assets/images/project3.png') }}" alt="Tiên Phong" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">Nhận diện 4</h3>
-                    <p class="project-category">Brand identity</p>
-                </div>
-            </a>
-
+            @empty
+            <div class="col-12 py-5 text-center text-muted">Chưa có dự án nào được cập nhật.</div>
+            @endforelse
         </div>
 
         <div class="load-more-wrap">

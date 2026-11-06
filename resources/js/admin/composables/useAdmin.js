@@ -20,27 +20,37 @@ export const currentLanguage = ref('vi');
 export const previewIframe = ref(null);
 export const previewAreaRef = ref(null);
 
-// 3. Save & Changes state
+// 3. Save & Changes state with registered page handlers
 export const hasUnsavedChanges = ref(false);
 export const isSaving = ref(false);
 export const isSavingDraft = ref(false);
+export const onSaveHandler = ref(null);
+export const onDraftHandler = ref(null);
 
 export const saveDraft = () => {
-  isSavingDraft.value = true;
-  setTimeout(() => {
-    isSavingDraft.value = false;
-    hasUnsavedChanges.value = false;
-    alert('Đã lưu bản nháp thành công!');
-  }, 500);
+  if (onDraftHandler.value) {
+    onDraftHandler.value();
+  } else {
+    isSavingDraft.value = true;
+    setTimeout(() => {
+      isSavingDraft.value = false;
+      hasUnsavedChanges.value = false;
+      alert('Đã lưu bản nháp thành công!');
+    }, 400);
+  }
 };
 
 export const saveChanges = () => {
-  isSaving.value = true;
-  setTimeout(() => {
-    isSaving.value = false;
-    hasUnsavedChanges.value = false;
-    alert('Đã xuất bản cấu hình thành công!');
-  }, 600);
+  if (onSaveHandler.value) {
+    onSaveHandler.value();
+  } else {
+    isSaving.value = true;
+    setTimeout(() => {
+      isSaving.value = false;
+      hasUnsavedChanges.value = false;
+      alert('Đã xuất bản cấu hình thành công!');
+    }, 400);
+  }
 };
 
 // 4. Scaling & Viewport calculation

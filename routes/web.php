@@ -1,33 +1,41 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\PageContentController;
+use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-// Client Routes (Blade Views)
-Route::get('/', function () {
-    return view('pages.index');
-})->name('home');
+// Client Routes (Blade Views with Dynamic Database Content)
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about-us', [HomeController::class, 'about'])->name('about');
+Route::get('/work', [HomeController::class, 'work'])->name('work');
+Route::get('/work/{slug?}', [HomeController::class, 'workDetail'])->name('work.detail');
+Route::get('/news', [HomeController::class, 'news'])->name('news');
+Route::get('/news/{slug?}', [HomeController::class, 'newsDetail'])->name('news.detail');
 
-Route::get('/about-us', function () {
-    return view('pages.about-us');
-})->name('about');
+// Client Contact Drawer submission
+Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'phone' => 'nullable|string|max:50',
+        'services' => 'nullable|array',
+        'budget' => 'nullable|string',
+        'message' => 'nullable|string',
+    ]);
 
-Route::get('/work', function () {
-    return view('pages.work');
-})->name('work');
+    \App\Models\Contact::create($validated);
 
-Route::get('/work/detail', function () {
-    return view('pages.work-detail');
-})->name('work.detail');
-
-Route::get('/news', function () {
-    return view('pages.news');
-})->name('news');
-
-Route::get('/news/detail', function () {
-    return view('pages.news-detail');
-})->name('news.detail');
+    return response()->json(['success' => true, 'message' => 'Cảm ơn bạn đã liên hệ! Norm sẽ phản hồi sớm nhất.']);
+})->name('contact.submit');
 
 // Admin Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -43,17 +51,52 @@ Route::prefix('admin')->group(function () {
             return redirect()->route('admin.dashboard');
         });
 
-        Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->name('admin.dashboard');
-        Route::get('/pages', fn() => Inertia::render('Pages'))->name('admin.pages');
-        Route::get('/projects', fn() => Inertia::render('Projects'))->name('admin.projects');
-        Route::get('/services', fn() => Inertia::render('Services'))->name('admin.services');
-        Route::get('/news', fn() => Inertia::render('Blogs'))->name('admin.news');
-        Route::get('/reviews', fn() => Inertia::render('Reviews'))->name('admin.reviews');
-        Route::get('/leads', fn() => Inertia::render('Contacts'))->name('admin.leads');
-        Route::get('/media', fn() => Inertia::render('Media'))->name('admin.media');
-        Route::get('/settings', fn() => Inertia::render('Settings'))->name('admin.settings');
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-        // Redirect old studio route to dashboard
+        // Pages Content Editor
+        Route::get('/pages', [PageContentController::class, 'index'])->name('admin.pages');
+        Route::post('/pages/update', [PageContentController::class, 'update'])->name('admin.pages.update');
+
+        // Projects
+        Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
+        Route::post('/projects', [ProjectController::class, 'store'])->name('admin.projects.store');
+        Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
+        Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
+
+        // Services
+        Route::get('/services', [ServiceController::class, 'index'])->name('admin.services');
+        Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
+        Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
+        Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
+
+        // News & Blogs
+        Route::get('/news', [BlogController::class, 'index'])->name('admin.news');
+        Route::post('/news', [BlogController::class, 'store'])->name('admin.news.store');
+        Route::put('/news/{blog}', [BlogController::class, 'update'])->name('admin.news.update');
+        Route::delete('/news/{blog}', [BlogController::class, 'destroy'])->name('admin.news.destroy');
+
+        // Reviews
+        Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews');
+        Route::post('/reviews', [ReviewController::class, 'store'])->name('admin.reviews.store');
+        Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('admin.reviews.update');
+        Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+
+        // Leads & Contacts
+        Route::get('/leads', [ContactController::class, 'index'])->name('admin.leads');
+        Route::patch('/leads/{contact}', [ContactController::class, 'updateStatus'])->name('admin.leads.update');
+        Route::delete('/leads/{contact}', [ContactController::class, 'destroy'])->name('admin.leads.destroy');
+
+        // Media Library
+        Route::get('/media', [MediaController::class, 'index'])->name('admin.media');
+        Route::post('/media/upload', [MediaController::class, 'upload'])->name('admin.media.upload');
+        Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('admin.media.destroy');
+
+        // Settings
+        Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+        Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+
+        // Redirect old studio route
         Route::get('/studio/{any?}', function () {
             return redirect()->route('admin.dashboard');
         });

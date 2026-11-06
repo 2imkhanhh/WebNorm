@@ -28,11 +28,7 @@
                 <div class="row">
                     <div class="col-12 testimonial-title-container">
 
-                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1">GIẢI PHÁP</h2>
-
-                        <div class="solution-right-group">
-                            <h2 class="testimonial-title scroll-slide-right">THIẾT KẾ CHO</h2>
-                        </div>
+                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1" data-studio-key="about_heading">@normVal($pageContents['about_heading'] ?? null, 'GIẢI PHÁP THIẾT KẾ CHO')</h2>
 
                         <h2 class="testimonial-title brand-line scroll-slide-up">
                             <span class="text-old">THƯƠNG HIỆU</span>

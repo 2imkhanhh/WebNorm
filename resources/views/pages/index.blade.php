@@ -33,7 +33,7 @@
 
 @section('content')
 <section class="hero-section">
-        <model-viewer src="{{ asset('assets/images/norm.glb') }}" alt="3D Banner" camera-controls disable-zoom
+        <model-viewer src="{{ !empty($settings['model_3d']) ? asset($settings['model_3d']) : asset('assets/images/norm.glb') }}" alt="3D Banner" camera-controls disable-zoom
             interaction-prompt="none" disable-pan class="hero-3d-model" style="--poster-color: transparent;"
             shadow-intensity="1" camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
             max-camera-orbit="30deg 90deg 140%"></model-viewer>
@@ -78,9 +78,8 @@
     <section class="intro-section">
         <div class="container-fluid norm-container">
             <div class="reveal-wrapper">
-                <p class="reveal-text">
-                    Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ
-                    ràng, nhất quán và phù hợp với định hướng kinh doanh.
+                <p class="reveal-text" data-studio-key="hero_desc">
+                    @normVal($pageContents['hero_desc'] ?? null, 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.')
                 </p>
             </div>
 
@@ -128,79 +127,35 @@
 
                 <div class="ps-horizontal-viewport">
                     <div class="ps-horizontal-track" id="psTrack">
-
+                        @forelse($projects as $p)
+                        <div class="ps-project-item">
+                            <a href="{{ route('work.detail', $p->slug) }}" class="ps-card-inner text-decoration-none text-reset d-block">
+                                <div class="ps-img-wrap">
+                                    <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}">
+                                </div>
+                                <div class="ps-info-wrap">
+                                    <div class="ps-title">{{ $p->getTitle() }}</div>
+                                    <div class="ps-categories">
+                                        <span>{{ $p->getCategory() }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        @empty
                         <div class="ps-project-item">
                             <div class="ps-card-inner">
                                 <div class="ps-img-wrap">
                                     <img src="{{ asset('assets/images/project1.png') }}" alt="Nhận diện">
                                 </div>
                                 <div class="ps-info-wrap">
-                                    <div class="ps-title">Nhận diện</div>
+                                    <div class="ps-title">Nhận diện thương hiệu</div>
                                     <div class="ps-categories">
                                         <span>Brand identity</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="ps-project-item">
-                            <div class="ps-card-inner">
-                                <div class="ps-img-wrap">
-                                    <img src="{{ asset('assets/images/project2.png') }}" alt="Website">
-                                </div>
-                                <div class="ps-info-wrap">
-                                    <div class="ps-title">Website</div>
-                                    <div class="ps-categories">
-                                        <span>UI/UX Design</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="ps-project-item">
-                            <div class="ps-card-inner">
-                                <div class="ps-img-wrap">
-                                    <img src="{{ asset('assets/images/project3.png') }}" alt="Nổi bật">
-                                </div>
-                                <div class="ps-info-wrap">
-                                    <div class="ps-title">Nổi bật</div>
-                                    <div class="ps-categories">
-                                        <span>Brand identity</span>
-                                        <span>UI/UX</span>
-                                        <span>Social Stategy</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="ps-project-item">
-                            <div class="ps-card-inner">
-                                <div class="ps-img-wrap">
-                                    <img src="{{ asset('assets/images/project4.png') }}" alt="Nổi bật 2">
-                                </div>
-                                <div class="ps-info-wrap">
-                                    <div class="ps-title">Nổi bật 2</div>
-                                    <div class="ps-categories">
-                                        <span>Social Stategy</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="ps-project-item">
-                            <div class="ps-card-inner">
-                                <div class="ps-img-wrap">
-                                    <img src="{{ asset('assets/images/project4.png') }}" alt="Website">
-                                </div>
-                                <div class="ps-info-wrap">
-                                    <div class="ps-title">Website</div>
-                                    <div class="ps-categories">
-                                        <span>Web Development</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -232,7 +187,8 @@
 
     <section class="services-detail-section">
         <div class="container-fluid px-4">
-            <div class="service-item" id="service-01">
+            @foreach($services as $svc)
+            <div class="service-item" id="service-{{ $svc->number }}">
                 <div class="row">
                     <div class="col-lg-2 d-none d-lg-block"></div>
                     <div class="col-12 col-lg-10">
@@ -242,26 +198,28 @@
                                 <div class="col-12 col-md-7">
                                     <div class="d-flex align-items-end service-header-row">
                                         <div class="service-number-box">
-                                            <span class="service-number">01/</span>
+                                            <span class="service-number">{{ $svc->number }}/</span>
                                         </div>
-                                        <h3 class="service-title">Thiết kế từ chiến lược</h3>
+                                        <h3 class="service-title">{{ $svc->getTitle() }}</h3>
                                     </div>
                                     <div class="d-flex service-body-row">
                                         <div class="service-number-box"></div>
                                         <div class="service-text-box">
-                                            <ul class="service-list">
-                                                <li>Định vị thương hiệu</li>
-                                                <li>Câu chuyện thương hiệu</li>
-                                                <li>Đặt tên thương hiệu</li>
-                                                <li>Bản sắc thương hiệu</li>
-                                                <li>Thông điệp thương hiệu</li>
-                                            </ul>
+                                            @if(is_array($svc->content) && count($svc->content) > 0)
+                                                <ul class="service-list">
+                                                    @foreach($svc->content as $item)
+                                                        <li>{{ is_array($item) ? ($item['vi'] ?? reset($item)) : $item }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p class="service-desc m-0">{{ $svc->getDescription() }}</p>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project1.png') }}" alt="Dịch vụ 1" class="service-img">
+                                        <img src="{{ !empty($svc->icon) ? asset($svc->icon) : asset('assets/images/project1.png') }}" alt="{{ $svc->getTitle() }}" class="service-img">
                                     </div>
                                 </div>
                             </div>
@@ -269,118 +227,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="service-item" id="service-02">
-                <div class="row">
-                    <div class="col-lg-2 d-none d-lg-block"></div>
-                    <div class="col-12 col-lg-10">
-                        <hr class="service-divider">
-                        <div class="service-content-wrapper">
-                            <div class="row align-items-center">
-                                <div class="col-12 col-md-7">
-                                    <div class="d-flex align-items-end service-header-row">
-                                        <div class="service-number-box">
-                                            <span class="service-number">02/</span>
-                                        </div>
-                                        <h3 class="service-title">Thiết kế nhận diện thương hiệu</h3>
-                                    </div>
-                                    <div class="d-flex service-body-row">
-                                        <div class="service-number-box"></div>
-                                        <div class="service-text-box">
-                                            <ul class="service-list">
-                                                <li>Thiết kế logo</li>
-                                                <li>Hệ thống nhận diện thương hiệu</li>
-                                                <li>Bộ nhận diện ứng dụng</li>
-                                                <li>Cẩm nang thương hiệu</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-5 mt-4 mt-md-0">
-                                    <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project2.png') }}" alt="Dịch vụ 2" class="service-img">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="service-item" id="service-03">
-                <div class="row">
-                    <div class="col-lg-2 d-none d-lg-block"></div>
-                    <div class="col-12 col-lg-10">
-                        <hr class="service-divider">
-                        <div class="service-content-wrapper">
-                            <div class="row align-items-center">
-                                <div class="col-12 col-md-7">
-                                    <div class="d-flex align-items-end service-header-row">
-                                        <div class="service-number-box">
-                                            <span class="service-number">03/</span>
-                                        </div>
-                                        <h3 class="service-title">Thiết kế không gian số</h3>
-                                    </div>
-                                    <div class="d-flex service-body-row">
-                                        <div class="service-number-box"></div>
-                                        <div class="service-text-box">
-                                            <ul class="service-list">
-                                                <li>Thiết kế UI/UX</li>
-                                                <li>Thiết kế Website</li>
-                                                <li>Ứng dụng di động</li>
-                                                <li>Tối ưu trải nghiệm</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-5 mt-4 mt-md-0">
-                                    <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project3.png') }}" alt="Dịch vụ 3" class="service-img">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="service-item" id="service-04">
-                <div class="row">
-                    <div class="col-lg-2 d-none d-lg-block"></div>
-                    <div class="col-12 col-lg-10">
-                        <hr class="service-divider">
-                        <div class="service-content-wrapper">
-                            <div class="row align-items-center">
-                                <div class="col-12 col-md-7">
-                                    <div class="d-flex align-items-end service-header-row">
-                                        <div class="service-number-box">
-                                            <span class="service-number">04/</span>
-                                        </div>
-                                        <h3 class="service-title">Sản xuất nội dung</h3>
-                                    </div>
-                                    <div class="d-flex service-body-row">
-                                        <div class="service-number-box"></div>
-                                        <div class="service-text-box">
-                                            <ul class="service-list">
-                                                <li>Chụp ảnh doanh nghiệp</li>
-                                                <li>Sản xuất Video quảng cáo</li>
-                                                <li>Nội dung truyền thông</li>
-                                                <li>Quản trị Fanpage</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-5 mt-4 mt-md-0">
-                                    <div class="service-image-viewport">
-                                        <img src="{{ asset('assets/images/project4.png') }}" alt="Dịch vụ 4" class="service-img">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @endforeach
         </div>
     </section>
 
@@ -401,6 +248,28 @@
             <div class="testimonial-main-content">
                 <div class="testi-slider-container">
                     <div class="testi-track" id="testiTrack">
+                        @forelse($reviews as $idx => $rev)
+                        <div class="testi-slide {{ $idx === 0 ? 'active' : '' }}">
+                            <div class="row align-items-start">
+                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                    <div class="testimonial-avatar">
+                                        <img src="{{ !empty($rev->avatar) ? (str_starts_with($rev->avatar, 'http') ? $rev->avatar : asset($rev->avatar)) : asset('assets/images/avatar.png') }}" alt="{{ $rev->author }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="testimonial-quote">
+                                        <p class="quote-text">
+                                            "{{ $rev->getContent() }}"
+                                        </p>
+                                        <div class="quote-author">
+                                            <h4 class="author-name">{{ $rev->author }}</h4>
+                                            <p class="author-position">{{ $rev->getRole() }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
                         <div class="testi-slide active">
                             <div class="row align-items-start">
                                 <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
@@ -411,15 +280,7 @@
                                 <div class="col-md-7">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
-                                            "Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định
-                                            hướng rõ ràng.
-                                            Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến
-                                            lược đến hệ thống nhận diện.
-                                            Trong suốt quá trình làm việc, mọi thứ được triển khai rất bài bản và minh
-                                            bạch. Kết quả cuối cùng
-                                            không chỉ là một bộ nhận diện đẹp mà còn là một nền tảng thương hiệu rõ ràng
-                                            để doanh nghiệp phát triển lâu dài.
-                                            Chúng tôi thật sự hài lòng với sự hợp tác này."
+                                            "Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định hướng rõ ràng. Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến lược đến hệ thống nhận diện."
                                         </p>
                                         <div class="quote-author">
                                             <h4 class="author-name">Nguyễn Minh Anh</h4>
@@ -429,59 +290,10 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="testi-slide">
-                            <div class="row align-items-start">
-                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
-                                    <div class="testimonial-avatar">
-                                        <img src="{{ asset('assets/images/project2.png') }}" alt="Khách hàng 2">
-                                    </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="testimonial-quote">
-                                        <p class="quote-text">
-                                            "Dịch vụ rất chuyên nghiệp. Từ khâu lên ý tưởng đến lúc thực thi đều trơn
-                                            tru.
-                                            Chúng tôi đánh giá cao sự sáng tạo và khả năng thấu hiểu thị trường của đội
-                                            ngũ.
-                                            Bộ nhận diện mới đã giúp doanh số tăng trưởng rõ rệt trong quý vừa qua."
-                                        </p>
-                                        <div class="quote-author">
-                                            <h4 class="author-name">Trần Văn B</h4>
-                                            <p class="author-position">CEO Tiên Phong</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="testi-slide">
-                            <div class="row align-items-start">
-                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
-                                    <div class="testimonial-avatar">
-                                        <img src="{{ asset('assets/images/project3.png') }}" alt="Khách hàng 3">
-                                    </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="testimonial-quote">
-                                        <p class="quote-text">
-                                            "Một trải nghiệm tuyệt vời. Agency không chỉ làm đẹp mà còn tư vấn chiến
-                                            lược rất sát thực tế.
-                                            Rất mong được tiếp tục đồng hành trong các dự án tương lai."
-                                        </p>
-                                        <div class="quote-author">
-                                            <h4 class="author-name">Lê Thị C</h4>
-                                            <p class="author-position">Founder Nem.A</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        @endforelse
                     </div>
                 </div>
             </div>
-
             <div class="testimonial-footer">
                 <div class="row align-items-center">
                     <div class="col-md-4 d-none d-md-block"></div>

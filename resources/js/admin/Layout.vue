@@ -92,6 +92,16 @@
           <i class="bx bx-image-alt"></i>
           <span>Thư viện</span>
         </Link>
+
+        <Link
+          href="/admin/settings"
+          class="nav-rail-item"
+          :class="{ active: isCurrent('Settings') }"
+          title="Cài đặt website"
+        >
+          <i class="bx bx-cog"></i>
+          <span>Cài đặt</span>
+        </Link>
       </nav>
 
       <!-- 2. Controls Panel (Sub-Sidebar) - Shows for non-dashboard pages -->

@@ -14,6 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'contact/submit',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

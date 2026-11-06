@@ -1,7 +1,12 @@
 <template>
   <Layout>
     <div class="sidebar-header">
-      <h2 class="sidebar-title">{{ currentPageData.name }}</h2>
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <div>
+          <h2 class="sidebar-title">{{ currentPageData.name }}</h2>
+          <span class="badge-lang-indicator">Đang sửa: {{ currentLanguage.toUpperCase() }}</span>
+        </div>
+      </div>
     </div>
 
     <div class="sidebar-sections">
@@ -20,43 +25,47 @@
             ></i>
             <span>{{ section.title }}</span>
           </div>
+          <span class="fields-count">{{ section.fields.length }}</span>
         </div>
 
         <!-- Accordion Body -->
         <div v-show="openSectionId === section.id" class="section-body">
           <div v-for="field in section.fields" :key="field.key" class="field-group">
-            <label class="field-label">{{ field.label }}</label>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="field-label mb-0">{{ field.label }}</label>
+              <span class="field-key-badge">{{ field.key }}</span>
+            </div>
 
             <!-- Text Input -->
             <input
               v-if="field.type === 'text'"
-              v-model="field.value"
+              :value="getFieldValue(field)"
               type="text"
               class="field-input"
-              @input="onFieldChange(section.id, field.key, field.value)"
+              @input="updateField(section.id, field, $event.target.value)"
             />
 
             <!-- Textarea -->
             <textarea
               v-else-if="field.type === 'textarea'"
-              v-model="field.value"
+              :value="getFieldValue(field)"
               class="field-textarea"
               :rows="field.rows || 3"
-              @input="onFieldChange(section.id, field.key, field.value)"
+              @input="updateField(section.id, field, $event.target.value)"
             ></textarea>
 
             <!-- Image URL Input -->
             <div v-else-if="field.type === 'image'" class="image-field-wrap">
               <input
-                v-model="field.value"
+                :value="getFieldValue(field)"
                 type="text"
                 class="field-input"
                 placeholder="assets/images/..."
-                @input="onFieldChange(section.id, field.key, field.value)"
+                @input="updateField(section.id, field, $event.target.value)"
               />
-              <div v-if="field.value" class="image-preview-thumb">
+              <div v-if="getFieldValue(field)" class="image-preview-thumb">
                 <img
-                  :src="field.value.startsWith('http') ? field.value : '/' + field.value"
+                  :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
                   alt="Preview"
                 />
               </div>
@@ -69,12 +78,29 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
-import { selectedPageSlug, hasUnsavedChanges, previewIframe } from './composables/useAdmin';
+import {
+  selectedPageSlug,
+  currentLanguage,
+  hasUnsavedChanges,
+  isSaving,
+  isSavingDraft,
+  onSaveHandler,
+  onDraftHandler,
+  previewIframe,
+} from './composables/useAdmin';
 
-// Dữ liệu các trang và khối chỉnh sửa nội dung
-const pages = ref([
+const props = defineProps({
+  initialPages: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+// Fallback pages data
+const defaultPages = [
   {
     name: 'Trang chủ',
     slug: '/',
@@ -83,34 +109,27 @@ const pages = ref([
         id: 'hero',
         title: 'Hero & Tiêu đề chính',
         fields: [
-          { key: 'page_title', label: 'Tiêu đề SEO / Title', type: 'text', value: 'Brand Design Agency' },
-          { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: 'Brand Design Agency cung cấp giải pháp thiết kế thương hiệu, logo, bộ nhận diện thương hiệu chuyên nghiệp và sáng tạo.' },
+          { key: 'page_title', label: 'Tiêu đề SEO / Title', type: 'text', value: { vi: 'Brand Design Agency', en: 'Brand Design Agency' } },
+          { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.', en: 'We help businesses build clear, consistent brand identities.' } },
         ],
       },
       {
         id: 'showcase',
         title: 'Khối dự án nổi bật',
         fields: [
-          { key: 'showcase_label', label: 'Nhãn tiêu đề khối', type: 'text', value: 'DỰ ÁN NỔI BẬT' },
-        ],
-      },
-      {
-        id: 'testimonials',
-        title: 'Khối Đánh giá khách hàng',
-        fields: [
-          { key: 'testi_title', label: 'Tiêu đề khối', type: 'text', value: 'ĐÁNH GIÁ CỦA ĐỐI TÁC' },
+          { key: 'showcase_label', label: 'Nhãn tiêu đề khối', type: 'text', value: { vi: 'DỰ ÁN NỔI BẬT', en: 'FEATURED PROJECTS' } },
         ],
       },
       {
         id: 'footer_words',
         title: 'Chữ lật chân trang (Footer Animation)',
         fields: [
-          { key: 'footer_line1_old', label: 'Dòng 1 (Trước)', type: 'text', value: 'TỪ NHỮNG' },
-          { key: 'footer_line1_new', label: 'Dòng 1 (Sau)', type: 'text', value: 'ĐẾN MỘT' },
-          { key: 'footer_line2_old', label: 'Dòng 2 (Trước)', type: 'text', value: 'Ý TƯỞNG' },
-          { key: 'footer_line2_new', label: 'Dòng 2 (Sau)', type: 'text', value: 'THƯƠNG HIỆU' },
-          { key: 'footer_line3_old', label: 'Dòng 3 (Trước)', type: 'text', value: 'BAN ĐẦU' },
-          { key: 'footer_line3_new', label: 'Dòng 3 (Sau)', type: 'text', value: 'ĐÁNG NHỚ' },
+          { key: 'footer_line1_old', label: 'Dòng 1 (Trước)', type: 'text', value: { vi: 'TỪ NHỮNG', en: 'FROM AN' } },
+          { key: 'footer_line1_new', label: 'Dòng 1 (Sau)', type: 'text', value: { vi: 'ĐẾN MỘT', en: 'INTO A' } },
+          { key: 'footer_line2_old', label: 'Dòng 2 (Trước)', type: 'text', value: { vi: 'Ý TƯỞNG', en: 'IDEA' } },
+          { key: 'footer_line2_new', label: 'Dòng 2 (Sau)', type: 'text', value: { vi: 'THƯƠNG HIỆU', en: 'BRAND' } },
+          { key: 'footer_line3_old', label: 'Dòng 3 (Trước)', type: 'text', value: { vi: 'BAN ĐẦU', en: 'INITIAL' } },
+          { key: 'footer_line3_new', label: 'Dòng 3 (Sau)', type: 'text', value: { vi: 'ĐÁNG NHỚ', en: 'MEMORABLE' } },
         ],
       },
     ],
@@ -123,17 +142,17 @@ const pages = ref([
         id: 'about_intro',
         title: 'Giới thiệu & Giải pháp',
         fields: [
-          { key: 'about_heading', label: 'Tiêu đề giải pháp', type: 'text', value: 'GIẢI PHÁP THIẾT KẾ CHO' },
-          { key: 'about_slogan', label: 'Slogan biến đổi', type: 'text', value: 'THƯƠNG HIỆU DOANH NGHIỆP' },
+          { key: 'about_heading', label: 'Tiêu đề giải pháp', type: 'text', value: { vi: 'GIẢI PHÁP THIẾT KẾ CHO', en: 'DESIGN SOLUTIONS FOR' } },
+          { key: 'about_slogan', label: 'Slogan biến đổi', type: 'text', value: { vi: 'THƯƠNG HIỆU DOANH NGHIỆP', en: 'ENTERPRISE BRANDS' } },
         ],
       },
       {
         id: 'about_workflow',
         title: 'Quy trình làm việc (Workflow)',
         fields: [
-          { key: 'step1_title', label: 'Bước 1: Tên bước', type: 'text', value: 'Nghiên cứu & Định vị' },
-          { key: 'step2_title', label: 'Bước 2: Tên bước', type: 'text', value: 'Xây dựng ý tưởng' },
-          { key: 'step3_title', label: 'Bước 3: Tên bước', type: 'text', value: 'Thiết kế hoàn thiện' },
+          { key: 'step1_title', label: 'Bước 1: Tên bước', type: 'text', value: { vi: 'Nghiên cứu & Định vị', en: 'Research & Positioning' } },
+          { key: 'step2_title', label: 'Bước 2: Tên bước', type: 'text', value: { vi: 'Xây dựng ý tưởng', en: 'Concept Ideation' } },
+          { key: 'step3_title', label: 'Bước 3: Tên bước', type: 'text', value: { vi: 'Thiết kế hoàn thiện', en: 'Final Delivery' } },
         ],
       },
     ],
@@ -146,10 +165,10 @@ const pages = ref([
         id: 'work_hero',
         title: 'Banner Dự án & Bộ lọc',
         fields: [
-          { key: 'filter_all', label: 'Nút bộ lọc 1', type: 'text', value: 'TẤT CẢ DỰ ÁN' },
-          { key: 'filter_featured', label: 'Nút bộ lọc 2', type: 'text', value: 'NỔI BẬT' },
-          { key: 'filter_identity', label: 'Nút bộ lọc 3', type: 'text', value: 'NHẬN DIỆN' },
-          { key: 'filter_website', label: 'Nút bộ lọc 4', type: 'text', value: 'WEBSITE' },
+          { key: 'filter_all', label: 'Nút bộ lọc 1', type: 'text', value: { vi: 'TẤT CẢ DỰ ÁN', en: 'ALL PROJECTS' } },
+          { key: 'filter_featured', label: 'Nút bộ lọc 2', type: 'text', value: { vi: 'NỔI BẬT', en: 'FEATURED' } },
+          { key: 'filter_identity', label: 'Nút bộ lọc 3', type: 'text', value: { vi: 'NHẬN DIỆN', en: 'IDENTITY' } },
+          { key: 'filter_website', label: 'Nút bộ lọc 4', type: 'text', value: { vi: 'WEBSITE', en: 'WEBSITE' } },
         ],
       },
     ],
@@ -162,19 +181,43 @@ const pages = ref([
         id: 'news_header',
         title: 'Tiêu đề trang Tin tức',
         fields: [
-          { key: 'news_title1', label: 'Dòng tiêu đề trái', type: 'text', value: 'TIN TỨC &' },
-          { key: 'news_title2', label: 'Dòng tiêu đề phải', type: 'text', value: 'GÓC NHÌN' },
+          { key: 'news_title1', label: 'Dòng tiêu đề trái', type: 'text', value: { vi: 'TIN TỨC &', en: 'NEWS &' } },
+          { key: 'news_title2', label: 'Dòng tiêu đề phải', type: 'text', value: { vi: 'GÓC NHÌN', en: 'PERSPECTIVES' } },
         ],
       },
     ],
   },
-]);
+];
+
+const pages = ref(props.initialPages && props.initialPages.length > 0 ? props.initialPages : defaultPages);
+
+// If initialPages changes from server, update ref
+watch(
+  () => props.initialPages,
+  (newVal) => {
+    if (newVal && newVal.length > 0) {
+      pages.value = newVal;
+    }
+  },
+  { deep: true }
+);
 
 const openSectionId = ref(null);
 
 const currentPageData = computed(() => {
   return pages.value.find((p) => p.slug === selectedPageSlug.value) || pages.value[0];
 });
+
+// Auto-open first section
+watch(
+  currentPageData,
+  (newVal) => {
+    if (newVal && newVal.sections && newVal.sections.length > 0 && !openSectionId.value) {
+      openSectionId.value = newVal.sections[0].id;
+    }
+  },
+  { immediate: true }
+);
 
 const toggleSection = (id) => {
   openSectionId.value = openSectionId.value === id ? null : id;
@@ -183,6 +226,23 @@ const toggleSection = (id) => {
 watch(selectedPageSlug, () => {
   openSectionId.value = null;
 });
+
+// Helper to get bilingual value
+const getFieldValue = (field) => {
+  if (field.value && typeof field.value === 'object') {
+    return field.value[currentLanguage.value] ?? field.value['vi'] ?? '';
+  }
+  return field.value ?? '';
+};
+
+// Update field value
+const updateField = (sectionId, field, newVal) => {
+  if (!field.value || typeof field.value !== 'object') {
+    field.value = { vi: field.value || '', en: field.value || '' };
+  }
+  field.value[currentLanguage.value] = newVal;
+  onFieldChange(sectionId, field.key, newVal);
+};
 
 // Đồng bộ thay đổi tức thời sang Iframe qua postMessage
 const onFieldChange = (sectionId, fieldKey, value) => {
@@ -199,6 +259,62 @@ const onFieldChange = (sectionId, fieldKey, value) => {
     '*'
   );
 };
+
+// Save logic to backend MySQL database via Inertia
+const savePagesToDatabase = (isDraft = false) => {
+  if (isDraft) {
+    isSavingDraft.value = true;
+  } else {
+    isSaving.value = true;
+  }
+
+  const flatFields = [];
+  pages.value.forEach((p) => {
+    if (p.sections) {
+      p.sections.forEach((s) => {
+        if (s.fields) {
+          s.fields.forEach((f) => {
+            flatFields.push({
+              page_slug: p.slug,
+              section_id: s.id,
+              key: f.key,
+              value: f.value,
+            });
+          });
+        }
+      });
+    }
+  });
+
+  router.post(
+    '/admin/pages/update',
+    { fields: flatFields },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSaving.value = false;
+        isSavingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        alert(isDraft ? 'Đã lưu bản nháp thành công!' : 'Đã xuất bản cấu hình thành công lên website!');
+      },
+      onError: (err) => {
+        isSaving.value = false;
+        isSavingDraft.value = false;
+        alert('Có lỗi xảy ra khi lưu: ' + JSON.stringify(err));
+      },
+    }
+  );
+};
+
+onMounted(() => {
+  onSaveHandler.value = () => savePagesToDatabase(false);
+  onDraftHandler.value = () => savePagesToDatabase(true);
+});
+
+onUnmounted(() => {
+  onSaveHandler.value = null;
+  onDraftHandler.value = null;
+});
 </script>
 
 <style src="./css/pages.css"></style>

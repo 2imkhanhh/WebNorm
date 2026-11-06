@@ -12,22 +12,22 @@
                 <div class="col-12">
                     <div class="footer-text-wrap">
                         <div class="footer-line">
-                            <span class="text-old">TỪ NHỮNG</span>
-                            <span class="text-new">ĐẾN MỘT</span>
+                            <span class="text-old" data-studio-key="footer_line1_old">@normVal($pageContents['footer_line1_old'] ?? null, 'TỪ NHỮNG')</span>
+                            <span class="text-new" data-studio-key="footer_line1_new">@normVal($pageContents['footer_line1_new'] ?? null, 'ĐẾN MỘT')</span>
                         </div>
                         <div class="footer-line">
-                            <span class="text-old">Ý TƯỞNG</span>
-                            <span class="text-new">THƯƠNG HIỆU</span>
+                            <span class="text-old" data-studio-key="footer_line2_old">@normVal($pageContents['footer_line2_old'] ?? null, 'Ý TƯỞNG')</span>
+                            <span class="text-new" data-studio-key="footer_line2_new">@normVal($pageContents['footer_line2_new'] ?? null, 'THƯƠNG HIỆU')</span>
                         </div>
                         <div class="footer-line">
-                            <span class="text-old">BAN ĐẦU</span>
-                            <span class="text-new">ĐÁNG NHỚ</span>
+                            <span class="text-old" data-studio-key="footer_line3_old">@normVal($pageContents['footer_line3_old'] ?? null, 'BAN ĐẦU')</span>
+                            <span class="text-new" data-studio-key="footer_line3_new">@normVal($pageContents['footer_line3_new'] ?? null, 'ĐÁNG NHỚ')</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-12 text-start text-md-end mt-5 mt-md-0 footer-real-btn-col">
-                    <a href="#" class="footer-btn">
+                    <a href="#" class="footer-btn nav-contact-trigger">
                         CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
                     </a>
                 </div>
@@ -36,7 +36,7 @@
     </div>
 </footer>
 
-<a href="#" class="footer-cursor-btn" id="footerCursorBtn">
+<a href="#" class="footer-cursor-btn nav-contact-trigger" id="footerCursorBtn">
     CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
 </a>
 
@@ -46,12 +46,12 @@
 
             <div class="col-12 col-md-6 d-flex flex-column justify-content-between final-left-col">
                 <div class="contact-info">
-                    <p>(+84)816 656718</p>
-                    <p>info@norm.vn</p>
-                    <p>No. 110 Nguyen Ngoc Nai street,<br>Phuong Liet ward, Ha Noi city, Vietnam</p>
+                    <p data-studio-setting="hotline">@normSetting('hotline', '(+84)816 656718')</p>
+                    <p data-studio-setting="email">@normSetting('email', 'info@norm.vn')</p>
+                    <p data-studio-setting="address">{!! nl2br(e(\App\Helpers\NormHelper::setting('address', "No. 110 Nguyen Ngoc Nai street,\nPhuong Liet ward, Ha Noi city, Vietnam"))) !!}</p>
                 </div>
                 <div class="copyright">
-                    <p>@@2026 All Rights Reserved</p>
+                    <p data-studio-setting="copyright">@normSetting('copyright', '©2026 All Rights Reserved')</p>
                 </div>
             </div>
 
@@ -59,11 +59,11 @@
                 <div class="social-links-wrap">
                     <p class="label-side social-title">• Mạng xã hội</p>
                     <ul class="social-list">
-                        <li><a href="#">Behance</a></li>
-                        <li><a href="#">Linkedin</a></li>
-                        <li><a href="#">Instagram</a></li>
-                        <li><a href="#">Facebook</a></li>
-                        <li><a href="#">Dribble</a></li>
+                        <li><a href="{{ \App\Helpers\NormHelper::setting('social_behance', '#') }}" target="_blank">Behance</a></li>
+                        <li><a href="{{ \App\Helpers\NormHelper::setting('social_linkedin', '#') }}" target="_blank">Linkedin</a></li>
+                        <li><a href="{{ \App\Helpers\NormHelper::setting('social_instagram', '#') }}" target="_blank">Instagram</a></li>
+                        <li><a href="{{ \App\Helpers\NormHelper::setting('social_facebook', '#') }}" target="_blank">Facebook</a></li>
+                        <li><a href="{{ \App\Helpers\NormHelper::setting('social_dribbble', '#') }}" target="_blank">Dribbble</a></li>
                     </ul>
                 </div>
             </div>
