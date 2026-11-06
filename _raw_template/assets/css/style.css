@@ -45,8 +45,7 @@ body {
   overflow-x: clip;
   font-family: 'AeonikPro';
   font-weight: 400;
-  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 8%);
-  background-repeat: no-repeat;
+  background-color: #FAFAFA;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -264,7 +263,7 @@ header.navbar {
   display: flex;
   flex-direction: column;
   position: relative;
-
+  background: linear-gradient(180deg, #FDFF8E 0%, #FAFAFA 100%);
 }
 
 .hero-section .container-fluid {

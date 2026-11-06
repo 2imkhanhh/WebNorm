@@ -36,7 +36,7 @@
     <!-- CSS & Scripts -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}" />
     @stack('styles')
 
