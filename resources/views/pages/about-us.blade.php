@@ -4,7 +4,193 @@
 @section('body_class', 'about-page')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/about-us.css') }}?v=3">
+    <link rel="stylesheet" href="{{ asset('assets/css/about-us.css') }}?v={{ filemtime(public_path('assets/css/about-us.css')) }}">
+    <style>
+        /* Đảm bảo Body là block để position: sticky hoạt động chuẩn trên Chrome/Edge */
+        body.about-page {
+            display: block !important;
+            background: #FFFFFF !important;
+            min-height: auto !important;
+        }
+
+        /* Section wrapper */
+        .solution-section-wrapper {
+            height: 150vh !important;
+            margin-top: 5% !important;
+            position: relative !important;
+        }
+
+        /* Sticky zone: Đặt overflow: visible và padding-top để tuyệt đối không cắt dấu hỏi trên chữ Ả */
+        .solution-sticky-zone {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            top: 20vh !important;
+            width: 100% !important;
+            z-index: 2 !important;
+            overflow: visible !important;
+            padding-top: 25px !important;
+            padding-bottom: 25px !important;
+        }
+
+        .solution-sticky-zone .testimonial-title-container {
+            overflow: visible !important;
+            padding-top: 10px !important;
+        }
+
+        /* Font size & spacing chuẩn khớp 100% template tĩnh (Ảnh 2) */
+        .solution-sticky-zone .testimonial-title {
+            font-size: 8vw !important;
+            line-height: 1 !important;
+            margin-top: 20px !important;
+            margin-bottom: 0 !important;
+            letter-spacing: -0.02em !important;
+            color: #111111 !important;
+            text-transform: uppercase !important;
+            font-weight: 500 !important;
+        }
+
+        /* Dòng 1: GIẢI PHÁP - Khớp vị trí padding-left: 12vw và margin-left: 2% của file tĩnh */
+        .solution-sticky-zone .solution-text-1 {
+            margin-left: 2% !important;
+            padding-left: 12vw !important;
+            margin-top: 20px !important;
+            text-align: left !important;
+            overflow: visible !important;
+        }
+
+        /* Dòng 2: THIẾT KẾ CHO - Canh phải trọn chiều rộng block khớp Ảnh 2 */
+        .solution-sticky-zone .solution-right-group {
+            width: 100% !important;
+            text-align: right !important;
+            padding-right: 13% !important;
+            margin: 0 !important;
+        }
+        .solution-sticky-zone .solution-right-group .testimonial-title {
+            display: block !important;
+            width: 100% !important;
+            text-align: right !important;
+            margin-top: 20px !important;
+        }
+
+        /* Dòng 3: THƯƠNG HIỆU / DOANH NGHIỆP - Canh phải khớp lề dòng 2 */
+        .solution-sticky-zone .brand-line {
+            position: relative !important;
+            overflow: hidden !important;
+            height: 1.2em !important;
+            line-height: 1.2em !important;
+            display: block !important;
+            width: fit-content !important;
+            margin-left: auto !important;
+            margin-right: 13% !important;
+            padding-right: 1em !important;
+            text-align: left !important;
+            margin-top: 20px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .solution-sticky-zone .brand-line .text-old {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            white-space: nowrap !important;
+            height: 100% !important;
+            color: #BDBDBD !important;
+        }
+
+        .solution-sticky-zone .brand-line .text-new {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            width: 100% !important;
+            height: 100% !important;
+            color: #BDBDBD !important;
+            background-color: #ffffff !important;
+            -webkit-clip-path: inset(100% 0 0 0);
+            clip-path: inset(100% 0 0 0);
+        }
+
+        /* Section intro bên dưới: Nằm dưới và che phủ khi cuộn qua */
+        .about-intro-section {
+            position: relative !important;
+            z-index: 3 !important;
+            background-color: #ffffff !important;
+        }
+
+        /* Responsive Tablet (768px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            .solution-section-wrapper {
+                height: 140vh !important;
+                margin-top: 15vw !important;
+            }
+            .solution-sticky-zone {
+                top: 20vh !important;
+                padding-top: 20px !important;
+            }
+            .solution-sticky-zone .testimonial-title {
+                font-size: 9vw !important;
+                line-height: 1 !important;
+            }
+            .solution-sticky-zone .solution-text-1 {
+                padding-left: 6vw !important;
+                margin-left: 2% !important;
+            }
+            .solution-sticky-zone .solution-right-group {
+                padding-right: 4% !important;
+                margin-top: 1.5vw !important;
+            }
+            .solution-sticky-zone .solution-right-group .testimonial-title {
+                display: block !important;
+                width: 100% !important;
+                text-align: right !important;
+                margin-top: 1.5vw !important;
+            }
+            .solution-sticky-zone .brand-line {
+                margin-right: 4% !important;
+                padding-right: 0.8em !important;
+                margin-top: 1.5vw !important;
+            }
+        }
+
+        /* Responsive Mobile (<= 767px) */
+        @media (max-width: 767px) {
+            .solution-section-wrapper {
+                margin-top: 20vw !important;
+                height: 120vh !important;
+            }
+            .solution-sticky-zone {
+                top: 15vh !important;
+                padding-top: 15px !important;
+            }
+            .solution-sticky-zone .testimonial-title {
+                font-size: 11vw !important;
+                line-height: 1.1 !important;
+            }
+            .solution-sticky-zone .solution-text-1 {
+                margin-left: 0 !important;
+                padding-left: 0 !important;
+            }
+            .solution-sticky-zone .solution-right-group {
+                padding-right: 3% !important;
+                margin-top: 4vw !important;
+            }
+            .solution-sticky-zone .solution-right-group .testimonial-title {
+                display: block !important;
+                width: 100% !important;
+                text-align: right !important;
+                margin-top: 4vw !important;
+            }
+            .solution-sticky-zone .brand-line {
+                padding-right: 0.8em !important;
+                margin-top: 4vw !important;
+                margin-right: 0 !important;
+            }
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -28,7 +214,11 @@
                 <div class="row">
                     <div class="col-12 testimonial-title-container">
 
-                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1" data-studio-key="about_heading">@normVal($pageContents['about_heading'] ?? null, 'GIẢI PHÁP THIẾT KẾ CHO')</h2>
+                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1" data-studio-key="about_heading_1">@normVal($pageContents['about_heading_1'] ?? null, 'GIẢI PHÁP')</h2>
+
+                        <div class="solution-right-group">
+                            <h2 class="testimonial-title scroll-slide-right" data-studio-key="about_heading_2">@normVal($pageContents['about_heading_2'] ?? null, 'THIẾT KẾ CHO')</h2>
+                        </div>
 
                         <h2 class="testimonial-title brand-line scroll-slide-up">
                             <span class="text-old">THƯƠNG HIỆU</span>

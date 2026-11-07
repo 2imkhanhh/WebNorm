@@ -128,7 +128,8 @@ const defaultPages = [
         id: 'about_intro',
         title: 'Giới thiệu & Giải pháp',
         fields: [
-          { key: 'about_heading', label: 'Tiêu đề giải pháp', type: 'text', value: { vi: 'GIẢI PHÁP THIẾT KẾ CHO', en: 'DESIGN SOLUTIONS FOR' } },
+          { key: 'about_heading_1', label: 'Tiêu đề dòng 1 (trái)', type: 'text', value: { vi: 'GIẢI PHÁP', en: 'DESIGN SOLUTIONS' } },
+          { key: 'about_heading_2', label: 'Tiêu đề dòng 2 (phải)', type: 'text', value: { vi: 'THIẾT KẾ CHO', en: 'FOR' } },
           { key: 'about_slogan', label: 'Slogan biến đổi', type: 'text', value: { vi: 'THƯƠNG HIỆU DOANH NGHIỆP', en: 'ENTERPRISE BRANDS' } },
         ],
       },
