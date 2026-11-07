@@ -145,19 +145,45 @@
 
 /* 2. Controls Panel (Sub-Sidebar) */
 .studio-sidebar {
-  min-width: 260px;
+  min-width: 280px;
   max-width: 800px;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
   flex-shrink: 0;
+  height: calc(100vh - 56px);
+  max-height: calc(100vh - 56px);
+  position: relative;
+}
+
+.studio-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.studio-sidebar::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+.studio-sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.studio-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .sidebar-header {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 20;
   padding: 16px 18px 14px;
   border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
 }
 
 .sidebar-title {

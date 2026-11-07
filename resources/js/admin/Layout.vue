@@ -157,11 +157,11 @@ const isDashboard = computed(() => {
 });
 
 // Logic kéo thay đổi độ rộng cột (Sidebar resizer)
-const MIN_SIDEBAR_WIDTH = 260;
+const MIN_SIDEBAR_WIDTH = 320;
 const sidebarWidth = ref(MIN_SIDEBAR_WIDTH);
 const isResizing = ref(false);
 
-// Reset độ rộng cột nhỏ nhất (260px) khi chuyển trang
+// Reset độ rộng cột (320px) khi chuyển trang
 watch(
   () => page.component,
   (newComp) => {

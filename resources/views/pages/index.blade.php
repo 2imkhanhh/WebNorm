@@ -41,9 +41,9 @@
             <div class="row h-100 align-items-end">
 
                 <div class="col-auto hero-tagline">
-                    <p>Brand Design Agency</p>
-                    <p>Based In Vietnam</p>
-                    <p>Culture Your Brand</p>
+                    <p data-studio-key="hero_tagline_1">@normVal($pageContents['hero_tagline_1'] ?? null, 'Brand Design Agency')</p>
+                    <p data-studio-key="hero_tagline_2">@normVal($pageContents['hero_tagline_2'] ?? null, 'Based In Vietnam')</p>
+                    <p data-studio-key="hero_tagline_3">@normVal($pageContents['hero_tagline_3'] ?? null, 'Culture Your Brand')</p>
                 </div>
 
                 <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
