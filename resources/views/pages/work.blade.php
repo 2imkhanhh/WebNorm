@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dự án | Brand Design Agency')
+@section('title', 'Dự án')
 @section('body_class', 'work-page')
 
 @push('styles')

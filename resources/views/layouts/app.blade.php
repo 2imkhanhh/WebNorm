@@ -103,8 +103,6 @@
                 } else if (fieldKey === 'footer_line3_new') {
                     const el = document.querySelector('.footer-line:nth-child(3) .text-new');
                     if (el) el.textContent = value;
-                } else if (fieldKey === 'page_title') {
-                    document.title = value;
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);

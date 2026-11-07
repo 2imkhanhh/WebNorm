@@ -95,7 +95,6 @@ const defaultPages = [
         id: 'hero',
         title: 'Hero & Tiêu đề chính',
         fields: [
-          { key: 'page_title', label: 'Tiêu đề SEO / Title', type: 'text', value: { vi: 'Brand Design Agency', en: 'Brand Design Agency' } },
           { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.', en: 'We help businesses build clear, consistent brand identities.' } },
         ],
       },
