@@ -9,8 +9,21 @@
       </div>
     </div>
 
+    <!-- Staging Alert Banner when settings have unsaved changes -->
+    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
+      <div class="banner-info">
+        <span>Có thay đổi chưa lưu vào database</span>
+      </div>
+      <div class="banner-buttons">
+        <button type="button" class="btn-banner-revert" @click="revertSettings">Hủy thay đổi</button>
+        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="saveSettings">
+          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+        </button>
+      </div>
+    </div>
+
     <div class="sidebar-panel-content">
-      <form @submit.prevent="saveSettings" class="settings-form">
+      <form @submit.prevent="saveSettings" class="settings-form" :key="renderKey">
         <!-- 1. Thông tin chung & Logo -->
         <div class="settings-card">
           <div class="settings-card-title">
@@ -121,9 +134,15 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import {
+  hasUnsavedChanges,
+  isSaving,
+  onSaveHandler,
+  onDraftHandler,
+} from './composables/useAdmin';
 
 const props = defineProps({
   settings: {
@@ -131,8 +150,6 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-
-const isSaving = ref(false);
 
 const getVal = (key, lang = null) => {
   const val = props.settings[key];
@@ -142,7 +159,7 @@ const getVal = (key, lang = null) => {
   return val || '';
 };
 
-const form = reactive({
+const initFormData = () => ({
   site_name_vi: getVal('site_name', 'vi') || 'Brand Design Agency • Norm',
   site_name_en: getVal('site_name', 'en') || 'Brand Design Agency • Norm',
   logo: props.settings.logo || '/assets/images/logo.png',
@@ -158,6 +175,35 @@ const form = reactive({
   social_behance: props.settings.social_behance || 'https://behance.net',
   social_dribbble: props.settings.social_dribbble || 'https://dribbble.com',
 });
+
+const form = reactive(initFormData());
+
+const renderKey = ref(0);
+let isInitialized = false;
+let isReverting = false;
+
+watch(
+  () => ({ ...form }),
+  () => {
+    if (isInitialized && !isReverting) {
+      hasUnsavedChanges.value = true;
+    }
+  },
+  { deep: true }
+);
+
+const revertSettings = () => {
+  if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại cài đặt gốc trong database?')) {
+    isReverting = true;
+    Object.assign(form, initFormData());
+    renderKey.value++;
+    hasUnsavedChanges.value = false;
+    setTimeout(() => {
+      isReverting = false;
+      hasUnsavedChanges.value = false;
+    }, 50);
+  }
+};
 
 const saveSettings = () => {
   isSaving.value = true;
@@ -182,7 +228,8 @@ const saveSettings = () => {
     preserveScroll: true,
     onSuccess: () => {
       isSaving.value = false;
-      alert('Đã lưu cài đặt website thành công!');
+      hasUnsavedChanges.value = false;
+      alert('Đã xuất bản cài đặt website thành công vào cơ sở dữ liệu!');
     },
     onError: (err) => {
       isSaving.value = false;
@@ -190,6 +237,18 @@ const saveSettings = () => {
     },
   });
 };
+
+onMounted(() => {
+  isInitialized = true;
+  onSaveHandler.value = saveSettings;
+  onDraftHandler.value = saveSettings;
+});
+
+onUnmounted(() => {
+  onSaveHandler.value = null;
+  onDraftHandler.value = null;
+  hasUnsavedChanges.value = false;
+});
 </script>
 
 <style src="./css/panels.css"></style>

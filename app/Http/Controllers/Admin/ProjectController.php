@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -16,6 +17,57 @@ class ProjectController extends Controller
         return Inertia::render('Projects', [
             'projects' => $projects,
         ]);
+    }
+
+    public function publish(Request $request)
+    {
+        $items = $request->input('items', []);
+        $deletedIds = $request->input('deleted_ids', []);
+
+        DB::transaction(function () use ($items, $deletedIds) {
+            // Delete items that were removed in the staging UI
+            if (!empty($deletedIds)) {
+                Project::whereIn('id', $deletedIds)->delete();
+            }
+
+            // Sync and save pending items
+            foreach ($items as $index => $itemData) {
+                $id = $itemData['id'] ?? null;
+
+                $title = $itemData['title'] ?? '';
+                if (is_string($title)) {
+                    $title = ['vi' => $title, 'en' => $title];
+                }
+                $category = $itemData['category'] ?? '';
+                if (is_string($category)) {
+                    $category = ['vi' => $category, 'en' => $category];
+                }
+                $description = $itemData['description'] ?? '';
+                if (is_string($description)) {
+                    $description = ['vi' => $description, 'en' => $description];
+                }
+
+                $payload = [
+                    'title' => $title,
+                    'slug' => $itemData['slug'] ?? ('project-' . ($index + 1)),
+                    'category' => $category,
+                    'thumbnail' => $itemData['thumbnail'] ?? null,
+                    'client' => $itemData['client'] ?? null,
+                    'year' => $itemData['year'] ?? date('Y'),
+                    'description' => $description,
+                    'is_featured' => !empty($itemData['is_featured']),
+                    'sort_order' => $index + 1,
+                ];
+
+                if ($id && is_numeric($id) && Project::find($id)) {
+                    Project::where('id', $id)->update($payload);
+                } else {
+                    Project::create($payload);
+                }
+            }
+        });
+
+        return back()->with('success', 'Đã xuất bản danh sách dự án thành công vào cơ sở dữ liệu!');
     }
 
     public function store(Request $request)

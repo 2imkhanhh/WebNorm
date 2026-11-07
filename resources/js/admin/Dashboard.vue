@@ -12,10 +12,10 @@
             <div class="hero-badge-group">
               <span class="status-pill published">
                 <span class="dot"></span>
-                Đã kết nối Database MySQL
+                Đã có bản xuất bản
               </span>
               <span class="status-pill draft">
-                {{ metrics.leads_count || 0 }} Liên hệ mới
+                Chưa có bản nháp
               </span>
             </div>
           </div>
@@ -116,6 +116,9 @@
             </table>
           </div>
         </div>
+
+        <!-- Khoảng đệm chân trang để không bị dính sát lề dưới / taskbar -->
+        <div class="overview-bottom-spacer"></div>
       </div>
     </section>
   </Layout>

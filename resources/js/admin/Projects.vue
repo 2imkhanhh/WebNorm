@@ -12,8 +12,21 @@
       </div>
     </div>
 
-    <div class="sidebar-panel-content">
-      <div class="panel-list-item" v-for="p in projects" :key="p.id">
+    <!-- Staging Alert Banner when changes are pending publish -->
+    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
+      <div class="banner-info">
+        <span>Có thay đổi chưa lưu vào database</span>
+      </div>
+      <div class="banner-buttons">
+        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
+        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishProjects">
+          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-panel-content" :key="renderKey">
+      <div class="panel-list-item" v-for="p in localProjects" :key="p.id">
         <div class="item-thumb">
           <img :src="p.thumbnail ? (p.thumbnail.startsWith('http') ? p.thumbnail : '/' + p.thumbnail.replace(/^\//, '')) : '/assets/images/project1.png'" :alt="getTrans(p.title)" />
         </div>
@@ -21,6 +34,8 @@
           <div class="item-name d-flex align-items-center gap-2">
             <span>{{ getTrans(p.title) }}</span>
             <span v-if="p.is_featured" class="badge-featured" title="Dự án nổi bật">Nổi bật</span>
+            <span v-if="p._isNew" class="badge-staging-new" title="Chưa xuất bản vào database">Mới</span>
+            <span v-else-if="p._isModified" class="badge-staging-modified" title="Đã chỉnh sửa nhưng chưa xuất bản">Đã sửa</span>
           </div>
           <div class="item-meta">{{ getTrans(p.category) }} • {{ p.year || '2026' }}</div>
         </div>
@@ -34,7 +49,7 @@
         </div>
       </div>
 
-      <div v-if="!projects || projects.length === 0" class="empty-state">
+      <div v-if="!localProjects || localProjects.length === 0" class="empty-state">
         <i class="bx bx-folder-open empty-icon"></i>
         <p>Chưa có dự án nào. Hãy bấm "Thêm mới" để bắt đầu.</p>
       </div>
@@ -105,8 +120,8 @@
 
           <div class="studio-modal-footer">
             <button type="button" class="btn-cancel" @click="isModalOpen = false">Hủy</button>
-            <button type="submit" class="btn-submit" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Đang lưu...' : (editingItem ? 'Cập nhật' : 'Thêm mới') }}
+            <button type="submit" class="btn-submit">
+              {{ editingItem ? 'Áp dụng thay đổi' : 'Thêm vào danh sách' }}
             </button>
           </div>
         </form>
@@ -116,10 +131,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
-import { currentLanguage } from './composables/useAdmin';
+import {
+  currentLanguage,
+  hasUnsavedChanges,
+  isSaving,
+  onSaveHandler,
+  onDraftHandler,
+} from './composables/useAdmin';
 
 const props = defineProps({
   projects: {
@@ -128,9 +149,20 @@ const props = defineProps({
   },
 });
 
+const localProjects = ref([]);
+const deletedIds = ref([]);
 const isModalOpen = ref(false);
 const editingItem = ref(null);
-const isSubmitting = ref(false);
+const renderKey = ref(0);
+
+const syncFromProps = () => {
+  localProjects.value = JSON.parse(JSON.stringify(props.projects || []));
+  deletedIds.value = [];
+  renderKey.value++;
+  hasUnsavedChanges.value = false;
+};
+
+watch(() => props.projects, syncFromProps, { immediate: true });
 
 const form = reactive({
   title_vi: '',
@@ -201,9 +233,9 @@ watch(
   }
 );
 
+// Submit modal: Only modifies local staging state, does NOT write to database yet!
 const submitForm = () => {
-  isSubmitting.value = true;
-  const payload = {
+  const payloadData = {
     title: { vi: form.title_vi, en: form.title_en || form.title_vi },
     slug: form.slug,
     category: { vi: form.category_vi, en: form.category_en || form.category_vi },
@@ -215,37 +247,78 @@ const submitForm = () => {
   };
 
   if (editingItem.value) {
-    router.put(`/admin/projects/${editingItem.value.id}`, payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
-    });
+    const idx = localProjects.value.findIndex((p) => p.id === editingItem.value.id);
+    if (idx !== -1) {
+      localProjects.value[idx] = {
+        ...localProjects.value[idx],
+        ...payloadData,
+        _isModified: true,
+      };
+    }
   } else {
-    router.post('/admin/projects', payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
+    localProjects.value.unshift({
+      id: 'temp_' + Date.now(),
+      ...payloadData,
+      _isNew: true,
     });
+  }
+
+  hasUnsavedChanges.value = true;
+  isModalOpen.value = false;
+};
+
+// Delete action: Removes from local list without deleting from database yet!
+const confirmDelete = (p) => {
+  if (confirm(`Bạn có chắc chắn muốn xóa dự án "${getTrans(p.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+    localProjects.value = localProjects.value.filter((item) => item.id !== p.id);
+    if (typeof p.id === 'number' || (typeof p.id === 'string' && !p.id.startsWith('temp_'))) {
+      deletedIds.value.push(p.id);
+    }
+    hasUnsavedChanges.value = true;
   }
 };
 
-const confirmDelete = (p) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa dự án "${getTrans(p.title)}" không?`)) {
-    router.delete(`/admin/projects/${p.id}`, {
-      preserveScroll: true,
-    });
+// Revert back to database state
+const revertChanges = () => {
+  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
+    syncFromProps();
   }
 };
+
+// Publish batch changes to backend database
+const publishProjects = () => {
+  isSaving.value = true;
+  router.post(
+    '/admin/projects/publish',
+    {
+      items: localProjects.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSaving.value = false;
+        hasUnsavedChanges.value = false;
+        alert('Đã xuất bản thay đổi dự án vào cơ sở dữ liệu thành công!');
+      },
+      onError: (err) => {
+        isSaving.value = false;
+        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+      },
+    }
+  );
+};
+
+onMounted(() => {
+  onSaveHandler.value = publishProjects;
+  onDraftHandler.value = publishProjects;
+});
+
+onUnmounted(() => {
+  onSaveHandler.value = null;
+  onDraftHandler.value = null;
+  hasUnsavedChanges.value = false;
+});
 </script>
 
 <style src="./css/panels.css"></style>

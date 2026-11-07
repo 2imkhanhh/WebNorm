@@ -12,11 +12,28 @@
       </div>
     </div>
 
-    <div class="sidebar-panel-content">
-      <div class="panel-list-item" v-for="s in services" :key="s.id">
+    <!-- Staging Alert Banner when changes are pending publish -->
+    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
+      <div class="banner-info">
+        <span>Có thay đổi chưa lưu vào database</span>
+      </div>
+      <div class="banner-buttons">
+        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
+        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishServices">
+          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-panel-content" :key="renderKey">
+      <div class="panel-list-item" v-for="s in localServices" :key="s.id">
         <div class="item-badge">{{ s.number }}</div>
         <div class="item-info">
-          <div class="item-name">{{ getTrans(s.title) }}</div>
+          <div class="item-name d-flex align-items-center gap-2">
+            <span>{{ getTrans(s.title) }}</span>
+            <span v-if="s._isNew" class="badge-staging-new" title="Chưa xuất bản">Mới</span>
+            <span v-else-if="s._isModified" class="badge-staging-modified" title="Đã chỉnh sửa">Đã sửa</span>
+          </div>
           <div class="item-meta">{{ getTrans(s.description) }}</div>
         </div>
         <div class="item-actions">
@@ -29,7 +46,7 @@
         </div>
       </div>
 
-      <div v-if="!services || services.length === 0" class="empty-state">
+      <div v-if="!localServices || localServices.length === 0" class="empty-state">
         <i class="bx bx-layer empty-icon"></i>
         <p>Chưa có dịch vụ nào trong cơ sở dữ liệu.</p>
       </div>
@@ -62,13 +79,13 @@
           </div>
 
           <div class="modal-form-group">
-            <label class="modal-label">Mô tả tóm tắt (VI)</label>
-            <textarea v-model="form.description_vi" class="modal-textarea" rows="2" placeholder="Định hình nền tảng bản sắc thương hiệu vững chắc..."></textarea>
+            <label class="modal-label">Danh sách dịch vụ / Bullet points (VI) — Mỗi dòng 1 mục</label>
+            <textarea v-model="form.description_vi" class="modal-textarea" rows="5" placeholder="Định vị thương hiệu&#10;Câu chuyện thương hiệu&#10;Đặt tên thương hiệu..."></textarea>
           </div>
 
           <div class="modal-form-group">
-            <label class="modal-label">Mô tả tóm tắt (EN)</label>
-            <textarea v-model="form.description_en" class="modal-textarea" rows="2" placeholder="Building solid foundation for brand identity..."></textarea>
+            <label class="modal-label">Danh sách dịch vụ / Bullet points (EN) — Mỗi dòng 1 mục</label>
+            <textarea v-model="form.description_en" class="modal-textarea" rows="5" placeholder="Brand positioning&#10;Brand story&#10;Brand naming..."></textarea>
           </div>
 
           <div class="modal-form-group">
@@ -78,8 +95,8 @@
 
           <div class="studio-modal-footer">
             <button type="button" class="btn-cancel" @click="isModalOpen = false">Hủy</button>
-            <button type="submit" class="btn-submit" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Đang lưu...' : (editingItem ? 'Cập nhật' : 'Thêm mới') }}
+            <button type="submit" class="btn-submit">
+              {{ editingItem ? 'Áp dụng thay đổi' : 'Thêm vào danh sách' }}
             </button>
           </div>
         </form>
@@ -89,10 +106,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
-import { currentLanguage } from './composables/useAdmin';
+import {
+  currentLanguage,
+  hasUnsavedChanges,
+  isSaving,
+  onSaveHandler,
+  onDraftHandler,
+} from './composables/useAdmin';
 
 const props = defineProps({
   services: {
@@ -101,9 +124,20 @@ const props = defineProps({
   },
 });
 
+const localServices = ref([]);
+const deletedIds = ref([]);
 const isModalOpen = ref(false);
 const editingItem = ref(null);
-const isSubmitting = ref(false);
+const renderKey = ref(0);
+
+const syncFromProps = () => {
+  localServices.value = JSON.parse(JSON.stringify(props.services || []));
+  deletedIds.value = [];
+  renderKey.value++;
+  hasUnsavedChanges.value = false;
+};
+
+watch(() => props.services, syncFromProps, { immediate: true });
 
 const form = reactive({
   number: '01',
@@ -123,7 +157,7 @@ const getTrans = (val) => {
 
 const openCreateModal = () => {
   editingItem.value = null;
-  form.number = String(props.services.length + 1).padStart(2, '0');
+  form.number = String(localServices.value.length + 1).padStart(2, '0');
   form.title_vi = '';
   form.title_en = '';
   form.description_vi = '';
@@ -135,17 +169,26 @@ const openCreateModal = () => {
 const openEditModal = (s) => {
   editingItem.value = s;
   form.number = s.number || '01';
-  form.title_vi = typeof s.title === 'object' ? (s.title.vi || '') : (s.title || '');
-  form.title_en = typeof s.title === 'object' ? (s.title.en || '') : '';
-  form.description_vi = typeof s.description === 'object' ? (s.description.vi || '') : (s.description || '');
-  form.description_en = typeof s.description === 'object' ? (s.description.en || '') : '';
+  form.title_vi = typeof s.title === 'object' ? (s.title?.vi || '') : (s.title || '');
+  form.title_en = typeof s.title === 'object' ? (s.title?.en || '') : '';
+
+  let descVi = typeof s.description === 'object' ? (s.description?.vi || '') : (s.description || '');
+  if (!descVi && s.content && s.content.vi && Array.isArray(s.content.vi)) {
+    descVi = s.content.vi.join('\n');
+  }
+  let descEn = typeof s.description === 'object' ? (s.description?.en || '') : '';
+  if (!descEn && s.content && s.content.en && Array.isArray(s.content.en)) {
+    descEn = s.content.en.join('\n');
+  }
+
+  form.description_vi = descVi;
+  form.description_en = descEn;
   form.icon = s.icon || '';
   isModalOpen.value = true;
 };
 
 const submitForm = () => {
-  isSubmitting.value = true;
-  const payload = {
+  const payloadData = {
     number: form.number,
     title: { vi: form.title_vi, en: form.title_en || form.title_vi },
     description: { vi: form.description_vi, en: form.description_en || form.description_vi },
@@ -153,37 +196,75 @@ const submitForm = () => {
   };
 
   if (editingItem.value) {
-    router.put(`/admin/services/${editingItem.value.id}`, payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
-    });
+    const idx = localServices.value.findIndex((s) => s.id === editingItem.value.id);
+    if (idx !== -1) {
+      localServices.value[idx] = {
+        ...localServices.value[idx],
+        ...payloadData,
+        _isModified: true,
+      };
+    }
   } else {
-    router.post('/admin/services', payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
+    localServices.value.push({
+      id: 'temp_' + Date.now(),
+      ...payloadData,
+      _isNew: true,
     });
   }
+
+  hasUnsavedChanges.value = true;
+  isModalOpen.value = false;
 };
 
 const confirmDelete = (s) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa dịch vụ "${getTrans(s.title)}" không?`)) {
-    router.delete(`/admin/services/${s.id}`, {
-      preserveScroll: true,
-    });
+  if (confirm(`Bạn có chắc chắn muốn xóa dịch vụ "${getTrans(s.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+    localServices.value = localServices.value.filter((item) => item.id !== s.id);
+    if (typeof s.id === 'number' || (typeof s.id === 'string' && !s.id.startsWith('temp_'))) {
+      deletedIds.value.push(s.id);
+    }
+    hasUnsavedChanges.value = true;
   }
 };
+
+const revertChanges = () => {
+  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
+    syncFromProps();
+  }
+};
+
+const publishServices = () => {
+  isSaving.value = true;
+  router.post(
+    '/admin/services/publish',
+    {
+      items: localServices.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSaving.value = false;
+        hasUnsavedChanges.value = false;
+        alert('Đã xuất bản dịch vụ vào cơ sở dữ liệu thành công!');
+      },
+      onError: (err) => {
+        isSaving.value = false;
+        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+      },
+    }
+  );
+};
+
+onMounted(() => {
+  onSaveHandler.value = publishServices;
+  onDraftHandler.value = publishServices;
+});
+
+onUnmounted(() => {
+  onSaveHandler.value = null;
+  onDraftHandler.value = null;
+  hasUnsavedChanges.value = false;
+});
 </script>
 
 <style src="./css/panels.css"></style>

@@ -360,28 +360,98 @@ class DatabaseSeeder extends Seeder
             [
                 'number' => '01',
                 'title' => ['vi' => 'Thiết kế từ chiến lược', 'en' => 'Strategy-led Design'],
-                'description' => ['vi' => 'Định vị thương hiệu, câu chuyện, đặt tên, bản sắc và thông điệp thương hiệu.', 'en' => 'Brand positioning, brand story, naming, identity and key messaging.'],
+                'description' => [
+                    'vi' => "Định vị thương hiệu\nCâu chuyện thương hiệu\nĐặt tên thương hiệu\nBản sắc thương hiệu\nThông điệp thương hiệu",
+                    'en' => "Brand positioning\nBrand story\nBrand naming\nBrand identity\nBrand messaging"
+                ],
+                'content' => [
+                    'vi' => [
+                        'Định vị thương hiệu',
+                        'Câu chuyện thương hiệu',
+                        'Đặt tên thương hiệu',
+                        'Bản sắc thương hiệu',
+                        'Thông điệp thương hiệu',
+                    ],
+                    'en' => [
+                        'Brand positioning',
+                        'Brand story',
+                        'Brand naming',
+                        'Brand identity',
+                        'Brand messaging',
+                    ],
+                ],
                 'icon' => '/assets/images/project1.png',
                 'sort_order' => 1,
             ],
             [
                 'number' => '02',
                 'title' => ['vi' => 'Thiết kế nhận diện thương hiệu', 'en' => 'Comprehensive Identity Design'],
-                'description' => ['vi' => 'Thiết kế logo, hệ thống nhận diện thương hiệu, bộ ứng dụng và cẩm nang thương hiệu.', 'en' => 'Logo design, brand identity system, application kit, and brand guidelines.'],
+                'description' => [
+                    'vi' => "Thiết kế logo\nHệ thống nhận diện thương hiệu\nBộ nhận diện ứng dụng\nCẩm nang thương hiệu",
+                    'en' => "Logo design\nBrand identity system\nApplication kit\nBrand guidelines"
+                ],
+                'content' => [
+                    'vi' => [
+                        'Thiết kế logo',
+                        'Hệ thống nhận diện thương hiệu',
+                        'Bộ nhận diện ứng dụng',
+                        'Cẩm nang thương hiệu',
+                    ],
+                    'en' => [
+                        'Logo design',
+                        'Brand identity system',
+                        'Application kit',
+                        'Brand guidelines',
+                    ],
+                ],
                 'icon' => '/assets/images/project2.png',
                 'sort_order' => 2,
             ],
             [
                 'number' => '03',
                 'title' => ['vi' => 'Thiết kế không gian số', 'en' => 'Digital Experience & UI/UX'],
-                'description' => ['vi' => 'Thiết kế UI/UX, Website thương hiệu, ứng dụng di động và tối ưu trải nghiệm tương tác.', 'en' => 'UI/UX design, brand website, mobile app, and interactive user experience.'],
+                'description' => [
+                    'vi' => "Thiết kế UI/UX\nThiết kế Website\nỨng dụng di động\nTối ưu trải nghiệm",
+                    'en' => "UI/UX design\nBrand website\nMobile app\nInteractive user experience"
+                ],
+                'content' => [
+                    'vi' => [
+                        'Thiết kế UI/UX',
+                        'Thiết kế Website',
+                        'Ứng dụng di động',
+                        'Tối ưu trải nghiệm',
+                    ],
+                    'en' => [
+                        'UI/UX design',
+                        'Brand website',
+                        'Mobile app',
+                        'Interactive user experience',
+                    ],
+                ],
                 'icon' => '/assets/images/project3.png',
                 'sort_order' => 3,
             ],
             [
                 'number' => '04',
                 'title' => ['vi' => 'Sản xuất nội dung', 'en' => 'Content Production'],
-                'description' => ['vi' => 'Chụp ảnh doanh nghiệp, sản xuất video quảng cáo, nội dung truyền thông và quản trị fanpage.', 'en' => 'Corporate photography, promotional video production, media content and fanpage management.'],
+                'description' => [
+                    'vi' => "Chụp ảnh doanh nghiệp\nSản xuất Video quảng cáo\nNội dung truyền thông\nQuản trị Fanpage",
+                    'en' => "Corporate photography\nPromotional video production\nMedia content\nFanpage management"
+                ],
+                'content' => [
+                    'vi' => [
+                        'Chụp ảnh doanh nghiệp',
+                        'Sản xuất Video quảng cáo',
+                        'Nội dung truyền thông',
+                        'Quản trị Fanpage',
+                    ],
+                    'en' => [
+                        'Corporate photography',
+                        'Promotional video production',
+                        'Media content',
+                        'Fanpage management',
+                    ],
+                ],
                 'icon' => '/assets/images/project4.png',
                 'sort_order' => 4,
             ],

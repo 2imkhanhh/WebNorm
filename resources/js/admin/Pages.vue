@@ -4,25 +4,30 @@
       <div class="d-flex justify-content-between align-items-center w-100">
         <div>
           <h2 class="sidebar-title">{{ currentPageData.name }}</h2>
-          <span class="badge-lang-indicator">Đang sửa: {{ currentLanguage.toUpperCase() }}</span>
         </div>
       </div>
     </div>
 
-    <div class="sidebar-sections">
+    <!-- Staging Alert Banner when changes are pending publish -->
+    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
+      <div class="banner-info">
+        <span>Có thay đổi chưa lưu vào database</span>
+      </div>
+      <div class="banner-buttons">
+        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
+        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="savePagesToDatabase(false)">
+          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-sections" :key="renderKey + '_' + selectedPageSlug">
       <!-- Accordion Section Cards -->
-      <div
-        v-for="section in currentPageData.sections"
-        :key="section.id"
-        class="section-card"
-        :class="{ active: openSectionId === section.id }"
-      >
+      <div v-for="section in currentPageData.sections" :key="section.id" class="section-card"
+        :class="{ active: openSectionId === section.id }">
         <div class="section-header" @click="toggleSection(section.id)">
           <div class="section-title-wrap">
-            <i
-              class="bx"
-              :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"
-            ></i>
+            <i class="bx" :class="openSectionId === section.id ? 'bx-chevron-down' : 'bx-chevron-right'"></i>
             <span>{{ section.title }}</span>
           </div>
           <span class="fields-count">{{ section.fields.length }}</span>
@@ -31,43 +36,24 @@
         <!-- Accordion Body -->
         <div v-show="openSectionId === section.id" class="section-body">
           <div v-for="field in section.fields" :key="field.key" class="field-group">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <label class="field-label mb-0">{{ field.label }}</label>
-              <span class="field-key-badge">{{ field.key }}</span>
-            </div>
+            <label class="field-label">{{ field.label }}</label>
 
             <!-- Text Input -->
-            <input
-              v-if="field.type === 'text'"
-              :value="getFieldValue(field)"
-              type="text"
-              class="field-input"
-              @input="updateField(section.id, field, $event.target.value)"
-            />
+            <input v-if="field.type === 'text'" :value="getFieldValue(field)" type="text" class="field-input"
+              @input="updateField(section.id, field, $event.target.value)" />
 
             <!-- Textarea -->
-            <textarea
-              v-else-if="field.type === 'textarea'"
-              :value="getFieldValue(field)"
-              class="field-textarea"
-              :rows="field.rows || 3"
-              @input="updateField(section.id, field, $event.target.value)"
-            ></textarea>
+            <textarea v-else-if="field.type === 'textarea'" :value="getFieldValue(field)" class="field-textarea"
+              :rows="field.rows || 3" @input="updateField(section.id, field, $event.target.value)"></textarea>
 
             <!-- Image URL Input -->
             <div v-else-if="field.type === 'image'" class="image-field-wrap">
-              <input
-                :value="getFieldValue(field)"
-                type="text"
-                class="field-input"
-                placeholder="assets/images/..."
-                @input="updateField(section.id, field, $event.target.value)"
-              />
+              <input :value="getFieldValue(field)" type="text" class="field-input" placeholder="assets/images/..."
+                @input="updateField(section.id, field, $event.target.value)" />
               <div v-if="getFieldValue(field)" class="image-preview-thumb">
                 <img
                   :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
-                  alt="Preview"
-                />
+                  alt="Preview" />
               </div>
             </div>
           </div>
@@ -189,14 +175,27 @@ const defaultPages = [
   },
 ];
 
-const pages = ref(props.initialPages && props.initialPages.length > 0 ? props.initialPages : defaultPages);
+const clone = (data) => JSON.parse(JSON.stringify(data || []));
+const renderKey = ref(0);
 
-// If initialPages changes from server, update ref
+const getSourcePages = () => {
+  return props.initialPages && props.initialPages.length > 0 ? props.initialPages : defaultPages;
+};
+
+// Pristine snapshot directly from database - NEVER mutated
+const originalPagesSnapshot = ref(clone(getSourcePages()));
+// Reactive working copy that user modifies in UI
+const pages = ref(clone(originalPagesSnapshot.value));
+
+// If initialPages changes from server, update ref and snapshot
 watch(
   () => props.initialPages,
   (newVal) => {
     if (newVal && newVal.length > 0) {
-      pages.value = newVal;
+      originalPagesSnapshot.value = clone(newVal);
+      pages.value = clone(newVal);
+      renderKey.value++;
+      hasUnsavedChanges.value = false;
     }
   },
   { deep: true }
@@ -295,6 +294,9 @@ const savePagesToDatabase = (isDraft = false) => {
         isSaving.value = false;
         isSavingDraft.value = false;
         hasUnsavedChanges.value = false;
+        // Update snapshot to freshly saved values
+        originalPagesSnapshot.value = clone(pages.value);
+        renderKey.value++;
         alert(isDraft ? 'Đã lưu bản nháp thành công!' : 'Đã xuất bản cấu hình thành công lên website!');
       },
       onError: (err) => {
@@ -304,6 +306,20 @@ const savePagesToDatabase = (isDraft = false) => {
       },
     }
   );
+};
+
+const revertChanges = () => {
+  if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại nội dung gốc?')) {
+    // Restore strictly from pristine snapshot
+    pages.value = clone(originalPagesSnapshot.value);
+    renderKey.value++;
+    hasUnsavedChanges.value = false;
+
+    // Reset iframe to revert live preview changes
+    if (previewIframe.value) {
+      previewIframe.value.src = selectedPageSlug.value;
+    }
+  }
 };
 
 onMounted(() => {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class BlogController extends Controller
@@ -16,6 +17,55 @@ class BlogController extends Controller
         return Inertia::render('Blogs', [
             'blogs' => $blogs,
         ]);
+    }
+
+    public function publish(Request $request)
+    {
+        $items = $request->input('items', []);
+        $deletedIds = $request->input('deleted_ids', []);
+
+        DB::transaction(function () use ($items, $deletedIds) {
+            if (!empty($deletedIds)) {
+                Blog::whereIn('id', $deletedIds)->delete();
+            }
+
+            foreach ($items as $index => $itemData) {
+                $id = $itemData['id'] ?? null;
+
+                $title = $itemData['title'] ?? '';
+                if (is_string($title)) {
+                    $title = ['vi' => $title, 'en' => $title];
+                }
+                $category = $itemData['category'] ?? '';
+                if (is_string($category)) {
+                    $category = ['vi' => $category, 'en' => $category];
+                }
+                $excerpt = $itemData['excerpt'] ?? '';
+                if (is_string($excerpt)) {
+                    $excerpt = ['vi' => $excerpt, 'en' => $excerpt];
+                }
+
+                $payload = [
+                    'title' => $title,
+                    'slug' => $itemData['slug'] ?? ('news-' . ($index + 1)),
+                    'category' => $category,
+                    'thumbnail' => $itemData['thumbnail'] ?? null,
+                    'excerpt' => $excerpt,
+                    'content' => $itemData['content'] ?? null,
+                    'author' => $itemData['author'] ?? 'Admin',
+                    'status' => $itemData['status'] ?? 'published',
+                    'published_at' => $itemData['published_at'] ?? now(),
+                ];
+
+                if ($id && is_numeric($id) && Blog::find($id)) {
+                    Blog::where('id', $id)->update($payload);
+                } else {
+                    Blog::create($payload);
+                }
+            }
+        });
+
+        return back()->with('success', 'Đã xuất bản tin tức vào cơ sở dữ liệu thành công!');
     }
 
     public function store(Request $request)

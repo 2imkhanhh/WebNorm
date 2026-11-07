@@ -60,24 +60,28 @@ Route::prefix('admin')->group(function () {
 
         // Projects
         Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
+        Route::post('/projects/publish', [ProjectController::class, 'publish'])->name('admin.projects.publish');
         Route::post('/projects', [ProjectController::class, 'store'])->name('admin.projects.store');
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
 
         // Services
         Route::get('/services', [ServiceController::class, 'index'])->name('admin.services');
+        Route::post('/services/publish', [ServiceController::class, 'publish'])->name('admin.services.publish');
         Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
         Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
         Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
 
         // News & Blogs
         Route::get('/news', [BlogController::class, 'index'])->name('admin.news');
+        Route::post('/news/publish', [BlogController::class, 'publish'])->name('admin.news.publish');
         Route::post('/news', [BlogController::class, 'store'])->name('admin.news.store');
         Route::put('/news/{blog}', [BlogController::class, 'update'])->name('admin.news.update');
         Route::delete('/news/{blog}', [BlogController::class, 'destroy'])->name('admin.news.destroy');
 
         // Reviews
         Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews');
+        Route::post('/reviews/publish', [ReviewController::class, 'publish'])->name('admin.reviews.publish');
         Route::post('/reviews', [ReviewController::class, 'store'])->name('admin.reviews.store');
         Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('admin.reviews.update');
         Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');

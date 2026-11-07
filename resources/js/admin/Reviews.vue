@@ -12,8 +12,21 @@
       </div>
     </div>
 
-    <div class="sidebar-panel-content">
-      <div class="panel-list-item" v-for="r in reviews" :key="r.id">
+    <!-- Staging Alert Banner when changes are pending publish -->
+    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
+      <div class="banner-info">
+        <span>Có thay đổi chưa lưu vào database</span>
+      </div>
+      <div class="banner-buttons">
+        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
+        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishReviews">
+          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-panel-content" :key="renderKey">
+      <div class="panel-list-item" v-for="r in localReviews" :key="r.id">
         <div class="item-thumb avatar">
           <img :src="r.avatar ? (r.avatar.startsWith('http') ? r.avatar : '/' + r.avatar.replace(/^\//, '')) : '/assets/images/avatar.png'" :alt="r.author" />
         </div>
@@ -23,6 +36,8 @@
             <div class="review-stars">
               <i v-for="star in (r.rating || 5)" :key="star" class="bx bxs-star"></i>
             </div>
+            <span v-if="r._isNew" class="badge-staging-new" title="Chưa xuất bản">Mới</span>
+            <span v-else-if="r._isModified" class="badge-staging-modified" title="Đã chỉnh sửa">Đã sửa</span>
           </div>
           <div class="item-meta">{{ getTrans(r.role) }}</div>
           <div class="item-quote">"{{ getTrans(r.content) }}"</div>
@@ -37,7 +52,7 @@
         </div>
       </div>
 
-      <div v-if="!reviews || reviews.length === 0" class="empty-state">
+      <div v-if="!localReviews || localReviews.length === 0" class="empty-state">
         <i class="bx bx-star empty-icon"></i>
         <p>Chưa có đánh giá nào trong cơ sở dữ liệu.</p>
       </div>
@@ -97,8 +112,8 @@
 
           <div class="studio-modal-footer">
             <button type="button" class="btn-cancel" @click="isModalOpen = false">Hủy</button>
-            <button type="submit" class="btn-submit" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Đang lưu...' : (editingItem ? 'Cập nhật' : 'Thêm mới') }}
+            <button type="submit" class="btn-submit">
+              {{ editingItem ? 'Áp dụng thay đổi' : 'Thêm vào danh sách' }}
             </button>
           </div>
         </form>
@@ -108,10 +123,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
-import { currentLanguage } from './composables/useAdmin';
+import {
+  currentLanguage,
+  hasUnsavedChanges,
+  isSaving,
+  onSaveHandler,
+  onDraftHandler,
+} from './composables/useAdmin';
 
 const props = defineProps({
   reviews: {
@@ -120,9 +141,20 @@ const props = defineProps({
   },
 });
 
+const localReviews = ref([]);
+const deletedIds = ref([]);
 const isModalOpen = ref(false);
 const editingItem = ref(null);
-const isSubmitting = ref(false);
+const renderKey = ref(0);
+
+const syncFromProps = () => {
+  localReviews.value = JSON.parse(JSON.stringify(props.reviews || []));
+  deletedIds.value = [];
+  renderKey.value++;
+  hasUnsavedChanges.value = false;
+};
+
+watch(() => props.reviews, syncFromProps, { immediate: true });
 
 const form = reactive({
   author: '',
@@ -166,8 +198,7 @@ const openEditModal = (r) => {
 };
 
 const submitForm = () => {
-  isSubmitting.value = true;
-  const payload = {
+  const payloadData = {
     author: form.author,
     role: { vi: form.role_vi, en: form.role_en || form.role_vi },
     rating: form.rating,
@@ -176,37 +207,75 @@ const submitForm = () => {
   };
 
   if (editingItem.value) {
-    router.put(`/admin/reviews/${editingItem.value.id}`, payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
-    });
+    const idx = localReviews.value.findIndex((r) => r.id === editingItem.value.id);
+    if (idx !== -1) {
+      localReviews.value[idx] = {
+        ...localReviews.value[idx],
+        ...payloadData,
+        _isModified: true,
+      };
+    }
   } else {
-    router.post('/admin/reviews', payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
+    localReviews.value.unshift({
+      id: 'temp_' + Date.now(),
+      ...payloadData,
+      _isNew: true,
     });
   }
+
+  hasUnsavedChanges.value = true;
+  isModalOpen.value = false;
 };
 
 const confirmDelete = (r) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?`)) {
-    router.delete(`/admin/reviews/${r.id}`, {
-      preserveScroll: true,
-    });
+  if (confirm(`Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+    localReviews.value = localReviews.value.filter((item) => item.id !== r.id);
+    if (typeof r.id === 'number' || (typeof r.id === 'string' && !r.id.startsWith('temp_'))) {
+      deletedIds.value.push(r.id);
+    }
+    hasUnsavedChanges.value = true;
   }
 };
+
+const revertChanges = () => {
+  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
+    syncFromProps();
+  }
+};
+
+const publishReviews = () => {
+  isSaving.value = true;
+  router.post(
+    '/admin/reviews/publish',
+    {
+      items: localReviews.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSaving.value = false;
+        hasUnsavedChanges.value = false;
+        alert('Đã xuất bản đánh giá vào cơ sở dữ liệu thành công!');
+      },
+      onError: (err) => {
+        isSaving.value = false;
+        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+      },
+    }
+  );
+};
+
+onMounted(() => {
+  onSaveHandler.value = publishReviews;
+  onDraftHandler.value = publishReviews;
+});
+
+onUnmounted(() => {
+  onSaveHandler.value = null;
+  onDraftHandler.value = null;
+  hasUnsavedChanges.value = false;
+});
 </script>
 
 <style src="./css/panels.css"></style>

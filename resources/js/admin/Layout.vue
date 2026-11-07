@@ -135,14 +135,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick, onMounted } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import Topbar from './components/Topbar.vue';
 import LivePreview from './components/LivePreview.vue';
 import {
   calculateAutoFit,
   isAutoFit,
   previewIframe,
+  hasUnsavedChanges,
 } from './composables/useAdmin';
 
 const page = usePage();
@@ -218,6 +219,28 @@ onMounted(() => {
   calculateAutoFit();
   window.addEventListener('resize', () => {
     if (isAutoFit.value) calculateAutoFit();
+  });
+
+  // Guard navigation when there are unsaved/un-published changes
+  const removeRouterGuard = router.on('before', (event) => {
+    if (hasUnsavedChanges.value) {
+      if (!confirm('Bạn đang có thay đổi chưa bấm "Xuất bản". Nếu rời khỏi trang này, các thay đổi chưa lưu sẽ bị hủy. Bạn có chắc chắn muốn rời đi không?')) {
+        event.preventDefault();
+      }
+    }
+  });
+
+  const handleBeforeUnload = (e) => {
+    if (hasUnsavedChanges.value) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  };
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
+  onUnmounted(() => {
+    removeRouterGuard();
+    window.removeEventListener('beforeunload', handleBeforeUnload);
   });
 });
 </script>

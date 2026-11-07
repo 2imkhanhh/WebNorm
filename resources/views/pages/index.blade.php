@@ -188,7 +188,12 @@
     <section class="services-detail-section">
         <div class="container-fluid px-4">
             @foreach($services as $svc)
-            <div class="service-item" id="service-{{ $svc->number }}">
+            @php
+                $numStr = str_pad(rtrim($svc->number, '/'), 2, '0', STR_PAD_LEFT);
+                $listItems = $svc->getListItems(session('locale', 'vi'));
+                $iconUrl = !empty($svc->icon) ? asset(ltrim($svc->icon, '/')) : asset('assets/images/project1.png');
+            @endphp
+            <div class="service-item" id="service-{{ $numStr }}">
                 <div class="row">
                     <div class="col-lg-2 d-none d-lg-block"></div>
                     <div class="col-12 col-lg-10">
@@ -198,28 +203,24 @@
                                 <div class="col-12 col-md-7">
                                     <div class="d-flex align-items-end service-header-row">
                                         <div class="service-number-box">
-                                            <span class="service-number">{{ $svc->number }}/</span>
+                                            <span class="service-number">{{ $numStr }}/</span>
                                         </div>
-                                        <h3 class="service-title">{{ $svc->getTitle() }}</h3>
+                                        <h3 class="service-title">{{ $svc->getTitle(session('locale', 'vi')) }}</h3>
                                     </div>
                                     <div class="d-flex service-body-row">
                                         <div class="service-number-box"></div>
                                         <div class="service-text-box">
-                                            @if(is_array($svc->content) && count($svc->content) > 0)
-                                                <ul class="service-list">
-                                                    @foreach($svc->content as $item)
-                                                        <li>{{ is_array($item) ? ($item['vi'] ?? reset($item)) : $item }}</li>
-                                                    @endforeach
-                                                </ul>
-                                            @else
-                                                <p class="service-desc m-0">{{ $svc->getDescription() }}</p>
-                                            @endif
+                                            <ul class="service-list">
+                                                @foreach($listItems as $item)
+                                                    <li>{{ $item }}</li>
+                                                @endforeach
+                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ !empty($svc->icon) ? asset($svc->icon) : asset('assets/images/project1.png') }}" alt="{{ $svc->getTitle() }}" class="service-img">
+                                        <img src="{{ $iconUrl }}" alt="{{ $svc->getTitle(session('locale', 'vi')) }}" class="service-img">
                                     </div>
                                 </div>
                             </div>

@@ -12,13 +12,30 @@
       </div>
     </div>
 
-    <div class="sidebar-panel-content">
-      <div class="panel-list-item" v-for="b in blogs" :key="b.id">
+    <!-- Staging Alert Banner when changes are pending publish -->
+    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
+      <div class="banner-info">
+        <span>Có thay đổi chưa lưu vào database</span>
+      </div>
+      <div class="banner-buttons">
+        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
+        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishBlogs">
+          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-panel-content" :key="renderKey">
+      <div class="panel-list-item" v-for="b in localBlogs" :key="b.id">
         <div class="item-thumb">
           <img :src="b.thumbnail ? (b.thumbnail.startsWith('http') ? b.thumbnail : '/' + b.thumbnail.replace(/^\//, '')) : '/assets/images/news1.png'" :alt="getTrans(b.title)" />
         </div>
         <div class="item-info">
-          <div class="item-name">{{ getTrans(b.title) }}</div>
+          <div class="item-name d-flex align-items-center gap-2">
+            <span>{{ getTrans(b.title) }}</span>
+            <span v-if="b._isNew" class="badge-staging-new" title="Chưa xuất bản">Mới</span>
+            <span v-else-if="b._isModified" class="badge-staging-modified" title="Đã chỉnh sửa">Đã sửa</span>
+          </div>
           <div class="item-meta">
             {{ getTrans(b.category) }} • {{ formatDate(b.published_at) }}
             <span class="badge-status-dot" :class="b.status">{{ b.status === 'published' ? 'Đã xuất bản' : 'Bản nháp' }}</span>
@@ -34,7 +51,7 @@
         </div>
       </div>
 
-      <div v-if="!blogs || blogs.length === 0" class="empty-state">
+      <div v-if="!localBlogs || localBlogs.length === 0" class="empty-state">
         <i class="bx bx-news empty-icon"></i>
         <p>Chưa có bài viết nào trong cơ sở dữ liệu.</p>
       </div>
@@ -101,8 +118,8 @@
 
           <div class="studio-modal-footer">
             <button type="button" class="btn-cancel" @click="isModalOpen = false">Hủy</button>
-            <button type="submit" class="btn-submit" :disabled="isSubmitting">
-              {{ isSubmitting ? 'Đang lưu...' : (editingItem ? 'Cập nhật' : 'Thêm mới') }}
+            <button type="submit" class="btn-submit">
+              {{ editingItem ? 'Áp dụng thay đổi' : 'Thêm vào danh sách' }}
             </button>
           </div>
         </form>
@@ -112,10 +129,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
-import { currentLanguage } from './composables/useAdmin';
+import {
+  currentLanguage,
+  hasUnsavedChanges,
+  isSaving,
+  onSaveHandler,
+  onDraftHandler,
+} from './composables/useAdmin';
 
 const props = defineProps({
   blogs: {
@@ -124,9 +147,20 @@ const props = defineProps({
   },
 });
 
+const localBlogs = ref([]);
+const deletedIds = ref([]);
 const isModalOpen = ref(false);
 const editingItem = ref(null);
-const isSubmitting = ref(false);
+const renderKey = ref(0);
+
+const syncFromProps = () => {
+  localBlogs.value = JSON.parse(JSON.stringify(props.blogs || []));
+  deletedIds.value = [];
+  renderKey.value++;
+  hasUnsavedChanges.value = false;
+};
+
+watch(() => props.blogs, syncFromProps, { immediate: true });
 
 const form = reactive({
   title_vi: '',
@@ -200,8 +234,7 @@ watch(
 );
 
 const submitForm = () => {
-  isSubmitting.value = true;
-  const payload = {
+  const payloadData = {
     title: { vi: form.title_vi, en: form.title_en || form.title_vi },
     slug: form.slug,
     category: { vi: form.category_vi, en: form.category_en || form.category_vi },
@@ -209,40 +242,79 @@ const submitForm = () => {
     excerpt: { vi: form.excerpt_vi, en: form.excerpt_en || form.excerpt_vi },
     author: form.author,
     status: form.status,
+    published_at: editingItem.value ? editingItem.value.published_at : new Date().toISOString(),
   };
 
   if (editingItem.value) {
-    router.put(`/admin/news/${editingItem.value.id}`, payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
-    });
+    const idx = localBlogs.value.findIndex((b) => b.id === editingItem.value.id);
+    if (idx !== -1) {
+      localBlogs.value[idx] = {
+        ...localBlogs.value[idx],
+        ...payloadData,
+        _isModified: true,
+      };
+    }
   } else {
-    router.post('/admin/news', payload, {
-      preserveScroll: true,
-      onSuccess: () => {
-        isSubmitting.value = false;
-        isModalOpen.value = false;
-      },
-      onError: () => {
-        isSubmitting.value = false;
-      },
+    localBlogs.value.unshift({
+      id: 'temp_' + Date.now(),
+      ...payloadData,
+      _isNew: true,
     });
   }
+
+  hasUnsavedChanges.value = true;
+  isModalOpen.value = false;
 };
 
 const confirmDelete = (b) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa bài viết "${getTrans(b.title)}" không?`)) {
-    router.delete(`/admin/news/${b.id}`, {
-      preserveScroll: true,
-    });
+  if (confirm(`Bạn có chắc chắn muốn xóa bài viết "${getTrans(b.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+    localBlogs.value = localBlogs.value.filter((item) => item.id !== b.id);
+    if (typeof b.id === 'number' || (typeof b.id === 'string' && !b.id.startsWith('temp_'))) {
+      deletedIds.value.push(b.id);
+    }
+    hasUnsavedChanges.value = true;
   }
 };
+
+const revertChanges = () => {
+  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
+    syncFromProps();
+  }
+};
+
+const publishBlogs = () => {
+  isSaving.value = true;
+  router.post(
+    '/admin/news/publish',
+    {
+      items: localBlogs.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSaving.value = false;
+        hasUnsavedChanges.value = false;
+        alert('Đã xuất bản bài viết vào cơ sở dữ liệu thành công!');
+      },
+      onError: (err) => {
+        isSaving.value = false;
+        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+      },
+    }
+  );
+};
+
+onMounted(() => {
+  onSaveHandler.value = publishBlogs;
+  onDraftHandler.value = publishBlogs;
+});
+
+onUnmounted(() => {
+  onSaveHandler.value = null;
+  onDraftHandler.value = null;
+  hasUnsavedChanges.value = false;
+});
 </script>
 
 <style src="./css/panels.css"></style>
