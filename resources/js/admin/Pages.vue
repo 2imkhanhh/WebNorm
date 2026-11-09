@@ -45,7 +45,8 @@
 
             <!-- Textarea -->
             <textarea v-else-if="field.type === 'textarea'" :value="getFieldValue(field)" class="field-textarea"
-              :rows="field.rows || (field.key === 'hero_desc' ? 4 : 3)" @input="updateField(section.id, field, $event.target.value)"></textarea>
+              :rows="field.rows || (field.key === 'hero_desc' ? 4 : 3)"
+              @input="updateField(section.id, field, $event.target.value)"></textarea>
 
             <!-- Image URL Input -->
             <div v-else-if="field.type === 'image'" class="image-field-wrap">
@@ -99,7 +100,7 @@ const defaultPages = [
           { key: 'hero_tagline_1', label: 'Banner Tagline 1', type: 'text', value: { vi: 'Brand Design Agency', en: 'Brand Design Agency' } },
           { key: 'hero_tagline_2', label: 'Banner Tagline 2', type: 'text', value: { vi: 'Based In Vietnam', en: 'Based In Vietnam' } },
           { key: 'hero_tagline_3', label: 'Banner Tagline 3', type: 'text', value: { vi: 'Culture Your Brand', en: 'Culture Your Brand' } },
-          { key: 'hero_heading', label: 'Tiêu đề lớn Hero (3 dòng)', type: 'textarea', value: { vi: "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ", en: "IDENTITY\nSTRATEGY\nCULTURE" } },
+          { key: 'hero_heading', label: 'Tiêu đề lớn Hero', type: 'textarea', value: { vi: "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ", en: "IDENTITY\nSTRATEGY\nCULTURE" } },
           { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.', en: 'We help businesses build clear, consistent brand identities.' } },
         ],
       },
