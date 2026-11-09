@@ -21,23 +21,20 @@
       <div v-else-if="currentPageData && currentPageData.has_draft" class="draft-active-banner">
         <div class="banner-info">
           <i class="bx bx-file-blank banner-icon-draft"></i>
-          <div>
-            <div class="banner-title">Trang này đang có bản nháp chưa xuất bản</div>
-            <div class="banner-sub">
-              <span v-if="formattedDraftTime">Lưu lúc: {{ formattedDraftTime }}</span>
-              <span v-else>Khách bên ngoài chưa nhìn thấy</span>
-            </div>
-          </div>
+          <span>Có bản nháp chưa xuất bản</span>
         </div>
         <div class="banner-buttons">
-          <a :href="previewDraftUrl" target="_blank" class="btn-banner-view" title="Mở trang xem trước bản nháp">
-            <i class="bx bx-show"></i> Xem nháp
+          <a :href="previewDraftUrl" target="_blank" class="btn-banner-view">
+            <i class="bx bx-show"></i> Xem bản nháp
           </a>
-          <button type="button" class="btn-banner-discard" :disabled="isDiscardingDraft || isSaving" @click="handleDiscardDraft">
-            {{ isDiscardingDraft ? 'Đang hủy...' : 'Hủy bản nháp' }}
-          </button>
-          <button type="button" class="btn-banner-publish" :disabled="isSaving || isDiscardingDraft" @click="savePagesToDatabase(false)">
-            {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+          <button
+            type="button"
+            class="btn-banner-discard"
+            :disabled="isDiscardingDraft || isSaving"
+            @click="handleDiscardDraft"
+          >
+            <i class="bx bx-trash"></i>
+            {{ isDiscardingDraft ? 'Đang xóa...' : 'Xóa bản nháp' }}
           </button>
         </div>
       </div>
@@ -377,11 +374,7 @@ const savePagesToDatabase = (isDraft = false) => {
             baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
         }
 
-        alert(
-          isDraft
-            ? 'Đã lưu bản nháp thành công!\n(Nội dung nháp đã lưu vào cơ sở dữ liệu. Khách bên ngoài website vẫn chưa thấy thay đổi này cho đến khi bạn bấm "Xuất bản")'
-            : 'Đã xuất bản cấu hình thành công lên website chính thức!'
-        );
+        alert(isDraft ? 'Đã lưu bản nháp thành công!' : 'Đã xuất bản thành công!');
       },
       onError: (err) => {
         isSaving.value = false;
@@ -393,11 +386,7 @@ const savePagesToDatabase = (isDraft = false) => {
 };
 
 const handleDiscardDraft = () => {
-  if (
-    !confirm(
-      'Bạn có chắc chắn muốn hủy bản nháp của trang này?\n(Toàn bộ nội dung nháp chưa xuất bản sẽ bị xóa và quay về nội dung đang hiển thị trên website thật)'
-    )
-  ) {
+  if (!confirm('Bạn có chắc chắn muốn xóa bản nháp này không?')) {
     return;
   }
 
@@ -442,11 +431,11 @@ const handleDiscardDraft = () => {
             baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
         }
 
-        alert('Đã hủy bản nháp thành công! Nội dung đã quay về bản đang xuất bản trên website.');
+        alert('Đã xóa bản nháp thành công!');
       },
       onError: (err) => {
         isDiscardingDraft.value = false;
-        alert('Có lỗi xảy ra khi hủy bản nháp: ' + JSON.stringify(err));
+        alert('Có lỗi xảy ra khi xóa bản nháp: ' + JSON.stringify(err));
       },
     }
   );

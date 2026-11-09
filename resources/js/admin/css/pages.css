@@ -188,9 +188,8 @@
   flex-direction: column;
   gap: 8px;
   padding: 10px 12px;
-  background: #fbfbfe;
-  border: 1px solid #ddd6fe;
-  border-left: 3px solid #8b5cf6;
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
@@ -199,88 +198,59 @@
 
 .draft-active-banner .banner-info {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1d4ed8;
   text-align: left;
+  width: 100%;
 }
 
 .draft-active-banner .banner-icon-draft {
-  font-size: 18px;
-  color: #8b5cf6;
-  margin-top: 1px;
-}
-
-.draft-active-banner .banner-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: #5b21b6;
-  line-height: 1.3;
-}
-
-.draft-active-banner .banner-sub {
-  font-size: 11px;
-  color: #7c3aed;
-  opacity: 0.85;
+  font-size: 16px;
+  color: #2563eb;
+  flex-shrink: 0;
 }
 
 .draft-active-banner .banner-buttons {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
 }
 
 .draft-active-banner .btn-banner-view {
-  background: #ffffff;
-  color: #6d28d9;
-  border: 1px solid #ddd6fe;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-decoration: none;
+  flex: 1;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  transition: all 0.15s ease;
-}
-
-.draft-active-banner .btn-banner-view:hover {
-  background: #f5f3ff;
-  color: #5b21b6;
+  justify-content: center;
+  gap: 5px;
+  background: #ffffff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .draft-active-banner .btn-banner-discard {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   background: #ffffff;
   color: #dc2626;
   border: 1px solid #fecaca;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
-}
-
-.draft-active-banner .btn-banner-discard:hover:not(:disabled) {
-  background: #fef2f2;
-}
-
-.draft-active-banner .btn-banner-publish {
-  background: #7c3aed;
-  color: #ffffff;
-  border: none;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  white-space: nowrap;
-  margin-left: auto;
-  transition: all 0.15s ease;
-}
-
-.draft-active-banner .btn-banner-publish:hover:not(:disabled) {
-  background: #6d28d9;
 }

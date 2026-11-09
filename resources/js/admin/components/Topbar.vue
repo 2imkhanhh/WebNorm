@@ -72,7 +72,7 @@
         <transition name="dropdown-fade">
           <div v-if="isUserMenuOpen" class="user-dropdown-popover">
             <a :href="previewDraftUrl" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
-              <i class="bx bx-file-blank"></i>
+              <i class="bx bx-show"></i>
               <span>Xem bản nháp</span>
             </a>
 

@@ -92,6 +92,9 @@ import {
   isAutoFit,
   previewIframe,
   hasUnsavedChanges,
+  isSaving,
+  isSavingDraft,
+  isDiscardingDraft,
 } from './composables/useAdmin';
 
 const page = usePage();
@@ -168,8 +171,17 @@ onMounted(() => {
   });
 
   const removeRouterGuard = router.on('before', (event) => {
+    // Không chặn khi đang thực hiện các request lưu (save, save draft, discard) hoặc request gửi dữ liệu POST/PUT/DELETE
+    if (isSaving.value || isSavingDraft.value || isDiscardingDraft.value) {
+      return;
+    }
+    const method = event.detail?.visit?.method;
+    if (method && method.toLowerCase() !== 'get') {
+      return;
+    }
+
     if (hasUnsavedChanges.value) {
-      if (!confirm('Bạn đang có thay đổi chưa bấm "Xuất bản". Nếu rời khỏi trang này, các thay đổi chưa lưu sẽ bị hủy. Bạn có chắc chắn muốn rời đi không?')) {
+      if (!confirm('Bạn đang có thay đổi chưa lưu. Nếu rời khỏi trang này, các thay đổi chưa lưu sẽ bị hủy. Bạn có chắc chắn muốn rời đi không?')) {
         event.preventDefault();
       }
     }
