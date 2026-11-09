@@ -58,13 +58,22 @@
             </div>
         </div>
 
-        <div class="big-bottom-text">
+        @php
+            $heroHeadingRaw = \App\Helpers\NormHelper::val($pageContents['hero_heading'] ?? null, "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ");
+            $headingLines = preg_split('/\r\n|\r|\n/', trim($heroHeadingRaw));
+            $headingLines = array_values(array_filter(array_map('trim', $headingLines), 'strlen'));
+            $headingWord1 = $headingLines[0] ?? 'NHẬN DIỆN';
+            $headingWord2 = $headingLines[1] ?? 'CHIẾN LƯỢC';
+            $headingWord3 = $headingLines[2] ?? 'VĂN HOÁ';
+        @endphp
+
+        <div class="big-bottom-text" data-studio-key="hero_heading">
             <div class="bbt-row bbt-row-1">
-                <span class="stagger-word" data-word-index="0">NHẬN DIỆN</span>
-                <span class="stagger-word" data-word-index="1">CHIẾN LƯỢC</span>
+                <span class="stagger-word" data-word-index="0">{{ $headingWord1 }}</span>
+                <span class="stagger-word" data-word-index="1">{{ $headingWord2 }}</span>
             </div>
             <div class="bbt-row bbt-row-2">
-                <span class="stagger-word" data-word-index="2">VĂN HOÁ</span>
+                <span class="stagger-word" data-word-index="2">{{ $headingWord3 }}</span>
             </div>
         </div>
 
@@ -494,6 +503,7 @@
                     el.appendChild(wrapper);
                 });
             }
+            window.splitIntoChars = splitIntoChars;
 
             const staggerObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {

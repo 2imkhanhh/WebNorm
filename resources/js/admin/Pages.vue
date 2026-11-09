@@ -212,17 +212,6 @@ const currentPageData = computed(() => {
   return pages.value.find((p) => p.slug === selectedPageSlug.value) || pages.value[0];
 });
 
-// Auto-open first section
-watch(
-  currentPageData,
-  (newVal) => {
-    if (newVal && newVal.sections && newVal.sections.length > 0 && !openSectionId.value) {
-      openSectionId.value = newVal.sections[0].id;
-    }
-  },
-  { immediate: true }
-);
-
 const toggleSection = (id) => {
   openSectionId.value = openSectionId.value === id ? null : id;
 };

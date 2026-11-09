@@ -103,6 +103,23 @@
                 } else if (fieldKey === 'footer_line3_new') {
                     const el = document.querySelector('.footer-line:nth-child(3) .text-new');
                     if (el) el.textContent = value;
+                } else if (fieldKey === 'hero_heading') {
+                    const lines = (value || '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+                    const w0 = document.querySelector('.stagger-word[data-word-index="0"]');
+                    const w1 = document.querySelector('.stagger-word[data-word-index="1"]');
+                    const w2 = document.querySelector('.stagger-word[data-word-index="2"]');
+                    if (w0 && lines[0]) {
+                        w0.textContent = lines[0];
+                        if (typeof window.splitIntoChars === 'function') window.splitIntoChars(w0);
+                    }
+                    if (w1 && lines[1]) {
+                        w1.textContent = lines[1];
+                        if (typeof window.splitIntoChars === 'function') window.splitIntoChars(w1);
+                    }
+                    if (w2 && lines[2]) {
+                        w2.textContent = lines[2];
+                        if (typeof window.splitIntoChars === 'function') window.splitIntoChars(w2);
+                    }
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);
