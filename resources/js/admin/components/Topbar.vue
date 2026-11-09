@@ -33,13 +33,8 @@
     <!-- Center: Device Switcher (Show only when in Pages editor) -->
     <div class="topbar-center">
       <div v-if="isPagesRoute" class="device-switch-group">
-        <button
-          v-for="d in devices"
-          :key="d.id"
-          class="device-btn"
-          :class="{ active: currentDevice === d.id }"
-          @click="setDevice(d.id)"
-        >
+        <button v-for="d in devices" :key="d.id" class="device-btn" :class="{ active: currentDevice === d.id }"
+          @click="setDevice(d.id)">
           <i :class="d.icon"></i> {{ d.label }}
         </button>
       </div>
@@ -48,15 +43,18 @@
     <!-- Right: Actions -->
     <div class="topbar-right">
       <div class="status-indicator">
-        <span class="status-dot" :class="{ unsaved: hasUnsavedChanges }"></span>
-        <span>{{ hasUnsavedChanges ? 'Có thay đổi chưa lưu' : 'Đã tải cấu hình' }}</span>
+        <span class="status-dot"
+          :class="{ unsaved: hasUnsavedChanges, draft: !hasUnsavedChanges && hasPendingDraft }"></span>
+        <span v-if="hasUnsavedChanges" class="status-text-unsaved">Có thay đổi chưa lưu</span>
+        <span v-else-if="hasPendingDraft" class="status-text-draft">Có bản nháp chưa xuất bản</span>
+        <span v-else class="status-text-live">Đã xuất bản</span>
       </div>
 
-      <button class="btn-draft" :disabled="isSavingDraft" @click="saveDraft">
+      <button class="btn-draft" :disabled="isSavingDraft || isSaving" @click="saveDraft">
         <span v-if="isSavingDraft">Đang lưu...</span>
         <span v-else>Lưu nháp</span>
       </button>
-      <button class="btn-publish" :disabled="isSaving" @click="saveChanges">
+      <button class="btn-publish" :disabled="isSaving || isSavingDraft" @click="saveChanges">
         <span v-if="isSaving">Đang lưu...</span>
         <span v-else>Xuất bản</span>
       </button>
@@ -73,12 +71,12 @@
         <!-- Dropdown Menu -->
         <transition name="dropdown-fade">
           <div v-if="isUserMenuOpen" class="user-dropdown-popover">
-            <a :href="selectedPageSlug" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
+            <a :href="previewDraftUrl" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
               <i class="bx bx-file-blank"></i>
               <span>Xem bản nháp</span>
             </a>
 
-            <a href="/" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
+            <a :href="selectedPageSlug" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
               <i class="bx bx-globe"></i>
               <span>Mở website đã xuất bản</span>
             </a>
@@ -107,6 +105,7 @@ import {
   currentDevice,
   setDevice,
   hasUnsavedChanges,
+  hasPendingDraft,
   isSavingDraft,
   isSaving,
   saveDraft,
@@ -117,6 +116,11 @@ const page = usePage();
 
 const isPagesRoute = computed(() => {
   return page.component === 'Pages';
+});
+
+const previewDraftUrl = computed(() => {
+  const slug = selectedPageSlug.value || '/';
+  return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
 });
 
 // Danh sách trang phục vụ dropdown chuyển trang

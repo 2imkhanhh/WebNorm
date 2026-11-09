@@ -8,20 +8,40 @@
       </div>
     </div>
 
-    <!-- Staging Alert Banner when changes are pending publish -->
-    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
-      <div class="banner-info">
-        <span>Có thay đổi chưa lưu vào database</span>
-      </div>
-      <div class="banner-buttons">
-        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
-        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="savePagesToDatabase(false)">
-          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
-        </button>
-      </div>
-    </div>
-
     <div class="sidebar-sections" :key="renderKey + '_' + selectedPageSlug">
+      <!-- 1. Staging Alert Banner when changes are pending in editor -->
+      <div v-if="hasUnsavedChanges" class="staging-alert-banner">
+        <div class="banner-info">
+          <i class="bx bx-info-circle banner-icon"></i>
+          <span>Có thay đổi chưa lưu</span>
+        </div>
+      </div>
+
+      <!-- 2. Draft Status Banner when a draft exists in database and is unpublished -->
+      <div v-else-if="currentPageData && currentPageData.has_draft" class="draft-active-banner">
+        <div class="banner-info">
+          <i class="bx bx-file-blank banner-icon-draft"></i>
+          <div>
+            <div class="banner-title">Trang này đang có bản nháp chưa xuất bản</div>
+            <div class="banner-sub">
+              <span v-if="formattedDraftTime">Lưu lúc: {{ formattedDraftTime }}</span>
+              <span v-else>Khách bên ngoài chưa nhìn thấy</span>
+            </div>
+          </div>
+        </div>
+        <div class="banner-buttons">
+          <a :href="previewDraftUrl" target="_blank" class="btn-banner-view" title="Mở trang xem trước bản nháp">
+            <i class="bx bx-show"></i> Xem nháp
+          </a>
+          <button type="button" class="btn-banner-discard" :disabled="isDiscardingDraft || isSaving" @click="handleDiscardDraft">
+            {{ isDiscardingDraft ? 'Đang hủy...' : 'Hủy bản nháp' }}
+          </button>
+          <button type="button" class="btn-banner-publish" :disabled="isSaving || isDiscardingDraft" @click="savePagesToDatabase(false)">
+            {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
+          </button>
+        </div>
+      </div>
+
       <!-- Accordion Section Cards -->
       <div v-for="section in currentPageData.sections" :key="section.id" class="section-card"
         :class="{ active: openSectionId === section.id }">
@@ -73,10 +93,13 @@ import {
   selectedPageSlug,
   currentLanguage,
   hasUnsavedChanges,
+  hasPendingDraft,
   isSaving,
   isSavingDraft,
+  isDiscardingDraft,
   onSaveHandler,
   onDraftHandler,
+  onDiscardDraftHandler,
   previewIframe,
 } from './composables/useAdmin';
 
@@ -92,6 +115,8 @@ const defaultPages = [
   {
     name: 'Trang chủ',
     slug: '/',
+    has_draft: false,
+    draft_updated_at: null,
     sections: [
       {
         id: 'hero',
@@ -128,6 +153,8 @@ const defaultPages = [
   {
     name: 'Về chúng tôi',
     slug: '/about-us',
+    has_draft: false,
+    draft_updated_at: null,
     sections: [
       {
         id: 'about_intro',
@@ -152,6 +179,8 @@ const defaultPages = [
   {
     name: 'Dự án',
     slug: '/work',
+    has_draft: false,
+    draft_updated_at: null,
     sections: [
       {
         id: 'work_hero',
@@ -168,6 +197,8 @@ const defaultPages = [
   {
     name: 'Bài viết / Tin tức',
     slug: '/news',
+    has_draft: false,
+    draft_updated_at: null,
     sections: [
       {
         id: 'news_header',
@@ -211,6 +242,35 @@ const openSectionId = ref(null);
 
 const currentPageData = computed(() => {
   return pages.value.find((p) => p.slug === selectedPageSlug.value) || pages.value[0];
+});
+
+// Sync hasPendingDraft to useAdmin state
+watch(
+  () => [currentPageData.value?.has_draft, currentPageData.value?.draft_updated_at],
+  () => {
+    hasPendingDraft.value = !!currentPageData.value?.has_draft;
+  },
+  { immediate: true }
+);
+
+const previewDraftUrl = computed(() => {
+  const slug = selectedPageSlug.value || '/';
+  return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
+});
+
+const formattedDraftTime = computed(() => {
+  const page = currentPageData.value;
+  if (!page || !page.draft_updated_at) return '';
+  try {
+    const d = new Date(page.draft_updated_at);
+    return (
+      d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) +
+      ' - ' +
+      d.toLocaleDateString('vi-VN')
+    );
+  } catch (e) {
+    return '';
+  }
 });
 
 const toggleSection = (id) => {
@@ -282,17 +342,46 @@ const savePagesToDatabase = (isDraft = false) => {
 
   router.post(
     '/admin/pages/update',
-    { fields: flatFields },
+    {
+      fields: flatFields,
+      action: isDraft ? 'draft' : 'publish',
+    },
     {
       preserveScroll: true,
       onSuccess: () => {
         isSaving.value = false;
         isSavingDraft.value = false;
         hasUnsavedChanges.value = false;
+
+        const targetPage = pages.value.find((p) => p.slug === selectedPageSlug.value);
+        if (targetPage) {
+          if (isDraft) {
+            targetPage.has_draft = true;
+            targetPage.draft_updated_at = new Date().toISOString();
+            hasPendingDraft.value = true;
+          } else {
+            targetPage.has_draft = false;
+            targetPage.draft_updated_at = null;
+            hasPendingDraft.value = false;
+          }
+        }
+
         // Update snapshot to freshly saved values
         originalPagesSnapshot.value = clone(pages.value);
         renderKey.value++;
-        alert(isDraft ? 'Đã lưu bản nháp thành công!' : 'Đã xuất bản cấu hình thành công lên website!');
+
+        // Reload preview iframe to fetch freshly saved draft or published state
+        if (previewIframe.value) {
+          const baseSlug = selectedPageSlug.value || '/';
+          previewIframe.value.src =
+            baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
+        }
+
+        alert(
+          isDraft
+            ? 'Đã lưu bản nháp thành công!\n(Nội dung nháp đã lưu vào cơ sở dữ liệu. Khách bên ngoài website vẫn chưa thấy thay đổi này cho đến khi bạn bấm "Xuất bản")'
+            : 'Đã xuất bản cấu hình thành công lên website chính thức!'
+        );
       },
       onError: (err) => {
         isSaving.value = false;
@@ -303,8 +392,68 @@ const savePagesToDatabase = (isDraft = false) => {
   );
 };
 
+const handleDiscardDraft = () => {
+  if (
+    !confirm(
+      'Bạn có chắc chắn muốn hủy bản nháp của trang này?\n(Toàn bộ nội dung nháp chưa xuất bản sẽ bị xóa và quay về nội dung đang hiển thị trên website thật)'
+    )
+  ) {
+    return;
+  }
+
+  isDiscardingDraft.value = true;
+
+  router.post(
+    '/admin/pages/discard-draft',
+    { page_slug: selectedPageSlug.value },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isDiscardingDraft.value = false;
+        hasUnsavedChanges.value = false;
+
+        const targetPage = pages.value.find((p) => p.slug === selectedPageSlug.value);
+        if (targetPage) {
+          targetPage.has_draft = false;
+          targetPage.draft_updated_at = null;
+          hasPendingDraft.value = false;
+
+          // Revert working value back to published_value
+          if (targetPage.sections) {
+            targetPage.sections.forEach((s) => {
+              if (s.fields) {
+                s.fields.forEach((f) => {
+                  if (f.published_value !== undefined) {
+                    f.value = clone(f.published_value);
+                  }
+                });
+              }
+            });
+          }
+        }
+
+        originalPagesSnapshot.value = clone(pages.value);
+        renderKey.value++;
+
+        // Reload preview iframe
+        if (previewIframe.value) {
+          const baseSlug = selectedPageSlug.value || '/';
+          previewIframe.value.src =
+            baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
+        }
+
+        alert('Đã hủy bản nháp thành công! Nội dung đã quay về bản đang xuất bản trên website.');
+      },
+      onError: (err) => {
+        isDiscardingDraft.value = false;
+        alert('Có lỗi xảy ra khi hủy bản nháp: ' + JSON.stringify(err));
+      },
+    }
+  );
+};
+
 const revertChanges = () => {
-  if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại nội dung gốc?')) {
+  if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại nội dung đã lưu gần nhất?')) {
     // Restore strictly from pristine snapshot
     pages.value = clone(originalPagesSnapshot.value);
     renderKey.value++;
@@ -312,7 +461,9 @@ const revertChanges = () => {
 
     // Reset iframe to revert live preview changes
     if (previewIframe.value) {
-      previewIframe.value.src = selectedPageSlug.value;
+      const baseSlug = selectedPageSlug.value || '/';
+      previewIframe.value.src =
+        baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
     }
   }
 };
@@ -320,11 +471,14 @@ const revertChanges = () => {
 onMounted(() => {
   onSaveHandler.value = () => savePagesToDatabase(false);
   onDraftHandler.value = () => savePagesToDatabase(true);
+  onDiscardDraftHandler.value = handleDiscardDraft;
 });
 
 onUnmounted(() => {
   onSaveHandler.value = null;
   onDraftHandler.value = null;
+  onDiscardDraftHandler.value = null;
+  hasPendingDraft.value = false;
 });
 </script>
 

@@ -12,22 +12,26 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * Helper to get page contents mapped by field_key
-     */
-    protected function getPageContentMap(string $pageSlug): array
+    protected function getPageContentMap(string $pageSlug, Request $request): array
     {
         $contents = PageContent::where('page_slug', $pageSlug)->get();
+        $isPreview = auth()->check() && $request->query('preview') === 'draft';
+        view()->share('isPreviewDraft', $isPreview);
+
         $map = [];
         foreach ($contents as $c) {
-            $map[$c->field_key] = $c->value; // {"vi": "...", "en": "..."} or string
+            if ($isPreview && $c->draft_value !== null) {
+                $map[$c->field_key] = $c->draft_value;
+            } else {
+                $map[$c->field_key] = $c->value;
+            }
         }
         return $map;
     }
 
     public function index(Request $request)
     {
-        $pageContents = $this->getPageContentMap('/');
+        $pageContents = $this->getPageContentMap('/', $request);
         $projects = Project::where('is_active', true)->orderBy('sort_order')->get();
         $services = Service::where('is_active', true)->orderBy('sort_order')->get();
         $reviews = Review::where('is_active', true)->orderBy('sort_order')->get();
@@ -37,13 +41,13 @@ class HomeController extends Controller
 
     public function about(Request $request)
     {
-        $pageContents = $this->getPageContentMap('/about-us');
+        $pageContents = $this->getPageContentMap('/about-us', $request);
         return view('pages.about-us', compact('pageContents'));
     }
 
     public function work(Request $request)
     {
-        $pageContents = $this->getPageContentMap('/work');
+        $pageContents = $this->getPageContentMap('/work', $request);
         $projects = Project::where('is_active', true)->orderBy('sort_order')->get();
         return view('pages.work', compact('pageContents', 'projects'));
     }
@@ -68,7 +72,7 @@ class HomeController extends Controller
 
     public function news(Request $request)
     {
-        $pageContents = $this->getPageContentMap('/news');
+        $pageContents = $this->getPageContentMap('/news', $request);
         $blogs = Blog::where('status', 'published')->latest('published_at')->get();
         return view('pages.news', compact('pageContents', 'blogs'));
     }
@@ -91,4 +95,3 @@ class HomeController extends Controller
         return view('pages.news-detail', compact('blog', 'relatedBlogs'));
     }
 }
-

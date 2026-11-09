@@ -14,11 +14,15 @@ class PageContent extends Model
         'field_label',
         'field_type',
         'value',
+        'draft_value',
+        'draft_updated_at',
         'sort_order',
     ];
 
     protected $casts = [
         'value' => 'json',
+        'draft_value' => 'json',
+        'draft_updated_at' => 'datetime',
     ];
 
     /**

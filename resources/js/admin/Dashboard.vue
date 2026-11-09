@@ -109,7 +109,8 @@
                   <td>{{ lead.phone || '—' }}</td>
                   <td>{{ Array.isArray(lead.services) ? lead.services.join(', ') : (lead.services || '—') }}</td>
                   <td>
-                    <span class="status-badge" :class="lead.status">{{ lead.status === 'new' ? 'Mới' : (lead.status === 'contacted' ? 'Đã liên hệ' : 'Hoàn thành') }}</span>
+                    <span class="status-badge" :class="lead.status">{{ lead.status === 'new' ? 'Mới' : (lead.status ===
+                      'contacted' ? 'Đã liên hệ' : 'Hoàn thành') }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -117,7 +118,6 @@
           </div>
         </div>
 
-        <!-- Khoảng đệm chân trang để không bị dính sát lề dưới / taskbar -->
         <div class="overview-bottom-spacer"></div>
       </div>
     </section>

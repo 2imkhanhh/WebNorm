@@ -25,11 +25,25 @@ class PageContentController extends Controller
             $pageRows = $rawContents->where('page_slug', $slug);
             $sectionsGrouped = [];
 
+            $hasDraft = false;
+            $latestDraftTime = null;
+
             foreach ($pageRows->groupBy('section_id') as $sectionId => $fields) {
                 $first = $fields->first();
                 $fieldList = [];
 
                 foreach ($fields as $f) {
+                    $fieldHasDraft = ($f->draft_value !== null);
+                    if ($fieldHasDraft) {
+                        $hasDraft = true;
+                        if (!$latestDraftTime || ($f->draft_updated_at && $f->draft_updated_at > $latestDraftTime)) {
+                            $latestDraftTime = $f->draft_updated_at;
+                        }
+                    }
+
+                    // Value given to frontend editor: draft_value if exists, otherwise published value
+                    $currentValue = $fieldHasDraft ? $f->draft_value : $f->value;
+
                     $fieldList[] = [
                         'id' => $f->id,
                         'page_slug' => $f->page_slug,
@@ -37,7 +51,10 @@ class PageContentController extends Controller
                         'key' => $f->field_key,
                         'label' => $f->field_label,
                         'type' => $f->field_type,
-                        'value' => $f->value, // {"vi": "...", "en": "..."}
+                        'value' => $currentValue,
+                        'published_value' => $f->value,
+                        'draft_value' => $f->draft_value,
+                        'has_draft' => $fieldHasDraft,
                     ];
                 }
 
@@ -51,6 +68,8 @@ class PageContentController extends Controller
             $pagesGrouped[] = [
                 'name' => $name,
                 'slug' => $slug,
+                'has_draft' => $hasDraft,
+                'draft_updated_at' => $latestDraftTime ? $latestDraftTime->toIso8601String() : null,
                 'sections' => $sectionsGrouped,
             ];
         }
@@ -63,6 +82,23 @@ class PageContentController extends Controller
     public function update(Request $request)
     {
         $fields = $request->input('fields', []);
+        $action = $request->input('action', 'publish');
+
+        if ($action === 'draft') {
+            foreach ($fields as $f) {
+                if (isset($f['page_slug'], $f['section_id'], $f['key'])) {
+                    PageContent::where('page_slug', $f['page_slug'])
+                        ->where('section_id', $f['section_id'])
+                        ->where('field_key', $f['key'])
+                        ->update([
+                            'draft_value' => $f['value'],
+                            'draft_updated_at' => now(),
+                        ]);
+                }
+            }
+
+            return back()->with('success', 'Đã lưu bản nháp thành công!');
+        }
 
         foreach ($fields as $f) {
             if (isset($f['page_slug'], $f['section_id'], $f['key'])) {
@@ -71,11 +107,28 @@ class PageContentController extends Controller
                     ->where('field_key', $f['key'])
                     ->update([
                         'value' => $f['value'],
+                        'draft_value' => null,
+                        'draft_updated_at' => null,
                     ]);
             }
         }
 
-        return back()->with('success', 'Đã lưu cấu hình trang thành công!');
+        return back()->with('success', 'Đã xuất bản cấu hình thành công lên website!');
+    }
+
+    public function discardDraft(Request $request)
+    {
+        $pageSlug = $request->input('page_slug');
+
+        if ($pageSlug) {
+            PageContent::where('page_slug', $pageSlug)->update([
+                'draft_value' => null,
+                'draft_updated_at' => null,
+            ]);
+
+            return back()->with('success', 'Đã hủy bản nháp, quay về nội dung đang xuất bản!');
+        }
+
+        return back()->with('error', 'Không tìm thấy trang để hủy bản nháp.');
     }
 }
-

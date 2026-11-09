@@ -57,6 +57,7 @@ Route::prefix('admin')->group(function () {
         // Pages Content Editor
         Route::get('/pages', [PageContentController::class, 'index'])->name('admin.pages');
         Route::post('/pages/update', [PageContentController::class, 'update'])->name('admin.pages.update');
+        Route::post('/pages/discard-draft', [PageContentController::class, 'discardDraft'])->name('admin.pages.discard-draft');
 
         // Projects
         Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');

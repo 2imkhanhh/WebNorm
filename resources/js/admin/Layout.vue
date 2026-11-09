@@ -1,19 +1,11 @@
 <template>
   <div class="studio-root">
-    <!-- Topbar -->
     <Topbar />
 
-    <!-- Workspace Columns -->
     <main class="studio-workspace">
-      <!-- 1. Leftmost Icon Navigation Sidebar -->
       <nav class="studio-nav-rail">
-        <!-- Top overview item -->
-        <Link
-          href="/admin/dashboard"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Dashboard') }"
-          title="Tổng quan"
-        >
+        <Link href="/admin/dashboard" class="nav-rail-item" :class="{ active: isCurrent('Dashboard') }"
+          title="Tổng quan">
           <i class="bx bx-grid-alt"></i>
           <span>Tổng quan</span>
         </Link>
@@ -23,103 +15,59 @@
         <div class="nav-rail-section-label">NỘI DUNG</div>
 
         <!-- Content nav items -->
-        <Link
-          href="/admin/pages"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Pages') }"
-          title="Chỉnh sửa trang"
-        >
+        <Link href="/admin/pages" class="nav-rail-item" :class="{ active: isCurrent('Pages') }" title="Chỉnh sửa trang">
           <i class="bx bx-edit-alt"></i>
           <span>Chỉnh sửa</span>
         </Link>
 
-        <Link
-          href="/admin/projects"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Projects') }"
-          title="Dự án (Work)"
-        >
+        <Link href="/admin/projects" class="nav-rail-item" :class="{ active: isCurrent('Projects') }"
+          title="Dự án (Work)">
           <i class="bx bx-briefcase-alt"></i>
           <span>Dự án</span>
         </Link>
 
-        <Link
-          href="/admin/services"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Services') }"
-          title="Dịch vụ"
-        >
+        <Link href="/admin/services" class="nav-rail-item" :class="{ active: isCurrent('Services') }" title="Dịch vụ">
           <i class="bx bx-layer"></i>
           <span>Dịch vụ</span>
         </Link>
 
-        <Link
-          href="/admin/news"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Blogs') }"
-          title="Tin tức & Bài viết"
-        >
+        <Link href="/admin/news" class="nav-rail-item" :class="{ active: isCurrent('Blogs') }"
+          title="Tin tức & Bài viết">
           <i class="bx bx-news"></i>
           <span>Bài viết</span>
         </Link>
 
-        <Link
-          href="/admin/reviews"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Reviews') }"
-          title="Đánh giá khách hàng"
-        >
+        <Link href="/admin/reviews" class="nav-rail-item" :class="{ active: isCurrent('Reviews') }"
+          title="Đánh giá khách hàng">
           <i class="bx bx-star"></i>
           <span>Reviews</span>
         </Link>
 
-        <Link
-          href="/admin/leads"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Contacts') }"
-          title="Khách hàng liên hệ"
-        >
+        <Link href="/admin/leads" class="nav-rail-item" :class="{ active: isCurrent('Contacts') }"
+          title="Khách hàng liên hệ">
           <i class="bx bx-envelope"></i>
           <span>Liên hệ</span>
         </Link>
 
-        <Link
-          href="/admin/media"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Media') }"
-          title="Thư viện hình ảnh"
-        >
+        <Link href="/admin/media" class="nav-rail-item" :class="{ active: isCurrent('Media') }"
+          title="Thư viện hình ảnh">
           <i class="bx bx-image-alt"></i>
           <span>Thư viện</span>
         </Link>
 
-        <Link
-          href="/admin/settings"
-          class="nav-rail-item"
-          :class="{ active: isCurrent('Settings') }"
-          title="Cài đặt website"
-        >
+        <Link href="/admin/settings" class="nav-rail-item" :class="{ active: isCurrent('Settings') }"
+          title="Cài đặt website">
           <i class="bx bx-cog"></i>
           <span>Cài đặt</span>
         </Link>
       </nav>
 
-      <!-- 2. Controls Panel (Sub-Sidebar) - Shows for non-dashboard pages -->
-      <aside
-        v-if="!isDashboard"
-        class="studio-sidebar"
-        :style="{ width: sidebarWidth + 'px' }"
-      >
+      <aside v-if="!isDashboard" class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
         <slot />
       </aside>
 
       <!-- Resizer Handle Bar -->
-      <div
-        v-if="!isDashboard"
-        class="resizer-bar"
-        :class="{ dragging: isResizing }"
-        @mousedown="startResize"
-      >
+      <div v-if="!isDashboard" class="resizer-bar" :class="{ dragging: isResizing }" @mousedown="startResize">
         <div class="resizer-pill" title="Kéo để thay đổi độ rộng cột">
           <span class="dot"></span>
           <span class="dot"></span>
@@ -156,12 +104,10 @@ const isDashboard = computed(() => {
   return page.component === 'Dashboard';
 });
 
-// Logic kéo thay đổi độ rộng cột (Sidebar resizer)
 const MIN_SIDEBAR_WIDTH = 320;
 const sidebarWidth = ref(MIN_SIDEBAR_WIDTH);
 const isResizing = ref(false);
 
-// Reset độ rộng cột (320px) khi chuyển trang
 watch(
   () => page.component,
   (newComp) => {
@@ -221,7 +167,6 @@ onMounted(() => {
     if (isAutoFit.value) calculateAutoFit();
   });
 
-  // Guard navigation when there are unsaved/un-published changes
   const removeRouterGuard = router.on('before', (event) => {
     if (hasUnsavedChanges.value) {
       if (!confirm('Bạn đang có thay đổi chưa bấm "Xuất bản". Nếu rời khỏi trang này, các thay đổi chưa lưu sẽ bị hủy. Bạn có chắc chắn muốn rời đi không?')) {

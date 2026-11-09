@@ -22,10 +22,14 @@ export const previewAreaRef = ref(null);
 
 // 3. Save & Changes state with registered page handlers
 export const hasUnsavedChanges = ref(false);
+export const hasPendingDraft = ref(false);
+export const draftLastSavedText = ref('');
 export const isSaving = ref(false);
 export const isSavingDraft = ref(false);
+export const isDiscardingDraft = ref(false);
 export const onSaveHandler = ref(null);
 export const onDraftHandler = ref(null);
+export const onDiscardDraftHandler = ref(null);
 
 export const saveDraft = () => {
   if (onDraftHandler.value) {
@@ -37,6 +41,12 @@ export const saveDraft = () => {
       hasUnsavedChanges.value = false;
       alert('Đã lưu bản nháp thành công!');
     }, 400);
+  }
+};
+
+export const discardDraft = () => {
+  if (onDiscardDraftHandler.value) {
+    onDiscardDraftHandler.value();
   }
 };
 

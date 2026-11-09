@@ -7,7 +7,7 @@
     >
       <iframe
         ref="previewIframe"
-        :src="selectedPageSlug"
+        :src="iframeSrc"
         class="live-iframe"
         @load="onIframeLoaded"
       ></iframe>
@@ -16,6 +16,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import {
   previewAreaRef,
   previewIframe,
@@ -23,6 +24,11 @@ import {
   frameContainerStyle,
   selectedPageSlug,
 } from '../composables/useAdmin';
+
+const iframeSrc = computed(() => {
+  const slug = selectedPageSlug.value || '/';
+  return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
+});
 
 const onIframeLoaded = () => {
   // Hook xử lý khi iframe load hoàn tất (nếu cần bắt tín hiệu)

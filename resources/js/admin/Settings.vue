@@ -12,7 +12,7 @@
     <!-- Staging Alert Banner when settings have unsaved changes -->
     <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
       <div class="banner-info">
-        <span>Có thay đổi chưa lưu vào database</span>
+        <span>Có thay đổi chưa lưu</span>
       </div>
       <div class="banner-buttons">
         <button type="button" class="btn-banner-revert" @click="revertSettings">Hủy thay đổi</button>

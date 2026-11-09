@@ -75,6 +75,20 @@
 
     @include('partials.contact-sidebar')
 
+    @if (!empty($isPreviewDraft))
+    <div id="draftPreviewNotification" style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 99999; background: #0f172a; color: #f8fafc; padding: 9px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.15); font-family: sans-serif;">
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 8px #a855f7;"></span>
+        <span>Đang xem <strong>Bản nháp (Draft Preview)</strong></span>
+        <a href="{{ request()->url() }}" style="margin-left: 8px; color: #38bdf8; text-decoration: none; font-size: 12px; background: rgba(56,189,248,0.15); padding: 4px 10px; border-radius: 6px; font-weight: 600;">Xem bản Live</a>
+    </div>
+    <script>
+        if (window.self !== window.top) {
+            var el = document.getElementById('draftPreviewNotification');
+            if (el) el.style.display = 'none';
+        }
+    </script>
+    @endif
+
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
     <script src="{{ asset('assets/js/script.js') }}"></script>
 
