@@ -156,7 +156,7 @@ class DatabaseSeeder extends Seeder
                 'section_title' => 'Khối Giới thiệu (Về chúng tôi)',
                 'field_key' => 'about_btn_url',
                 'field_label' => 'Đường dẫn liên kết nút',
-                'field_type' => 'text',
+                'field_type' => 'link',
                 'value' => ['vi' => '/about-us', 'en' => '/about-us'],
                 'sort_order' => 10,
             ],

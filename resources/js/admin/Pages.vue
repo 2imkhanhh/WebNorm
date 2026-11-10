@@ -61,6 +61,33 @@
               :rows="field.rows || (field.key === 'hero_desc' ? 4 : 3)"
               @input="updateField(section.id, field, $event.target.value)"></textarea>
 
+            <!-- Link Picker (Predefined Pages + Custom URL) -->
+            <div v-else-if="field.type === 'link' || field.type === 'url'" class="link-field-wrap">
+              <select
+                class="field-select"
+                :value="getLinkSelectValue(field)"
+                @change="handleLinkSelectChange(section.id, field, $event.target.value)"
+              >
+                <option value="/about-us">Về chúng tôi (/about-us)</option>
+                <option value="/work">Dự án (/work)</option>
+                <option value="/news">Bài viết / Tin tức (/news)</option>
+                <option value="/">Trang chủ (/)</option>
+                <option value="__custom__">Đường dẫn tùy chỉnh khác...</option>
+              </select>
+              <div v-if="isCustomLink(field)" class="custom-link-box">
+                <input
+                  :value="getFieldValue(field)"
+                  type="text"
+                  class="field-input"
+                  placeholder="https://... hoặc /duong-dan"
+                  @input="updateField(section.id, field, $event.target.value)"
+                />
+                <span class="field-hint" style="font-size: 11px; color: #64748b;">
+                  Điền link ngoài (https://...) hoặc đường dẫn tùy ý.
+                </span>
+              </div>
+            </div>
+
             <!-- Image URL Input -->
             <div v-else-if="field.type === 'image'" class="image-field-wrap">
               <div class="media-input-group">
@@ -117,7 +144,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
 import {
@@ -168,7 +195,7 @@ const defaultPages = [
           { key: 'about_label', label: 'Nhãn tiêu đề (Label)', type: 'text', value: { vi: '• Về chúng tôi', en: '• About us' } },
           { key: 'about_desc', label: 'Nội dung mô tả', type: 'textarea', rows: 4, value: { vi: 'Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.', en: 'There are countless reasons why branding and marketing matter. Endless books have been written on this topic, but it all comes down to one simple question: why should anyone care about your existence? We create experiences that make people notice and care.' } },
           { key: 'about_btn_text', label: 'Chữ trên nút bấm', type: 'text', value: { vi: 'ĐỌC THÊM', en: 'READ MORE' } },
-          { key: 'about_btn_url', label: 'Đường dẫn liên kết nút', type: 'text', value: { vi: '/about-us', en: '/about-us' } },
+          { key: 'about_btn_url', label: 'Đường dẫn liên kết nút', type: 'link', value: { vi: '/about-us', en: '/about-us' } },
         ],
       },
       {
@@ -329,6 +356,41 @@ const getFieldValue = (field) => {
     return field.value[currentLanguage.value] ?? field.value['vi'] ?? '';
   }
   return field.value ?? '';
+};
+
+// Link Picker logic (Predefined Pages + Custom URL)
+const internalPages = [
+  { label: 'Về chúng tôi (/about-us)', value: '/about-us' },
+  { label: 'Dự án (/work)', value: '/work' },
+  { label: 'Bài viết / Tin tức (/news)', value: '/news' },
+  { label: 'Trang chủ (/)', value: '/' },
+];
+
+const customLinkMap = reactive({});
+
+const getLinkSelectValue = (field) => {
+  const currentVal = (getFieldValue(field) || '').trim();
+  if (customLinkMap[field.key]) {
+    return '__custom__';
+  }
+  const match = internalPages.find((p) => p.value === currentVal);
+  if (match) {
+    return match.value;
+  }
+  return '__custom__';
+};
+
+const isCustomLink = (field) => {
+  return getLinkSelectValue(field) === '__custom__';
+};
+
+const handleLinkSelectChange = (sectionId, field, selectedVal) => {
+  if (selectedVal === '__custom__') {
+    customLinkMap[field.key] = true;
+  } else {
+    customLinkMap[field.key] = false;
+    updateField(sectionId, field, selectedVal);
+  }
 };
 
 // Media / Video / Image file upload logic

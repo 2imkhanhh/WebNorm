@@ -52,7 +52,7 @@ return new class extends Migration
             [
                 'field_key' => 'about_btn_url',
                 'field_label' => 'Đường dẫn liên kết nút',
-                'field_type' => 'text',
+                'field_type' => 'link',
                 'value' => [
                     'vi' => '/about-us',
                     'en' => '/about-us',
