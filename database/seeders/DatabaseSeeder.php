@@ -106,6 +106,19 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'page_slug' => '/',
+                'section_id' => 'hero',
+                'section_title' => 'Hero & Tiêu đề chính',
+                'field_key' => 'hero_video',
+                'field_label' => 'Video giới thiệu (MP4 URL)',
+                'field_type' => 'video',
+                'value' => [
+                    'vi' => 'assets/images/main-feature.mp4',
+                    'en' => 'assets/images/main-feature.mp4'
+                ],
+                'sort_order' => 6,
+            ],
+            [
+                'page_slug' => '/',
                 'section_id' => 'showcase',
                 'section_title' => 'Khối dự án nổi bật',
                 'field_key' => 'showcase_label',

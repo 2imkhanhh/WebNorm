@@ -22,7 +22,7 @@
         <input
           ref="fileInputRef"
           type="file"
-          class="d-none"
+          style="display: none;"
           accept="image/*,.glb,.mp4,.webm,.pdf"
           @change="handleFileSelect"
         />

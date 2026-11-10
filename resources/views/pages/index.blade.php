@@ -95,10 +95,22 @@
             <div class="row align-items-start" style="margin-top: 150px; margin-bottom: 100px;">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <video class="w-100 d-block" style="border-radius: 8px;" autoplay loop muted playsinline>
-                        <source src="{{ asset('assets/images/main-feature.mp4') }}" type="video/mp4">
-                        Trình duyệt của bạn không hỗ trợ thẻ video.
-                    </video>
+                    @php
+                        $heroMediaVal = \App\Helpers\NormHelper::val($pageContents['hero_video'] ?? null, 'assets/images/main-feature.mp4');
+                        $heroMediaSrc = str_starts_with($heroMediaVal, 'http') ? $heroMediaVal : asset(ltrim($heroMediaVal, '/'));
+                        $heroExt = strtolower(pathinfo(parse_url($heroMediaVal, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+                        $isHeroVideo = in_array($heroExt, ['mp4', 'webm', 'mov', 'avi']) || str_ends_with(strtolower($heroMediaVal), '.mp4');
+                    @endphp
+                    <div class="hero-media-wrapper" data-studio-container="hero_video">
+                        @if($isHeroVideo)
+                            <video class="w-100 d-block hero-media-el" style="border-radius: 8px;" autoplay loop muted playsinline data-studio-key="hero_video">
+                                <source src="{{ $heroMediaSrc }}" type="video/{{ $heroExt === 'webm' ? 'webm' : 'mp4' }}">
+                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                            </video>
+                        @else
+                            <img class="w-100 d-block hero-media-el" style="border-radius: 8px; object-fit: cover;" src="{{ $heroMediaSrc }}" alt="Hero Media" data-studio-key="hero_video">
+                        @endif
+                    </div>
                 </div>
                 <div class="col-md-3"></div>
             </div>

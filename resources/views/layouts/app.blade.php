@@ -134,6 +134,40 @@
                         w2.textContent = lines[2];
                         if (typeof window.splitIntoChars === 'function') window.splitIntoChars(w2);
                     }
+                } else if (fieldKey === 'hero_video') {
+                    const cleanVal = (value || '').trim();
+                    const fullSrc = cleanVal.startsWith('http') ? cleanVal : '/' + cleanVal.replace(/^\//, '');
+                    const cleanLower = cleanVal.split('?')[0].toLowerCase();
+                    const isVid = cleanLower.endsWith('.mp4') || cleanLower.endsWith('.webm') || cleanLower.endsWith('.mov') || cleanLower.endsWith('.avi');
+
+                    const container = document.querySelector('[data-studio-container="hero_video"]');
+                    if (container) {
+                        if (isVid) {
+                            container.innerHTML = `
+                                <video class="w-100 d-block hero-media-el" style="border-radius: 8px;" autoplay loop muted playsinline data-studio-key="hero_video">
+                                    <source src="${fullSrc}" type="video/mp4">
+                                </video>
+                            `;
+                            const newVid = container.querySelector('video');
+                            if (newVid) {
+                                newVid.load();
+                                newVid.play().catch(() => {});
+                            }
+                        } else {
+                            container.innerHTML = `
+                                <img class="w-100 d-block hero-media-el" style="border-radius: 8px; object-fit: cover;" src="${fullSrc}" alt="Hero Media" data-studio-key="hero_video">
+                            `;
+                        }
+                    } else {
+                        const existingVid = document.querySelector('video[data-studio-key="hero_video"]');
+                        if (existingVid) {
+                            const srcEl = existingVid.querySelector('source');
+                            if (srcEl) srcEl.src = fullSrc;
+                            existingVid.src = fullSrc;
+                            existingVid.load();
+                            existingVid.play().catch(() => {});
+                        }
+                    }
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);

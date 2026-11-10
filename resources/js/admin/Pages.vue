@@ -67,18 +67,68 @@
 
             <!-- Image URL Input -->
             <div v-else-if="field.type === 'image'" class="image-field-wrap">
-              <input :value="getFieldValue(field)" type="text" class="field-input" placeholder="assets/images/..."
-                @input="updateField(section.id, field, $event.target.value)" />
-              <div v-if="getFieldValue(field)" class="image-preview-thumb">
+              <div class="media-input-group">
+                <input :value="getFieldValue(field)" type="text" class="field-input" placeholder="assets/images/... hoặc storage/uploads/..."
+                  @input="updateField(section.id, field, $event.target.value)" />
+                <button
+                  type="button"
+                  class="btn-upload-trigger"
+                  :disabled="isUploadingMedia"
+                  @click="triggerMediaUpload(section.id, field, 'image/*')"
+                  title="Tải ảnh lên từ máy tính (PNG, JPG, WEBP... tối đa 40MB)"
+                >
+                  <i class="bx" :class="isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <span>{{ isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'Đang tải...' : 'Tải file lên' }}</span>
+                </button>
+              </div>
+              <div v-if="getFieldValue(field)" class="image-preview-thumb mt-2">
                 <img
                   :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
                   alt="Preview" />
+              </div>
+            </div>
+
+            <!-- Video / Media URL Input -->
+            <div v-else-if="field.type === 'video'" class="video-field-wrap">
+              <div class="media-input-group">
+                <input :value="getFieldValue(field)" type="text" class="field-input" placeholder="storage/uploads/... hoặc assets/images/..."
+                  @input="updateField(section.id, field, $event.target.value)" />
+                <button
+                  type="button"
+                  class="btn-upload-trigger"
+                  :disabled="isUploadingMedia"
+                  @click="triggerMediaUpload(section.id, field, 'video/mp4,video/webm,video/quicktime,image/*')"
+                  title="Tải tệp lên từ máy tính (Video MP4/WEBM hoặc Ảnh PNG/JPG/WEBP, tối đa 40MB)"
+                >
+                  <i class="bx" :class="isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <span>{{ isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'Đang tải...' : 'Tải file lên' }}</span>
+                </button>
+              </div>
+              <div v-if="getFieldValue(field)" class="media-preview-thumb mt-2">
+                <video
+                  v-if="isVideoUrl(getFieldValue(field))"
+                  :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
+                  controls muted playsinline class="video-preview-player"></video>
+                <div v-else class="image-preview-thumb">
+                  <img
+                    :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
+                    alt="Preview" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Hidden native file input for media upload -->
+    <input
+      type="file"
+      ref="mediaFileInputRef"
+      style="display: none;"
+      :accept="mediaUploadAccept"
+      @change="handleMediaUploadSelected"
+    />
   </Layout>
 </template>
 
@@ -124,6 +174,7 @@ const defaultPages = [
           { key: 'hero_tagline_3', label: 'Banner Tagline 3', type: 'text', value: { vi: 'Culture Your Brand', en: 'Culture Your Brand' } },
           { key: 'hero_heading', label: 'Tiêu đề lớn Hero', type: 'textarea', value: { vi: "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ", en: "IDENTITY\nSTRATEGY\nCULTURE" } },
           { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.', en: 'We help businesses build clear, consistent brand identities.' } },
+          { key: 'hero_video', label: 'Tệp giới thiệu (Video hoặc Ảnh)', type: 'video', value: { vi: 'assets/images/main-feature.mp4', en: 'assets/images/main-feature.mp4' } },
         ],
       },
       {
@@ -284,6 +335,74 @@ const getFieldValue = (field) => {
     return field.value[currentLanguage.value] ?? field.value['vi'] ?? '';
   }
   return field.value ?? '';
+};
+
+// Media / Video / Image file upload logic
+const mediaFileInputRef = ref(null);
+const mediaUploadAccept = ref('video/mp4,video/webm,video/quicktime,image/*');
+const isUploadingMedia = ref(false);
+const activeUploadTarget = ref({ sectionId: null, field: null });
+
+const isVideoUrl = (url) => {
+  if (!url) return false;
+  const clean = url.split('?')[0].toLowerCase();
+  return (
+    clean.endsWith('.mp4') ||
+    clean.endsWith('.webm') ||
+    clean.endsWith('.mov') ||
+    clean.endsWith('.avi')
+  );
+};
+
+const triggerMediaUpload = (sectionId, field, acceptType = 'video/mp4,video/webm,video/quicktime,image/*') => {
+  activeUploadTarget.value = { sectionId, field };
+  mediaUploadAccept.value = acceptType;
+  if (mediaFileInputRef.value) {
+    mediaFileInputRef.value.value = '';
+    mediaFileInputRef.value.click();
+  }
+};
+
+const handleMediaUploadSelected = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 40 * 1024 * 1024) {
+    alert('Dung lượng tệp không được vượt quá 40MB!');
+    return;
+  }
+
+  isUploadingMedia.value = true;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const csrfToken =
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const response = await fetch('/admin/media/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    });
+
+    const data = await response.json();
+    if (data && data.success && data.file_path) {
+      const { sectionId, field } = activeUploadTarget.value;
+      if (sectionId && field) {
+        updateField(sectionId, field, data.file_path);
+      }
+    } else {
+      alert('Không thể tải tệp lên: ' + (data.message || 'Lỗi không xác định'));
+    }
+  } catch (err) {
+    alert('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
+  } finally {
+    isUploadingMedia.value = false;
+  }
 };
 
 // Update field value
