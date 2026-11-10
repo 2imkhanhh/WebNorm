@@ -44,6 +44,20 @@ class Project extends Model
         return is_array($this->title) ? ($this->title[$lang] ?? $this->title['vi'] ?? '') : ($this->title ?? '');
     }
 
+    public function getSlogan(string $lang = 'vi'): string
+    {
+        $slogan = $this->content['slogan'] ?? null;
+        if (is_array($slogan)) {
+            $val = $slogan[$lang] ?? $slogan['vi'] ?? '';
+            if (!empty($val)) {
+                return $val;
+            }
+        } elseif (is_string($slogan) && !empty($slogan)) {
+            return $slogan;
+        }
+        return $this->getTitle($lang);
+    }
+
     public function getCategory(string $lang = 'vi'): string
     {
         if ($this->relationLoaded('categories') && $this->categories->isNotEmpty()) {

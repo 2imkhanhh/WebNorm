@@ -181,11 +181,11 @@
         <div class="modal-nav-tabs">
           <button type="button" class="modal-nav-tab" :class="{ active: activeTab === 'basic' }"
             @click="activeTab = 'basic'">
-            <i class="bx bx-info-circle"></i> 1. Thông tin chung
+            1. Thông tin chung
           </button>
           <button type="button" class="modal-nav-tab" :class="{ active: activeTab === 'detail' }"
             @click="activeTab = 'detail'">
-            <i class="bx bx-layout"></i> 2. Chi tiết trang (/work/{{ form.slug || '...' }})
+            2. Chi tiết dự án
           </button>
         </div>
 
@@ -273,15 +273,6 @@
                           Tháng {{ m }}
                         </button>
                       </div>
-
-                      <div class="calendar-footer">
-                        <button type="button" class="btn-cal-quick" @click="selectYearOnly">
-                          Chỉ Năm {{ calYear }}
-                        </button>
-                        <button type="button" class="btn-cal-quick btn-cal-today" @click="selectCurrentMonth">
-                          Tháng này
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -320,18 +311,17 @@
                     <i class="bx bx-trash"></i>
                   </button>
                 </div>
-
-                <input v-model="form.thumbnail" type="text" class="form-input-custom form-input-sm mt-2"
-                  placeholder="Hoặc dán URL /storage/uploads/..." />
               </div>
 
-              <!-- Mô tả ngắn -->
+              <!-- Mô tả dự án / Giới thiệu đầu trang chi tiết -->
               <div class="form-group-custom">
-                <label class="form-label-custom">Mô tả ngắn</label>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label class="form-label-custom m-0">Mô tả dự án</label>
+                </div>
                 <textarea v-if="modalLang === 'vi'" v-model="form.description_vi" class="form-textarea-custom" rows="3"
-                  placeholder="Tóm tắt ngắn về dự án..."></textarea>
+                  placeholder="Ví dụ: Thiết kế bộ nhận diện thương hiệu số toàn diện..."></textarea>
                 <textarea v-else v-model="form.description_en" class="form-textarea-custom" rows="3"
-                  placeholder="Short summary in English..."></textarea>
+                  placeholder="E.g. Comprehensive digital brand identity design..."></textarea>
               </div>
 
               <!-- Featured Checkbox Card -->
@@ -355,8 +345,8 @@
                 <div class="detail-card-title-wrap">
                   <span class="section-step-num">1</span>
                   <div>
-                    <h4 class="detail-card-title">Ảnh bìa Hero Banner lớn</h4>
-                    <p class="detail-card-subtitle">Hiển thị đầu trang chi tiết (Khuyến nghị 1920×1080px tràn màn hình)
+                    <h4 class="detail-card-title">Ảnh bìa Hero Banner</h4>
+                    <p class="detail-card-subtitle">Hiển thị đầu trang (Khuyến nghị 1920×1080px)
                     </p>
                   </div>
                 </div>
@@ -502,20 +492,10 @@
 
           <!-- Modal Footer -->
           <div class="studio-modal-footer d-flex justify-content-end align-items-center gap-2 mt-3 pt-3 border-top">
-            <button
-              v-if="activeTab === 'basic'"
-              type="button"
-              class="btn-tab-switch"
-              @click="activeTab = 'detail'"
-            >
+            <button v-if="activeTab === 'basic'" type="button" class="btn-tab-switch" @click="activeTab = 'detail'">
               Tiếp tục sang Chi tiết dự án <i class="bx bx-right-arrow-alt"></i>
             </button>
-            <button
-              v-else
-              type="button"
-              class="btn-tab-switch"
-              @click="activeTab = 'basic'"
-            >
+            <button v-else type="button" class="btn-tab-switch" @click="activeTab = 'basic'">
               <i class="bx bx-left-arrow-alt"></i> Quay lại Thông tin chung
             </button>
             <button type="submit" class="btn-submit">
@@ -694,19 +674,6 @@ const isMonthActive = (m) => {
 
 const selectMonth = (m) => {
   const mStr = String(m).padStart(2, '0');
-  form.year = `${mStr}/${calYear.value}`;
-  isCalendarOpen.value = false;
-};
-
-const selectYearOnly = () => {
-  form.year = String(calYear.value);
-  isCalendarOpen.value = false;
-};
-
-const selectCurrentMonth = () => {
-  const now = new Date();
-  calYear.value = now.getFullYear();
-  const mStr = String(now.getMonth() + 1).padStart(2, '0');
   form.year = `${mStr}/${calYear.value}`;
   isCalendarOpen.value = false;
 };
