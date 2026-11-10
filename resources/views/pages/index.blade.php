@@ -33,7 +33,11 @@
 
 @section('content')
 <section class="hero-section">
-        <model-viewer src="{{ !empty($settings['model_3d']) ? asset($settings['model_3d']) : asset('assets/images/norm.glb') }}" alt="3D Banner" camera-controls disable-zoom
+        @php
+            $model3dVal = !empty($settings['model_3d']) ? $settings['model_3d'] : 'storage/uploads/norm.glb';
+            $model3dSrc = str_starts_with($model3dVal, 'http') ? $model3dVal : asset(ltrim($model3dVal, '/'));
+        @endphp
+        <model-viewer src="{{ $model3dSrc }}" alt="3D Banner" camera-controls disable-zoom
             interaction-prompt="none" disable-pan class="hero-3d-model" style="--poster-color: transparent;"
             shadow-intensity="1" camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
             max-camera-orbit="30deg 90deg 140%"></model-viewer>
@@ -96,7 +100,7 @@
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
                     @php
-                        $heroMediaVal = \App\Helpers\NormHelper::val($pageContents['hero_video'] ?? null, 'assets/images/main-feature.mp4');
+                        $heroMediaVal = \App\Helpers\NormHelper::val($pageContents['hero_video'] ?? null, 'storage/uploads/main-feature.mp4');
                         $heroMediaSrc = str_starts_with($heroMediaVal, 'http') ? $heroMediaVal : asset(ltrim($heroMediaVal, '/'));
                         $heroExt = strtolower(pathinfo(parse_url($heroMediaVal, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
                         $isHeroVideo = in_array($heroExt, ['mp4', 'webm', 'mov', 'avi']) || str_ends_with(strtolower($heroMediaVal), '.mp4');

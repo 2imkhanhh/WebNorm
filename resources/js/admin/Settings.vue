@@ -50,7 +50,19 @@
 
           <div class="modal-form-group">
             <label class="modal-label">Đường dẫn Mô hình 3D Hero (.glb)</label>
-            <input v-model="form.model_3d" type="text" class="modal-input" placeholder="/assets/images/norm.glb" />
+            <div class="d-flex gap-2">
+              <input v-model="form.model_3d" type="text" class="modal-input" placeholder="/storage/uploads/norm.glb" />
+              <button
+                type="button"
+                class="btn-upload-trigger"
+                :disabled="isUploading3D"
+                @click="trigger3DUpload"
+                title="Tải tệp mô hình .glb từ máy tính (tối đa 50MB)"
+              >
+                <i class="bx" :class="isUploading3D ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                <span>{{ isUploading3D ? 'Đang tải...' : 'Tải file lên' }}</span>
+              </button>
+            </div>
             <span class="field-hint">Mô hình 3D tương tác tại Banner trang chủ.</span>
           </div>
 
@@ -130,6 +142,15 @@
         </div>
       </form>
     </div>
+
+    <!-- Hidden native file input for 3D GLB upload -->
+    <input
+      type="file"
+      ref="file3DInputRef"
+      style="display: none;"
+      accept=".glb"
+      @change="handle3DUploadSelected"
+    />
   </Layout>
 </template>
 
@@ -163,7 +184,7 @@ const initFormData = () => ({
   site_name_vi: getVal('site_name', 'vi') || 'Brand Design Agency • Norm',
   site_name_en: getVal('site_name', 'en') || 'Brand Design Agency • Norm',
   logo: props.settings.logo || '/assets/images/logo.png',
-  model_3d: props.settings.model_3d || '/assets/images/norm.glb',
+  model_3d: props.settings.model_3d || '/storage/uploads/norm.glb',
   copyright: props.settings.copyright || '©2026 All Rights Reserved',
   hotline: props.settings.hotline || '(+84)816 656718',
   email: props.settings.email || 'info@norm.vn',
@@ -191,6 +212,58 @@ watch(
   },
   { deep: true }
 );
+
+// 3D GLB upload logic
+const file3DInputRef = ref(null);
+const isUploading3D = ref(false);
+
+const trigger3DUpload = () => {
+  if (file3DInputRef.value) {
+    file3DInputRef.value.value = '';
+    file3DInputRef.value.click();
+  }
+};
+
+const handle3DUploadSelected = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  if (file.size > 50 * 1024 * 1024) {
+    alert('Dung lượng tệp 3D không được vượt quá 50MB!');
+    return;
+  }
+
+  isUploading3D.value = true;
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const csrfToken =
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const response = await fetch('/admin/media/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    });
+
+    const data = await response.json();
+    if (data && data.success && data.file_path) {
+      const finalPath = data.file_path.startsWith('/') ? data.file_path : '/' + data.file_path;
+      form.model_3d = finalPath;
+      hasUnsavedChanges.value = true;
+    } else {
+      alert('Không thể tải tệp lên: ' + (data.message || 'Lỗi không xác định'));
+    }
+  } catch (err) {
+    alert('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
+  } finally {
+    isUploading3D.value = false;
+  }
+};
 
 const revertSettings = () => {
   if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại cài đặt gốc trong database?')) {

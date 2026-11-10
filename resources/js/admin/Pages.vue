@@ -174,7 +174,7 @@ const defaultPages = [
           { key: 'hero_tagline_3', label: 'Banner Tagline 3', type: 'text', value: { vi: 'Culture Your Brand', en: 'Culture Your Brand' } },
           { key: 'hero_heading', label: 'Tiêu đề lớn Hero', type: 'textarea', value: { vi: "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ", en: "IDENTITY\nSTRATEGY\nCULTURE" } },
           { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.', en: 'We help businesses build clear, consistent brand identities.' } },
-          { key: 'hero_video', label: 'Tệp giới thiệu (Video hoặc Ảnh)', type: 'video', value: { vi: 'assets/images/main-feature.mp4', en: 'assets/images/main-feature.mp4' } },
+          { key: 'hero_video', label: 'Tệp giới thiệu (Video hoặc Ảnh)', type: 'video', value: { vi: 'storage/uploads/main-feature.mp4', en: 'storage/uploads/main-feature.mp4' } },
         ],
       },
       {

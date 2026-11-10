@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         $settings = [
             ['key' => 'site_name', 'value' => ['vi' => 'Brand Design Agency • Norm', 'en' => 'Brand Design Agency • Norm'], 'group' => 'general', 'description' => 'Tên thương hiệu website'],
             ['key' => 'logo', 'value' => '/assets/images/logo.png', 'group' => 'general', 'description' => 'Ảnh logo chính'],
-            ['key' => 'model_3d', 'value' => '/assets/images/norm.glb', 'group' => 'general', 'description' => 'Đường dẫn mô hình 3D hero'],
+            ['key' => 'model_3d', 'value' => '/storage/uploads/norm.glb', 'group' => 'general', 'description' => 'Đường dẫn mô hình 3D hero'],
             ['key' => 'hotline', 'value' => '(+84)816 656718', 'group' => 'contact', 'description' => 'Số điện thoại hotline'],
             ['key' => 'email', 'value' => 'info@norm.vn', 'group' => 'contact', 'description' => 'Địa chỉ email'],
             ['key' => 'address', 'value' => ['vi' => "Số 110 Nguyễn Ngọc Nại, P. Phương Liệt, TP. Hà Nội", 'en' => "No. 110 Nguyen Ngoc Nai street,\nPhuong Liet ward, Ha Noi city, Vietnam"], 'group' => 'contact', 'description' => 'Địa chỉ văn phòng'],
@@ -109,11 +109,11 @@ class DatabaseSeeder extends Seeder
                 'section_id' => 'hero',
                 'section_title' => 'Hero & Tiêu đề chính',
                 'field_key' => 'hero_video',
-                'field_label' => 'Video giới thiệu (MP4 URL)',
+                'field_label' => 'Tệp giới thiệu (Video hoặc Ảnh)',
                 'field_type' => 'video',
                 'value' => [
-                    'vi' => 'assets/images/main-feature.mp4',
-                    'en' => 'assets/images/main-feature.mp4'
+                    'vi' => 'storage/uploads/main-feature.mp4',
+                    'en' => 'storage/uploads/main-feature.mp4'
                 ],
                 'sort_order' => 6,
             ],
@@ -603,7 +603,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'project3.png', 'file_path' => '/assets/images/project3.png', 'file_type' => 'image', 'file_size' => 920000],
             ['name' => 'project4.png', 'file_path' => '/assets/images/project4.png', 'file_type' => 'image', 'file_size' => 950000],
             ['name' => 'news1.png', 'file_path' => '/assets/images/news1.png', 'file_type' => 'image', 'file_size' => 640000],
-            ['name' => 'norm.glb', 'file_path' => '/assets/images/norm.glb', 'file_type' => 'model3d', 'file_size' => 4500000],
+            ['name' => 'norm.glb', 'file_path' => '/storage/uploads/norm.glb', 'file_type' => 'model3d', 'file_size' => 40766352],
         ];
         foreach ($mediaFiles as $mf) {
             Media::updateOrCreate(['name' => $mf['name']], $mf);

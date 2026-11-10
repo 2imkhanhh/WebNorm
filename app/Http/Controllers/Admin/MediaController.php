@@ -22,7 +22,7 @@ class MediaController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|max:40960', // Max 40MB
+            'file' => 'required|file|max:51200', // Max 50MB
         ]);
 
         $file = $request->file('file');
