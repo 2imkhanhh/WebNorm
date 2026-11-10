@@ -593,6 +593,44 @@
   background: transparent;
 }
 
+.bullet-input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.bullet-input-wrap:focus-within {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a;
+}
+
+.bullet-prefix {
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-right: 1px solid #e2e8f0;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bullet-input-field {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #0f172a;
+  background: transparent;
+}
+
 /* Category selector pills */
 .project-cat-pills {
   display: flex;
@@ -1057,6 +1095,26 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.hero-preview-empty {
+  width: 100%;
+  height: 90px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f8fafc;
+  color: #94a3b8;
+  font-size: 12.5px;
+}
+
+.hero-preview-empty i {
+  font-size: 26px;
+  color: #94a3b8;
 }
 
 .btn-clear-preview {

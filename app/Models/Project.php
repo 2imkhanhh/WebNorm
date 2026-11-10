@@ -100,13 +100,16 @@ class Project extends Model
     public function getOverviewTitle(string $lang = 'vi'): string
     {
         $title = $this->content['overview_title'] ?? null;
+        $val = '';
         if (is_array($title)) {
-            return $title[$lang] ?? $title['vi'] ?? ($lang === 'en' ? '• Project Overview' : '• Tổng quan về dự án');
+            $val = $title[$lang] ?? $title['vi'] ?? ($lang === 'en' ? 'Project Overview' : 'Tổng quan về dự án');
+        } elseif (is_string($title) && !empty($title)) {
+            $val = $title;
+        } else {
+            $val = $lang === 'en' ? 'Project Overview' : 'Tổng quan về dự án';
         }
-        if (is_string($title) && !empty($title)) {
-            return $title;
-        }
-        return $lang === 'en' ? '• Project Overview' : '• Tổng quan về dự án';
+        $val = preg_replace('/^[•\s\-\*]+/u', '', trim($val));
+        return '• ' . (empty($val) ? ($lang === 'en' ? 'Project Overview' : 'Tổng quan về dự án') : $val);
     }
 
     public function getOverviewText(string $lang = 'vi'): string

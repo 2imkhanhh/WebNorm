@@ -364,9 +364,10 @@
                   <i class="bx bx-x"></i>
                 </button>
               </div>
-
-              <input v-model="form.hero_image" type="text" class="form-input-custom form-input-sm mt-2"
-                placeholder="Hoặc dán URL ảnh bìa lớn (/storage/uploads/...)" />
+              <div v-else class="hero-preview-empty mt-2">
+                <i class="bx bx-image"></i>
+                <span>Chưa có ảnh bìa</span>
+              </div>
             </div>
 
             <!-- 2. Overview Section -->
@@ -375,23 +376,26 @@
                 <div class="detail-card-title-wrap">
                   <span class="section-step-num">2</span>
                   <div>
-                    <h4 class="detail-card-title">Phần Tổng quan dự án (Overview)</h4>
-                    <p class="detail-card-subtitle">Tiêu đề, câu chuyện thương hiệu & Mockup tổng quan</p>
+                    <h4 class="detail-card-title">Tổng quan dự án</h4>
+                    <p class="detail-card-subtitle">Tiêu đề, câu chuyện thương hiệu & ảnh tổng quan</p>
                   </div>
                 </div>
               </div>
 
               <div class="form-row-2col mt-2">
                 <div class="form-group-custom">
-                  <label class="form-label-custom">Tiêu đề phụ bên trái</label>
-                  <input v-if="modalLang === 'vi'" v-model="form.overview_title_vi" type="text"
-                    class="form-input-custom" placeholder="Ví dụ: • Tổng quan về dự án" />
-                  <input v-else v-model="form.overview_title_en" type="text" class="form-input-custom"
-                    placeholder="E.g. • Project Overview" />
+                  <label class="form-label-custom">Tiêu đề</label>
+                  <div class="bullet-input-wrap">
+                    <span class="bullet-prefix">•</span>
+                    <input v-if="modalLang === 'vi'" v-model="form.overview_title_vi" type="text"
+                      class="bullet-input-field" placeholder="Tổng quan về dự án" />
+                    <input v-else v-model="form.overview_title_en" type="text" class="bullet-input-field"
+                      placeholder="Project Overview" />
+                  </div>
                 </div>
 
                 <div class="form-group-custom">
-                  <label class="form-label-custom">Ảnh Mockup Tổng quan</label>
+                  <label class="form-label-custom">Ảnh tổng quan</label>
                   <div class="d-flex gap-2">
                     <input v-model="form.overview_image" type="text" class="form-input-custom"
                       placeholder="/storage/uploads/... hoặc URL mockup" />
@@ -406,8 +410,7 @@
               <div class="form-group-custom mt-2">
                 <label class="form-label-custom">Nội dung giới thiệu chi tiết</label>
                 <textarea v-if="modalLang === 'vi'" v-model="form.overview_text_vi" class="form-textarea-custom"
-                  rows="3"
-                  placeholder="Nhập 1 - 2 đoạn văn giới thiệu ý tưởng, câu chuyện và giải pháp thương hiệu..."></textarea>
+                  rows="3" placeholder="Giới thiệu ý tưởng, câu chuyện và giải pháp thương hiệu..."></textarea>
                 <textarea v-else v-model="form.overview_text_en" class="form-textarea-custom" rows="3"
                   placeholder="Overview story and creative concept in English..."></textarea>
               </div>
@@ -429,8 +432,8 @@
                 <div class="detail-card-title-wrap">
                   <span class="section-step-num">3</span>
                   <div>
-                    <h4 class="detail-card-title">Bộ sưu tập ảnh Gallery ({{ form.gallery.length }} ảnh)</h4>
-                    <p class="detail-card-subtitle">Ảnh hiển thị lớn ở các section bên dưới trang chi tiết</p>
+                    <h4 class="detail-card-title">Bộ sưu tập ảnh ({{ form.gallery.length }} ảnh)</h4>
+                    <p class="detail-card-subtitle">Ảnh hiển thị lớn ở bên dưới</p>
                   </div>
                 </div>
                 <button type="button" class="btn-detail-action" :disabled="isUploadingGallery"
@@ -462,8 +465,8 @@
                 <div class="detail-card-title-wrap">
                   <span class="section-step-num">4</span>
                   <div>
-                    <h4 class="detail-card-title">Đội ngũ thực hiện (Credits)</h4>
-                    <p class="detail-card-subtitle">Ghi nhận vai trò & tên các thành viên thực hiện dự án</p>
+                    <h4 class="detail-card-title">Đội ngũ thực hiện</h4>
+                    <p class="detail-card-subtitle">Vai trò & tên các thành viên thực hiện dự án</p>
                   </div>
                 </div>
                 <button type="button" class="btn-detail-action" @click="addCreditRow">
@@ -625,8 +628,8 @@ const form = reactive({
 
   // Detail page fields
   hero_image: '',
-  overview_title_vi: '• Tổng quan về dự án',
-  overview_title_en: '• Project Overview',
+  overview_title_vi: 'Tổng quan về dự án',
+  overview_title_en: 'Project Overview',
   overview_text_vi: '',
   overview_text_en: '',
   overview_image: '',
@@ -884,8 +887,8 @@ const openCreateModal = () => {
 
   // Detail fields
   form.hero_image = '';
-  form.overview_title_vi = '• Tổng quan về dự án';
-  form.overview_title_en = '• Project Overview';
+  form.overview_title_vi = 'Tổng quan về dự án';
+  form.overview_title_en = 'Project Overview';
   form.overview_text_vi = '';
   form.overview_text_en = '';
   form.overview_image = '';
@@ -936,9 +939,12 @@ const openEditModal = (p) => {
 
   // Detail fields from p.content & p.gallery
   const c = p.content || {};
+  const cleanDot = (s) => String(s || '').replace(/^[•\s\-\*]+/u, '').trim();
   form.hero_image = c.hero_image || '';
-  form.overview_title_vi = (typeof c.overview_title === 'object' ? c.overview_title.vi : c.overview_title) || '• Tổng quan về dự án';
-  form.overview_title_en = (typeof c.overview_title === 'object' ? c.overview_title.en : '') || '• Project Overview';
+  const rawVi = typeof c.overview_title === 'object' ? c.overview_title.vi : c.overview_title;
+  const rawEn = typeof c.overview_title === 'object' ? c.overview_title.en : '';
+  form.overview_title_vi = cleanDot(rawVi) || 'Tổng quan về dự án';
+  form.overview_title_en = cleanDot(rawEn) || 'Project Overview';
   form.overview_text_vi = (typeof c.overview_text === 'object' ? c.overview_text.vi : c.overview_text) || form.description_vi || '';
   form.overview_text_en = (typeof c.overview_text === 'object' ? c.overview_text.en : '') || form.description_en || '';
   form.overview_image = c.overview_image || '';
@@ -1192,11 +1198,15 @@ const submitForm = () => {
   const catVi = selectedCats.map((c) => c.name?.vi || c.name).join(' • ');
   const catEn = selectedCats.map((c) => c.name?.en || c.name?.vi || c.name).join(' • ');
 
+  const cleanDot = (s) => String(s || '').replace(/^[•\s\-\*]+/u, '').trim();
+  const viOverview = cleanDot(form.overview_title_vi || form.overview_title_en) || 'Tổng quan về dự án';
+  const enOverview = cleanDot(form.overview_title_en || form.overview_title_vi) || 'Project Overview';
+
   const contentPayload = {
     hero_image: form.hero_image,
     overview_title: {
-      vi: form.overview_title_vi || form.overview_title_en || '• Tổng quan về dự án',
-      en: form.overview_title_en || form.overview_title_vi || '• Project Overview',
+      vi: '• ' + viOverview,
+      en: '• ' + enOverview,
     },
     overview_text: {
       vi: form.overview_text_vi || form.overview_text_en || '',
