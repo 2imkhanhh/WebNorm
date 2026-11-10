@@ -32,7 +32,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $pageContents = $this->getPageContentMap('/', $request);
-        $projects = Project::where('is_active', true)->orderBy('sort_order')->get();
+        $projects = Project::where('is_active', true)->with('categories')->orderBy('sort_order')->get();
         $services = Service::where('is_active', true)->orderBy('sort_order')->get();
         $reviews = Review::where('is_active', true)->orderBy('sort_order')->get();
 
@@ -48,7 +48,7 @@ class HomeController extends Controller
     public function work(Request $request)
     {
         $pageContents = $this->getPageContentMap('/work', $request);
-        $projects = Project::where('is_active', true)->orderBy('sort_order')->get();
+        $projects = Project::where('is_active', true)->with('categories')->orderBy('sort_order')->get();
         return view('pages.work', compact('pageContents', 'projects'));
     }
 
@@ -56,13 +56,13 @@ class HomeController extends Controller
     {
         $project = null;
         if ($slug) {
-            $project = Project::where('slug', $slug)->first();
+            $project = Project::with('categories')->where('slug', $slug)->first();
         }
         if (!$project) {
-            $project = Project::where('is_active', true)->first();
+            $project = Project::with('categories')->where('is_active', true)->first();
         }
 
-        $otherProjects = Project::where('id', '!=', $project ? $project->id : 0)
+        $otherProjects = Project::with('categories')->where('id', '!=', $project ? $project->id : 0)
             ->where('is_active', true)
             ->take(3)
             ->get();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\ProjectCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -12,10 +13,12 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::orderBy('sort_order')->orderBy('id', 'desc')->get();
+        $projects = Project::with('categories')->orderBy('sort_order')->orderBy('id', 'desc')->get();
+        $categories = ProjectCategory::orderBy('sort_order')->orderBy('id')->get();
 
         return Inertia::render('Projects', [
             'projects' => $projects,
+            'categories' => $categories,
         ]);
     }
 
@@ -38,13 +41,36 @@ class ProjectController extends Controller
                 if (is_string($title)) {
                     $title = ['vi' => $title, 'en' => $title];
                 }
+
                 $category = $itemData['category'] ?? '';
                 if (is_string($category)) {
                     $category = ['vi' => $category, 'en' => $category];
                 }
+
+                $categoryIds = $itemData['category_ids'] ?? [];
+                if (!empty($categoryIds)) {
+                    $selectedCats = ProjectCategory::whereIn('id', $categoryIds)->get();
+                    if ($selectedCats->isNotEmpty()) {
+                        $category = [
+                            'vi' => $selectedCats->map(fn($c) => $c->getName('vi'))->join(' • '),
+                            'en' => $selectedCats->map(fn($c) => $c->getName('en'))->join(' • '),
+                        ];
+                    }
+                }
+
                 $description = $itemData['description'] ?? '';
                 if (is_string($description)) {
                     $description = ['vi' => $description, 'en' => $description];
+                }
+
+                $gallery = $itemData['gallery'] ?? [];
+                if (!is_array($gallery)) {
+                    $gallery = [];
+                }
+
+                $content = $itemData['content'] ?? [];
+                if (!is_array($content)) {
+                    $content = [];
                 }
 
                 $payload = [
@@ -52,6 +78,8 @@ class ProjectController extends Controller
                     'slug' => $itemData['slug'] ?? ('project-' . ($index + 1)),
                     'category' => $category,
                     'thumbnail' => $itemData['thumbnail'] ?? null,
+                    'gallery' => $gallery,
+                    'content' => $content,
                     'client' => $itemData['client'] ?? null,
                     'year' => $itemData['year'] ?? date('Y'),
                     'description' => $description,
@@ -59,10 +87,16 @@ class ProjectController extends Controller
                     'sort_order' => $index + 1,
                 ];
 
-                if ($id && is_numeric($id) && Project::find($id)) {
-                    Project::where('id', $id)->update($payload);
+                $project = null;
+                if ($id && is_numeric($id) && ($existing = Project::find($id))) {
+                    $existing->update($payload);
+                    $project = $existing;
                 } else {
-                    Project::create($payload);
+                    $project = Project::create($payload);
+                }
+
+                if ($project && isset($itemData['category_ids'])) {
+                    $project->categories()->sync($itemData['category_ids']);
                 }
             }
         });

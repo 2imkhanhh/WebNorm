@@ -34,7 +34,7 @@
 
         <div class="work-grid">
             @forelse($projects as $p)
-            <a href="{{ route('work.detail', $p->slug) }}" class="project-card" data-category="{{ strtolower($p->getCategory()) }}">
+            <a href="{{ route('work.detail', $p->slug) }}" class="project-card" data-category="{{ strtolower($p->getCategory()) }}" data-featured="{{ $p->is_featured ? '1' : '0' }}">
                 <div class="project-img-wrap">
                     <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}" class="project-img">
                 </div>
@@ -70,8 +70,10 @@
                 let matchingCount = 0;
 
                 projects.forEach(project => {
-                    const category = project.getAttribute('data-category') || '';
-                    const matchesFilter = currentFilter === 'all' || category.includes(currentFilter);
+
+                    const category = (project.getAttribute('data-category') || '').toLowerCase();
+                    const isFeatured = project.getAttribute('data-featured') === '1';
+                    const matchesFilter = currentFilter === 'all' || (currentFilter === 'featured' ? isFeatured : category.includes(currentFilter));
 
                     if (matchesFilter) {
                         matchingCount++;

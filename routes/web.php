@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PageContentController;
+use App\Http\Controllers\Admin\ProjectCategoryController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -65,6 +66,11 @@ Route::prefix('admin')->group(function () {
         Route::post('/projects', [ProjectController::class, 'store'])->name('admin.projects.store');
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
+
+        // Project Categories (CRUD)
+        Route::post('/project-categories', [ProjectCategoryController::class, 'store'])->name('admin.project-categories.store');
+        Route::put('/project-categories/{category}', [ProjectCategoryController::class, 'update'])->name('admin.project-categories.update');
+        Route::delete('/project-categories/{category}', [ProjectCategoryController::class, 'destroy'])->name('admin.project-categories.destroy');
 
         // Services
         Route::get('/services', [ServiceController::class, 'index'])->name('admin.services');

@@ -62,22 +62,25 @@
         </Link>
       </nav>
 
-      <aside v-if="!isDashboard" class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
-        <slot />
-      </aside>
+      <!-- Main Content Area: Full Width (Dashboard, Projects) OR Studio Split View -->
+      <slot v-if="isFullWidth" />
 
-      <!-- Resizer Handle Bar -->
-      <div v-if="!isDashboard" class="resizer-bar" :class="{ dragging: isResizing }" @mousedown="startResize">
-        <div class="resizer-pill" title="Kéo để thay đổi độ rộng cột">
-          <span class="dot"></span>
-          <span class="dot"></span>
-          <span class="dot"></span>
+      <template v-else>
+        <aside class="studio-sidebar" :style="{ width: sidebarWidth + 'px' }">
+          <slot />
+        </aside>
+
+        <!-- Resizer Handle Bar -->
+        <div class="resizer-bar" :class="{ dragging: isResizing }" @mousedown="startResize">
+          <div class="resizer-pill" title="Kéo để thay đổi độ rộng cột">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
         </div>
-      </div>
 
-      <!-- Main Content Area: Overview Dashboard OR Live Preview -->
-      <slot v-if="isDashboard" />
-      <LivePreview v-else />
+        <LivePreview />
+      </template>
     </main>
   </div>
 </template>
@@ -107,6 +110,10 @@ const isDashboard = computed(() => {
   return page.component === 'Dashboard';
 });
 
+const isFullWidth = computed(() => {
+  return page.component === 'Dashboard' || page.component === 'Projects';
+});
+
 const MIN_SIDEBAR_WIDTH = 320;
 const sidebarWidth = ref(MIN_SIDEBAR_WIDTH);
 const isResizing = ref(false);
@@ -114,7 +121,7 @@ const isResizing = ref(false);
 watch(
   () => page.component,
   (newComp) => {
-    if (newComp !== 'Dashboard') {
+    if (!isFullWidth.value) {
       sidebarWidth.value = MIN_SIDEBAR_WIDTH;
       nextTick(() => {
         if (isAutoFit.value) {
