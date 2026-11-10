@@ -62,7 +62,7 @@
             const projects = document.querySelectorAll('.project-card');
             const loadMoreBtn = document.getElementById('loadMoreBtn');
 
-            let currentItems = 6;
+            let currentItems = 9;
             let currentFilter = 'all';
 
             function updateProjects() {
@@ -114,7 +114,7 @@
                     btn.classList.add('wh-dark');
 
                     currentFilter = btn.getAttribute('data-filter');
-                    currentItems = 6;
+                    currentItems = 9;
                     updateProjects();
                 });
             });
@@ -122,7 +122,7 @@
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    currentItems += 6;
+                    currentItems += 9;
                     updateProjects();
                 });
             }

@@ -59,14 +59,14 @@
             </button>
             <button v-for="cat in localCategories" :key="cat.id" type="button" class="filter-tab-pill"
               :class="{ active: selectedFilterCat === cat.id }" @click="selectedFilterCat = cat.id">
-              {{ getTrans(cat.name) }}
+              {{ getTrans(cat.name) }} ({{ getCategoryProjectCount(cat.id) }})
             </button>
           </div>
         </div>
 
         <!-- Projects Card Grid -->
         <div v-if="filteredProjects && filteredProjects.length > 0" class="projects-card-grid">
-          <div v-for="p in filteredProjects" :key="p.id" class="project-card-full">
+          <div v-for="p in paginatedProjects" :key="p.id" class="project-card-full">
             <div class="project-card-thumb-wrap">
               <img
                 :src="p.thumbnail ? (p.thumbnail.startsWith('http') ? p.thumbnail : '/' + p.thumbnail.replace(/^\//, '')) : '/assets/images/project1.png'"
@@ -76,12 +76,6 @@
                 <span v-if="p._isNew" class="card-badge-new" title="Chưa xuất bản vào database">Mới</span>
                 <span v-else-if="p._isModified" class="card-badge-mod" title="Đã chỉnh sửa nhưng chưa xuất bản">Đã
                   sửa</span>
-              </div>
-              <div class="card-stats-overlay">
-                <span title="Số lượng ảnh gallery"><i class="bx bx-images"></i> {{ (p.gallery && p.gallery.length) || 0
-                  }} ảnh</span>
-                <span title="Đội ngũ thực hiện"><i class="bx bx-group"></i> {{ (p.content && p.content.credits &&
-                  p.content.credits.length) || 0 }}</span>
               </div>
             </div>
 
@@ -115,8 +109,44 @@
           </div>
         </div>
 
+        <!-- Pagination Controls (9 projects per page) -->
+        <div v-if="totalPages > 1" class="projects-pagination-wrap">
+          <div class="pagination-controls">
+            <button
+              type="button"
+              class="btn-page-nav"
+              :disabled="currentPage === 1"
+              @click="setPage(currentPage - 1)"
+              title="Trang trước"
+            >
+              <i class="bx bx-chevron-left"></i>
+            </button>
+
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              type="button"
+              class="btn-page-num"
+              :class="{ active: currentPage === page }"
+              @click="setPage(page)"
+            >
+              {{ page }}
+            </button>
+
+            <button
+              type="button"
+              class="btn-page-nav"
+              :disabled="currentPage === totalPages"
+              @click="setPage(currentPage + 1)"
+              title="Trang tiếp theo"
+            >
+              <i class="bx bx-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
         <!-- Empty State -->
-        <div v-else class="empty-state bg-white p-5 rounded-3 border text-center my-3">
+        <div v-if="!filteredProjects || filteredProjects.length === 0" class="empty-state bg-white p-5 rounded-3 border text-center my-3">
           <i class="bx bx-folder-open empty-icon fs-1 text-muted"></i>
           <h4 class="mt-2 text-dark">Không tìm thấy dự án nào</h4>
           <p class="text-muted">Không có dự án nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
@@ -445,7 +475,7 @@
 
           <!-- List of existing categories -->
           <div class="category-list-header">
-            <span class="modal-label m-0 fw-semibold">Danh sách danh mục</span>
+            <span class="modal-label m-0 fw-semibold">Danh sách danh mục ({{ localCategories.length }})</span>
           </div>
           <div class="category-list-items">
             <div v-for="cat in localCategories" :key="cat.id" class="category-list-item"
@@ -455,6 +485,7 @@
                 <span class="cat-name">{{ getTrans(cat.name) }}</span>
               </div>
               <div class="cat-item-right">
+                <span class="cat-badge-count">{{ getCategoryProjectCount(cat.id) }} dự án</span>
                 <div class="cat-item-actions">
                   <button type="button" class="btn-action edit" title="Sửa tên" @click="startEditCategory(cat)">
                     <i class="bx bx-edit-alt"></i>
@@ -571,7 +602,37 @@ const filteredProjects = computed(() => {
 const resetFilters = () => {
   selectedFilterCat.value = 'all';
   searchQuery.value = '';
+  currentPage.value = 1;
 };
+
+// Pagination (9 projects per page)
+const currentPage = ref(1);
+const itemsPerPage = 9;
+
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(filteredProjects.value.length / itemsPerPage));
+});
+
+const paginatedProjects = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  return filteredProjects.value.slice(start, start + itemsPerPage);
+});
+
+const setPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+};
+
+watch([selectedFilterCat, searchQuery], () => {
+  currentPage.value = 1;
+});
+
+watch(totalPages, (newTotal) => {
+  if (currentPage.value > newTotal) {
+    currentPage.value = newTotal;
+  }
+});
 
 const form = reactive({
   title_vi: '',
