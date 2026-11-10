@@ -112,41 +112,26 @@
         <!-- Pagination Controls (9 projects per page) -->
         <div v-if="totalPages > 1" class="projects-pagination-wrap">
           <div class="pagination-controls">
-            <button
-              type="button"
-              class="btn-page-nav"
-              :disabled="currentPage === 1"
-              @click="setPage(currentPage - 1)"
-              title="Trang trước"
-            >
+            <button type="button" class="btn-page-nav" :disabled="currentPage === 1" @click="setPage(currentPage - 1)"
+              title="Trang trước">
               <i class="bx bx-chevron-left"></i>
             </button>
 
-            <button
-              v-for="page in totalPages"
-              :key="page"
-              type="button"
-              class="btn-page-num"
-              :class="{ active: currentPage === page }"
-              @click="setPage(page)"
-            >
+            <button v-for="page in totalPages" :key="page" type="button" class="btn-page-num"
+              :class="{ active: currentPage === page }" @click="setPage(page)">
               {{ page }}
             </button>
 
-            <button
-              type="button"
-              class="btn-page-nav"
-              :disabled="currentPage === totalPages"
-              @click="setPage(currentPage + 1)"
-              title="Trang tiếp theo"
-            >
+            <button type="button" class="btn-page-nav" :disabled="currentPage === totalPages"
+              @click="setPage(currentPage + 1)" title="Trang tiếp theo">
               <i class="bx bx-chevron-right"></i>
             </button>
           </div>
         </div>
 
         <!-- Empty State -->
-        <div v-if="!filteredProjects || filteredProjects.length === 0" class="empty-state bg-white p-5 rounded-3 border text-center my-3">
+        <div v-if="!filteredProjects || filteredProjects.length === 0"
+          class="empty-state bg-white p-5 rounded-3 border text-center my-3">
           <i class="bx bx-folder-open empty-icon fs-1 text-muted"></i>
           <h4 class="mt-2 text-dark">Không tìm thấy dự án nào</h4>
           <p class="text-muted">Không có dự án nào phù hợp với bộ lọc hoặc từ khóa tìm kiếm của bạn.</p>
@@ -172,271 +157,370 @@
               <i class="bx bx-link-external"></i> Xem trang chi tiết
             </a>
           </div>
-          <button class="btn-close-modal" @click="isModalOpen = false">
-            <i class="bx bx-x"></i>
-          </button>
+
+          <div class="d-flex align-items-center gap-2">
+            <!-- Language Switcher in Modal -->
+            <div class="modal-lang-switcher">
+              <button type="button" class="btn-modal-lang" :class="{ active: modalLang === 'vi' }"
+                @click="modalLang = 'vi'" title="Tiếng Việt">
+                VI
+              </button>
+              <button type="button" class="btn-modal-lang" :class="{ active: modalLang === 'en' }"
+                @click="modalLang = 'en'" title="English">
+                EN
+              </button>
+            </div>
+
+            <button class="btn-close-modal" @click="isModalOpen = false">
+              <i class="bx bx-x"></i>
+            </button>
+          </div>
         </div>
 
         <!-- Navigation Tabs -->
         <div class="modal-nav-tabs">
           <button type="button" class="modal-nav-tab" :class="{ active: activeTab === 'basic' }"
             @click="activeTab = 'basic'">
-            <i class="bx bx-info-circle"></i> 1. Thông tin cơ bản
+            <i class="bx bx-info-circle"></i> 1. Thông tin chung
           </button>
           <button type="button" class="modal-nav-tab" :class="{ active: activeTab === 'detail' }"
             @click="activeTab = 'detail'">
-            <i class="bx bx-layout"></i> 2. Nội dung Trang Chi tiết (Hero, Gallery, Credits)
+            <i class="bx bx-layout"></i> 2. Chi tiết trang (/work/{{ form.slug || '...' }})
           </button>
         </div>
 
         <!-- Form Body -->
         <form @submit.prevent="submitForm" class="tab-pane-content">
-          <!-- TAB 1: THÔNG TIN CƠ BẢN -->
-          <div v-show="activeTab === 'basic'" class="d-flex flex-column gap-3">
-            <div class="modal-form-row">
-              <div class="modal-form-group col-6">
-                <label class="modal-label">Tên dự án (Tiếng Việt) *</label>
-                <input v-model="form.title_vi" type="text" class="modal-input" placeholder="Ví dụ: Tiên Phong Identity"
-                  required />
+          <!-- TAB 1: THÔNG TIN CHUNG (2 Cột khoa học) -->
+          <div v-if="activeTab === 'basic'" class="project-tab-body">
+            <!-- Cột trái: Thông tin chính -->
+            <div class="project-form-main">
+              <!-- Tên dự án -->
+              <div class="form-group-custom">
+                <label class="form-label-custom">
+                  Tên dự án <span class="text-danger">*</span>
+                </label>
+                <input v-if="modalLang === 'vi'" v-model="form.title_vi" type="text" class="form-input-custom"
+                  placeholder="Ví dụ: Tiên Phong Identity" @input="onTitleInput" required />
+                <input v-else v-model="form.title_en" type="text" class="form-input-custom"
+                  placeholder="E.g. Tien Phong Identity" @input="onTitleInput" required />
               </div>
-              <div class="modal-form-group col-6">
-                <label class="modal-label">Tên dự án (Tiếng Anh)</label>
-                <input v-model="form.title_en" type="text" class="modal-input"
-                  placeholder="Ví dụ: Tien Phong Identity" />
-              </div>
-            </div>
 
-            <div class="modal-form-row">
-              <div class="modal-form-group col-6">
-                <label class="modal-label">Đường dẫn tĩnh (Slug) *</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light text-muted" style="font-size: 12px;">/work/</span>
-                  <input v-model="form.slug" type="text" class="modal-input" placeholder="tien-phong-identity"
-                    required />
+              <!-- Đường dẫn tĩnh (Slug) -->
+              <div class="form-group-custom">
+                <label class="form-label-custom">
+                  Đường dẫn tĩnh <span class="text-danger">*</span>
+                </label>
+                <div class="slug-input-wrap">
+                  <span class="slug-prefix">/work/</span>
+                  <input v-model="form.slug" type="text" class="slug-input-field" placeholder="tien-phong-identity"
+                    @input="onSlugInput" required />
                 </div>
               </div>
-              <div class="modal-form-group col-3">
-                <label class="modal-label">Năm thực hiện</label>
-                <input v-model="form.year" type="text" class="modal-input" placeholder="2026" />
+
+              <!-- Danh mục dự án (Pills) -->
+              <div class="form-group-custom">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label-custom">
+                    Danh mục dự án <span class="text-danger">*</span>
+                  </label>
+                  <button type="button" class="btn-manage-cat-link" @click="openCategoryModal">
+                    <i class="bx bx-cog"></i> Quản lý danh mục
+                  </button>
+                </div>
+                <div class="project-cat-pills">
+                  <button v-for="cat in localCategories" :key="cat.id" type="button" class="cat-select-pill"
+                    :class="{ active: form.category_ids.includes(cat.id) }" @click="toggleCategory(cat.id)">
+                    <i class="bx" :class="form.category_ids.includes(cat.id) ? 'bx-check' : 'bx-plus'"></i>
+                    <span>{{ getTrans(cat.name) }}</span>
+                  </button>
+                </div>
+                <span v-if="!form.category_ids || form.category_ids.length === 0" class="field-hint text-danger mt-1">
+                  * Vui lòng chọn ít nhất 1 danh mục cho dự án.
+                </span>
               </div>
-              <div class="modal-form-group col-3">
-                <label class="modal-label">Khách hàng (Client)</label>
-                <input v-model="form.client" type="text" class="modal-input" placeholder="Tên khách hàng" />
+
+              <!-- Năm & Khách hàng -->
+              <div class="form-row-2col">
+                <div class="form-group-custom">
+                  <label class="form-label-custom">Năm thực hiện</label>
+                  <div class="calendar-picker-wrap">
+                    <div class="calendar-input-box" @click="toggleCalendar">
+                      <i class="bx bx-calendar calendar-icon"></i>
+                      <span v-if="form.year" class="calendar-val">{{ formatYearDisplay(form.year) }}</span>
+                      <span v-else class="calendar-placeholder">Chọn thời gian</span>
+                      <button v-if="form.year" type="button" class="btn-clear-date" @click.stop="form.year = ''"
+                        title="Xóa">
+                        <i class="bx bx-x"></i>
+                      </button>
+                    </div>
+
+                    <!-- Calendar Dropdown Popup -->
+                    <div v-if="isCalendarOpen" class="calendar-dropdown" @click.stop>
+                      <div class="calendar-header">
+                        <button type="button" class="btn-cal-nav" @click="calYear--" title="Năm trước">
+                          <i class="bx bx-chevron-left"></i>
+                        </button>
+                        <span class="cal-year-title">Năm {{ calYear }}</span>
+                        <button type="button" class="btn-cal-nav" @click="calYear++" title="Năm sau">
+                          <i class="bx bx-chevron-right"></i>
+                        </button>
+                      </div>
+
+                      <div class="calendar-months-grid">
+                        <button v-for="m in 12" :key="m" type="button" class="cal-month-btn"
+                          :class="{ active: isMonthActive(m) }" @click="selectMonth(m)">
+                          Tháng {{ m }}
+                        </button>
+                      </div>
+
+                      <div class="calendar-footer">
+                        <button type="button" class="btn-cal-quick" @click="selectYearOnly">
+                          Chỉ Năm {{ calYear }}
+                        </button>
+                        <button type="button" class="btn-cal-quick btn-cal-today" @click="selectCurrentMonth">
+                          Tháng này
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group-custom">
+                  <label class="form-label-custom">Khách hàng</label>
+                  <input v-model="form.client" type="text" class="form-input-custom"
+                    placeholder="Tên khách hàng / Đối tác" />
+                </div>
               </div>
             </div>
 
-            <!-- Category Multi-Select Selector -->
-            <div class="modal-form-group">
-              <div class="d-flex justify-content-between align-items-center mb-1">
-                <label class="modal-label m-0">Danh mục dự án (Chọn 1 hoặc nhiều danh mục) *</label>
-                <button type="button" class="btn-quick-manage-cat" @click="openCategoryModal">
-                  <i class="bx bx-cog"></i> Quản lý danh mục
-                </button>
-              </div>
-              <div class="category-pills-wrap">
-                <button v-for="cat in localCategories" :key="cat.id" type="button" class="category-pill"
-                  :class="{ active: form.category_ids.includes(cat.id) }" @click="toggleCategory(cat.id)">
-                  <i class="bx" :class="form.category_ids.includes(cat.id) ? 'bx-check' : 'bx-plus'"></i>
-                  <span>{{ getTrans(cat.name) }}</span>
-                </button>
-              </div>
-              <span v-if="form.category_ids.length === 0" class="field-hint text-danger mt-1">
-                * Vui lòng chọn ít nhất 1 danh mục cho dự án.
-              </span>
-            </div>
+            <!-- Cột phải: Ảnh đại diện & Mô tả -->
+            <div class="project-form-side">
+              <!-- Thumbnail Upload -->
+              <div class="form-group-custom">
+                <label class="form-label-custom">Ảnh đại diện</label>
 
-            <!-- Thumbnail Upload -->
-            <div class="modal-form-group">
-              <label class="modal-label">Ảnh đại diện thẻ dự án (Thumbnail danh sách)</label>
-              <div class="d-flex gap-2">
-                <input v-model="form.thumbnail" type="text" class="modal-input"
-                  placeholder="/storage/uploads/... hoặc URL ảnh" />
-                <button type="button" class="btn-upload-trigger" :disabled="isUploadingThumb"
-                  @click="triggerThumbUpload" title="Tải ảnh từ máy tính (PNG, JPG, WEBP...)">
-                  <i class="bx" :class="isUploadingThumb ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                  <span>{{ isUploadingThumb ? 'Đang tải...' : 'Tải ảnh lên' }}</span>
-                </button>
-              </div>
-              <div v-if="form.thumbnail" class="modal-img-preview mt-2" style="max-height: 120px;">
-                <img :src="form.thumbnail.startsWith('http') ? form.thumbnail : '/' + form.thumbnail.replace(/^\//, '')"
-                  alt="Preview" />
-              </div>
-            </div>
+                <div class="project-thumb-box">
+                  <img v-if="form.thumbnail"
+                    :src="form.thumbnail.startsWith('http') ? form.thumbnail : '/' + form.thumbnail.replace(/^\//, '')"
+                    alt="Thumbnail preview" class="project-thumb-img" />
+                  <div v-else class="project-thumb-empty">
+                    <i class="bx bx-image-add"></i>
+                    <span>Chưa có ảnh đại diện</span>
+                  </div>
+                </div>
 
-            <!-- Short Description -->
-            <div class="modal-form-row">
-              <div class="modal-form-group col-6">
-                <label class="modal-label">Mô tả ngắn (VI)</label>
-                <textarea v-model="form.description_vi" class="modal-textarea" rows="2"
+                <div class="thumb-action-row mt-2">
+                  <button type="button" class="btn-upload-thumb" :disabled="isUploadingThumb"
+                    @click="triggerThumbUpload">
+                    <i class="bx" :class="isUploadingThumb ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                    <span>{{ isUploadingThumb ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                  </button>
+                  <button v-if="form.thumbnail" type="button" class="btn-remove-thumb" @click="form.thumbnail = ''"
+                    title="Xóa ảnh đại diện">
+                    <i class="bx bx-trash"></i>
+                  </button>
+                </div>
+
+                <input v-model="form.thumbnail" type="text" class="form-input-custom form-input-sm mt-2"
+                  placeholder="Hoặc dán URL /storage/uploads/..." />
+              </div>
+
+              <!-- Mô tả ngắn -->
+              <div class="form-group-custom">
+                <label class="form-label-custom">Mô tả ngắn</label>
+                <textarea v-if="modalLang === 'vi'" v-model="form.description_vi" class="form-textarea-custom" rows="3"
                   placeholder="Tóm tắt ngắn về dự án..."></textarea>
-              </div>
-              <div class="modal-form-group col-6">
-                <label class="modal-label">Mô tả ngắn (EN)</label>
-                <textarea v-model="form.description_en" class="modal-textarea" rows="2"
+                <textarea v-else v-model="form.description_en" class="form-textarea-custom" rows="3"
                   placeholder="Short summary in English..."></textarea>
               </div>
-            </div>
 
-            <div class="modal-form-group">
-              <label class="modal-checkbox-label">
-                <input v-model="form.is_featured" type="checkbox" />
-                <span>Đánh dấu là dự án nổi bật (Hiển thị tại Showcase trang chủ)</span>
-              </label>
+              <!-- Featured Checkbox Card -->
+              <div class="project-featured-card">
+                <label class="featured-checkbox-label">
+                  <input v-model="form.is_featured" type="checkbox" class="featured-checkbox-input" />
+                  <div class="featured-info">
+                    <span class="featured-title">Dự án nổi bật</span>
+                    <span class="featured-desc">Hiển thị tại Showcase trang chủ</span>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
 
           <!-- TAB 2: NỘI DUNG TRANG CHI TIẾT (/work/{slug}) -->
-          <div v-show="activeTab === 'detail'" class="d-flex flex-column gap-3">
+          <div v-if="activeTab === 'detail'" class="project-tab-body-detail">
             <!-- 1. Hero Banner Section -->
-            <div class="detail-section-group">
-              <div class="detail-section-header">
-                <h4 class="detail-section-title">
-                  <i class="bx bx-image-alt text-primary"></i> 1. Ảnh bìa Hero Banner lớn (Đầu trang chi tiết)
-                </h4>
-                <span class="detail-section-hint">Khuyến nghị ảnh kích thước 1920x1080px tràn viền</span>
-              </div>
-              <div class="d-flex gap-2">
-                <input v-model="form.hero_image" type="text" class="modal-input"
-                  placeholder="/storage/uploads/... hoặc URL ảnh bìa lớn" />
-                <button type="button" class="btn-upload-trigger" :disabled="isUploadingHero" @click="triggerHeroUpload">
+            <div class="detail-card-section">
+              <div class="detail-card-header">
+                <div class="detail-card-title-wrap">
+                  <span class="section-step-num">1</span>
+                  <div>
+                    <h4 class="detail-card-title">Ảnh bìa Hero Banner lớn</h4>
+                    <p class="detail-card-subtitle">Hiển thị đầu trang chi tiết (Khuyến nghị 1920×1080px tràn màn hình)
+                    </p>
+                  </div>
+                </div>
+                <button type="button" class="btn-detail-action" :disabled="isUploadingHero" @click="triggerHeroUpload">
                   <i class="bx" :class="isUploadingHero ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
                   <span>{{ isUploadingHero ? 'Đang tải...' : 'Tải ảnh bìa' }}</span>
                 </button>
               </div>
-              <div v-if="form.hero_image" class="editor-img-preview-box mt-1">
+
+              <div v-if="form.hero_image" class="hero-preview-wrapper mt-2">
                 <img
                   :src="form.hero_image.startsWith('http') ? form.hero_image : '/' + form.hero_image.replace(/^\//, '')"
-                  alt="Hero Preview" />
+                  alt="Hero banner preview" class="hero-preview-img" />
+                <button type="button" class="btn-clear-preview" @click="form.hero_image = ''" title="Xóa ảnh bìa">
+                  <i class="bx bx-x"></i>
+                </button>
               </div>
+
+              <input v-model="form.hero_image" type="text" class="form-input-custom form-input-sm mt-2"
+                placeholder="Hoặc dán URL ảnh bìa lớn (/storage/uploads/...)" />
             </div>
 
             <!-- 2. Overview Section -->
-            <div class="detail-section-group">
-              <div class="detail-section-header">
-                <h4 class="detail-section-title">
-                  <i class="bx bx-paragraph text-primary"></i> 2. Phần Tổng quan dự án (Overview)
-                </h4>
-                <span class="detail-section-hint">Đoạn văn bản câu chuyện thương hiệu & Mockup tổng quan</span>
-              </div>
-
-              <div class="modal-form-row">
-                <div class="modal-form-group col-6">
-                  <label class="modal-label">Tiêu đề phụ bên trái (VI)</label>
-                  <input v-model="form.overview_title_vi" type="text" class="modal-input"
-                    placeholder="• Tổng quan về dự án" />
-                </div>
-                <div class="modal-form-group col-6">
-                  <label class="modal-label">Tiêu đề phụ bên trái (EN)</label>
-                  <input v-model="form.overview_title_en" type="text" class="modal-input"
-                    placeholder="• Project Overview" />
+            <div class="detail-card-section">
+              <div class="detail-card-header">
+                <div class="detail-card-title-wrap">
+                  <span class="section-step-num">2</span>
+                  <div>
+                    <h4 class="detail-card-title">Phần Tổng quan dự án (Overview)</h4>
+                    <p class="detail-card-subtitle">Tiêu đề, câu chuyện thương hiệu & Mockup tổng quan</p>
+                  </div>
                 </div>
               </div>
 
-              <div class="modal-form-row">
-                <div class="modal-form-group col-6">
-                  <label class="modal-label">Nội dung giới thiệu chi tiết (VI)</label>
-                  <textarea v-model="form.overview_text_vi" class="modal-textarea" rows="4"
-                    placeholder="Nhập 1 - 2 đoạn văn bản giới thiệu ý tưởng, giải pháp, câu chuyện của dự án..."></textarea>
+              <div class="form-row-2col mt-2">
+                <div class="form-group-custom">
+                  <label class="form-label-custom">Tiêu đề phụ bên trái</label>
+                  <input v-if="modalLang === 'vi'" v-model="form.overview_title_vi" type="text"
+                    class="form-input-custom" placeholder="Ví dụ: • Tổng quan về dự án" />
+                  <input v-else v-model="form.overview_title_en" type="text" class="form-input-custom"
+                    placeholder="E.g. • Project Overview" />
                 </div>
-                <div class="modal-form-group col-6">
-                  <label class="modal-label">Nội dung giới thiệu chi tiết (EN)</label>
-                  <textarea v-model="form.overview_text_en" class="modal-textarea" rows="4"
-                    placeholder="Overview story and creative concept in English..."></textarea>
+
+                <div class="form-group-custom">
+                  <label class="form-label-custom">Ảnh Mockup Tổng quan</label>
+                  <div class="d-flex gap-2">
+                    <input v-model="form.overview_image" type="text" class="form-input-custom"
+                      placeholder="/storage/uploads/... hoặc URL mockup" />
+                    <button type="button" class="btn-upload-sm" :disabled="isUploadingOverview"
+                      @click="triggerOverviewUpload" title="Tải ảnh Mockup">
+                      <i class="bx" :class="isUploadingOverview ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div class="modal-form-group">
-                <label class="modal-label">Ảnh Mockup Tổng quan (Bên dưới văn bản giới thiệu)</label>
-                <div class="d-flex gap-2">
-                  <input v-model="form.overview_image" type="text" class="modal-input"
-                    placeholder="/storage/uploads/... hoặc URL ảnh mockup" />
-                  <button type="button" class="btn-upload-trigger" :disabled="isUploadingOverview"
-                    @click="triggerOverviewUpload">
-                    <i class="bx" :class="isUploadingOverview ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                    <span>{{ isUploadingOverview ? 'Đang tải...' : 'Tải mockup' }}</span>
-                  </button>
-                </div>
-                <div v-if="form.overview_image" class="editor-img-preview-box mt-1">
-                  <img
-                    :src="form.overview_image.startsWith('http') ? form.overview_image : '/' + form.overview_image.replace(/^\//, '')"
-                    alt="Overview Mockup Preview" />
-                </div>
+              <div class="form-group-custom mt-2">
+                <label class="form-label-custom">Nội dung giới thiệu chi tiết</label>
+                <textarea v-if="modalLang === 'vi'" v-model="form.overview_text_vi" class="form-textarea-custom"
+                  rows="3"
+                  placeholder="Nhập 1 - 2 đoạn văn giới thiệu ý tưởng, câu chuyện và giải pháp thương hiệu..."></textarea>
+                <textarea v-else v-model="form.overview_text_en" class="form-textarea-custom" rows="3"
+                  placeholder="Overview story and creative concept in English..."></textarea>
+              </div>
+
+              <div v-if="form.overview_image" class="mockup-preview-wrap mt-2">
+                <img
+                  :src="form.overview_image.startsWith('http') ? form.overview_image : '/' + form.overview_image.replace(/^\//, '')"
+                  alt="Mockup preview" class="mockup-preview-img" />
+                <button type="button" class="btn-clear-preview" @click="form.overview_image = ''"
+                  title="Xóa ảnh mockup">
+                  <i class="bx bx-x"></i>
+                </button>
               </div>
             </div>
 
             <!-- 3. Gallery Images Section -->
-            <div class="detail-section-group">
-              <div class="detail-section-header">
-                <h4 class="detail-section-title">
-                  <i class="bx bx-images text-primary"></i> 3. Bộ sưu tập ảnh Gallery ({{ form.gallery.length }} ảnh)
-                </h4>
-                <div class="d-flex gap-2 align-items-center">
-                  <button type="button" class="btn btn-sm btn-outline-dark d-inline-flex align-items-center gap-1"
-                    :disabled="isUploadingGallery" @click="triggerGalleryUpload"
-                    style="font-size: 11.5px; padding: 4px 10px;">
-                    <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                    <span>{{ isUploadingGallery ? 'Đang tải ảnh...' : '+ Tải nhiều ảnh từ máy' }}</span>
-                  </button>
+            <div class="detail-card-section">
+              <div class="detail-card-header">
+                <div class="detail-card-title-wrap">
+                  <span class="section-step-num">3</span>
+                  <div>
+                    <h4 class="detail-card-title">Bộ sưu tập ảnh Gallery ({{ form.gallery.length }} ảnh)</h4>
+                    <p class="detail-card-subtitle">Ảnh hiển thị lớn ở các section bên dưới trang chi tiết</p>
+                  </div>
                 </div>
+                <button type="button" class="btn-detail-action" :disabled="isUploadingGallery"
+                  @click="triggerGalleryUpload">
+                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <span>{{ isUploadingGallery ? 'Đang tải ảnh...' : '+ Tải nhiều ảnh cùng lúc' }}</span>
+                </button>
               </div>
 
-              <div class="editor-gallery-grid">
-                <div v-for="(img, idx) in form.gallery" :key="idx" class="editor-gallery-item">
+              <div class="project-gallery-grid mt-2">
+                <div v-for="(img, idx) in form.gallery" :key="idx" class="gallery-card-item">
                   <img :src="img.startsWith('http') ? img : '/' + img.replace(/^\//, '')" alt="Gallery item" />
-                  <span class="gallery-order-badge">#{{ idx + 1 }}</span>
-                  <button type="button" class="btn-del-gallery-item" @click="removeGalleryImage(idx)"
-                    title="Xóa ảnh này">
+                  <span class="gallery-num-badge">#{{ idx + 1 }}</span>
+                  <button type="button" class="btn-del-gallery" @click="removeGalleryImage(idx)" title="Xóa ảnh này">
                     <i class="bx bx-x"></i>
                   </button>
                 </div>
 
-                <!-- Upload Card Trigger inside grid -->
-                <div class="gallery-upload-trigger-card" @click="triggerGalleryUpload">
-                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-plus'"></i>
-                  <span>{{ isUploadingGallery ? 'Đang tải lên...' : 'Thêm ảnh mới' }}</span>
+                <div class="gallery-add-card" @click="triggerGalleryUpload">
+                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-plus-circle'"></i>
+                  <span>{{ isUploadingGallery ? 'Đang tải...' : 'Thêm ảnh mới' }}</span>
                 </div>
               </div>
             </div>
 
             <!-- 4. Credits Section -->
-            <div class="detail-section-group">
-              <div class="detail-section-header">
-                <h4 class="detail-section-title">
-                  <i class="bx bx-group text-primary"></i> 4. Đội ngũ thực hiện (Credits)
-                </h4>
-                <span class="detail-section-hint">Danh sách thành viên & vị trí thực hiện dự án</span>
+            <div class="detail-card-section">
+              <div class="detail-card-header">
+                <div class="detail-card-title-wrap">
+                  <span class="section-step-num">4</span>
+                  <div>
+                    <h4 class="detail-card-title">Đội ngũ thực hiện (Credits)</h4>
+                    <p class="detail-card-subtitle">Ghi nhận vai trò & tên các thành viên thực hiện dự án</p>
+                  </div>
+                </div>
+                <button type="button" class="btn-detail-action" @click="addCreditRow">
+                  <i class="bx bx-plus"></i> Thêm thành viên
+                </button>
               </div>
 
-              <div class="credits-rows-list">
-                <div v-for="(item, idx) in form.credits" :key="idx" class="credit-row-item">
-                  <input v-model="item.role" type="text" class="modal-input" style="flex: 1;"
-                    placeholder="Vai trò (VD: Design Lead, Account Manager, Developer...)" />
-                  <input v-model="item.name" type="text" class="modal-input" style="flex: 1;"
-                    placeholder="Họ và tên (VD: Amadeus Malmin, Sebastian...)" />
-                  <button type="button" class="btn-del-credit-row" @click="removeCreditRow(idx)" title="Xóa dòng này">
+              <div v-if="form.credits && form.credits.length > 0" class="credits-list-wrap mt-2">
+                <div v-for="(item, idx) in form.credits" :key="idx" class="credit-input-row">
+                  <span class="credit-index">#{{ idx + 1 }}</span>
+                  <input v-model="item.role" type="text" class="form-input-custom credit-role"
+                    placeholder="Vai trò (VD: Art Director, UI/UX Designer...)" />
+                  <input v-model="item.name" type="text" class="form-input-custom credit-name"
+                    placeholder="Họ và tên thành viên" />
+                  <button type="button" class="btn-del-credit" @click="removeCreditRow(idx)" title="Xóa thành viên này">
                     <i class="bx bx-trash"></i>
                   </button>
                 </div>
               </div>
-
-              <button type="button" class="btn-add-credit-row" @click="addCreditRow">
-                <i class="bx bx-plus"></i> Thêm thành viên
-              </button>
+              <div v-else class="text-muted small py-2 text-center"
+                style="background: #ffffff; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                Chưa có thành viên nào. Nhấn "+ Thêm thành viên" để thêm vai trò và họ tên.
+              </div>
             </div>
           </div>
 
           <!-- Modal Footer -->
-          <div class="studio-modal-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-            <button type="button" class="btn-cancel" @click="isModalOpen = false">Hủy</button>
-            <div class="d-flex gap-2">
-              <button v-if="activeTab === 'basic'" type="button" class="btn btn-outline-dark btn-sm px-3"
-                @click="activeTab = 'detail'">
-                Tiếp tục sang Chi tiết dự án <i class="bx bx-right-arrow-alt"></i>
-              </button>
-              <button type="submit" class="btn-submit">
-                {{ editingItem ? 'Áp dụng thay đổi' : 'Thêm vào danh sách' }}
-              </button>
-            </div>
+          <div class="studio-modal-footer d-flex justify-content-end align-items-center gap-2 mt-3 pt-3 border-top">
+            <button
+              v-if="activeTab === 'basic'"
+              type="button"
+              class="btn-tab-switch"
+              @click="activeTab = 'detail'"
+            >
+              Tiếp tục sang Chi tiết dự án <i class="bx bx-right-arrow-alt"></i>
+            </button>
+            <button
+              v-else
+              type="button"
+              class="btn-tab-switch"
+              @click="activeTab = 'basic'"
+            >
+              <i class="bx bx-left-arrow-alt"></i> Quay lại Thông tin chung
+            </button>
+            <button type="submit" class="btn-submit">
+              {{ editingItem ? 'Áp dụng thay đổi' : 'Thêm vào danh sách' }}
+            </button>
           </div>
         </form>
       </div>
@@ -543,8 +627,158 @@ const isModalOpen = ref(false);
 const editingItem = ref(null);
 const renderKey = ref(0);
 const activeTab = ref('basic');
+const modalLang = ref('vi');
 const selectedFilterCat = ref('all');
 const searchQuery = ref('');
+
+const form = reactive({
+  title_vi: '',
+  title_en: '',
+  slug: '',
+  category_ids: [],
+  year: '',
+  client: '',
+  thumbnail: '',
+  description_vi: '',
+  description_en: '',
+  is_featured: false,
+
+  // Detail page fields
+  hero_image: '',
+  overview_title_vi: '• Tổng quan về dự án',
+  overview_title_en: '• Project Overview',
+  overview_text_vi: '',
+  overview_text_en: '',
+  overview_image: '',
+  gallery: [],
+  credits: [],
+});
+
+const isCalendarOpen = ref(false);
+const calYear = ref(new Date().getFullYear());
+
+const toggleCalendar = () => {
+  if (!isCalendarOpen.value) {
+    if (form.year) {
+      if (form.year.includes('/')) {
+        const parts = form.year.split('/');
+        if (parts[1]) calYear.value = parseInt(parts[1], 10) || new Date().getFullYear();
+      } else if (form.year.includes('-')) {
+        const parts = form.year.split('-');
+        if (parts[0]) calYear.value = parseInt(parts[0], 10) || new Date().getFullYear();
+      } else {
+        calYear.value = parseInt(form.year, 10) || new Date().getFullYear();
+      }
+    } else {
+      calYear.value = new Date().getFullYear();
+    }
+    isCalendarOpen.value = true;
+  } else {
+    isCalendarOpen.value = false;
+  }
+};
+
+const isMonthActive = (m) => {
+  if (!form.year) return false;
+  const mStr = String(m).padStart(2, '0');
+  if (form.year.includes('/')) {
+    const parts = form.year.split('/');
+    return parts[0] === mStr && parts[1] === String(calYear.value);
+  }
+  if (form.year.includes('-')) {
+    const parts = form.year.split('-');
+    return parts[1] === mStr && parts[0] === String(calYear.value);
+  }
+  return false;
+};
+
+const selectMonth = (m) => {
+  const mStr = String(m).padStart(2, '0');
+  form.year = `${mStr}/${calYear.value}`;
+  isCalendarOpen.value = false;
+};
+
+const selectYearOnly = () => {
+  form.year = String(calYear.value);
+  isCalendarOpen.value = false;
+};
+
+const selectCurrentMonth = () => {
+  const now = new Date();
+  calYear.value = now.getFullYear();
+  const mStr = String(now.getMonth() + 1).padStart(2, '0');
+  form.year = `${mStr}/${calYear.value}`;
+  isCalendarOpen.value = false;
+};
+
+const formatYearDisplay = (val) => {
+  if (!val) return '';
+  if (val.includes('/')) {
+    const parts = val.split('/');
+    return `Tháng ${parts[0]} / ${parts[1]}`;
+  }
+  if (val.includes('-')) {
+    const parts = val.split('-');
+    return `Tháng ${parts[1]} / ${parts[0]}`;
+  }
+  return `Năm ${val}`;
+};
+
+const closeCalendarOnClickOutside = (e) => {
+  const el = document.querySelector('.calendar-picker-wrap');
+  if (el && !el.contains(e.target)) {
+    isCalendarOpen.value = false;
+  }
+};
+
+// Slug auto-generation logic
+const isSlugManual = ref(false);
+
+const slugify = (str) => {
+  if (!str) return '';
+  return str
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+};
+
+const onTitleInput = () => {
+  if (!isSlugManual.value) {
+    const src = (modalLang.value === 'en' ? form.title_en : form.title_vi) || form.title_vi || form.title_en;
+    form.slug = slugify(src);
+  }
+};
+
+const onSlugInput = () => {
+  if (!form.slug || form.slug.trim() === '') {
+    isSlugManual.value = false;
+  } else {
+    isSlugManual.value = true;
+  }
+};
+
+watch(
+  [() => form.title_vi, () => form.title_en, modalLang],
+  () => {
+    if (!isSlugManual.value) {
+      const src = (modalLang.value === 'en' ? form.title_en : form.title_vi) || form.title_vi || form.title_en;
+      if (src) {
+        form.slug = slugify(src);
+      }
+    }
+  }
+);
+
+watch(currentLanguage, (newLang) => {
+  if (newLang) {
+    modalLang.value = newLang;
+  }
+}, { immediate: true });
 
 const syncFromProps = () => {
   localProjects.value = JSON.parse(JSON.stringify(props.projects || []));
@@ -634,29 +868,6 @@ watch(totalPages, (newTotal) => {
   }
 });
 
-const form = reactive({
-  title_vi: '',
-  title_en: '',
-  slug: '',
-  category_ids: [],
-  year: '2026',
-  client: '',
-  thumbnail: '',
-  description_vi: '',
-  description_en: '',
-  is_featured: false,
-
-  // Detail page fields
-  hero_image: '',
-  overview_title_vi: '• Tổng quan về dự án',
-  overview_title_en: '• Project Overview',
-  overview_text_vi: '',
-  overview_text_en: '',
-  overview_image: '',
-  gallery: [],
-  credits: [],
-});
-
 const getTrans = (val) => {
   if (val && typeof val === 'object') {
     return val[currentLanguage.value] || val.vi || '';
@@ -689,11 +900,15 @@ const toggleCategory = (catId) => {
 const openCreateModal = () => {
   editingItem.value = null;
   activeTab.value = 'basic';
+  modalLang.value = currentLanguage.value || 'vi';
   form.title_vi = '';
   form.title_en = '';
   form.slug = '';
-  form.category_ids = localCategories.value.length > 0 ? [localCategories.value[0].id] : [];
-  form.year = '2026';
+  isSlugManual.value = false;
+  form.category_ids = [];
+  form.year = '';
+  calYear.value = new Date().getFullYear();
+  isCalendarOpen.value = false;
   form.client = '';
   form.thumbnail = '/assets/images/project1.png';
   form.description_vi = '';
@@ -720,9 +935,11 @@ const openCreateModal = () => {
 const openEditModal = (p) => {
   editingItem.value = p;
   activeTab.value = 'basic';
+  modalLang.value = currentLanguage.value || 'vi';
   form.title_vi = typeof p.title === 'object' ? (p.title.vi || '') : (p.title || '');
   form.title_en = typeof p.title === 'object' ? (p.title.en || '') : '';
   form.slug = p.slug || '';
+  isSlugManual.value = true;
 
   let catIds = [];
   if (p.categories && Array.isArray(p.categories) && p.categories.length > 0) {
@@ -741,7 +958,9 @@ const openEditModal = (p) => {
   }
   form.category_ids = catIds.length > 0 ? Array.from(new Set(catIds)) : (localCategories.value.length > 0 ? [localCategories.value[0].id] : []);
 
-  form.year = p.year || '2026';
+  form.year = p.year || '';
+  calYear.value = new Date().getFullYear();
+  isCalendarOpen.value = false;
   form.client = p.client || '';
   form.thumbnail = p.thumbnail || '';
   form.description_vi = typeof p.description === 'object' ? (p.description.vi || '') : (p.description || '');
@@ -984,24 +1203,19 @@ const deleteCategory = (cat) => {
   });
 };
 
-// Auto generate slug from Vietnamese title if empty
-watch(
-  () => form.title_vi,
-  (newTitle) => {
-    if (!editingItem.value && newTitle) {
-      form.slug = newTitle
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[đĐ]/g, 'd')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    }
-  }
-);
-
 // Submit modal: Only modifies local staging state
 const submitForm = () => {
+  const currentTitle = (modalLang.value === 'en' ? form.title_en : form.title_vi) || form.title_vi || form.title_en;
+  if (!currentTitle || !currentTitle.trim()) {
+    alert(modalLang.value === 'en' ? 'Vui lòng nhập tên dự án!' : 'Vui lòng nhập tên dự án!');
+    return;
+  }
+
+  if (!form.slug || !form.slug.trim()) {
+    alert('Vui lòng nhập đường dẫn tĩnh (Slug)!');
+    return;
+  }
+
   if (!form.category_ids || form.category_ids.length === 0) {
     alert('Vui lòng chọn ít nhất 1 danh mục cho dự án!');
     return;
@@ -1013,14 +1227,20 @@ const submitForm = () => {
 
   const contentPayload = {
     hero_image: form.hero_image,
-    overview_title: { vi: form.overview_title_vi, en: form.overview_title_en || form.overview_title_vi },
-    overview_text: { vi: form.overview_text_vi, en: form.overview_text_en || form.overview_text_vi },
+    overview_title: {
+      vi: form.overview_title_vi || form.overview_title_en || '• Tổng quan về dự án',
+      en: form.overview_title_en || form.overview_title_vi || '• Project Overview',
+    },
+    overview_text: {
+      vi: form.overview_text_vi || form.overview_text_en || '',
+      en: form.overview_text_en || form.overview_text_vi || '',
+    },
     overview_image: form.overview_image,
     credits: form.credits.filter((c) => (c.role && c.role.trim()) || (c.name && c.name.trim())),
   };
 
   const payloadData = {
-    title: { vi: form.title_vi, en: form.title_en || form.title_vi },
+    title: { vi: form.title_vi || form.title_en, en: form.title_en || form.title_vi },
     slug: form.slug,
     category_ids: [...form.category_ids],
     categories: selectedCats,
@@ -1028,7 +1248,7 @@ const submitForm = () => {
     year: form.year,
     client: form.client,
     thumbnail: form.thumbnail,
-    description: { vi: form.description_vi, en: form.description_en || form.description_vi },
+    description: { vi: form.description_vi || form.description_en, en: form.description_en || form.description_vi },
     is_featured: form.is_featured,
     gallery: [...form.gallery],
     content: contentPayload,
@@ -1100,12 +1320,14 @@ const publishProjects = () => {
 onMounted(() => {
   onSaveHandler.value = publishProjects;
   onDraftHandler.value = publishProjects;
+  document.addEventListener('click', closeCalendarOnClickOutside);
 });
 
 onUnmounted(() => {
   onSaveHandler.value = null;
   onDraftHandler.value = null;
   hasUnsavedChanges.value = false;
+  document.removeEventListener('click', closeCalendarOnClickOutside);
 });
 </script>
 
