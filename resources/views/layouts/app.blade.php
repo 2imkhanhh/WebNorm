@@ -168,6 +168,9 @@
                             existingVid.play().catch(() => {});
                         }
                     }
+                } else if (fieldKey === 'about_btn_url') {
+                    const btn = document.querySelector('a[data-studio-key="about_btn_text"]');
+                    if (btn) btn.href = value;
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);

@@ -79,18 +79,21 @@
 }
 
 .section-body {
-  padding: 14px;
+  padding: 14px 16px;
   background: #fcfdfe;
   border-top: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  box-sizing: border-box;
 }
 
 .field-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Compact grouping for consecutive tagline inputs */
@@ -121,6 +124,7 @@
 .field-input,
 .field-textarea {
   width: 100%;
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 8px;

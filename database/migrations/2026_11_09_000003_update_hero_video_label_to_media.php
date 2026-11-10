@@ -11,7 +11,7 @@ return new class extends Migration
             ->where('section_id', 'hero')
             ->where('field_key', 'hero_video')
             ->update([
-                'field_label' => 'Tệp giới thiệu (Video hoặc Ảnh)',
+                'field_label' => 'Tệp giới thiệu',
             ]);
     }
 

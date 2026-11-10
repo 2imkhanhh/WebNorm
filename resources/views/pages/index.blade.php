@@ -121,19 +121,19 @@
 
             <div class="row align-items-start content-footer" style="margin-bottom: 200px;">
                 <div class="col-md-3">
-                    <span class="si-label">• Về chúng tôi</span>
+                    <span class="si-label" data-studio-key="about_label">@normVal($pageContents['about_label'] ?? null, '• Về chúng tôi')</span>
                 </div>
 
                 <div class="col-md-6">
-                    <p class="desc-text m-0">
-                        Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về
-                        chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn
-                        tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.
+                    <p class="desc-text m-0" data-studio-key="about_desc">
+                        @normVal($pageContents['about_desc'] ?? null, 'Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.')
                     </p>
                 </div>
 
                 <div class="col-md-3 text-start text-md-end mt-4 mt-md-0">
-                    <a href="#" class="link-more">ĐỌC THÊM</a>
+                    <a href="{{ \App\Helpers\NormHelper::val($pageContents['about_btn_url'] ?? null, '/about-us') }}" class="link-more" data-studio-key="about_btn_text">
+                        @normVal($pageContents['about_btn_text'] ?? null, 'ĐỌC THÊM')
+                    </a>
                 </div>
             </div>
         </div>

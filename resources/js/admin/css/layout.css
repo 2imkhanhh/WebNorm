@@ -11,6 +11,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.studio-root *,
+.studio-root *::before,
+.studio-root *::after {
+  box-sizing: border-box;
+}
+
 .studio-root input,
 .studio-root textarea,
 .studio-root select,

@@ -27,12 +27,8 @@
           <a :href="previewDraftUrl" target="_blank" class="btn-banner-view">
             <i class="bx bx-show"></i> Xem bản nháp
           </a>
-          <button
-            type="button"
-            class="btn-banner-discard"
-            :disabled="isDiscardingDraft || isSaving"
-            @click="handleDiscardDraft"
-          >
+          <button type="button" class="btn-banner-discard" :disabled="isDiscardingDraft || isSaving"
+            @click="handleDiscardDraft">
             <i class="bx bx-trash"></i>
             {{ isDiscardingDraft ? 'Đang xóa...' : 'Xóa bản nháp' }}
           </button>
@@ -68,17 +64,14 @@
             <!-- Image URL Input -->
             <div v-else-if="field.type === 'image'" class="image-field-wrap">
               <div class="media-input-group">
-                <input :value="getFieldValue(field)" type="text" class="field-input" placeholder="assets/images/... hoặc storage/uploads/..."
+                <input :value="getFieldValue(field)" type="text" class="field-input"
+                  placeholder="assets/images/... hoặc storage/uploads/..."
                   @input="updateField(section.id, field, $event.target.value)" />
-                <button
-                  type="button"
-                  class="btn-upload-trigger"
-                  :disabled="isUploadingMedia"
+                <button type="button" class="btn-upload-trigger" :disabled="isUploadingMedia"
                   @click="triggerMediaUpload(section.id, field, 'image/*')"
-                  title="Tải ảnh lên từ máy tính (PNG, JPG, WEBP... tối đa 40MB)"
-                >
-                  <i class="bx" :class="isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                  <span>{{ isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'Đang tải...' : 'Tải file lên' }}</span>
+                  title="Tải ảnh lên từ máy tính (PNG, JPG, WEBP... tối đa 40MB)">
+                  <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải file lên' }}</span>
                 </button>
               </div>
               <div v-if="getFieldValue(field)" class="image-preview-thumb mt-2">
@@ -91,22 +84,18 @@
             <!-- Video / Media URL Input -->
             <div v-else-if="field.type === 'video'" class="video-field-wrap">
               <div class="media-input-group">
-                <input :value="getFieldValue(field)" type="text" class="field-input" placeholder="storage/uploads/... hoặc assets/images/..."
+                <input :value="getFieldValue(field)" type="text" class="field-input"
+                  placeholder="storage/uploads/... hoặc assets/images/..."
                   @input="updateField(section.id, field, $event.target.value)" />
-                <button
-                  type="button"
-                  class="btn-upload-trigger"
-                  :disabled="isUploadingMedia"
+                <button type="button" class="btn-upload-trigger" :disabled="isUploadingMedia"
                   @click="triggerMediaUpload(section.id, field, 'video/mp4,video/webm,video/quicktime,image/*')"
-                  title="Tải tệp lên từ máy tính (Video MP4/WEBM hoặc Ảnh PNG/JPG/WEBP, tối đa 40MB)"
-                >
-                  <i class="bx" :class="isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                  <span>{{ isUploadingMedia && activeUploadTarget.field?.key === field.key ? 'Đang tải...' : 'Tải file lên' }}</span>
+                  title="Tải tệp lên từ máy tính (Video MP4/WEBM hoặc Ảnh PNG/JPG/WEBP, tối đa 40MB)">
+                  <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải file lên' }}</span>
                 </button>
               </div>
               <div v-if="getFieldValue(field)" class="media-preview-thumb mt-2">
-                <video
-                  v-if="isVideoUrl(getFieldValue(field))"
+                <video v-if="isVideoUrl(getFieldValue(field))"
                   :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
                   controls muted playsinline class="video-preview-player"></video>
                 <div v-else class="image-preview-thumb">
@@ -122,13 +111,8 @@
     </div>
 
     <!-- Hidden native file input for media upload -->
-    <input
-      type="file"
-      ref="mediaFileInputRef"
-      style="display: none;"
-      :accept="mediaUploadAccept"
-      @change="handleMediaUploadSelected"
-    />
+    <input type="file" ref="mediaFileInputRef" style="display: none;" :accept="mediaUploadAccept"
+      @change="handleMediaUploadSelected" />
   </Layout>
 </template>
 
@@ -174,7 +158,17 @@ const defaultPages = [
           { key: 'hero_tagline_3', label: 'Banner Tagline 3', type: 'text', value: { vi: 'Culture Your Brand', en: 'Culture Your Brand' } },
           { key: 'hero_heading', label: 'Tiêu đề lớn Hero', type: 'textarea', value: { vi: "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ", en: "IDENTITY\nSTRATEGY\nCULTURE" } },
           { key: 'hero_desc', label: 'Mô tả ngắn trang chủ', type: 'textarea', value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng bản sắc thương hiệu rõ ràng, nhất quán và phù hợp với định hướng kinh doanh.', en: 'We help businesses build clear, consistent brand identities.' } },
-          { key: 'hero_video', label: 'Tệp giới thiệu (Video hoặc Ảnh)', type: 'video', value: { vi: 'storage/uploads/main-feature.mp4', en: 'storage/uploads/main-feature.mp4' } },
+          { key: 'hero_video', label: 'Tệp giới thiệu', type: 'video', value: { vi: 'storage/uploads/main-feature.mp4', en: 'storage/uploads/main-feature.mp4' } },
+        ],
+      },
+      {
+        id: 'intro_about',
+        title: 'Khối Giới thiệu',
+        fields: [
+          { key: 'about_label', label: 'Nhãn tiêu đề (Label)', type: 'text', value: { vi: '• Về chúng tôi', en: '• About us' } },
+          { key: 'about_desc', label: 'Nội dung mô tả', type: 'textarea', rows: 4, value: { vi: 'Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.', en: 'There are countless reasons why branding and marketing matter. Endless books have been written on this topic, but it all comes down to one simple question: why should anyone care about your existence? We create experiences that make people notice and care.' } },
+          { key: 'about_btn_text', label: 'Chữ trên nút bấm', type: 'text', value: { vi: 'ĐỌC THÊM', en: 'READ MORE' } },
+          { key: 'about_btn_url', label: 'Đường dẫn liên kết nút', type: 'text', value: { vi: '/about-us', en: '/about-us' } },
         ],
       },
       {
@@ -342,6 +336,10 @@ const mediaFileInputRef = ref(null);
 const mediaUploadAccept = ref('video/mp4,video/webm,video/quicktime,image/*');
 const isUploadingMedia = ref(false);
 const activeUploadTarget = ref({ sectionId: null, field: null });
+
+const isFieldUploading = (field) => {
+  return isUploadingMedia.value && activeUploadTarget.value.field?.key === field?.key;
+};
 
 const isVideoUrl = (url) => {
   if (!url) return false;
