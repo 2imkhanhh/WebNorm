@@ -14,18 +14,23 @@
                 <div class="col-12 col-md-10 col-lg-7">
 
                     <div class="article-header">
-                        <p class="article-date">29 tháng 1 2026</p>
-                        <h1 class="article-title">Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công
-                            nghiệp sáng tạo</h1>
+                        <p class="article-date">
+                            @if($blog && $blog->published_at)
+                                {{ app()->getLocale() === 'en' ? $blog->published_at->format('F d, Y') : $blog->published_at->format('d \T\h\á\n\g m Y') }}
+                            @else
+                                29 Tháng 01 2026
+                            @endif
+                        </p>
+                        <h1 class="article-title">{{ $blog ? $blog->getTitle() : 'Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo' }}</h1>
                     </div>
 
                     <div class="article-meta-bar d-flex flex-wrap justify-content-between align-items-center">
 
                         <div class="author-info d-flex align-items-center">
-                            <img src="{{ asset('assets/images/avatar.png') }}" alt="Nguyễn Minh Anh" class="author-avatar">
+                            <img src="{{ !empty($blog->author_avatar) ? (str_starts_with($blog->author_avatar, 'http') ? $blog->author_avatar : asset(ltrim($blog->author_avatar, '/'))) : asset('assets/images/avatar.png') }}" alt="{{ $blog && $blog->author ? $blog->author : 'Nguyễn Minh Anh' }}" class="author-avatar">
                             <div class="author-text">
-                                <h4 class="author-name">Nguyễn Minh Anh</h4>
-                                <p class="author-role">Giám đốc Marketing</p>
+                                <h4 class="author-name">{{ $blog && $blog->author ? $blog->author : 'Nguyễn Minh Anh' }}</h4>
+                                <p class="author-role">{{ $blog && $blog->getAuthorRole(session('locale', 'vi')) ? $blog->getAuthorRole(session('locale', 'vi')) : 'Giám đốc Marketing' }}</p>
                             </div>
                         </div>
 
@@ -39,83 +44,16 @@
                     </div>
 
                     <div class="article-content">
-                        <p>Design Thinking là một cách tiếp cận vấn đề mang tính chiến lược, lấy con người làm trung tâm
-                            và hướng đến việc giải quyết những nhu cầu thực sự của người dùng. Trong bài viết này, chúng
-                            ta sẽ cùng tìm hiểu sâu về tư duy thiết kế là gì, vì sao tư duy thiết kế lại trở thành lợi
-                            thế cạnh tranh trong ngành công nghiệp sáng tạo, cũng như cách áp dụng phương pháp này để
-                            nâng tầm chất lượng dự án và tư duy làm nghề.</p>
-
-                        <h3>1. Tư duy thiết kế (Design Thinking) là gì?</h3>
-
-                        <p>Tư duy thiết kế, hay Design Thinking, là một phương pháp tư duy và giải quyết vấn đề lấy con
-                            người làm trung tâm. Thay vì bắt đầu từ giải pháp hoặc từ góc nhìn chủ quan của người làm
-                            sáng tạo, tư duy thiết kế bắt đầu từ việc thấu hiểu sâu sắc nhu cầu, mong muốn, hành vi và
-                            "nỗi đau" của người dùng, sau đó mới phát triển ý tưởng và giải pháp phù hợp.</p>
-
-                        <p>Nói một cách đơn giản, tư duy thiết kế (Design Thinking) là cách tiếp cận vấn đề giống như
-                            một nhà thiết kế: quan sát, đặt câu hỏi, thấu cảm, thử nghiệm, sai, sửa và tối ưu liên tục.
-                            Phương pháp này không chỉ được sử dụng trong thiết kế đồ họa hay thiết kế sản phẩm, mà còn
-                            được ứng dụng rộng rãi trong kinh doanh, marketing, giáo dục, công nghệ và quản trị.</p>
-
-                        <p>Khác với tư duy thiết kế truyền thống vốn tập trung nhiều vào hình thức và thẩm mỹ, tư duy
-                            Design Thinking nhấn mạnh vào việc giải quyết vấn đề cốt lõi. Một sản phẩm, một thương hiệu
-                            hay một chiến dịch truyền thông, dù có đẹp đến đâu, nếu không giải quyết đúng nhu cầu thật
-                            của người dùng thì vẫn có thể thất bại.</p>
-
-                        <p>Ngày nay, nhiều tập đoàn lớn như Google, Apple, IDEO, Airbnb hay IBM đều coi tư duy thiết kế
-                            là nền tảng trong cách họ phát triển sản phẩm và xây dựng trải nghiệm khách hàng. Điều đó
-                            cho thấy tư duy thiết kế không còn là "đặc quyền" của giới designer, mà là kỹ năng cốt lõi
-                            của bất kỳ ai làm trong lĩnh vực sáng tạo và đổi mới.</p>
+                        @php
+                            $articleBody = $blog ? $blog->getContent(session('locale', 'vi')) : '';
+                        @endphp
+                        @if(!empty($articleBody))
+                            {!! $articleBody !!}
+                        @else
+                            <p>Nội dung bài viết đang được cập nhật...</p>
+                        @endif
                     </div>
 
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <div class="article-image-container">
-                        <img src="{{ asset('assets/images/gotrail.jpg') }}" alt="Gotrail Billboard" class="article-fluid-img">
-                    </div>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-10 col-lg-7">
-                    <div class="article-content">
-                        <h3>1. Tư duy thiết kế (Design Thinking) là gì?</h3>
-
-                        <p>Tư duy thiết kế, hay Design Thinking, là một phương pháp tư duy và giải quyết vấn đề lấy con
-                            người làm trung tâm. Thay vì bắt đầu từ giải pháp hoặc từ góc nhìn chủ quan của người làm
-                            sáng tạo, tư duy thiết kế bắt đầu từ việc thấu hiểu sâu sắc nhu cầu, mong muốn, hành vi và
-                            "nỗi đau" của người dùng, sau đó mới phát triển ý tưởng và giải pháp phù hợp.</p>
-
-                        <p>Nói một cách đơn giản, tư duy thiết kế (Design Thinking) là cách tiếp cận vấn đề giống như
-                            một nhà thiết kế: quan sát, đặt câu hỏi, thấu cảm, thử nghiệm, sai, sửa và tối ưu liên tục.
-                            Phương pháp này không chỉ được sử dụng trong thiết kế đồ họa hay thiết kế sản phẩm, mà còn
-                            được ứng dụng rộng rãi trong kinh doanh, marketing, giáo dục, công nghệ và quản trị.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-12 col-lg-8">
-                    <div class="article-image-container">
-                        <img src="{{ asset('assets/images/gallery1.jpg') }}" alt="Gotrail Billboard" class="article-fluid-img">
-                    </div>
-                </div>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-10 col-lg-7">
-                    <div class="article-content">
-                        <h3>1. Tư duy thiết kế (Design Thinking) là gì?</h3>
-
-                        <p>Tư duy thiết kế, hay Design Thinking, là một phương pháp tư duy và giải quyết vấn đề lấy con
-                            người làm trung tâm. Thay vì bắt đầu từ giải pháp hoặc từ góc nhìn chủ quan của người làm
-                            sáng tạo, tư duy thiết kế bắt đầu từ việc thấu hiểu sâu sắc nhu cầu, mong muốn, hành vi và
-                            "nỗi đau" của người dùng, sau đó mới phát triển ý tưởng và giải pháp phù hợp.</p>
-
-                        <p>Nói một cách đơn giản, tư duy thiết kế (Design Thinking) là cách tiếp cận vấn đề giống như
-                            một nhà thiết kế: quan sát, đặt câu hỏi, thấu cảm, thử nghiệm, sai, sửa và tối ưu liên tục.
-                            Phương pháp này không chỉ được sử dụng trong thiết kế đồ họa hay thiết kế sản phẩm, mà còn
-                            được ứng dụng rộng rãi trong kinh doanh, marketing, giáo dục, công nghệ và quản trị.</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -129,57 +67,24 @@
 
             <div class="blog-slider-container">
                 <div class="blog-track" id="blogTrack">
+                    @forelse($relatedBlogs as $rel)
+                    @php
+                        $relThumb = !empty($rel->thumbnail) ? (str_starts_with($rel->thumbnail, 'http') ? $rel->thumbnail : asset(ltrim($rel->thumbnail, '/'))) : asset('assets/images/project1.png');
+                    @endphp
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project1.png') }}" alt="Blog 1">
+                            <a href="{{ route('news.detail', $rel->slug) }}" class="d-block w-100 h-100">
+                                <img src="{{ $relThumb }}" alt="{{ $rel->getTitle() }}">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            <a href="{{ route('news.detail', $rel->slug) }}" class="text-decoration-none" style="color: inherit;">
+                                {{ $rel->getTitle() }}
                             </a>
                         </h3>
                     </div>
-
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project2.png') }}" alt="Blog 2">
-                            </a>
-                        </div>
-                        <h3 class="blog-title">
-                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
-                            </a>
-                        </h3>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project3.png') }}" alt="Blog 3">
-                            </a>
-                        </div>
-                        <h3 class="blog-title">
-                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
-                            </a>
-                        </h3>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="#" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project4.png') }}" alt="Blog 4">
-                            </a>
-                        </div>
-                        <h3 class="blog-title">
-                            <a href="#" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
-                            </a>
-                        </h3>
-                    </div>
+                    @empty
+                    @endforelse
                 </div>
             </div>
 

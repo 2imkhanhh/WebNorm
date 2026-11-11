@@ -362,12 +362,12 @@
             <div class="row services-intro-row">
 
                 <div class="col-12 col-lg-3 mb-4 mb-lg-0">
-                    <span class="si-label">• Blog</span>
+                    <span class="si-label">• <span data-studio-key="blog_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['blog_label'] ?? null, 'Blog'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-12 col-lg-9 mb-4 mb-lg-0">
-                    <h2 class="si-statement reveal-text-multi">
-                        Chia sẻ góc nhìn về thương hiệu, thiết kế và chiến lược giúp doanh nghiệp phát triển bền vững.
+                    <h2 class="si-statement reveal-text-multi" data-studio-key="blog_statement">
+                        @normVal($pageContents['blog_statement'] ?? null, 'Chia sẻ góc nhìn về thương hiệu, thiết kế và chiến lược giúp doanh nghiệp phát triển bền vững.')
                     </h2>
                 </div>
 
@@ -378,63 +378,45 @@
     <section class="blog-slider-section">
         <div class="container-fluid blog-custom-container">
             <div class="d-flex justify-content-end mb-4">
-                <a href="{{ route('news') }}" class="link-more text-uppercase" style="margin-top: 100px;">XEM THÊM
-                    BÀI VIẾT</a>
+                <a href="{{ \App\Helpers\NormHelper::val($pageContents['blog_btn_url'] ?? null, '/news') }}" class="link-more text-uppercase" style="margin-top: 100px;" data-studio-key="blog_btn_text">
+                    @normVal($pageContents['blog_btn_text'] ?? null, 'XEM THÊM BÀI VIẾT')
+                </a>
             </div>
 
             <div class="blog-slider-container">
                 <div class="blog-track" id="blogTrack">
+                    @forelse($blogs as $blog)
+                    @php
+                        $thumbUrl = !empty($blog->thumbnail) ? (str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset(ltrim($blog->thumbnail, '/'))) : asset('assets/images/project1.png');
+                        $detailUrl = route('news.detail', $blog->slug);
+                        $blogTitle = $blog->getTitle(session('locale', 'vi'));
+                    @endphp
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project1.png') }}" alt="Blog 1">
+                            <a href="{{ $detailUrl }}" class="d-block w-100 h-100">
+                                <img src="{{ $thumbUrl }}" alt="{{ $blogTitle }}" loading="lazy">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            <a href="{{ $detailUrl }}" class="text-decoration-none" style="color: inherit;">
+                                {{ $blogTitle }}
                             </a>
                         </h3>
                     </div>
-
+                    @empty
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project2.png') }}" alt="Blog 2">
+                            <a href="{{ route('news') }}" class="d-block w-100 h-100">
+                                <img src="{{ asset('assets/images/project1.png') }}" alt="Blog">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
+                            <a href="{{ route('news') }}" class="text-decoration-none" style="color: inherit;">
+                                Chưa có bài viết nào được đăng tải.
                             </a>
                         </h3>
                     </div>
-
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project3.png') }}" alt="Blog 3">
-                            </a>
-                        </div>
-                        <h3 class="blog-title">
-                            <a href="{{ route('news.detail') }}" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
-                            </a>
-                        </h3>
-                    </div>
-
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="#" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project4.png') }}" alt="Blog 4">
-                            </a>
-                        </div>
-                        <h3 class="blog-title">
-                            <a href="#" class="text-decoration-none" style="color: inherit;">
-                                Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo
-                            </a>
-                        </h3>
-                    </div>
+                    @endforelse
                 </div>
             </div>
 

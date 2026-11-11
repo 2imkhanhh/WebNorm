@@ -44,6 +44,14 @@ class BlogController extends Controller
                 if (is_string($excerpt)) {
                     $excerpt = ['vi' => $excerpt, 'en' => $excerpt];
                 }
+                $content = $itemData['content'] ?? null;
+                if (is_string($content)) {
+                    $content = ['vi' => $content, 'en' => $content];
+                }
+                $authorRole = $itemData['author_role'] ?? null;
+                if (is_string($authorRole)) {
+                    $authorRole = ['vi' => $authorRole, 'en' => $authorRole];
+                }
 
                 $payload = [
                     'title' => $title,
@@ -51,9 +59,12 @@ class BlogController extends Controller
                     'category' => $category,
                     'thumbnail' => $itemData['thumbnail'] ?? null,
                     'excerpt' => $excerpt,
-                    'content' => $itemData['content'] ?? null,
-                    'author' => $itemData['author'] ?? 'Admin',
+                    'content' => $content,
+                    'author' => $itemData['author'] ?? '',
+                    'author_role' => $authorRole,
+                    'author_avatar' => $itemData['author_avatar'] ?? null,
                     'status' => $itemData['status'] ?? 'published',
+                    'is_featured' => !empty($itemData['is_featured']),
                     'published_at' => $itemData['published_at'] ?? now(),
                 ];
 
@@ -90,6 +101,9 @@ class BlogController extends Controller
         if (isset($validated['excerpt']) && is_string($validated['excerpt'])) {
             $validated['excerpt'] = ['vi' => $validated['excerpt'], 'en' => $validated['excerpt']];
         }
+        if (isset($validated['content']) && is_string($validated['content'])) {
+            $validated['content'] = ['vi' => $validated['content'], 'en' => $validated['content']];
+        }
 
         $validated['published_at'] = now();
         $validated['status'] = $validated['status'] ?? 'published';
@@ -120,6 +134,9 @@ class BlogController extends Controller
         }
         if (isset($validated['excerpt']) && is_string($validated['excerpt'])) {
             $validated['excerpt'] = ['vi' => $validated['excerpt'], 'en' => $blog->excerpt['en'] ?? $validated['excerpt']];
+        }
+        if (isset($validated['content']) && is_string($validated['content'])) {
+            $validated['content'] = ['vi' => $validated['content'], 'en' => $blog->content['en'] ?? $validated['content']];
         }
 
         $blog->update($validated);

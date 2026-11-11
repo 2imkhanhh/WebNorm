@@ -1187,7 +1187,7 @@ const submitForm = () => {
   }
 
   if (!form.slug || !form.slug.trim()) {
-    alert('Vui lòng nhập đường dẫn tĩnh (Slug)!');
+    alert('Vui lòng nhập đường dẫn tĩnh');
     return;
   }
 

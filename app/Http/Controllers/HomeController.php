@@ -39,8 +39,14 @@ class HomeController extends Controller
             ->get();
         $services = Service::where('is_active', true)->orderBy('sort_order')->get();
         $reviews = Review::where('is_active', true)->orderBy('sort_order')->get();
+        $blogs = Blog::where('status', 'published')
+            ->where('is_featured', true)
+            ->latest('published_at')
+            ->latest('id')
+            ->take(10)
+            ->get();
 
-        return view('pages.index', compact('pageContents', 'projects', 'services', 'reviews'));
+        return view('pages.index', compact('pageContents', 'projects', 'services', 'reviews', 'blogs'));
     }
 
     public function about(Request $request)

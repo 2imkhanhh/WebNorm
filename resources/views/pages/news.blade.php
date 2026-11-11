@@ -34,7 +34,7 @@
                                 <img src="{{ !empty($blog->thumbnail) ? (str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset($blog->thumbnail)) : asset('assets/images/news1.png') }}" alt="{{ $blog->getTitle() }}" class="img-fluid w-100">
                             </a>
                             <div class="news-meta">
-                                <span class="news-date">{{ $blog->published_at ? $blog->published_at->format('d/m/Y') : '' }}</span>
+                                <span class="news-date">{{ $blog->published_at ? (app()->getLocale() === 'en' ? $blog->published_at->format('d M Y') : $blog->published_at->format('d \T\h\gn Y')) : '' }}</span>
                             </div>
                             <h3 class="news-card-title">
                                 <a href="{{ route('news.detail', $blog->slug) }}">{{ $blog->getTitle() }}</a>

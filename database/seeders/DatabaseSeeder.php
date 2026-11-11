@@ -122,7 +122,7 @@ class DatabaseSeeder extends Seeder
                 'section_id' => 'intro_about',
                 'section_title' => 'Khối Giới thiệu (Về chúng tôi)',
                 'field_key' => 'about_label',
-                'field_label' => 'Nhãn tiêu đề (chữ sau dấu •)',
+                'field_label' => 'Nhãn tiêu đề',
                 'field_type' => 'text',
                 'value' => ['vi' => 'Về chúng tôi', 'en' => 'About us'],
                 'sort_order' => 7,
@@ -165,7 +165,7 @@ class DatabaseSeeder extends Seeder
                 'section_id' => 'intro_services',
                 'section_title' => 'Khối Giới thiệu Dịch vụ',
                 'field_key' => 'services_label',
-                'field_label' => 'Nhãn tiêu đề (Label)',
+                'field_label' => 'Nhãn tiêu đề',
                 'field_type' => 'text',
                 'value' => ['vi' => '• Dịch vụ', 'en' => '• Services'],
                 'sort_order' => 12,
@@ -218,13 +218,56 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'page_slug' => '/',
+                'section_id' => 'intro_blog',
+                'section_title' => 'Khối Giới thiệu Blog',
+                'field_key' => 'blog_label',
+                'field_label' => 'Nhãn tiêu đề',
+                'field_type' => 'text',
+                'value' => ['vi' => 'Blog', 'en' => 'Blog'],
+                'sort_order' => 17,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'intro_blog',
+                'section_title' => 'Khối Giới thiệu Blog',
+                'field_key' => 'blog_statement',
+                'field_label' => 'Tuyên ngôn bài viết (Statement)',
+                'field_type' => 'textarea',
+                'value' => [
+                    'vi' => 'Chia sẻ góc nhìn về thương hiệu, thiết kế và chiến lược giúp doanh nghiệp phát triển bền vững.',
+                    'en' => 'Sharing perspectives on branding, design, and strategy to help businesses grow sustainably.',
+                ],
+                'sort_order' => 18,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'intro_blog',
+                'section_title' => 'Khối Giới thiệu Blog',
+                'field_key' => 'blog_btn_text',
+                'field_label' => 'Chữ trên nút xem thêm',
+                'field_type' => 'text',
+                'value' => ['vi' => 'XEM THÊM BÀI VIẾT', 'en' => 'VIEW ALL ARTICLES'],
+                'sort_order' => 19,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'intro_blog',
+                'section_title' => 'Khối Giới thiệu Blog',
+                'field_key' => 'blog_btn_url',
+                'field_label' => 'Đường dẫn liên kết nút',
+                'field_type' => 'link',
+                'value' => ['vi' => '/news', 'en' => '/news'],
+                'sort_order' => 20,
+            ],
+            [
+                'page_slug' => '/',
                 'section_id' => 'footer_words',
                 'section_title' => 'Chữ lật chân trang (Footer Animation)',
                 'field_key' => 'footer_line1_old',
                 'field_label' => 'Dòng 1 (Trước)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'TỪ NHỮNG', 'en' => 'FROM AN'],
-                'sort_order' => 20,
+                'sort_order' => 25,
             ],
             [
                 'page_slug' => '/',
@@ -234,7 +277,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 1 (Sau)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'ĐẾN MỘT', 'en' => 'INTO A'],
-                'sort_order' => 21,
+                'sort_order' => 26,
             ],
             [
                 'page_slug' => '/',
@@ -244,7 +287,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 2 (Trước)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'Ý TƯỞNG', 'en' => 'IDEA'],
-                'sort_order' => 22,
+                'sort_order' => 27,
             ],
             [
                 'page_slug' => '/',
@@ -254,7 +297,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 2 (Sau)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'THƯƠNG HIỆU', 'en' => 'BRAND'],
-                'sort_order' => 23,
+                'sort_order' => 28,
             ],
             [
                 'page_slug' => '/',
@@ -264,7 +307,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 3 (Trước)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'BAN ĐẦU', 'en' => 'INITIAL'],
-                'sort_order' => 24,
+                'sort_order' => 29,
             ],
             [
                 'page_slug' => '/',
@@ -274,7 +317,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 3 (Sau)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'ĐÁNG NHỚ', 'en' => 'MEMORABLE'],
-                'sort_order' => 25,
+                'sort_order' => 30,
             ],
 
             // VỀ CHÚNG TÔI (/about-us)
@@ -590,14 +633,19 @@ class DatabaseSeeder extends Seeder
                     'en' => 'Understanding Design Thinking to Stand Out in the Creative Industry'
                 ],
                 'slug' => 'hieu-ve-tu-duy-thiet-ke-design-thinking',
-                'category' => ['vi' => 'Tư duy sáng tạo', 'en' => 'Creative Thinking'],
+                'category' => null,
                 'thumbnail' => '/assets/images/news1.png',
                 'excerpt' => [
                     'vi' => 'Tư duy thiết kế giúp doanh nghiệp giải quyết các bài toán phức tạp bằng cách lấy người dùng làm trọng tâm.',
                     'en' => 'Design thinking helps businesses solve complex problems by putting users at the center.'
                 ],
+                'content' => [
+                    'vi' => "<p>Design Thinking là một cách tiếp cận vấn đề mang tính chiến lược, lấy con người làm trung tâm và hướng đến việc giải quyết những nhu cầu thực sự của người dùng. Trong bài viết này, chúng ta sẽ cùng tìm hiểu sâu về tư duy thiết kế là gì, vì sao tư duy thiết kế lại trở thành lợi thế cạnh tranh trong ngành công nghiệp sáng tạo, cũng như cách áp dụng phương pháp này để nâng tầm chất lượng dự án và tư duy làm nghề.</p>\n\n<h3>1. Tư duy thiết kế (Design Thinking) là gì?</h3>\n\n<p>Tư duy thiết kế, hay Design Thinking, là một phương pháp tư duy và giải quyết vấn đề lấy con người làm trung tâm. Thay vì bắt đầu từ giải pháp hoặc từ góc nhìn chủ quan của người làm sáng tạo, tư duy thiết kế bắt đầu từ việc thấu hiểu sâu sắc nhu cầu, mong muốn, hành vi và \"nỗi đau\" của người dùng, sau đó mới phát triển ý tưởng và giải pháp phù hợp.</p>\n\n<p>Nói một cách đơn giản, tư duy thiết kế (Design Thinking) là cách tiếp cận vấn đề giống như một nhà thiết kế: quan sát, đặt câu hỏi, thấu cảm, thử nghiệm, sai, sửa và tối ưu liên tục. Phương pháp này không chỉ được sử dụng trong thiết kế đồ họa hay thiết kế sản phẩm, mà còn được ứng dụng rộng rãi trong kinh doanh, marketing, giáo dục, công nghệ và quản trị.</p>\n\n<div class=\"article-image-container my-4\">\n    <img src=\"/assets/images/gotrail.jpg\" alt=\"Gotrail Billboard\" class=\"article-fluid-img img-fluid w-100\" style=\"border-radius: 8px;\">\n</div>\n\n<h3>2. Vì sao tư duy thiết kế là lợi thế cạnh tranh?</h3>\n\n<p>Trong bối cảnh thị trường bão hòa, nơi các sản phẩm và dịch vụ ngày càng tương đồng về tính năng lẫn giá cả, trải nghiệm người dùng và giá trị cảm xúc chính là yếu tố tạo nên sự khác biệt.</p>\n\n<div class=\"article-image-container my-4\">\n    <img src=\"/assets/images/gallery1.jpg\" alt=\"Design Thinking Workshop\" class=\"article-fluid-img img-fluid w-100\" style=\"border-radius: 8px;\">\n</div>\n\n<h3>3. Áp dụng tư duy thiết kế vào dự án sáng tạo</h3>\n\n<p>Quy trình Design Thinking tiêu chuẩn gồm 5 giai đoạn: Thấu cảm (Empathize), Xác định vấn đề (Define), Lên ý tưởng (Ideate), Tạo mẫu thử (Prototype), và Kiểm tra (Test).</p>",
+                    'en' => "<p>Design Thinking is a strategic, human-centered approach to problem solving that focuses on addressing real user needs.</p>\n\n<h3>1. What is Design Thinking?</h3>\n\n<p>Design thinking is a human-centric methodology for solving complex problems.</p>\n\n<div class=\"article-image-container my-4\">\n    <img src=\"/assets/images/gotrail.jpg\" alt=\"Gotrail Billboard\" class=\"article-fluid-img img-fluid w-100\" style=\"border-radius: 8px;\">\n</div>\n\n<h3>2. Why Design Thinking is a Competitive Advantage</h3>\n\n<p>In saturated markets where products and services share similar features and pricing, user experience and emotional resonance become the true differentiators.</p>"
+                ],
                 'published_at' => now()->subDays(5),
                 'status' => 'published',
+                'is_featured' => true,
             ],
             [
                 'title' => [
@@ -605,7 +653,7 @@ class DatabaseSeeder extends Seeder
                     'en' => 'Brand Repositioning in the Digital Era'
                 ],
                 'slug' => 'tai-dinh-vi-thuong-hieu-ky-nguyen-so',
-                'category' => ['vi' => 'Chiến lược', 'en' => 'Strategy'],
+                'category' => null,
                 'thumbnail' => '/assets/images/project2.png',
                 'excerpt' => [
                     'vi' => 'Các nguyên tắc cốt lõi giúp doanh nghiệp làm mới hình ảnh trong mắt người dùng hiện đại.',
@@ -613,6 +661,7 @@ class DatabaseSeeder extends Seeder
                 ],
                 'published_at' => now()->subDays(12),
                 'status' => 'published',
+                'is_featured' => true,
             ],
             [
                 'title' => [
@@ -620,7 +669,7 @@ class DatabaseSeeder extends Seeder
                     'en' => 'Minimalist Design and Enduring Brand Appeal'
                 ],
                 'slug' => 'thiet-ke-toi-gian-va-suc-hut-thuong-hieu',
-                'category' => ['vi' => 'Thiết kế', 'en' => 'Design'],
+                'category' => null,
                 'thumbnail' => '/assets/images/project3.png',
                 'excerpt' => [
                     'vi' => 'Tại sao sự tối giản luôn là lựa chọn hàng đầu của các thương hiệu hàng đầu thế giới.',
@@ -628,6 +677,7 @@ class DatabaseSeeder extends Seeder
                 ],
                 'published_at' => now()->subDays(18),
                 'status' => 'published',
+                'is_featured' => true,
             ],
         ];
         foreach ($blogs as $b) {

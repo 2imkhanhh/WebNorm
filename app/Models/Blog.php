@@ -14,8 +14,11 @@ class Blog extends Model
         'excerpt',
         'content',
         'author',
+        'author_role',
+        'author_avatar',
         'published_at',
         'status',
+        'is_featured',
     ];
 
     protected $casts = [
@@ -23,7 +26,9 @@ class Blog extends Model
         'category' => 'json',
         'excerpt' => 'json',
         'content' => 'json',
+        'author_role' => 'json',
         'published_at' => 'datetime',
+        'is_featured' => 'boolean',
     ];
 
     public function getTitle(string $lang = 'vi'): string
@@ -34,6 +39,16 @@ class Blog extends Model
     public function getExcerpt(string $lang = 'vi'): string
     {
         return is_array($this->excerpt) ? ($this->excerpt[$lang] ?? $this->excerpt['vi'] ?? '') : ($this->excerpt ?? '');
+    }
+
+    public function getContent(string $lang = 'vi'): string
+    {
+        return is_array($this->content) ? ($this->content[$lang] ?? $this->content['vi'] ?? '') : ($this->content ?? '');
+    }
+
+    public function getAuthorRole(string $lang = 'vi'): string
+    {
+        return is_array($this->author_role) ? ($this->author_role[$lang] ?? $this->author_role['vi'] ?? '') : ($this->author_role ?? '');
     }
 }
 
