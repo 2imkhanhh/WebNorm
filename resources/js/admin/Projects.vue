@@ -33,16 +33,10 @@
         </div>
 
         <!-- Staging Alert Banner when changes are pending publish -->
-        <div v-if="hasUnsavedChanges" class="staging-alert-banner shadow-sm">
-          <div class="banner-info d-flex align-items-center gap-2">
-            <i class="bx bx-info-circle text-warning fs-5"></i>
-            <span>Bạn có thay đổi chưa lưu vào cơ sở dữ liệu. Nhấn "Xuất bản ngay" để áp dụng lên website.</span>
-          </div>
-          <div class="banner-buttons">
-            <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
-            <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishProjects">
-              {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
-            </button>
+        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
+          <div class="banner-info">
+            <i class="bx bx-info-circle banner-icon"></i>
+            <span>Có thay đổi chưa lưu</span>
           </div>
         </div>
 
@@ -71,11 +65,8 @@
               <img
                 :src="p.thumbnail ? (p.thumbnail.startsWith('http') ? p.thumbnail : '/' + p.thumbnail.replace(/^\//, '')) : '/assets/images/project1.png'"
                 :alt="getTrans(p.title)" loading="lazy" />
-              <div class="card-badges-top">
-                <span v-if="p.is_featured" class="card-badge-feat" title="Hiển thị tại trang chủ">Nổi bật</span>
-                <span v-if="p._isNew" class="card-badge-new" title="Chưa xuất bản vào database">Mới</span>
-                <span v-else-if="p._isModified" class="card-badge-mod" title="Đã chỉnh sửa nhưng chưa xuất bản">Đã
-                  sửa</span>
+              <div v-if="p.is_featured" class="card-badges-top">
+                <span class="card-badge-feat" title="Hiển thị tại trang chủ">Nổi bật</span>
               </div>
             </div>
 
