@@ -111,7 +111,7 @@ const isDashboard = computed(() => {
 });
 
 const isFullWidth = computed(() => {
-  return page.component === 'Dashboard' || page.component === 'Projects';
+  return page.component === 'Dashboard' || page.component === 'Projects' || page.component === 'Services';
 });
 
 const MIN_SIDEBAR_WIDTH = 320;

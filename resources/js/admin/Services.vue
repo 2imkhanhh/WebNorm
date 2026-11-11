@@ -1,65 +1,129 @@
 <template>
   <Layout>
-    <div class="sidebar-header">
-      <div class="d-flex justify-content-between align-items-center w-100">
-        <div>
-          <h2 class="sidebar-title">Dịch vụ cốt lõi</h2>
-          <p class="sidebar-subtitle">Các gói dịch vụ doanh nghiệp hiển thị tại trang chủ.</p>
-        </div>
-        <button class="btn-create-item" @click="openCreateModal">
-          <i class="bx bx-plus"></i> Thêm mới
-        </button>
-      </div>
-    </div>
-
-    <!-- Staging Alert Banner when changes are pending publish -->
-    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
-      <div class="banner-info">
-        <span>Có thay đổi chưa lưu</span>
-      </div>
-      <div class="banner-buttons">
-        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
-        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishServices">
-          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
-        </button>
-      </div>
-    </div>
-
-    <div class="sidebar-panel-content" :key="renderKey">
-      <div class="panel-list-item" v-for="s in localServices" :key="s.id">
-        <div class="item-badge">{{ s.number }}</div>
-        <div class="item-info">
-          <div class="item-name d-flex align-items-center gap-2">
-            <span>{{ getTrans(s.title) }}</span>
-            <span v-if="s._isNew" class="badge-staging-new" title="Chưa xuất bản">Mới</span>
-            <span v-else-if="s._isModified" class="badge-staging-modified" title="Đã chỉnh sửa">Đã sửa</span>
+    <div class="services-workspace-view" :key="renderKey">
+      <div class="services-container">
+        <!-- Header Card -->
+        <div class="services-header-card">
+          <div class="services-header-main">
+            <div class="services-title-area">
+              <h1 class="services-title">
+                <span>Quản lý Dịch vụ</span>
+              </h1>
+              <p class="services-subtitle">
+                Quản lý danh sách các gói dịch vụ, danh sách nội dung và hình ảnh.
+              </p>
+            </div>
+            <div class="services-header-actions">
+              <div class="services-header-search">
+                <i class="bx bx-search search-icon"></i>
+                <input v-model="searchQuery" type="text" class="services-header-search-input"
+                  placeholder="Tìm kiếm dịch vụ..." />
+                <button v-if="searchQuery" type="button" class="btn-clear-header-search" @click="searchQuery = ''"
+                  title="Xóa tìm kiếm">
+                  <i class="bx bx-x"></i>
+                </button>
+              </div>
+              <button type="button" class="btn-services-create" @click="openCreateModal">
+                <i class="bx bx-plus"></i> Thêm dịch vụ mới
+              </button>
+            </div>
           </div>
-          <div class="item-meta">{{ getTrans(s.description) }}</div>
         </div>
-        <div class="item-actions">
-          <button class="btn-action edit" title="Sửa dịch vụ" @click="openEditModal(s)">
-            <i class="bx bx-edit-alt"></i>
-          </button>
-          <button class="btn-action delete" title="Xóa dịch vụ" @click="confirmDelete(s)">
-            <i class="bx bx-trash"></i>
-          </button>
-        </div>
-      </div>
 
-      <div v-if="!localServices || localServices.length === 0" class="empty-state">
-        <i class="bx bx-layer empty-icon"></i>
-        <p>Chưa có dịch vụ nào trong cơ sở dữ liệu.</p>
+        <!-- Staging Alert Banner when changes are pending publish -->
+        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
+          <div class="banner-info">
+            <i class="bx bx-info-circle banner-icon"></i>
+            <span>Có thay đổi chưa lưu</span>
+          </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div v-if="filteredServices && filteredServices.length > 0" class="services-card-grid">
+          <div v-for="s in filteredServices" :key="s.id" class="service-card-full">
+            <div class="service-card-header">
+              <div class="service-card-meta">
+                <div class="service-card-num-badge">{{ formatNumber(s.number) }}</div>
+                <div class="service-card-title-box">
+                  <h3 class="service-card-title">{{ getTrans(s.title) }}</h3>
+                  <div v-if="s.title && typeof s.title === 'object' && s.title.en && currentLanguage === 'vi'"
+                    class="service-card-sub-title">
+                    {{ s.title.en }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="service-card-body">
+              <div class="service-card-media">
+                <img :src="getImageUrl(s.icon)" :alt="getTrans(s.title)" loading="lazy" />
+              </div>
+
+              <div class="service-card-items-wrap">
+                <ul class="service-card-bullet-list">
+                  <li v-for="(item, idx) in getBulletList(s)" :key="idx">
+                    <span class="bullet-dot">•</span>
+                    <span>{{ item }}</span>
+                  </li>
+                  <li v-if="getBulletList(s).length === 0" class="text-muted fst-italic">
+                    Chưa có hạng mục chi tiết
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="service-card-footer">
+              <a :href="'/#service-' + String(s.number || '').replace(/\D/g, '')" target="_blank"
+                class="btn-service-view-live" title="Xem vị trí dịch vụ trên trang chủ">
+                <i class="bx bx-link-external"></i> Xem trên trang chủ
+              </a>
+              <div class="d-flex align-items-center gap-1">
+                <button type="button" class="btn-action edit" @click="openEditModal(s)" title="Sửa">
+                  <i class="bx bx-edit-alt"></i>
+                </button>
+                <button type="button" class="btn-action delete" @click="confirmDelete(s)" title="Xóa">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="services-empty-state">
+          <i class="bx bx-layer empty-icon"></i>
+          <p v-if="searchQuery">Không tìm thấy dịch vụ nào phù hợp với từ khóa "{{ searchQuery }}"</p>
+          <p v-else>Chưa có gói dịch vụ nào trong cơ sở dữ liệu.</p>
+          <button v-if="searchQuery" type="button" class="btn-cancel" @click="searchQuery = ''">
+            Xóa tìm kiếm
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Modal Form (Add / Edit Service) -->
     <div v-if="isModalOpen" class="studio-modal-backdrop" @click.self="isModalOpen = false">
-      <div class="studio-modal-dialog">
+      <div class="studio-modal-dialog-service">
         <div class="studio-modal-header">
-          <h3 class="modal-title">{{ editingItem ? 'Chỉnh sửa dịch vụ' : 'Thêm dịch vụ mới' }}</h3>
-          <button class="btn-close-modal" @click="isModalOpen = false">
-            <i class="bx bx-x"></i>
-          </button>
+          <div class="modal-header-left">
+            <h3 class="modal-title">{{ editingItem ? 'Chỉnh sửa dịch vụ' : 'Thêm dịch vụ mới' }}</h3>
+          </div>
+          <div class="modal-header-right">
+            <!-- Language Switcher in Modal -->
+            <div class="modal-lang-switcher">
+              <button type="button" class="btn-modal-lang" :class="{ active: modalLang === 'vi' }"
+                @click="modalLang = 'vi'" title="Tiếng Việt">
+                VI
+              </button>
+              <button type="button" class="btn-modal-lang" :class="{ active: modalLang === 'en' }"
+                @click="modalLang = 'en'" title="English">
+                EN
+              </button>
+            </div>
+            <button type="button" class="btn-close-modal" @click="isModalOpen = false">
+              <i class="bx bx-x"></i>
+            </button>
+          </div>
         </div>
 
         <form @submit.prevent="submitForm" class="studio-modal-body">
@@ -69,28 +133,52 @@
           </div>
 
           <div class="modal-form-group">
-            <label class="modal-label">Tên dịch vụ (VI) *</label>
-            <input v-model="form.title_vi" type="text" class="modal-input" placeholder="Thiết kế từ chiến lược" required />
+            <label class="modal-label">
+              Tên dịch vụ ({{ modalLang.toUpperCase() }}) *
+            </label>
+            <input v-if="modalLang === 'vi'" v-model="form.title_vi" type="text" class="modal-input"
+              placeholder="Ví dụ: Thiết kế từ chiến lược" required />
+            <input v-else v-model="form.title_en" type="text" class="modal-input" placeholder="E.g. Strategy-led Design"
+              required />
           </div>
 
           <div class="modal-form-group">
-            <label class="modal-label">Tên dịch vụ (EN)</label>
-            <input v-model="form.title_en" type="text" class="modal-input" placeholder="Strategic Design" />
+            <label class="modal-label">
+              Danh sách hạng mục / Bullet points ({{ modalLang.toUpperCase() }})
+            </label>
+            <span class="modal-help-text">Mỗi dòng tương ứng với 1 gạch đầu dòng hiển thị trên website.</span>
+            <textarea v-if="modalLang === 'vi'" v-model="form.description_vi" class="modal-textarea" rows="6"
+              placeholder="Định vị thương hiệu&#10;Câu chuyện thương hiệu&#10;Đặt tên thương hiệu&#10;Bản sắc thương hiệu&#10;Thông điệp thương hiệu"></textarea>
+            <textarea v-else v-model="form.description_en" class="modal-textarea" rows="6"
+              placeholder="Brand positioning&#10;Brand story&#10;Brand naming&#10;Brand identity&#10;Brand messaging"></textarea>
           </div>
 
           <div class="modal-form-group">
-            <label class="modal-label">Danh sách dịch vụ / Bullet points (VI) — Mỗi dòng 1 mục</label>
-            <textarea v-model="form.description_vi" class="modal-textarea" rows="5" placeholder="Định vị thương hiệu&#10;Câu chuyện thương hiệu&#10;Đặt tên thương hiệu..."></textarea>
-          </div>
-
-          <div class="modal-form-group">
-            <label class="modal-label">Danh sách dịch vụ / Bullet points (EN) — Mỗi dòng 1 mục</label>
-            <textarea v-model="form.description_en" class="modal-textarea" rows="5" placeholder="Brand positioning&#10;Brand story&#10;Brand naming..."></textarea>
-          </div>
-
-          <div class="modal-form-group">
-            <label class="modal-label">Đường dẫn ảnh minh họa</label>
-            <input v-model="form.icon" type="text" class="modal-input" placeholder="/assets/images/project1.png" />
+            <label class="modal-label">Ảnh minh họa dịch vụ</label>
+            <div class="service-thumb-row">
+              <div class="service-thumb-preview">
+                <img v-if="form.icon" :src="getImageUrl(form.icon)" alt="Preview" />
+                <div v-else class="service-thumb-empty">
+                  <i class="bx bx-image"></i>
+                </div>
+              </div>
+              <div class="service-thumb-controls">
+                <input v-model="form.icon" type="text" class="modal-input"
+                  placeholder="/assets/images/project1.png hoặc đường dẫn URL" />
+                <div class="service-thumb-btn-row">
+                  <input type="file" ref="fileInputRef" accept="image/*" style="display: none"
+                    @change="handleFileUpload" />
+                  <button type="button" class="btn-upload-file" :disabled="isUploading" @click="triggerFileInput">
+                    <i class="bx bx-upload"></i>
+                    <span>{{ isUploading ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                  </button>
+                  <button v-if="form.icon" type="button" class="btn-remove-file" @click="form.icon = ''"
+                    title="Xóa ảnh">
+                    <i class="bx bx-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="studio-modal-footer">
@@ -106,7 +194,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
 import {
@@ -129,6 +217,10 @@ const deletedIds = ref([]);
 const isModalOpen = ref(false);
 const editingItem = ref(null);
 const renderKey = ref(0);
+const searchQuery = ref('');
+const modalLang = ref('vi');
+const fileInputRef = ref(null);
+const isUploading = ref(false);
 
 const syncFromProps = () => {
   localServices.value = JSON.parse(JSON.stringify(props.services || []));
@@ -139,6 +231,16 @@ const syncFromProps = () => {
 
 watch(() => props.services, syncFromProps, { immediate: true });
 
+watch(
+  currentLanguage,
+  (newLang) => {
+    if (newLang) {
+      modalLang.value = newLang;
+    }
+  },
+  { immediate: true }
+);
+
 const form = reactive({
   number: '01',
   title_vi: '',
@@ -148,6 +250,17 @@ const form = reactive({
   icon: '',
 });
 
+const formatNumber = (num) => {
+  if (!num) return '01';
+  return String(num).replace(/[\/\s]+$/g, '').trim();
+};
+
+const getImageUrl = (icon) => {
+  if (!icon) return '/assets/images/project1.png';
+  if (icon.startsWith('http')) return icon;
+  return '/' + icon.replace(/^\//, '');
+};
+
 const getTrans = (val) => {
   if (val && typeof val === 'object') {
     return val[currentLanguage.value] || val.vi || '';
@@ -155,8 +268,40 @@ const getTrans = (val) => {
   return val || '';
 };
 
+const getBulletList = (s) => {
+  const lang = currentLanguage.value || 'vi';
+  if (s.content && s.content[lang] && Array.isArray(s.content[lang]) && s.content[lang].length > 0) {
+    return s.content[lang];
+  }
+  let desc = '';
+  if (s.description && typeof s.description === 'object') {
+    desc = s.description[lang] || s.description.vi || '';
+  } else if (typeof s.description === 'string') {
+    desc = s.description;
+  }
+  if (!desc) return [];
+  return desc
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+};
+
+const filteredServices = computed(() => {
+  if (!searchQuery.value.trim()) return localServices.value;
+  const q = searchQuery.value.toLowerCase().trim();
+  return localServices.value.filter((s) => {
+    const num = String(s.number || '').toLowerCase();
+    const titleVi = (typeof s.title === 'object' ? s.title?.vi : s.title || '').toLowerCase();
+    const titleEn = (typeof s.title === 'object' ? s.title?.en : '').toLowerCase();
+    const descVi = (typeof s.description === 'object' ? s.description?.vi : s.description || '').toLowerCase();
+    const descEn = (typeof s.description === 'object' ? s.description?.en : '').toLowerCase();
+    return num.includes(q) || titleVi.includes(q) || titleEn.includes(q) || descVi.includes(q) || descEn.includes(q);
+  });
+});
+
 const openCreateModal = () => {
   editingItem.value = null;
+  modalLang.value = currentLanguage.value || 'vi';
   form.number = String(localServices.value.length + 1).padStart(2, '0');
   form.title_vi = '';
   form.title_en = '';
@@ -168,7 +313,8 @@ const openCreateModal = () => {
 
 const openEditModal = (s) => {
   editingItem.value = s;
-  form.number = s.number || '01';
+  modalLang.value = currentLanguage.value || 'vi';
+  form.number = String(s.number || '01').replace('/', '');
   form.title_vi = typeof s.title === 'object' ? (s.title?.vi || '') : (s.title || '');
   form.title_en = typeof s.title === 'object' ? (s.title?.en || '') : '';
 
@@ -187,11 +333,70 @@ const openEditModal = (s) => {
   isModalOpen.value = true;
 };
 
+const triggerFileInput = () => {
+  if (fileInputRef.value) {
+    fileInputRef.value.click();
+  }
+};
+
+const uploadSingleFile = async (file) => {
+  if (file.size > 50 * 1024 * 1024) {
+    alert('Dung lượng tệp không được vượt quá 50MB!');
+    return null;
+  }
+  const formData = new FormData();
+  formData.append('file', file);
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const res = await fetch('/admin/media/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    });
+    const data = await res.json();
+    if (data.url) return data.url;
+    if (data.path) return data.path;
+    return null;
+  } catch (err) {
+    console.error('Lỗi upload file:', err);
+    alert('Lỗi tải ảnh lên máy chủ!');
+    return null;
+  }
+};
+
+const handleFileUpload = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  isUploading.value = true;
+  const path = await uploadSingleFile(file);
+  if (path) {
+    form.icon = path;
+  }
+  isUploading.value = false;
+  e.target.value = '';
+};
+
 const submitForm = () => {
+  const currentTitle = (modalLang.value === 'en' ? form.title_en : form.title_vi) || form.title_vi || form.title_en;
+  if (!currentTitle || !currentTitle.trim()) {
+    alert('Vui lòng nhập tên dịch vụ!');
+    return;
+  }
+
   const payloadData = {
-    number: form.number,
-    title: { vi: form.title_vi, en: form.title_en || form.title_vi },
-    description: { vi: form.description_vi, en: form.description_en || form.description_vi },
+    number: String(form.number || '01').replace(/[\/\s]+$/g, '').trim(),
+    title: {
+      vi: form.title_vi || form.title_en,
+      en: form.title_en || form.title_vi,
+    },
+    description: {
+      vi: form.description_vi || form.description_en,
+      en: form.description_en || form.description_vi,
+    },
     icon: form.icon,
   };
 
@@ -201,14 +406,12 @@ const submitForm = () => {
       localServices.value[idx] = {
         ...localServices.value[idx],
         ...payloadData,
-        _isModified: true,
       };
     }
   } else {
     localServices.value.push({
       id: 'temp_' + Date.now(),
       ...payloadData,
-      _isNew: true,
     });
   }
 
@@ -217,18 +420,12 @@ const submitForm = () => {
 };
 
 const confirmDelete = (s) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa dịch vụ "${getTrans(s.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+  if (confirm(`Bạn có chắc chắn muốn xóa dịch vụ "${getTrans(s.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`)) {
     localServices.value = localServices.value.filter((item) => item.id !== s.id);
     if (typeof s.id === 'number' || (typeof s.id === 'string' && !s.id.startsWith('temp_'))) {
       deletedIds.value.push(s.id);
     }
     hasUnsavedChanges.value = true;
-  }
-};
-
-const revertChanges = () => {
-  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
-    syncFromProps();
   }
 };
 
@@ -267,4 +464,4 @@ onUnmounted(() => {
 });
 </script>
 
-<style src="./css/panels.css"></style>
+<style src="./css/services.css"></style>
