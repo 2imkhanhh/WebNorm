@@ -142,7 +142,7 @@
     <section class="project-showcase" id="projectShowcase">
         <div class="ps-sticky-wrap">
             <div class="ps-content-wrapper">
-                <div class="ps-counter-top">
+                <div class="ps-counter-top" style="transform: translateY(26px);">
                     <div>
                         <span class="ps-num-current" id="psCurrent">01</span>
                         <span class="ps-num-total" id="psTotal">/05</span>
@@ -154,7 +154,7 @@
                     <div class="ps-horizontal-track" id="psTrack">
                         @forelse($projects as $p)
                         <div class="ps-project-item">
-                            <a href="{{ route('work.detail', $p->slug) }}" class="ps-card-inner text-decoration-none text-reset d-block">
+                            <a href="{{ route('work.detail', $p->slug) }}" class="ps-card-inner text-decoration-none text-reset">
                                 <div class="ps-img-wrap">
                                     <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}">
                                 </div>

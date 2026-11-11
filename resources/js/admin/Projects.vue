@@ -151,11 +151,6 @@
             <h3 class="modal-title m-0">
               {{ editingItem ? 'Chỉnh sửa: ' + getTrans(editingItem.title) : 'Thêm dự án mới' }}
             </h3>
-            <a v-if="editingItem && form.slug" :href="'/work/' + form.slug" target="_blank"
-              class="btn btn-sm btn-outline-primary py-1 px-2 d-inline-flex align-items-center gap-1"
-              style="font-size: 11.5px;" title="Mở trang chi tiết trên website">
-              <i class="bx bx-link-external"></i> Xem trang chi tiết
-            </a>
           </div>
 
           <div class="d-flex align-items-center gap-2">
@@ -938,23 +933,36 @@ const openEditModal = (p) => {
   form.is_featured = !!p.is_featured;
 
   // Detail fields from p.content & p.gallery
-  const c = p.content || {};
+  let c = p.content || {};
+  if (typeof c === 'string') {
+    try { c = JSON.parse(c); } catch (e) { c = {}; }
+  }
+  let g = p.gallery || [];
+  if (typeof g === 'string') {
+    try { g = JSON.parse(g); } catch (e) { g = []; }
+  }
+
   const cleanDot = (s) => String(s || '').replace(/^[•\s\-\*]+/u, '').trim();
-  form.hero_image = c.hero_image || '';
-  const rawVi = typeof c.overview_title === 'object' ? c.overview_title.vi : c.overview_title;
-  const rawEn = typeof c.overview_title === 'object' ? c.overview_title.en : '';
+  form.hero_image = c.hero_image || p.thumbnail || '/assets/images/gotrail.jpg';
+
+  const rawVi = typeof c.overview_title === 'object' ? c.overview_title?.vi : c.overview_title;
+  const rawEn = typeof c.overview_title === 'object' ? c.overview_title?.en : '';
   form.overview_title_vi = cleanDot(rawVi) || 'Tổng quan về dự án';
   form.overview_title_en = cleanDot(rawEn) || 'Project Overview';
-  form.overview_text_vi = (typeof c.overview_text === 'object' ? c.overview_text.vi : c.overview_text) || form.description_vi || '';
-  form.overview_text_en = (typeof c.overview_text === 'object' ? c.overview_text.en : '') || form.description_en || '';
-  form.overview_image = c.overview_image || '';
-  form.gallery = Array.isArray(p.gallery) ? [...p.gallery] : [];
-  form.credits = Array.isArray(c.credits) && c.credits.length > 0
+
+  form.overview_text_vi = (typeof c.overview_text === 'object' ? c.overview_text?.vi : c.overview_text) || form.description_vi || 'NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa tính cách thương hiệu một cách rõ nét.';
+  form.overview_text_en = (typeof c.overview_text === 'object' ? c.overview_text?.en : '') || form.description_en || 'NORM Creative was born with a fresh, contemporary, youthful, and disruptive spirit. Taking culture as our core, combined with open design thinking.';
+  form.overview_image = c.overview_image || '/assets/images/mockup.png';
+  form.gallery = Array.isArray(g) && g.length > 0 ? [...g] : ['/assets/images/work1.jpg', '/assets/images/work2.jpg', '/assets/images/work3.jpg'];
+
+  const hasCredits = Array.isArray(c.credits) && c.credits.some((cr) => cr && (cr.name || cr.role));
+  form.credits = hasCredits
     ? JSON.parse(JSON.stringify(c.credits))
     : [
-      { role: 'Account Manager', name: '' },
-      { role: 'Design Lead', name: '' },
-      { role: 'Developer', name: '' },
+      { role: 'Account Manager', name: 'Sebastian Degenhart' },
+      { role: 'Design Lead', name: 'Amadeus Malmin' },
+      { role: 'Lead Designer', name: 'Kasia Bielska' },
+      { role: 'Senior Designer', name: 'Mariusz Ciesla' },
     ];
 
   isModalOpen.value = true;

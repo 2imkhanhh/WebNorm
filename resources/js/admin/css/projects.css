@@ -1085,16 +1085,20 @@
 .hero-preview-wrapper {
   position: relative;
   width: 100%;
-  height: 140px;
+  height: 250px;
   border-radius: 8px;
   overflow: hidden;
-  background: #0f172a;
+  background: #090d16;
+  border: 1px solid #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-preview-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .hero-preview-empty {
