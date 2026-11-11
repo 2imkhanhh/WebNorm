@@ -261,11 +261,11 @@
             <div class="row">
                 <div class="col-12 testimonial-title-container" id="testimonialTitleWrap">
                     <h2 class="testimonial-title text-left scroll-slide-left">
-                        <span class="quote-mark">“</span>TRẢI NGHIỆM
+                        <span class="quote-mark">“</span><span data-studio-key="testimonial_title_1">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['testimonial_title_1'] ?? null, 'TRẢI NGHIỆM'), '“" ') }}</span>
                     </h2>
 
                     <h2 class="testimonial-title text-right scroll-slide-right">
-                        KHÁCH HÀNG
+                        <span data-studio-key="testimonial_title_2">@normVal($pageContents['testimonial_title_2'] ?? null, 'KHÁCH HÀNG')</span>
                     </h2>
                 </div>
             </div>
@@ -324,7 +324,7 @@
                     <div class="col-md-4 d-none d-md-block"></div>
                     <div class="col-md-6 d-flex align-items-center gap-4">
                         <div class="testimonial-pagination">
-                            <span class="current">01</span><span class="total">/06</span>
+                            <span class="current">01</span><span class="total">/{{ str_pad(max(count($reviews), 1), 2, '0', STR_PAD_LEFT) }}</span>
                         </div>
                         <div class="testimonial-nav-btns">
                             <button class="nav-btn prev" aria-label="Previous">

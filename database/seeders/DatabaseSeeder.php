@@ -198,13 +198,33 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'page_slug' => '/',
+                'section_id' => 'intro_testimonials',
+                'section_title' => 'Khối Trải nghiệm khách hàng',
+                'field_key' => 'testimonial_title_1',
+                'field_label' => 'Dòng tiêu đề 1 (bên trái)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'TRẢI NGHIỆM', 'en' => 'CLIENT'],
+                'sort_order' => 15,
+            ],
+            [
+                'page_slug' => '/',
+                'section_id' => 'intro_testimonials',
+                'section_title' => 'Khối Trải nghiệm khách hàng',
+                'field_key' => 'testimonial_title_2',
+                'field_label' => 'Dòng tiêu đề 2 (bên phải)',
+                'field_type' => 'text',
+                'value' => ['vi' => 'KHÁCH HÀNG', 'en' => 'EXPERIENCES'],
+                'sort_order' => 16,
+            ],
+            [
+                'page_slug' => '/',
                 'section_id' => 'footer_words',
                 'section_title' => 'Chữ lật chân trang (Footer Animation)',
                 'field_key' => 'footer_line1_old',
                 'field_label' => 'Dòng 1 (Trước)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'TỪ NHỮNG', 'en' => 'FROM AN'],
-                'sort_order' => 6,
+                'sort_order' => 20,
             ],
             [
                 'page_slug' => '/',
@@ -214,7 +234,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 1 (Sau)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'ĐẾN MỘT', 'en' => 'INTO A'],
-                'sort_order' => 7,
+                'sort_order' => 21,
             ],
             [
                 'page_slug' => '/',
@@ -224,7 +244,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 2 (Trước)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'Ý TƯỞNG', 'en' => 'IDEA'],
-                'sort_order' => 8,
+                'sort_order' => 22,
             ],
             [
                 'page_slug' => '/',
@@ -234,7 +254,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 2 (Sau)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'THƯƠNG HIỆU', 'en' => 'BRAND'],
-                'sort_order' => 9,
+                'sort_order' => 23,
             ],
             [
                 'page_slug' => '/',
@@ -244,7 +264,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 3 (Trước)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'BAN ĐẦU', 'en' => 'INITIAL'],
-                'sort_order' => 10,
+                'sort_order' => 24,
             ],
             [
                 'page_slug' => '/',
@@ -254,7 +274,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Dòng 3 (Sau)',
                 'field_type' => 'text',
                 'value' => ['vi' => 'ĐÁNG NHỚ', 'en' => 'MEMORABLE'],
-                'sort_order' => 11,
+                'sort_order' => 25,
             ],
 
             // VỀ CHÚNG TÔI (/about-us)

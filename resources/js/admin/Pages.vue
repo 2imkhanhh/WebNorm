@@ -53,7 +53,9 @@
             <label class="field-label">{{ field.label }}</label>
 
             <!-- Text Input with fixed bullet dot -->
-            <div v-if="field.type === 'text' && (field.prefix || field.key === 'services_label' || field.key === 'about_label')" class="field-input-prefix-wrap">
+            <div
+              v-if="field.type === 'text' && (field.prefix === '•' || field.key === 'services_label' || field.key === 'about_label')"
+              class="field-input-prefix-wrap">
               <span class="field-prefix-dot">•</span>
               <input :value="cleanDot(getFieldValue(field))" type="text" class="field-input field-input-with-prefix"
                 @input="updateField(section.id, field, cleanDot($event.target.value))" />
@@ -70,11 +72,8 @@
 
             <!-- Link Picker (Predefined Pages + Custom URL) -->
             <div v-else-if="field.type === 'link' || field.type === 'url'" class="link-field-wrap">
-              <select
-                class="field-select"
-                :value="getLinkSelectValue(field)"
-                @change="handleLinkSelectChange(section.id, field, $event.target.value)"
-              >
+              <select class="field-select" :value="getLinkSelectValue(field)"
+                @change="handleLinkSelectChange(section.id, field, $event.target.value)">
                 <option value="/about-us">Về chúng tôi (/about-us)</option>
                 <option value="/work">Dự án (/work)</option>
                 <option value="/news">Bài viết / Tin tức (/news)</option>
@@ -82,13 +81,9 @@
                 <option value="__custom__">Đường dẫn tùy chỉnh khác...</option>
               </select>
               <div v-if="isCustomLink(field)" class="custom-link-box">
-                <input
-                  :value="getFieldValue(field)"
-                  type="text"
-                  class="field-input"
+                <input :value="getFieldValue(field)" type="text" class="field-input"
                   placeholder="https://... hoặc /duong-dan"
-                  @input="updateField(section.id, field, $event.target.value)"
-                />
+                  @input="updateField(section.id, field, $event.target.value)" />
                 <span class="field-hint" style="font-size: 11px; color: #64748b;">
                   Điền link ngoài (https://...) hoặc đường dẫn tùy ý.
                 </span>
@@ -212,6 +207,14 @@ const defaultPages = [
           { key: 'services_label', label: 'Nhãn tiêu đề (chữ sau dấu •)', type: 'text', prefix: '•', value: { vi: 'Dịch vụ', en: 'Services' } },
           { key: 'services_statement', label: 'Tuyên ngôn dịch vụ (Statement)', type: 'textarea', rows: 3, value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác biệt và tăng trưởng.', en: 'We help businesses build clear, consistent brands to convey distinct value and drive growth.' } },
           { key: 'services_desc', label: 'Mô tả ngắn bên phải', type: 'textarea', rows: 3, value: { vi: 'Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.', en: 'From strategy to experience, we shape distinct brands.' } },
+        ],
+      },
+      {
+        id: 'intro_testimonials',
+        title: 'Khối Trải nghiệm khách hàng',
+        fields: [
+          { key: 'testimonial_title_1', label: 'Dòng tiêu đề 1', type: 'text', value: { vi: 'TRẢI NGHIỆM', en: 'CLIENT' } },
+          { key: 'testimonial_title_2', label: 'Dòng tiêu đề 2', type: 'text', value: { vi: 'KHÁCH HÀNG', en: 'EXPERIENCES' } },
         ],
       },
       {
