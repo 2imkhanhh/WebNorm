@@ -373,10 +373,11 @@
                   <label class="form-label-custom">Tiêu đề</label>
                   <div class="bullet-input-wrap">
                     <span class="bullet-prefix">•</span>
-                    <input v-if="modalLang === 'vi'" v-model="form.overview_title_vi" type="text"
-                      class="bullet-input-field" placeholder="Tổng quan về dự án" />
-                    <input v-else v-model="form.overview_title_en" type="text" class="bullet-input-field"
-                      placeholder="Project Overview" />
+                    <input v-if="modalLang === 'vi'" :value="cleanDot(form.overview_title_vi)" type="text"
+                      class="bullet-input-field" placeholder="Tổng quan về dự án"
+                      @input="form.overview_title_vi = cleanDot($event.target.value)" />
+                    <input v-else :value="cleanDot(form.overview_title_en)" type="text" class="bullet-input-field"
+                      placeholder="Project Overview" @input="form.overview_title_en = cleanDot($event.target.value)" />
                   </div>
                 </div>
 
@@ -599,6 +600,8 @@ const activeTab = ref('basic');
 const modalLang = ref('vi');
 const selectedFilterCat = ref('all');
 const searchQuery = ref('');
+
+const cleanDot = (s) => String(s || '').replace(/^[•\s\-\*]+/u, '').trim();
 
 const form = reactive({
   title_vi: '',

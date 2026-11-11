@@ -52,8 +52,15 @@
             :class="{ 'field-compact': field.key && field.key.startsWith('hero_tagline_') }">
             <label class="field-label">{{ field.label }}</label>
 
-            <!-- Text Input -->
-            <input v-if="field.type === 'text'" :value="getFieldValue(field)" type="text" class="field-input"
+            <!-- Text Input with fixed bullet dot -->
+            <div v-if="field.type === 'text' && (field.prefix || field.key === 'services_label' || field.key === 'about_label')" class="field-input-prefix-wrap">
+              <span class="field-prefix-dot">•</span>
+              <input :value="cleanDot(getFieldValue(field))" type="text" class="field-input field-input-with-prefix"
+                @input="updateField(section.id, field, cleanDot($event.target.value))" />
+            </div>
+
+            <!-- Standard Text Input -->
+            <input v-else-if="field.type === 'text'" :value="getFieldValue(field)" type="text" class="field-input"
               @input="updateField(section.id, field, $event.target.value)" />
 
             <!-- Textarea -->
@@ -192,17 +199,19 @@ const defaultPages = [
         id: 'intro_about',
         title: 'Khối Giới thiệu',
         fields: [
-          { key: 'about_label', label: 'Nhãn tiêu đề (Label)', type: 'text', value: { vi: '• Về chúng tôi', en: '• About us' } },
+          { key: 'about_label', label: 'Nhãn tiêu đề (chữ sau dấu •)', type: 'text', prefix: '•', value: { vi: 'Về chúng tôi', en: 'About us' } },
           { key: 'about_desc', label: 'Nội dung mô tả', type: 'textarea', rows: 4, value: { vi: 'Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.', en: 'There are countless reasons why branding and marketing matter. Endless books have been written on this topic, but it all comes down to one simple question: why should anyone care about your existence? We create experiences that make people notice and care.' } },
           { key: 'about_btn_text', label: 'Chữ trên nút bấm', type: 'text', value: { vi: 'ĐỌC THÊM', en: 'READ MORE' } },
           { key: 'about_btn_url', label: 'Đường dẫn liên kết nút', type: 'link', value: { vi: '/about-us', en: '/about-us' } },
         ],
       },
       {
-        id: 'showcase',
-        title: 'Khối dự án nổi bật',
+        id: 'intro_services',
+        title: 'Khối Giới thiệu Dịch vụ',
         fields: [
-          { key: 'showcase_label', label: 'Nhãn tiêu đề khối', type: 'text', value: { vi: 'DỰ ÁN NỔI BẬT', en: 'FEATURED PROJECTS' } },
+          { key: 'services_label', label: 'Nhãn tiêu đề (chữ sau dấu •)', type: 'text', prefix: '•', value: { vi: 'Dịch vụ', en: 'Services' } },
+          { key: 'services_statement', label: 'Tuyên ngôn dịch vụ (Statement)', type: 'textarea', rows: 3, value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác biệt và tăng trưởng.', en: 'We help businesses build clear, consistent brands to convey distinct value and drive growth.' } },
+          { key: 'services_desc', label: 'Mô tả ngắn bên phải', type: 'textarea', rows: 3, value: { vi: 'Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.', en: 'From strategy to experience, we shape distinct brands.' } },
         ],
       },
       {
@@ -349,6 +358,9 @@ const toggleSection = (id) => {
 watch(selectedPageSlug, () => {
   openSectionId.value = null;
 });
+
+// Helper to strip leading dot/bullet
+const cleanDot = (s) => String(s || '').replace(/^[•\s\-\*]+/u, '').trimStart();
 
 // Helper to get bilingual value
 const getFieldValue = (field) => {

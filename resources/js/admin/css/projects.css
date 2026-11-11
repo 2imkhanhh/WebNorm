@@ -627,39 +627,43 @@
 .bullet-input-wrap {
   display: flex;
   align-items: center;
-  border: 1px solid #cbd5e1;
-  border-radius: 7px;
-  overflow: hidden;
-  background: #ffffff;
-  transition: all 0.15s ease;
-}
-
-.bullet-input-wrap:focus-within {
-  border-color: #0f172a;
-  box-shadow: 0 0 0 1px #0f172a;
+  position: relative;
+  width: 100%;
 }
 
 .bullet-prefix {
-  background: #f8fafc;
-  color: #0f172a;
+  position: absolute;
+  left: 12px;
   font-size: 16px;
-  font-weight: 700;
-  padding: 8px 12px;
-  border-right: 1px solid #e2e8f0;
+  color: #64748b;
+  pointer-events: none;
   user-select: none;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  z-index: 2;
 }
 
 .bullet-input-field {
-  flex: 1;
-  border: none;
-  outline: none;
-  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px 8px 28px !important;
   font-size: 13px;
-  color: #0f172a;
-  background: transparent;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bullet-input-field:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 1px #0f172a;
 }
 
 /* Category selector pills */
@@ -1119,8 +1123,8 @@
   height: 250px;
   border-radius: 8px;
   overflow: hidden;
-  background: #090d16;
-  border: 1px solid #1e293b;
+  background: #1e293b;
+  border: 1px solid #334155;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1182,6 +1186,7 @@
   border-radius: 8px;
   overflow: hidden;
   background: #1e293b;
+  border: 1px solid #334155;
   display: flex;
   align-items: center;
   justify-content: center;

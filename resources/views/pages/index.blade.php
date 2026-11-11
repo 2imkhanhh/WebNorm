@@ -121,7 +121,7 @@
 
             <div class="row align-items-start content-footer" style="margin-bottom: 200px;">
                 <div class="col-md-3">
-                    <span class="si-label" data-studio-key="about_label">@normVal($pageContents['about_label'] ?? null, '• Về chúng tôi')</span>
+                    <span class="si-label">• <span data-studio-key="about_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['about_label'] ?? null, 'Về chúng tôi'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-md-6">
@@ -191,19 +191,18 @@
         <div class="container-fluid norm-container">
             <div class="row services-intro-row">
                 <div class="col-12 col-lg-2 mb-4 mb-lg-0">
-                    <span class="si-label">• Dịch vụ</span>
+                    <span class="si-label">• <span data-studio-key="services_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['services_label'] ?? null, 'Dịch vụ'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-12 col-lg-7 mb-4 mb-lg-0">
-                    <h2 class="si-statement reveal-text-multi">
-                        Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác
-                        biệt và tăng trưởng.
+                    <h2 class="si-statement reveal-text-multi" data-studio-key="services_statement">
+                        @normVal($pageContents['services_statement'] ?? null, 'Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác biệt và tăng trưởng.')
                     </h2>
                 </div>
 
                 <div class="col-12 col-lg-3 d-flex justify-content-lg-end">
-                    <p class="si-desc">
-                        Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.
+                    <p class="si-desc" data-studio-key="services_desc">
+                        @normVal($pageContents['services_desc'] ?? null, 'Từ chiến lược đến trải nghiệm, chúng tôi định hình thương hiệu rõ nét.')
                     </p>
                 </div>
             </div>
