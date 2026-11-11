@@ -1,113 +1,185 @@
 <template>
   <Layout>
-    <div class="sidebar-header">
-      <div class="d-flex justify-content-between align-items-center w-100">
-        <div>
-          <h2 class="sidebar-title">Đánh giá khách hàng</h2>
-          <p class="sidebar-subtitle">Lời nhận xét từ các đối tác và thương hiệu đồng hành.</p>
-        </div>
-        <button class="btn-create-item" @click="openCreateModal">
-          <i class="bx bx-plus"></i> Thêm mới
-        </button>
-      </div>
-    </div>
-
-    <!-- Staging Alert Banner when changes are pending publish -->
-    <div v-if="hasUnsavedChanges" class="staging-alert-banner mx-3 mt-2">
-      <div class="banner-info">
-        <span>Có thay đổi chưa lưu</span>
-      </div>
-      <div class="banner-buttons">
-        <button type="button" class="btn-banner-revert" @click="revertChanges">Hủy thay đổi</button>
-        <button type="button" class="btn-banner-publish" :disabled="isSaving" @click="publishReviews">
-          {{ isSaving ? 'Đang lưu...' : 'Xuất bản ngay' }}
-        </button>
-      </div>
-    </div>
-
-    <div class="sidebar-panel-content" :key="renderKey">
-      <div class="panel-list-item" v-for="r in localReviews" :key="r.id">
-        <div class="item-thumb avatar">
-          <img :src="r.avatar ? (r.avatar.startsWith('http') ? r.avatar : '/' + r.avatar.replace(/^\//, '')) : '/assets/images/avatar.png'" :alt="r.author" />
-        </div>
-        <div class="item-info">
-          <div class="item-name d-flex align-items-center gap-2">
-            <span>{{ r.author }}</span>
-            <div class="review-stars">
-              <i v-for="star in (r.rating || 5)" :key="star" class="bx bxs-star"></i>
+    <div class="reviews-workspace-view" :key="renderKey">
+      <div class="reviews-container">
+        <!-- Header Card -->
+        <div class="reviews-header-card">
+          <div class="reviews-header-main">
+            <div class="reviews-title-area">
+              <h1 class="reviews-title">
+                <span>Quản lý Đánh giá</span>
+              </h1>
+              <p class="reviews-subtitle">
+                Quản lý danh sách nhận xét, đối tác và thương hiệu hiển thị tại trang chủ.
+              </p>
             </div>
-            <span v-if="r._isNew" class="badge-staging-new" title="Chưa xuất bản">Mới</span>
-            <span v-else-if="r._isModified" class="badge-staging-modified" title="Đã chỉnh sửa">Đã sửa</span>
+            <div class="reviews-header-actions">
+              <div class="reviews-header-search">
+                <i class="bx bx-search search-icon"></i>
+                <input v-model="searchQuery" type="text" class="reviews-header-search-input"
+                  placeholder="Tìm kiếm đánh giá..." />
+                <button v-if="searchQuery" type="button" class="btn-clear-header-search" @click="searchQuery = ''"
+                  title="Xóa tìm kiếm">
+                  <i class="bx bx-x"></i>
+                </button>
+              </div>
+              <button type="button" class="btn-reviews-create" @click="openCreateModal">
+                <i class="bx bx-plus"></i> Thêm đánh giá mới
+              </button>
+            </div>
           </div>
-          <div class="item-meta">{{ getTrans(r.role) }}</div>
-          <div class="item-quote">"{{ getTrans(r.content) }}"</div>
         </div>
-        <div class="item-actions">
-          <button class="btn-action edit" title="Sửa nhận xét" @click="openEditModal(r)">
-            <i class="bx bx-edit-alt"></i>
-          </button>
-          <button class="btn-action delete" title="Xóa nhận xét" @click="confirmDelete(r)">
-            <i class="bx bx-trash"></i>
-          </button>
-        </div>
-      </div>
 
-      <div v-if="!localReviews || localReviews.length === 0" class="empty-state">
-        <i class="bx bx-star empty-icon"></i>
-        <p>Chưa có đánh giá nào trong cơ sở dữ liệu.</p>
+        <!-- Staging Alert Banner when changes are pending publish -->
+        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
+          <div class="banner-info">
+            <i class="bx bx-info-circle banner-icon"></i>
+            <span>Có thay đổi chưa lưu</span>
+          </div>
+        </div>
+
+        <!-- Reviews Card Grid -->
+        <div v-if="filteredReviews && filteredReviews.length > 0" class="reviews-card-grid">
+          <div v-for="r in filteredReviews" :key="r.id" class="review-card-full">
+            <div class="review-card-header">
+              <div class="review-card-meta">
+                <div class="review-card-avatar">
+                  <img :src="getImageUrl(r.avatar)" :alt="r.author" loading="lazy" />
+                </div>
+                <div class="review-card-author-box">
+                  <h3 class="review-card-author">{{ r.author }}</h3>
+                  <div class="review-card-role">{{ getTrans(r.role) }}</div>
+                </div>
+              </div>
+
+              <div class="review-card-stars">
+                <i v-for="star in (r.rating || 5)" :key="star" class="bx bxs-star"></i>
+              </div>
+            </div>
+
+            <div class="review-card-body">
+              <p class="review-card-quote">“{{ getTrans(r.content) }}”</p>
+            </div>
+
+            <div class="service-card-footer">
+              <div class="d-flex align-items-center gap-1">
+                <button type="button" class="btn-action move" :disabled="isFirst(r)" @click="moveUp(r)"
+                  title="Di chuyển lên trên">
+                  <i class="bx bx-chevron-up"></i>
+                </button>
+                <button type="button" class="btn-action move" :disabled="isLast(r)" @click="moveDown(r)"
+                  title="Di chuyển xuống dưới">
+                  <i class="bx bx-chevron-down"></i>
+                </button>
+                <button type="button" class="btn-action edit" @click="openEditModal(r)" title="Chỉnh sửa">
+                  <i class="bx bx-edit-alt"></i>
+                </button>
+                <button type="button" class="btn-action delete" @click="confirmDelete(r)" title="Xóa">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="reviews-empty-state">
+          <i class="bx bx-star empty-icon"></i>
+          <p v-if="searchQuery">Không tìm thấy đánh giá nào phù hợp với từ khóa "{{ searchQuery }}"</p>
+          <p v-else>Chưa có đánh giá nào trong cơ sở dữ liệu.</p>
+          <button v-if="searchQuery" type="button" class="btn-cancel" @click="searchQuery = ''">
+            Xóa tìm kiếm
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Modal Form (Add / Edit Review) -->
     <div v-if="isModalOpen" class="studio-modal-backdrop" @click.self="isModalOpen = false">
-      <div class="studio-modal-dialog">
+      <div class="studio-modal-dialog-review">
         <div class="studio-modal-header">
-          <h3 class="modal-title">{{ editingItem ? 'Chỉnh sửa đánh giá' : 'Thêm đánh giá mới' }}</h3>
-          <button class="btn-close-modal" @click="isModalOpen = false">
-            <i class="bx bx-x"></i>
-          </button>
+          <div class="modal-header-left">
+            <h3 class="modal-title">{{ editingItem ? 'Chỉnh sửa đánh giá' : 'Thêm đánh giá mới' }}</h3>
+          </div>
+          <div class="modal-header-right">
+            <!-- Language Switcher in Modal -->
+            <div class="modal-lang-switcher">
+              <button type="button" class="btn-modal-lang" :class="{ active: modalLang === 'vi' }"
+                @click="modalLang = 'vi'" title="Tiếng Việt">
+                VI
+              </button>
+              <button type="button" class="btn-modal-lang" :class="{ active: modalLang === 'en' }"
+                @click="modalLang = 'en'" title="English">
+                EN
+              </button>
+            </div>
+            <button type="button" class="btn-close-modal" @click="isModalOpen = false">
+              <i class="bx bx-x"></i>
+            </button>
+          </div>
         </div>
 
         <form @submit.prevent="submitForm" class="studio-modal-body">
           <div class="modal-form-row">
-            <div class="modal-form-group col-7">
+            <div class="modal-form-group">
               <label class="modal-label">Tên người đánh giá *</label>
-              <input v-model="form.author" type="text" class="modal-input" placeholder="Nguyễn Minh Anh" required />
+              <input v-model="form.author" type="text" class="modal-input" placeholder="Ví dụ: Nguyễn Minh Anh"
+                required />
             </div>
-            <div class="modal-form-group col-5">
-              <label class="modal-label">Số sao đánh giá (1-5)</label>
+            <div class="modal-form-group">
+              <label class="modal-label">Số sao đánh giá</label>
               <select v-model="form.rating" class="modal-input">
-                <option :value="5">5 Sao ★★★★★</option>
-                <option :value="4">4 Sao ★★★★☆</option>
-                <option :value="3">3 Sao ★★★☆☆</option>
+                <option :value="5">5 Sao</option>
+                <option :value="4">4 Sao</option>
+                <option :value="3">3 Sao</option>
+                <option :value="2">2 Sao</option>
+                <option :value="1">1 Sao</option>
               </select>
             </div>
           </div>
 
-          <div class="modal-form-row">
-            <div class="modal-form-group col-6">
-              <label class="modal-label">Chức vụ / Công ty (VI)</label>
-              <input v-model="form.role_vi" type="text" class="modal-input" placeholder="Giám đốc Marketing" />
+          <div class="modal-form-group">
+            <label class="modal-label">
+              Chức vụ / Doanh nghiệp ({{ modalLang.toUpperCase() }})
+            </label>
+            <input v-if="modalLang === 'vi'" v-model="form.role_vi" type="text" class="modal-input"
+              placeholder="Ví dụ: Giám đốc Marketing" />
+            <input v-else v-model="form.role_en" type="text" class="modal-input"
+              placeholder="E.g. Marketing Director" />
+          </div>
+
+          <div class="modal-form-group">
+            <label class="modal-label">Ảnh đại diện (Avatar)</label>
+            <div class="avatar-upload-row">
+              <div class="avatar-preview-circle">
+                <img v-if="form.avatar" :src="getImageUrl(form.avatar)" alt="Avatar" />
+                <div v-else class="avatar-empty-icon">
+                  <i class="bx bx-user"></i>
+                </div>
+              </div>
+              <div class="avatar-btn-row">
+                <input type="file" ref="fileInputRef" accept="image/*" style="display: none"
+                  @change="handleFileUpload" />
+                <button type="button" class="btn-upload-file" :disabled="isUploading" @click="triggerFileInput">
+                  <i class="bx bx-upload"></i>
+                  <span>{{ isUploading ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                </button>
+                <button v-if="form.avatar" type="button" class="btn-remove-file" @click="form.avatar = ''"
+                  title="Xóa ảnh">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
             </div>
-            <div class="modal-form-group col-6">
-              <label class="modal-label">Chức vụ / Công ty (EN)</label>
-              <input v-model="form.role_en" type="text" class="modal-input" placeholder="Marketing Director" />
-            </div>
           </div>
 
           <div class="modal-form-group">
-            <label class="modal-label">Đường dẫn ảnh đại diện (Avatar)</label>
-            <input v-model="form.avatar" type="text" class="modal-input" placeholder="/assets/images/avatar.png" />
-          </div>
-
-          <div class="modal-form-group">
-            <label class="modal-label">Nội dung đánh giá (VI) *</label>
-            <textarea v-model="form.content_vi" class="modal-textarea" rows="3" placeholder="Nhận xét của khách hàng..." required></textarea>
-          </div>
-
-          <div class="modal-form-group">
-            <label class="modal-label">Nội dung đánh giá (EN)</label>
-            <textarea v-model="form.content_en" class="modal-textarea" rows="3" placeholder="Client testimonial in English..."></textarea>
+            <label class="modal-label">
+              Nội dung nhận xét ({{ modalLang.toUpperCase() }}) *
+            </label>
+            <textarea v-if="modalLang === 'vi'" v-model="form.content_vi" class="modal-textarea" rows="4"
+              placeholder="Nhập nội dung nhận xét của khách hàng..." required></textarea>
+            <textarea v-else v-model="form.content_en" class="modal-textarea" rows="4"
+              placeholder="Client testimonial in English..." required></textarea>
           </div>
 
           <div class="studio-modal-footer">
@@ -123,7 +195,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
 import {
@@ -146,6 +218,10 @@ const deletedIds = ref([]);
 const isModalOpen = ref(false);
 const editingItem = ref(null);
 const renderKey = ref(0);
+const searchQuery = ref('');
+const modalLang = ref('vi');
+const fileInputRef = ref(null);
+const isUploading = ref(false);
 
 const syncFromProps = () => {
   localReviews.value = JSON.parse(JSON.stringify(props.reviews || []));
@@ -155,6 +231,16 @@ const syncFromProps = () => {
 };
 
 watch(() => props.reviews, syncFromProps, { immediate: true });
+
+watch(
+  currentLanguage,
+  (newLang) => {
+    if (newLang) {
+      modalLang.value = newLang;
+    }
+  },
+  { immediate: true }
+);
 
 const form = reactive({
   author: '',
@@ -166,6 +252,12 @@ const form = reactive({
   content_en: '',
 });
 
+const getImageUrl = (avatar) => {
+  if (!avatar) return '/assets/images/avatar.png';
+  if (avatar.startsWith('http')) return avatar;
+  return '/' + avatar.replace(/^\//, '');
+};
+
 const getTrans = (val) => {
   if (val && typeof val === 'object') {
     return val[currentLanguage.value] || val.vi || '';
@@ -173,8 +265,49 @@ const getTrans = (val) => {
   return val || '';
 };
 
+const filteredReviews = computed(() => {
+  if (!searchQuery.value.trim()) return localReviews.value;
+  const q = searchQuery.value.toLowerCase().trim();
+  return localReviews.value.filter((r) => {
+    const author = (r.author || '').toLowerCase();
+    const roleVi = (typeof r.role === 'object' ? r.role?.vi : r.role || '').toLowerCase();
+    const roleEn = (typeof r.role === 'object' ? r.role?.en : '').toLowerCase();
+    const contentVi = (typeof r.content === 'object' ? r.content?.vi : r.content || '').toLowerCase();
+    const contentEn = (typeof r.content === 'object' ? r.content?.en : '').toLowerCase();
+    return author.includes(q) || roleVi.includes(q) || roleEn.includes(q) || contentVi.includes(q) || contentEn.includes(q);
+  });
+});
+
+const isFirst = (item) => {
+  return localReviews.value.findIndex((r) => r.id === item.id) === 0;
+};
+
+const isLast = (item) => {
+  const idx = localReviews.value.findIndex((r) => r.id === item.id);
+  return idx === localReviews.value.length - 1;
+};
+
+const moveUp = (item) => {
+  const idx = localReviews.value.findIndex((r) => r.id === item.id);
+  if (idx > 0) {
+    const itemToMove = localReviews.value.splice(idx, 1)[0];
+    localReviews.value.splice(idx - 1, 0, itemToMove);
+    hasUnsavedChanges.value = true;
+  }
+};
+
+const moveDown = (item) => {
+  const idx = localReviews.value.findIndex((r) => r.id === item.id);
+  if (idx !== -1 && idx < localReviews.value.length - 1) {
+    const itemToMove = localReviews.value.splice(idx, 1)[0];
+    localReviews.value.splice(idx + 1, 0, itemToMove);
+    hasUnsavedChanges.value = true;
+  }
+};
+
 const openCreateModal = () => {
   editingItem.value = null;
+  modalLang.value = currentLanguage.value || 'vi';
   form.author = '';
   form.role_vi = 'Giám đốc Marketing';
   form.role_en = 'Marketing Director';
@@ -187,6 +320,7 @@ const openCreateModal = () => {
 
 const openEditModal = (r) => {
   editingItem.value = r;
+  modalLang.value = currentLanguage.value || 'vi';
   form.author = r.author || '';
   form.role_vi = typeof r.role === 'object' ? (r.role.vi || '') : (r.role || '');
   form.role_en = typeof r.role === 'object' ? (r.role.en || '') : '';
@@ -197,13 +331,77 @@ const openEditModal = (r) => {
   isModalOpen.value = true;
 };
 
+const triggerFileInput = () => {
+  if (fileInputRef.value) {
+    fileInputRef.value.click();
+  }
+};
+
+const uploadSingleFile = async (file) => {
+  if (file.size > 50 * 1024 * 1024) {
+    alert('Dung lượng tệp không được vượt quá 50MB!');
+    return null;
+  }
+  const formData = new FormData();
+  formData.append('file', file);
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const res = await fetch('/admin/media/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    });
+    const data = await res.json();
+    if (data.url) return data.url;
+    if (data.path) return data.path;
+    return null;
+  } catch (err) {
+    console.error('Lỗi tải ảnh:', err);
+    alert('Lỗi tải ảnh lên máy chủ!');
+    return null;
+  }
+};
+
+const handleFileUpload = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  isUploading.value = true;
+  const path = await uploadSingleFile(file);
+  if (path) {
+    form.avatar = path;
+  }
+  isUploading.value = false;
+  e.target.value = '';
+};
+
 const submitForm = () => {
+  if (!form.author || !form.author.trim()) {
+    alert('Vui lòng nhập tên người đánh giá!');
+    return;
+  }
+
+  const currentContent = (modalLang.value === 'en' ? form.content_en : form.content_vi) || form.content_vi || form.content_en;
+  if (!currentContent || !currentContent.trim()) {
+    alert('Vui lòng nhập nội dung đánh giá!');
+    return;
+  }
+
   const payloadData = {
     author: form.author,
-    role: { vi: form.role_vi, en: form.role_en || form.role_vi },
+    role: {
+      vi: form.role_vi || form.role_en,
+      en: form.role_en || form.role_vi,
+    },
     rating: form.rating,
     avatar: form.avatar,
-    content: { vi: form.content_vi, en: form.content_en || form.content_vi },
+    content: {
+      vi: form.content_vi || form.content_en,
+      en: form.content_en || form.content_vi,
+    },
   };
 
   if (editingItem.value) {
@@ -212,14 +410,12 @@ const submitForm = () => {
       localReviews.value[idx] = {
         ...localReviews.value[idx],
         ...payloadData,
-        _isModified: true,
       };
     }
   } else {
-    localReviews.value.unshift({
+    localReviews.value.push({
       id: 'temp_' + Date.now(),
       ...payloadData,
-      _isNew: true,
     });
   }
 
@@ -228,18 +424,12 @@ const submitForm = () => {
 };
 
 const confirmDelete = (r) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+  if (confirm(`Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`)) {
     localReviews.value = localReviews.value.filter((item) => item.id !== r.id);
     if (typeof r.id === 'number' || (typeof r.id === 'string' && !r.id.startsWith('temp_'))) {
       deletedIds.value.push(r.id);
     }
     hasUnsavedChanges.value = true;
-  }
-};
-
-const revertChanges = () => {
-  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
-    syncFromProps();
   }
 };
 
@@ -278,4 +468,4 @@ onUnmounted(() => {
 });
 </script>
 
-<style src="./css/panels.css"></style>
+<style src="./css/reviews.css"></style>
