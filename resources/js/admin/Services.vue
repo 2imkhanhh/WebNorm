@@ -46,10 +46,6 @@
                 <div class="service-card-num-badge">{{ formatNumber(s.number) }}</div>
                 <div class="service-card-title-box">
                   <h3 class="service-card-title">{{ getTrans(s.title) }}</h3>
-                  <div v-if="s.title && typeof s.title === 'object' && s.title.en && currentLanguage === 'vi'"
-                    class="service-card-sub-title">
-                    {{ s.title.en }}
-                  </div>
                 </div>
               </div>
             </div>
@@ -73,15 +69,19 @@
             </div>
 
             <div class="service-card-footer">
-              <a :href="'/#service-' + String(s.number || '').replace(/\D/g, '')" target="_blank"
-                class="btn-service-view-live" title="Xem vị trí dịch vụ trên trang chủ">
-                <i class="bx bx-link-external"></i> Xem trên trang chủ
-              </a>
               <div class="d-flex align-items-center gap-1">
-                <button type="button" class="btn-action edit" @click="openEditModal(s)" title="Sửa">
+                <button type="button" class="btn-action move" :disabled="isFirst(s)" @click="moveUp(s)"
+                  title="Di chuyển lên trên">
+                  <i class="bx bx-chevron-up"></i>
+                </button>
+                <button type="button" class="btn-action move" :disabled="isLast(s)" @click="moveDown(s)"
+                  title="Di chuyển xuống dưới">
+                  <i class="bx bx-chevron-down"></i>
+                </button>
+                <button type="button" class="btn-action edit" @click="openEditModal(s)" title="Chỉnh sửa dịch vụ">
                   <i class="bx bx-edit-alt"></i>
                 </button>
-                <button type="button" class="btn-action delete" @click="confirmDelete(s)" title="Xóa">
+                <button type="button" class="btn-action delete" @click="confirmDelete(s)" title="Xóa dịch vụ">
                   <i class="bx bx-trash"></i>
                 </button>
               </div>
@@ -128,13 +128,8 @@
 
         <form @submit.prevent="submitForm" class="studio-modal-body">
           <div class="modal-form-group">
-            <label class="modal-label">Số thứ tự hiển thị (Ví dụ: 01, 02, 03) *</label>
-            <input v-model="form.number" type="text" class="modal-input" placeholder="01" required />
-          </div>
-
-          <div class="modal-form-group">
             <label class="modal-label">
-              Tên dịch vụ ({{ modalLang.toUpperCase() }}) *
+              Tên dịch vụ *
             </label>
             <input v-if="modalLang === 'vi'" v-model="form.title_vi" type="text" class="modal-input"
               placeholder="Ví dụ: Thiết kế từ chiến lược" required />
@@ -144,13 +139,12 @@
 
           <div class="modal-form-group">
             <label class="modal-label">
-              Danh sách hạng mục / Bullet points ({{ modalLang.toUpperCase() }})
+              Danh sách hạng mục
             </label>
             <span class="modal-help-text">Mỗi dòng tương ứng với 1 gạch đầu dòng hiển thị trên website.</span>
             <textarea v-if="modalLang === 'vi'" v-model="form.description_vi" class="modal-textarea" rows="6"
-              placeholder="Định vị thương hiệu&#10;Câu chuyện thương hiệu&#10;Đặt tên thương hiệu&#10;Bản sắc thương hiệu&#10;Thông điệp thương hiệu"></textarea>
-            <textarea v-else v-model="form.description_en" class="modal-textarea" rows="6"
-              placeholder="Brand positioning&#10;Brand story&#10;Brand naming&#10;Brand identity&#10;Brand messaging"></textarea>
+              placeholder=""></textarea>
+            <textarea v-else v-model="form.description_en" class="modal-textarea" rows="6" placeholder=""></textarea>
           </div>
 
           <div class="modal-form-group">
@@ -163,8 +157,6 @@
                 </div>
               </div>
               <div class="service-thumb-controls">
-                <input v-model="form.icon" type="text" class="modal-input"
-                  placeholder="/assets/images/project1.png hoặc đường dẫn URL" />
                 <div class="service-thumb-btn-row">
                   <input type="file" ref="fileInputRef" accept="image/*" style="display: none"
                     @change="handleFileUpload" />
@@ -380,6 +372,41 @@ const handleFileUpload = async (e) => {
   e.target.value = '';
 };
 
+const isFirst = (item) => {
+  return localServices.value.findIndex((s) => s.id === item.id) === 0;
+};
+
+const isLast = (item) => {
+  const idx = localServices.value.findIndex((s) => s.id === item.id);
+  return idx === localServices.value.length - 1;
+};
+
+const reindexServices = () => {
+  localServices.value.forEach((s, i) => {
+    s.number = String(i + 1).padStart(2, '0');
+  });
+};
+
+const moveUp = (item) => {
+  const idx = localServices.value.findIndex((s) => s.id === item.id);
+  if (idx > 0) {
+    const itemToMove = localServices.value.splice(idx, 1)[0];
+    localServices.value.splice(idx - 1, 0, itemToMove);
+    reindexServices();
+    hasUnsavedChanges.value = true;
+  }
+};
+
+const moveDown = (item) => {
+  const idx = localServices.value.findIndex((s) => s.id === item.id);
+  if (idx !== -1 && idx < localServices.value.length - 1) {
+    const itemToMove = localServices.value.splice(idx, 1)[0];
+    localServices.value.splice(idx + 1, 0, itemToMove);
+    reindexServices();
+    hasUnsavedChanges.value = true;
+  }
+};
+
 const submitForm = () => {
   const currentTitle = (modalLang.value === 'en' ? form.title_en : form.title_vi) || form.title_vi || form.title_en;
   if (!currentTitle || !currentTitle.trim()) {
@@ -413,6 +440,7 @@ const submitForm = () => {
       id: 'temp_' + Date.now(),
       ...payloadData,
     });
+    reindexServices();
   }
 
   hasUnsavedChanges.value = true;
@@ -425,6 +453,7 @@ const confirmDelete = (s) => {
     if (typeof s.id === 'number' || (typeof s.id === 'string' && !s.id.startsWith('temp_'))) {
       deletedIds.value.push(s.id);
     }
+    reindexServices();
     hasUnsavedChanges.value = true;
   }
 };

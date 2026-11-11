@@ -342,7 +342,7 @@
   border-top: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .btn-service-view-live {
@@ -377,6 +377,24 @@
   font-size: 15px;
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.btn-action.move {
+  font-size: 18px;
+}
+
+.btn-action.move:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+}
+
+.btn-action.move:not(:disabled):hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
 }
 
 .btn-action.edit:hover {
