@@ -32,7 +32,11 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $pageContents = $this->getPageContentMap('/', $request);
-        $projects = Project::where('is_active', true)->with('categories')->orderBy('sort_order')->get();
+        $projects = Project::where('is_active', true)
+            ->where('is_featured', true)
+            ->with('categories')
+            ->orderBy('sort_order')
+            ->get();
         $services = Service::where('is_active', true)->orderBy('sort_order')->get();
         $reviews = Review::where('is_active', true)->orderBy('sort_order')->get();
 

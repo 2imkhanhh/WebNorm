@@ -142,10 +142,10 @@
     <section class="project-showcase" id="projectShowcase">
         <div class="ps-sticky-wrap">
             <div class="ps-content-wrapper">
-                <div class="ps-counter-top" style="transform: translateY(26px);">
+                <div class="ps-counter-top">
                     <div>
                         <span class="ps-num-current" id="psCurrent">01</span>
-                        <span class="ps-num-total" id="psTotal">/05</span>
+                        <span class="ps-num-total" id="psTotal">/{{ str_pad(max(count($projects), 1), 2, '0', STR_PAD_LEFT) }}</span>
                     </div>
                     <a href="{{ route('work') }}" class="link-more text-uppercase ps-view-all">XEM TOÀN BỘ DỰ ÁN</a>
                 </div>
