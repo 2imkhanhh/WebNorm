@@ -625,6 +625,7 @@
 
 .btn-upload-file:hover {
   background: #1e293b;
+  color: #ffffff !important;
 }
 
 .btn-upload-file:disabled {

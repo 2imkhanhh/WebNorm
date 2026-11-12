@@ -266,33 +266,110 @@
   display: none !important;
 }
 
-.btn-upload-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  background: #ffffff;
-  color: #334155;
-  border: 1px solid #cbd5e1;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: all 0.15s ease;
+/* Master Unified Upload Button Styles */
+.btn-upload-file,
+.btn-upload-thumb,
+.btn-upload-trigger,
+.btn-detail-action,
+.btn-upload-sm {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 8px 14px !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid #0f172a !important;
+  border-radius: 6px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08) !important;
+  transition: all 0.18s ease !important;
 }
 
-.btn-upload-trigger:hover:not(:disabled) {
-  background: #f1f5f9;
-  color: #0f172a;
-  border-color: #94a3b8;
+.btn-upload-file:hover:not(:disabled),
+.btn-upload-thumb:hover:not(:disabled),
+.btn-upload-trigger:hover:not(:disabled),
+.btn-detail-action:hover:not(:disabled),
+.btn-upload-sm:hover:not(:disabled) {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #1e293b !important;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.18) !important;
+  transform: translateY(-1px) !important;
 }
 
-.btn-upload-trigger:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.btn-upload-file:active:not(:disabled),
+.btn-upload-thumb:active:not(:disabled),
+.btn-upload-trigger:active:not(:disabled),
+.btn-detail-action:active:not(:disabled),
+.btn-upload-sm:active:not(:disabled) {
+  transform: translateY(0) !important;
+  background: #0f172a !important;
+}
+
+.btn-upload-file:disabled,
+.btn-upload-thumb:disabled,
+.btn-upload-trigger:disabled,
+.btn-detail-action:disabled,
+.btn-upload-sm:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-upload-file i,
+.btn-upload-thumb i,
+.btn-upload-trigger i,
+.btn-detail-action i,
+.btn-upload-sm i {
+  font-size: 15px !important;
+  color: #ffffff !important;
+  flex-shrink: 0 !important;
+}
+
+.btn-upload-file span,
+.btn-upload-thumb span,
+.btn-upload-trigger span,
+.btn-detail-action span,
+.btn-upload-sm span {
+  color: #ffffff !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+}
+
+/* Master Unified Remove Button Styles */
+.btn-remove-file,
+.btn-remove-thumb {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #ef4444 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  transition: all 0.15s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.btn-remove-file:hover,
+.btn-remove-thumb:hover {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #dc2626 !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-remove-file i,
+.btn-remove-thumb i {
+  color: inherit !important;
 }
 
 /* Flex utilities */

@@ -227,18 +227,6 @@ const defaultPages = [
           { key: 'blog_btn_url', label: 'Đường dẫn liên kết nút', type: 'link', value: { vi: '/news', en: '/news' } },
         ],
       },
-      {
-        id: 'footer_words',
-        title: 'Chữ lật chân trang (Footer Animation)',
-        fields: [
-          { key: 'footer_line1_old', label: 'Dòng 1 (Trước)', type: 'text', value: { vi: 'TỪ NHỮNG', en: 'FROM AN' } },
-          { key: 'footer_line1_new', label: 'Dòng 1 (Sau)', type: 'text', value: { vi: 'ĐẾN MỘT', en: 'INTO A' } },
-          { key: 'footer_line2_old', label: 'Dòng 2 (Trước)', type: 'text', value: { vi: 'Ý TƯỞNG', en: 'IDEA' } },
-          { key: 'footer_line2_new', label: 'Dòng 2 (Sau)', type: 'text', value: { vi: 'THƯƠNG HIỆU', en: 'BRAND' } },
-          { key: 'footer_line3_old', label: 'Dòng 3 (Trước)', type: 'text', value: { vi: 'BAN ĐẦU', en: 'INITIAL' } },
-          { key: 'footer_line3_new', label: 'Dòng 3 (Sau)', type: 'text', value: { vi: 'ĐÁNG NHỚ', en: 'MEMORABLE' } },
-        ],
-      },
     ],
   },
   {

@@ -289,7 +289,7 @@
                 <div class="thumb-action-row mt-2">
                   <button type="button" class="btn-upload-thumb" :disabled="isUploadingThumb"
                     @click="triggerThumbUpload">
-                    <i class="bx" :class="isUploadingThumb ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                    <i class="bx" :class="isUploadingThumb ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                     <span>{{ isUploadingThumb ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
                   </button>
                   <button v-if="form.thumbnail" type="button" class="btn-remove-thumb" @click="form.thumbnail = ''"
@@ -337,7 +337,7 @@
                   </div>
                 </div>
                 <button type="button" class="btn-detail-action" :disabled="isUploadingHero" @click="triggerHeroUpload">
-                  <i class="bx" :class="isUploadingHero ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <i class="bx" :class="isUploadingHero ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                   <span>{{ isUploadingHero ? 'Đang tải...' : 'Tải ảnh bìa' }}</span>
                 </button>
               </div>
@@ -388,7 +388,7 @@
                       placeholder="/storage/uploads/... hoặc URL mockup" />
                     <button type="button" class="btn-upload-sm" :disabled="isUploadingOverview"
                       @click="triggerOverviewUpload" title="Tải ảnh Mockup">
-                      <i class="bx" :class="isUploadingOverview ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                      <i class="bx" :class="isUploadingOverview ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                     </button>
                   </div>
                 </div>
@@ -425,7 +425,7 @@
                 </div>
                 <button type="button" class="btn-detail-action" :disabled="isUploadingGallery"
                   @click="triggerGalleryUpload">
-                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
+                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                   <span>{{ isUploadingGallery ? 'Đang tải ảnh...' : '+ Tải nhiều ảnh cùng lúc' }}</span>
                 </button>
               </div>

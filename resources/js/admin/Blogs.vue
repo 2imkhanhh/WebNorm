@@ -164,7 +164,7 @@
                 <input type="file" ref="fileInputRef" accept="image/*" style="display: none"
                   @change="handleFileUpload" />
                 <button type="button" class="btn-upload-file" :disabled="isUploading" @click="triggerFileInput">
-                  <i class="bx bx-upload"></i>
+                  <i class="bx" :class="isUploading ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                   <span>{{ isUploading ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
                 </button>
                 <button v-if="form.thumbnail" type="button" class="btn-remove-file" @click="form.thumbnail = ''"

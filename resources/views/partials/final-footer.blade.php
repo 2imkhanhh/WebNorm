@@ -12,23 +12,23 @@
                 <div class="col-12">
                     <div class="footer-text-wrap">
                         <div class="footer-line">
-                            <span class="text-old" data-studio-key="footer_line1_old">@normVal($pageContents['footer_line1_old'] ?? null, 'TỪ NHỮNG')</span>
-                            <span class="text-new" data-studio-key="footer_line1_new">@normVal($pageContents['footer_line1_new'] ?? null, 'ĐẾN MỘT')</span>
+                            <span class="text-old" data-studio-key="footer_line1_old">@normSetting('footer_line1_old', 'TỪ NHỮNG')</span>
+                            <span class="text-new" data-studio-key="footer_line1_new">@normSetting('footer_line1_new', 'ĐẾN MỘT')</span>
                         </div>
                         <div class="footer-line">
-                            <span class="text-old" data-studio-key="footer_line2_old">@normVal($pageContents['footer_line2_old'] ?? null, 'Ý TƯỞNG')</span>
-                            <span class="text-new" data-studio-key="footer_line2_new">@normVal($pageContents['footer_line2_new'] ?? null, 'THƯƠNG HIỆU')</span>
+                            <span class="text-old" data-studio-key="footer_line2_old">@normSetting('footer_line2_old', 'Ý TƯỞNG')</span>
+                            <span class="text-new" data-studio-key="footer_line2_new">@normSetting('footer_line2_new', 'THƯƠNG HIỆU')</span>
                         </div>
                         <div class="footer-line">
-                            <span class="text-old" data-studio-key="footer_line3_old">@normVal($pageContents['footer_line3_old'] ?? null, 'BAN ĐẦU')</span>
-                            <span class="text-new" data-studio-key="footer_line3_new">@normVal($pageContents['footer_line3_new'] ?? null, 'ĐÁNG NHỚ')</span>
+                            <span class="text-old" data-studio-key="footer_line3_old">@normSetting('footer_line3_old', 'BAN ĐẦU')</span>
+                            <span class="text-new" data-studio-key="footer_line3_new">@normSetting('footer_line3_new', 'ĐÁNG NHỚ')</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-12 text-start text-md-end mt-5 mt-md-0 footer-real-btn-col">
                     <a href="#" class="footer-btn nav-contact-trigger">
-                        CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+                        @normSetting('footer_btn_text', 'CÙNG BẮT ĐẦU') <i class='bx bx-right-arrow-alt'></i>
                     </a>
                 </div>
             </div>
@@ -37,7 +37,7 @@
 </footer>
 
 <a href="#" class="footer-cursor-btn nav-contact-trigger" id="footerCursorBtn">
-    CÙNG BẮT ĐẦU <i class='bx bx-right-arrow-alt'></i>
+    @normSetting('footer_btn_text', 'CÙNG BẮT ĐẦU') <i class='bx bx-right-arrow-alt'></i>
 </a>
 
 <section class="final-footer-section">
@@ -57,7 +57,7 @@
 
             <div class="col-12 col-md-6 d-flex flex-column align-items-md-end final-right-col mt-5 mt-md-0">
                 <div class="social-links-wrap">
-                    <p class="label-side social-title">• Mạng xã hội</p>
+                    <p class="label-side social-title">• {{ ltrim(\App\Helpers\NormHelper::setting('footer_social_title', 'Mạng xã hội'), '• ') }}</p>
                     <ul class="social-list">
                         <li><a href="{{ \App\Helpers\NormHelper::setting('social_behance', '#') }}" target="_blank">Behance</a></li>
                         <li><a href="{{ \App\Helpers\NormHelper::setting('social_linkedin', '#') }}" target="_blank">Linkedin</a></li>

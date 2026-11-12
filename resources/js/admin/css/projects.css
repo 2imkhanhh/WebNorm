@@ -969,12 +969,13 @@
 
 .btn-upload-thumb:hover:not(:disabled) {
   background: #1e293b;
+  color: #ffffff !important;
 }
 
 .btn-remove-thumb {
-  background: #fee2e2;
+  background: #ffffff;
   color: #ef4444;
-  border: 1px solid #fecaca;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
   width: 36px;
   height: 36px;
@@ -987,8 +988,10 @@
 }
 
 .btn-remove-thumb:hover {
-  background: #fca5a5;
-  color: #ffffff;
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+  transform: translateY(-1px);
 }
 
 /* Featured Card */
@@ -1214,6 +1217,7 @@
 
 .btn-upload-sm:hover:not(:disabled) {
   background: #1e293b;
+  color: #ffffff !important;
 }
 
 .project-gallery-grid {
