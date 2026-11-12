@@ -251,36 +251,35 @@
         </div>
     </section>
 
-    <section class="about-intro-section">
+    <section class="about-intro-section" data-studio-container="about_story">
         <div class="container-fluid px-4 px-md-5">
             <div class="row align-items-start about-content-row">
 
                 <div class="col-md-3">
-                    <span class="label-side">• Về chúng tôi</span>
+                    <span class="label-side">• <span data-studio-key="story_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['story_label'] ?? null, 'Về chúng tôi'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-lg-7 col-md-9 custom-nudge">
 
                     <div class="row text-paragraphs-row">
                         <div class="col-md-6 about-text-left">
-                            <p class="desc-text m-0">
-                                NÔRM Creative là agency sáng tạo thế hệ mới, chuyên sâu trong lĩnh vực thiết kế nhận
-                                diện thương hiệu, tư vấn chiến lược bài bản, toàn diện và các giải pháp hình ảnh chuyên
-                                nghiệp cho doanh nghiệp.
+                            <p class="desc-text m-0" data-studio-key="story_desc_left">
+                                @normVal($pageContents['story_desc_left'] ?? null, 'NÔRM Creative là agency sáng tạo thế hệ mới, chuyên sâu trong lĩnh vực thiết kế nhận diện thương hiệu, tư vấn chiến lược bài bản, toàn diện và các giải pháp hình ảnh chuyên nghiệp cho doanh nghiệp.')
                             </p>
                         </div>
                         <div class="col-md-6 about-text-right mt-4 mt-md-0">
-                            <p class="desc-text m-0">
-                                NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn
-                                hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính
-                                thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa
-                                tính cách thương hiệu một cách rõ nét.
+                            <p class="desc-text m-0" data-studio-key="story_desc_right">
+                                @normVal($pageContents['story_desc_right'] ?? null, 'NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa tính cách thương hiệu một cách rõ nét.')
                             </p>
                         </div>
                     </div>
 
+                    @php
+                        $storyImg = \App\Helpers\NormHelper::val($pageContents['story_image'] ?? null, '/assets/images/team-photo.jpg');
+                        $storyImgUrl = !empty($storyImg) ? (str_starts_with($storyImg, 'http') ? $storyImg : asset(ltrim($storyImg, '/'))) : asset('assets/images/team-photo.jpg');
+                    @endphp
                     <div class="team-image-wrapper">
-                        <img src="{{ asset('assets/images/team-photo.jpg') }}" alt="Team" class="team-img">
+                        <img src="{{ $storyImgUrl }}" alt="Team" class="team-img" data-studio-key="story_image">
                     </div>
 
                 </div>

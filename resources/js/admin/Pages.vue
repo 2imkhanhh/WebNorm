@@ -54,7 +54,7 @@
 
             <!-- Text Input with fixed bullet dot -->
             <div
-              v-if="field.type === 'text' && (field.prefix === '•' || field.key === 'services_label' || field.key === 'about_label' || field.key === 'blog_label')"
+              v-if="field.type === 'text' && (field.prefix === '•' || field.key === 'services_label' || field.key === 'about_label' || field.key === 'blog_label' || field.key === 'story_label' || (field.key && field.key.endsWith('_label')))"
               class="field-input-prefix-wrap">
               <span class="field-prefix-dot">•</span>
               <input :value="cleanDot(getFieldValue(field))" type="text" class="field-input field-input-with-prefix"
@@ -90,23 +90,33 @@
               </div>
             </div>
 
-            <!-- Image URL Input -->
-            <div v-else-if="field.type === 'image'" class="image-field-wrap">
-              <div class="media-input-group">
-                <input :value="getFieldValue(field)" type="text" class="field-input"
-                  placeholder="assets/images/... hoặc storage/uploads/..."
-                  @input="updateField(section.id, field, $event.target.value)" />
-                <button type="button" class="btn-upload-trigger" :disabled="isUploadingMedia"
-                  @click="triggerMediaUpload(section.id, field, 'image/*')"
-                  title="Tải ảnh lên từ máy tính (PNG, JPG, WEBP... tối đa 40MB)">
-                  <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                  <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải file lên' }}</span>
-                </button>
-              </div>
-              <div v-if="getFieldValue(field)" class="image-preview-thumb mt-2">
+            <!-- Image Field (Clean Upload Row without raw path input) -->
+            <div v-else-if="field.type === 'image'" class="pages-image-upload-row">
+              <div
+                class="pages-image-thumb"
+                @click="triggerMediaUpload(section.id, field, 'image/*')"
+                title="Nhấn để đổi ảnh"
+              >
                 <img
+                  v-if="getFieldValue(field)"
                   :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
-                  alt="Preview" />
+                  alt="Preview"
+                />
+                <div v-else class="preview-empty-icon">
+                  <i class="bx bx-image-alt"></i>
+                </div>
+              </div>
+              <div class="pages-image-btn-wrap">
+                <button
+                  type="button"
+                  class="btn-upload-file"
+                  :disabled="isUploadingMedia"
+                  @click="triggerMediaUpload(section.id, field, 'image/*')"
+                  title="Tải ảnh từ máy tính"
+                >
+                  <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                  <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                </button>
               </div>
             </div>
 
@@ -116,11 +126,11 @@
                 <input :value="getFieldValue(field)" type="text" class="field-input"
                   placeholder="storage/uploads/... hoặc assets/images/..."
                   @input="updateField(section.id, field, $event.target.value)" />
-                <button type="button" class="btn-upload-trigger" :disabled="isUploadingMedia"
+                <button type="button" class="btn-upload-file" :disabled="isUploadingMedia"
                   @click="triggerMediaUpload(section.id, field, 'video/mp4,video/webm,video/quicktime,image/*')"
                   title="Tải tệp lên từ máy tính (Video MP4/WEBM hoặc Ảnh PNG/JPG/WEBP, tối đa 40MB)">
-                  <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-cloud-upload'"></i>
-                  <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải file lên' }}</span>
+                  <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                  <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải file từ máy' }}</span>
                 </button>
               </div>
               <div v-if="getFieldValue(field)" class="media-preview-thumb mt-2">
@@ -297,6 +307,16 @@ const defaultPages = [
           { key: 'about_heading_2', label: 'Tiêu đề dòng 2', type: 'text', value: { vi: 'THIẾT KẾ CHO', en: 'FOR' } },
           { key: 'about_slogan_old', label: 'Tiêu đề dòng 3 (Trước)', type: 'text', value: { vi: 'THƯƠNG HIỆU', en: 'ENTERPRISE' } },
           { key: 'about_slogan_new', label: 'Tiêu đề dòng 3 (Sau)', type: 'text', value: { vi: 'DOANH NGHIỆP', en: 'BRANDS' } },
+        ],
+      },
+      {
+        id: 'about_story',
+        title: 'Về chúng tôi',
+        fields: [
+          { key: 'story_label', label: 'Nhãn tiêu đề', type: 'text', prefix: '•', value: { vi: 'Về chúng tôi', en: 'About us' } },
+          { key: 'story_desc_left', label: 'Nội dung đoạn 1', type: 'textarea', rows: 4, value: { vi: 'NÔRM Creative là agency sáng tạo thế hệ mới, chuyên sâu trong lĩnh vực thiết kế nhận diện thương hiệu, tư vấn chiến lược bài bản, toàn diện và các giải pháp hình ảnh chuyên nghiệp cho doanh nghiệp.', en: 'NÔRM Creative is a next-generation creative agency specializing in brand identity design, comprehensive strategy consulting, and professional visual solutions for businesses.' } },
+          { key: 'story_desc_right', label: 'Nội dung đoạn 2', type: 'textarea', rows: 4, value: { vi: 'NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa tính cách thương hiệu một cách rõ nét.', en: 'NÔRM Creative was born with a fresh, modern, youthful, and disruptive spirit. Taking culture as the core combined with open design thinking, we weave brand stories and personality into every design product, breathing life, forging identity, and distinctly portraying brand character.' } },
+          { key: 'story_image', label: 'Hình ảnh giới thiệu', type: 'image', value: { vi: '/assets/images/team-photo.jpg', en: '/assets/images/team-photo.jpg' } },
         ],
       },
       {

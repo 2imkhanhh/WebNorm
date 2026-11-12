@@ -174,7 +174,14 @@
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);
-                    if (target) target.textContent = value;
+                    if (target) {
+                        if (target.tagName === 'IMG') {
+                            const fullSrc = (value || '').startsWith('http') ? value : '/' + (value || '').replace(/^\//, '');
+                            target.src = fullSrc;
+                        } else {
+                            target.textContent = value;
+                        }
+                    }
                 }
             }
         });
