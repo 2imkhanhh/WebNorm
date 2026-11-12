@@ -58,9 +58,21 @@ class PageContentController extends Controller
                     ];
                 }
 
+                $sectionTitle = $first->section_title ?? $sectionId;
+                $titles = $fields->pluck('section_title')->map(fn($t) => trim($t ?? ''))->filter()->unique();
+                if ($titles->count() > 1) {
+                    // If user manually changed section_title on any row in DB, prefer the latest updated/created row
+                    $latestRow = $fields->sortByDesc('updated_at')->first();
+                    if ($latestRow && !empty($latestRow->section_title)) {
+                        $sectionTitle = trim($latestRow->section_title);
+                    }
+                } else if ($titles->isNotEmpty()) {
+                    $sectionTitle = $titles->first();
+                }
+
                 $sectionsGrouped[] = [
                     'id' => $sectionId,
-                    'title' => $first->section_title ?? $sectionId,
+                    'title' => $sectionTitle,
                     'fields' => $fieldList,
                 ];
             }

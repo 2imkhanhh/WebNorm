@@ -241,8 +241,8 @@
                         </div>
 
                         <h2 class="testimonial-title brand-line scroll-slide-up">
-                            <span class="text-old">THƯƠNG HIỆU</span>
-                            <span class="text-new">DOANH NGHIỆP</span>
+                            <span class="text-old" data-studio-key="about_slogan_old">@normVal($pageContents['about_slogan_old'] ?? null, 'THƯƠNG HIỆU')</span>
+                            <span class="text-new" data-studio-key="about_slogan_new">@normVal($pageContents['about_slogan_new'] ?? null, 'DOANH NGHIỆP')</span>
                         </h2>
 
                     </div>

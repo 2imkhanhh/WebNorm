@@ -284,7 +284,7 @@ class DatabaseSeeder extends Seeder
             [
                 'page_slug' => '/about-us',
                 'section_id' => 'about_intro',
-                'section_title' => 'Giới thiệu & Giải pháp',
+                'section_title' => 'Giới thiệu',
                 'field_key' => 'about_heading_1',
                 'field_label' => 'Tiêu đề dòng 1 (trái)',
                 'field_type' => 'text',
@@ -294,7 +294,7 @@ class DatabaseSeeder extends Seeder
             [
                 'page_slug' => '/about-us',
                 'section_id' => 'about_intro',
-                'section_title' => 'Giới thiệu & Giải pháp',
+                'section_title' => 'Giới thiệu',
                 'field_key' => 'about_heading_2',
                 'field_label' => 'Tiêu đề dòng 2 (phải)',
                 'field_type' => 'text',
@@ -304,12 +304,22 @@ class DatabaseSeeder extends Seeder
             [
                 'page_slug' => '/about-us',
                 'section_id' => 'about_intro',
-                'section_title' => 'Giới thiệu & Giải pháp',
-                'field_key' => 'about_slogan',
-                'field_label' => 'Slogan biến đổi',
+                'section_title' => 'Giới thiệu',
+                'field_key' => 'about_slogan_old',
+                'field_label' => 'Slogan dòng 3 - Chữ ban đầu',
                 'field_type' => 'text',
-                'value' => ['vi' => 'THƯƠNG HIỆU DOANH NGHIỆP', 'en' => 'ENTERPRISE BRANDS'],
-                'sort_order' => 13,
+                'value' => ['vi' => 'THƯƠNG HIỆU', 'en' => 'ENTERPRISE'],
+                'sort_order' => 14,
+            ],
+            [
+                'page_slug' => '/about-us',
+                'section_id' => 'about_intro',
+                'section_title' => 'Giới thiệu',
+                'field_key' => 'about_slogan_new',
+                'field_label' => 'Slogan dòng 3 - Chữ biến đổi',
+                'field_type' => 'text',
+                'value' => ['vi' => 'DOANH NGHIỆP', 'en' => 'BRANDS'],
+                'sort_order' => 15,
             ],
             [
                 'page_slug' => '/about-us',
@@ -319,7 +329,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Bước 1: Tên bước',
                 'field_type' => 'text',
                 'value' => ['vi' => 'Nghiên cứu & Định vị', 'en' => 'Research & Positioning'],
-                'sort_order' => 14,
+                'sort_order' => 16,
             ],
             [
                 'page_slug' => '/about-us',
@@ -329,7 +339,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Bước 2: Tên bước',
                 'field_type' => 'text',
                 'value' => ['vi' => 'Xây dựng ý tưởng', 'en' => 'Concept Strategy'],
-                'sort_order' => 15,
+                'sort_order' => 17,
             ],
             [
                 'page_slug' => '/about-us',
@@ -339,7 +349,7 @@ class DatabaseSeeder extends Seeder
                 'field_label' => 'Bước 3: Tên bước',
                 'field_type' => 'text',
                 'value' => ['vi' => 'Thiết kế hoàn thiện', 'en' => 'Design & Execution'],
-                'sort_order' => 16,
+                'sort_order' => 18,
             ],
 
             // DỰ ÁN (/work)
