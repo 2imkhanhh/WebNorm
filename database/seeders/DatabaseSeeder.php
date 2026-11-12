@@ -263,6 +263,26 @@ class DatabaseSeeder extends Seeder
             // VỀ CHÚNG TÔI (/about-us)
             [
                 'page_slug' => '/about-us',
+                'section_id' => 'about_hero_gallery',
+                'section_title' => 'Bộ sưu tập ảnh chuyển động đầu trang',
+                'field_key' => 'hero_gallery',
+                'field_label' => 'Danh sách ảnh chuyển động',
+                'field_type' => 'gallery',
+                'value' => [
+                    '/assets/images/gallery1.jpg',
+                    '/assets/images/gallery2.jpg',
+                    '/assets/images/gallery3.jpg',
+                    '/assets/images/gallery4.jpg',
+                    '/assets/images/gallery5.jpg',
+                    '/assets/images/gallery6.jpg',
+                    '/assets/images/gallery7.jpg',
+                    '/assets/images/gallery8.jpg',
+                    '/assets/images/gallery9.jpg',
+                ],
+                'sort_order' => 10,
+            ],
+            [
+                'page_slug' => '/about-us',
                 'section_id' => 'about_intro',
                 'section_title' => 'Giới thiệu & Giải pháp',
                 'field_key' => 'about_heading_1',

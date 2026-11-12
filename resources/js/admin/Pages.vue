@@ -50,7 +50,7 @@
         <div v-show="openSectionId === section.id" class="section-body">
           <div v-for="field in section.fields" :key="field.key" class="field-group"
             :class="{ 'field-compact': field.key && field.key.startsWith('hero_tagline_') }">
-            <label class="field-label">{{ field.label }}</label>
+            <label v-if="field.type !== 'gallery'" class="field-label">{{ field.label }}</label>
 
             <!-- Text Input with fixed bullet dot -->
             <div
@@ -134,6 +134,34 @@
                 </div>
               </div>
             </div>
+
+            <!-- Gallery Multi-Image Field -->
+            <div v-else-if="field.type === 'gallery'" class="pages-gallery-wrap">
+              <div class="pages-gallery-top-bar">
+                <button type="button" class="btn-upload-file" :disabled="isUploadingGallery"
+                  @click="triggerGalleryUpload(section.id, field)" title="Tải ảnh từ máy tính">
+                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                  <span>{{ isUploadingGallery ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                </button>
+              </div>
+
+              <div class="pages-gallery-grid mt-2">
+                <div v-for="(img, idx) in getGalleryItems(field)" :key="idx" class="pages-gallery-item">
+                  <img :src="img.startsWith('http') ? img : '/' + img.replace(/^\//, '')" alt="Gallery item"
+                    loading="lazy" />
+                  <span class="gallery-num-badge">#{{ idx + 1 }}</span>
+                  <button type="button" class="btn-del-gallery" @click="removeGalleryImage(section.id, field, idx)"
+                    title="Xóa ảnh này">
+                    <i class="bx bx-x"></i>
+                  </button>
+                </div>
+
+                <div class="pages-gallery-add-card" @click="triggerGalleryUpload(section.id, field)">
+                  <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                  <span>{{ isUploadingGallery ? 'Đang tải...' : 'Thêm ảnh mới' }}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -142,6 +170,10 @@
     <!-- Hidden native file input for media upload -->
     <input type="file" ref="mediaFileInputRef" style="display: none;" :accept="mediaUploadAccept"
       @change="handleMediaUploadSelected" />
+
+    <!-- Hidden native file input for gallery multi-upload -->
+    <input type="file" ref="galleryFileInputRef" style="display: none;" multiple accept="image/*"
+      @change="handleGalleryUploadSelected" />
   </Layout>
 </template>
 
@@ -235,6 +267,28 @@ const defaultPages = [
     has_draft: false,
     draft_updated_at: null,
     sections: [
+      {
+        id: 'about_hero_gallery',
+        title: 'Bộ sưu tập ảnh chuyển động đầu trang',
+        fields: [
+          {
+            key: 'hero_gallery',
+            label: 'Danh sách ảnh chuyển động',
+            type: 'gallery',
+            value: [
+              '/assets/images/gallery1.jpg',
+              '/assets/images/gallery2.jpg',
+              '/assets/images/gallery3.jpg',
+              '/assets/images/gallery4.jpg',
+              '/assets/images/gallery5.jpg',
+              '/assets/images/gallery6.jpg',
+              '/assets/images/gallery7.jpg',
+              '/assets/images/gallery8.jpg',
+              '/assets/images/gallery9.jpg',
+            ],
+          },
+        ],
+      },
       {
         id: 'about_intro',
         title: 'Giới thiệu & Giải pháp',
@@ -365,6 +419,8 @@ const cleanDot = (s) => String(s || '').replace(/^[•\s\-\*]+/u, '').trimStart(
 
 // Helper to get bilingual value
 const getFieldValue = (field) => {
+  if (!field) return '';
+  if (Array.isArray(field.value)) return field.value;
   if (field.value && typeof field.value === 'object') {
     return field.value[currentLanguage.value] ?? field.value['vi'] ?? '';
   }
@@ -406,6 +462,40 @@ const handleLinkSelectChange = (sectionId, field, selectedVal) => {
   }
 };
 
+// Single media upload worker
+const uploadSingleMediaFile = async (file) => {
+  if (file.size > 40 * 1024 * 1024) {
+    alert(`Dung lượng tệp "${file.name}" không được vượt quá 40MB!`);
+    return null;
+  }
+  const formData = new FormData();
+  formData.append('file', file);
+  const csrfToken =
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const response = await fetch('/admin/media/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+    });
+
+    const data = await response.json();
+    if (data && data.success && data.file_path) {
+      return data.file_path;
+    } else {
+      alert('Không thể tải tệp lên: ' + (data?.message || 'Lỗi không xác định'));
+      return null;
+    }
+  } catch (err) {
+    alert('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
+    return null;
+  }
+};
+
 // Media / Video / Image file upload logic
 const mediaFileInputRef = ref(null);
 const mediaUploadAccept = ref('video/mp4,video/webm,video/quicktime,image/*');
@@ -440,42 +530,79 @@ const handleMediaUploadSelected = async (e) => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
 
-  if (file.size > 40 * 1024 * 1024) {
-    alert('Dung lượng tệp không được vượt quá 40MB!');
-    return;
-  }
-
   isUploadingMedia.value = true;
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const csrfToken =
-    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
   try {
-    const response = await fetch('/admin/media/upload', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN': csrfToken,
-      },
-    });
-
-    const data = await response.json();
-    if (data && data.success && data.file_path) {
+    const uploadedPath = await uploadSingleMediaFile(file);
+    if (uploadedPath) {
       const { sectionId, field } = activeUploadTarget.value;
       if (sectionId && field) {
-        updateField(sectionId, field, data.file_path);
+        updateField(sectionId, field, uploadedPath);
       }
-    } else {
-      alert('Không thể tải tệp lên: ' + (data.message || 'Lỗi không xác định'));
     }
-  } catch (err) {
-    alert('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
   } finally {
     isUploadingMedia.value = false;
   }
+};
+
+// Gallery Multi-Image upload logic
+const galleryFileInputRef = ref(null);
+const isUploadingGallery = ref(false);
+const activeGalleryTarget = ref({ sectionId: null, field: null });
+
+const getGalleryItems = (field) => {
+  if (!field) return [];
+  let val = field.value;
+  if (val && typeof val === 'object' && !Array.isArray(val)) {
+    val = val[currentLanguage.value] || val.vi || val;
+  }
+  if (typeof val === 'string') {
+    try {
+      val = JSON.parse(val);
+    } catch (e) {
+      val = [];
+    }
+  }
+  return Array.isArray(val) ? val : [];
+};
+
+const triggerGalleryUpload = (sectionId, field) => {
+  activeGalleryTarget.value = { sectionId, field };
+  if (galleryFileInputRef.value) {
+    galleryFileInputRef.value.value = '';
+    galleryFileInputRef.value.click();
+  }
+};
+
+const handleGalleryUploadSelected = async (e) => {
+  const files = e.target.files;
+  if (!files || files.length === 0) return;
+  const { sectionId, field } = activeGalleryTarget.value;
+  if (!sectionId || !field) return;
+
+  isUploadingGallery.value = true;
+  const currentItems = [...getGalleryItems(field)];
+
+  for (let i = 0; i < files.length; i++) {
+    const path = await uploadSingleMediaFile(files[i]);
+    if (path) {
+      currentItems.push(path);
+    }
+  }
+
+  setGalleryItems(sectionId, field, currentItems);
+  isUploadingGallery.value = false;
+};
+
+const removeGalleryImage = (sectionId, field, idx) => {
+  const currentItems = [...getGalleryItems(field)];
+  currentItems.splice(idx, 1);
+  setGalleryItems(sectionId, field, currentItems);
+};
+
+const setGalleryItems = (sectionId, field, items) => {
+  field.value = items;
+  hasUnsavedChanges.value = true;
+  onFieldChange(sectionId, field.key, items);
 };
 
 // Update field value

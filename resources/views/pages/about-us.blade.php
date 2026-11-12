@@ -194,17 +194,37 @@
 @endpush
 
 @section('content')
-    <section class="about-hero-gallery">
+    @php
+        $heroGallery = $pageContents['hero_gallery'] ?? null;
+        if (is_string($heroGallery)) {
+            $decoded = json_decode($heroGallery, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $heroGallery = $decoded;
+            }
+        }
+        if (!is_array($heroGallery) || empty($heroGallery)) {
+            $heroGallery = [
+                '/assets/images/gallery1.jpg',
+                '/assets/images/gallery2.jpg',
+                '/assets/images/gallery3.jpg',
+                '/assets/images/gallery4.jpg',
+                '/assets/images/gallery5.jpg',
+                '/assets/images/gallery6.jpg',
+                '/assets/images/gallery7.jpg',
+                '/assets/images/gallery8.jpg',
+                '/assets/images/gallery9.jpg',
+            ];
+        }
+    @endphp
+
+    <section class="about-hero-gallery" data-studio-container="hero_gallery">
         <div class="gallery-track" id="galleryTrack">
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery1.jpg') }}" alt="Gallery 1"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery2.jpg') }}" alt="Gallery 2"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery3.jpg') }}" alt="Gallery 3"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery4.jpg') }}" alt="Gallery 4"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery5.jpg') }}" alt="Gallery 5"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery6.jpg') }}" alt="Gallery 6"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery7.jpg') }}" alt="Gallery 7"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery8.jpg') }}" alt="Gallery 8"></div>
-            <div class="gallery-item"><img src="{{ asset('assets/images/gallery9.jpg') }}" alt="Gallery 9"></div>
+            @foreach($heroGallery as $idx => $img)
+                @php
+                    $imgSrc = !empty($img) ? (str_starts_with($img, 'http') ? $img : asset(ltrim($img, '/'))) : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
+                @endphp
+                <div class="gallery-item"><img src="{{ $imgSrc }}" alt="Gallery {{ $idx + 1 }}"></div>
+            @endforeach
         </div>
     </section>
 
@@ -601,35 +621,64 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function initHeroGalleryTrack() {
             const track = document.getElementById('galleryTrack');
-            if (track) {
-                const originalItems = Array.from(track.children);
-                const totalItems = originalItems.length;
-                originalItems.forEach((item, index) => item.style.setProperty('--i', index + 1));
-                originalItems.forEach((item, index) => {
-                    const clone = item.cloneNode(true);
-                    clone.style.setProperty('--i', totalItems + index + 1);
-                    clone.setAttribute('aria-hidden', 'true');
-                    track.appendChild(clone);
-                });
-            }
+            if (!track) return;
 
-            const galleryItems = document.querySelectorAll('.gallery-item');
+            // Remove previous clones if any
+            track.querySelectorAll('[data-clone="true"]').forEach(el => el.remove());
 
-            galleryItems.forEach(item => {
-                item.addEventListener('click', (e) => {
+            const originalItems = Array.from(track.querySelectorAll('.gallery-item:not([data-clone="true"])'));
+            const totalItems = originalItems.length;
+            if (totalItems === 0) return;
+
+            track.style.setProperty('--total-items', totalItems);
+            originalItems.forEach((item, index) => item.style.setProperty('--i', index + 1));
+            originalItems.forEach((item, index) => {
+                const clone = item.cloneNode(true);
+                clone.style.setProperty('--i', totalItems + index + 1);
+                clone.setAttribute('aria-hidden', 'true');
+                clone.setAttribute('data-clone', 'true');
+                track.appendChild(clone);
+            });
+
+            const allItems = track.querySelectorAll('.gallery-item');
+            allItems.forEach(item => {
+                item.onclick = (e) => {
                     e.stopPropagation();
                     if (item.classList.contains('is-active')) {
                         item.classList.remove('is-active');
                     } else {
-                        galleryItems.forEach(el => el.classList.remove('is-active'));
+                        allItems.forEach(el => el.classList.remove('is-active'));
                         item.classList.add('is-active');
                     }
-                });
+                };
             });
+        }
+
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'STUDIO_LIVE_UPDATE' && event.data.fieldKey === 'hero_gallery') {
+                const track = document.getElementById('galleryTrack');
+                const items = event.data.value;
+                if (track && Array.isArray(items)) {
+                    track.innerHTML = '';
+                    items.forEach((img, idx) => {
+                        const url = img.startsWith('http') ? img : '/' + img.replace(/^\//, '');
+                        const div = document.createElement('div');
+                        div.className = 'gallery-item';
+                        div.innerHTML = `<img src="${url}" alt="Gallery ${idx + 1}" loading="lazy">`;
+                        track.appendChild(div);
+                    });
+                    initHeroGalleryTrack();
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeroGalleryTrack();
 
             document.addEventListener('click', () => {
+                const galleryItems = document.querySelectorAll('.gallery-item');
                 galleryItems.forEach(item => item.classList.remove('is-active'));
             });
 
