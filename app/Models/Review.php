@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\NormHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
@@ -24,14 +25,14 @@ class Review extends Model
         'is_active' => 'boolean',
     ];
 
-    public function getRole(string $lang = 'vi'): string
+    public function getRole(?string $lang = null): string
     {
-        return is_array($this->role) ? ($this->role[$lang] ?? $this->role['vi'] ?? '') : ($this->role ?? '');
+        return NormHelper::val($this->role, '', $lang);
     }
 
-    public function getContent(string $lang = 'vi'): string
+    public function getContent(?string $lang = null): string
     {
-        return is_array($this->content) ? ($this->content[$lang] ?? $this->content['vi'] ?? '') : ($this->content ?? '');
+        return NormHelper::val($this->content, '', $lang);
     }
 }
 

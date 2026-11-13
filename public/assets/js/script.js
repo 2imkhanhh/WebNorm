@@ -11,32 +11,13 @@ if (hamburger && mobileMenu) {
 
     document.querySelectorAll('.mobile-menu-item').forEach(link => {
         link.addEventListener('click', () => {
-            const text = link.textContent.trim().toLowerCase();
-            if (text === 'contact' || text === 'liên hệ' || text === 'vn' || text === 'en') {
+            if (link.classList.contains('nav-contact-trigger') || link.classList.contains('mobile-menu-lang')) {
                 return;
             }
             mobileMenu.classList.remove('open');
             hamburger.classList.remove('active');
             document.body.style.overflow = '';
         });
-    });
-}
-
-// language toogle
-const langToggleMobile = document.getElementById('langToggleMobile');
-const langToggle = document.getElementById('langToggle');
-
-if (langToggleMobile && langToggle) {
-    langToggleMobile.addEventListener('click', function (e) {
-        e.preventDefault();
-        const newLang = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
-        this.textContent = newLang;
-        langToggle.textContent = newLang;
-    });
-
-    langToggle.addEventListener('click', function (e) {
-        e.preventDefault();
-        this.textContent = this.textContent.trim() === 'VN' ? 'EN' : 'VN';
     });
 }
 
@@ -454,6 +435,7 @@ if (blogTrack && blogPrev && blogNext) {
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('a');
     const contactTriggers = Array.from(links).filter(a => {
+        if (a.classList.contains('nav-contact-trigger')) return true;
         const text = a.textContent.trim().toLowerCase();
         return text === 'contact' || text === 'liên hệ';
     });
@@ -513,7 +495,8 @@ function initContactPopup(triggers) {
             pill.dataset.pillBound = '1';
             pill.addEventListener('click', () => {
                 if (isMultiSelect) {
-                    const isKhac = pill.textContent.trim().toLowerCase() === 'khác';
+                    const pillText = pill.textContent.trim().toLowerCase();
+                    const isKhac = pill.dataset.other === '1' || pillText === 'khác' || pillText === 'other';
                     
                     if (isKhac) {
                         const wasActive = pill.classList.contains('active');
@@ -522,7 +505,10 @@ function initContactPopup(triggers) {
                             pill.classList.add('active');
                         }
                     } else {
-                        const khacPill = Array.from(pills).find(p => p.textContent.trim().toLowerCase() === 'khác');
+                        const khacPill = Array.from(pills).find(p => {
+                            const t = p.textContent.trim().toLowerCase();
+                            return p.dataset.other === '1' || t === 'khác' || t === 'other';
+                        });
                         if (khacPill) {
                             khacPill.classList.remove('active');
                         }

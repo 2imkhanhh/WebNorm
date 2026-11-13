@@ -6,27 +6,37 @@ use App\Models\Setting;
 
 class NormHelper
 {
+    public static function locale(?string $lang = null): string
+    {
+        $resolved = $lang ?: (app()->getLocale() ?: session('locale', 'vi'));
+        return in_array($resolved, ['vi', 'en'], true) ? $resolved : 'vi';
+    }
+
     /**
      * Get translated text from array, json string, or plain string.
      */
     public static function val($value, string $default = '', ?string $lang = null): string
     {
-        $currentLang = $lang ?: session('locale', 'vi');
+        $currentLang = static::locale($lang);
 
         if (is_null($value)) {
             return $default;
         }
 
         if (is_array($value)) {
-            return (string) ($value[$currentLang] ?? $value['vi'] ?? reset($value) ?? $default);
+            $picked = $value[$currentLang] ?? null;
+            if ($picked === null || $picked === '') {
+                $picked = $value['vi'] ?? ($value['en'] ?? reset($value));
+            }
+            return ($picked !== null && $picked !== false && $picked !== '') ? (string) $picked : $default;
         }
 
         if (is_string($value)) {
             $decoded = json_decode($value, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                return (string) ($decoded[$currentLang] ?? $decoded['vi'] ?? reset($decoded) ?? $default);
+                return static::val($decoded, $default, $currentLang);
             }
-            return $value;
+            return $value !== '' ? $value : $default;
         }
 
         return (string) $value;

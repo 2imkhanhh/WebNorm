@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\NormHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -23,12 +24,9 @@ class ProjectCategory extends Model
         return $this->belongsToMany(Project::class, 'project_category_project', 'project_category_id', 'project_id');
     }
 
-    public function getName(string $lang = 'vi'): string
+    public function getName(?string $lang = null): string
     {
-        if (is_array($this->name)) {
-            return $this->name[$lang] ?? $this->name['vi'] ?? '';
-        }
-        return (string) ($this->name ?? '');
+        return NormHelper::val($this->name, '', $lang);
     }
 }
 

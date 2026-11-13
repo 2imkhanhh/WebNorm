@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\NormHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
@@ -24,25 +25,27 @@ class Service extends Model
         'sort_order' => 'integer',
     ];
 
-    public function getTitle(string $lang = 'vi'): string
+    public function getTitle(?string $lang = null): string
     {
-        return is_array($this->title) ? ($this->title[$lang] ?? $this->title['vi'] ?? '') : ($this->title ?? '');
+        return NormHelper::val($this->title, '', $lang);
     }
 
-    public function getDescription(string $lang = 'vi'): string
+    public function getDescription(?string $lang = null): string
     {
-        return is_array($this->description) ? ($this->description[$lang] ?? $this->description['vi'] ?? '') : ($this->description ?? '');
+        return NormHelper::val($this->description, '', $lang);
     }
 
     /**
      * Get bullet list items for frontend service-content-wrapper
      */
-    public function getListItems(string $lang = 'vi'): array
+    public function getListItems(?string $lang = null): array
     {
+        $resolvedLang = NormHelper::locale($lang);
+
         // 1. If explicit 'content' array exists for language
         if (is_array($this->content)) {
-            if (isset($this->content[$lang]) && is_array($this->content[$lang]) && !empty($this->content[$lang])) {
-                return $this->content[$lang];
+            if (isset($this->content[$resolvedLang]) && is_array($this->content[$resolvedLang]) && !empty($this->content[$resolvedLang])) {
+                return $this->content[$resolvedLang];
             }
             if (isset($this->content['vi']) && is_array($this->content['vi']) && !empty($this->content['vi'])) {
                 return $this->content['vi'];
@@ -54,7 +57,7 @@ class Service extends Model
         }
 
         // 2. Parse from description
-        $desc = $this->getDescription($lang);
+        $desc = $this->getDescription($resolvedLang);
         if (!empty($desc)) {
             // Newline-separated lines
             if (str_contains($desc, "\n")) {

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Chi tiết bài viết')
+@section('title', ($blog ? $blog->getTitle() . ' | ' : '') . __('site.title_news_detail'))
 @section('body_class', 'news-detail-page')
 
 @push('styles')
@@ -30,12 +30,12 @@
                             <img src="{{ !empty($blog->author_avatar) ? (str_starts_with($blog->author_avatar, 'http') ? $blog->author_avatar : asset(ltrim($blog->author_avatar, '/'))) : asset('assets/images/avatar.png') }}" alt="{{ $blog && $blog->author ? $blog->author : 'Nguyễn Minh Anh' }}" class="author-avatar">
                             <div class="author-text">
                                 <h4 class="author-name">{{ $blog && $blog->author ? $blog->author : 'Nguyễn Minh Anh' }}</h4>
-                                <p class="author-role">{{ $blog && $blog->getAuthorRole(session('locale', 'vi')) ? $blog->getAuthorRole(session('locale', 'vi')) : 'Giám đốc Marketing' }}</p>
+                                <p class="author-role">{{ $blog && $blog->getAuthorRole() ? $blog->getAuthorRole() : __('site.default_author_role') }}</p>
                             </div>
                         </div>
 
                         <div class="share-actions d-flex align-items-center">
-                            <span class="share-text">Share</span>
+                            <span class="share-text">{{ __('site.news_share') }}</span>
                             <a href="#" class="share-icon"><i class='bx bxl-linkedin'></i></a>
                             <a href="#" class="share-icon text-icon">X</a>
                             <a href="#" class="share-icon"><i class='bx bxl-facebook'></i></a>
@@ -45,12 +45,12 @@
 
                     <div class="article-content">
                         @php
-                            $articleBody = $blog ? $blog->getContent(session('locale', 'vi')) : '';
+                            $articleBody = $blog ? $blog->getContent() : '';
                         @endphp
                         @if(!empty($articleBody))
                             {!! $articleBody !!}
                         @else
-                            <p>Nội dung bài viết đang được cập nhật...</p>
+                            <p>{{ __('site.news_content_updating') }}</p>
                         @endif
                     </div>
 
@@ -62,7 +62,7 @@
     <section class="blog-slider-section">
         <div class="container-fluid px-4 px-md-5">
             <div class="d-flex justify-content-end mb-4">
-                <a href="{{ route('news') }}" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">XEM THÊM BÀI VIẾT</a>
+                <a href="{{ route('news') }}" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">{{ __('site.news_more_articles') }}</a>
             </div>
 
             <div class="blog-slider-container">

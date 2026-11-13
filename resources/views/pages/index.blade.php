@@ -55,8 +55,8 @@
                 </div>
 
                 <div class="col-auto hero-ctas d-flex gap-5">
-                    <a href="{{ route('work') }}" class="cta-btn">XEM DỰ ÁN</a>
-                    <a href="#" class="cta-btn">LIÊN HỆ</a>
+                    <a href="{{ route('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
+                    <a href="#" class="cta-btn nav-contact-trigger">{{ __('site.hero_cta_contact') }}</a>
                 </div>
 
             </div>
@@ -82,8 +82,8 @@
         </div>
 
         <div class="hero-ctas-mobile">
-            <a href="{{ route('work') }}" class="cta-btn">XEM DỰ ÁN</a>
-            <a href="#" class="cta-btn">LIÊN HỆ</a>
+            <a href="{{ route('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
+            <a href="#" class="cta-btn nav-contact-trigger">{{ __('site.hero_cta_contact') }}</a>
         </div>
 
     </section>
@@ -109,7 +109,7 @@
                         @if($isHeroVideo)
                             <video class="w-100 d-block hero-media-el" style="border-radius: 8px;" autoplay loop muted playsinline data-studio-key="hero_video">
                                 <source src="{{ $heroMediaSrc }}" type="video/{{ $heroExt === 'webm' ? 'webm' : 'mp4' }}">
-                                Trình duyệt của bạn không hỗ trợ thẻ video.
+                                {{ __('site.video_unsupported') }}
                             </video>
                         @else
                             <img class="w-100 d-block hero-media-el" style="border-radius: 8px; object-fit: cover;" src="{{ $heroMediaSrc }}" alt="Hero Media" data-studio-key="hero_video">
@@ -147,7 +147,7 @@
                         <span class="ps-num-current" id="psCurrent">01</span>
                         <span class="ps-num-total" id="psTotal">/{{ str_pad(max(count($projects), 1), 2, '0', STR_PAD_LEFT) }}</span>
                     </div>
-                    <a href="{{ route('work') }}" class="link-more text-uppercase ps-view-all">XEM TOÀN BỘ DỰ ÁN</a>
+                    <a href="{{ route('work') }}" class="link-more text-uppercase ps-view-all">{{ __('site.view_all_projects') }}</a>
                 </div>
 
                 <div class="ps-horizontal-viewport">
@@ -170,10 +170,10 @@
                         <div class="ps-project-item">
                             <div class="ps-card-inner">
                                 <div class="ps-img-wrap">
-                                    <img src="{{ asset('assets/images/project1.png') }}" alt="Nhận diện">
+                                    <img src="{{ asset('assets/images/project1.png') }}" alt="{{ __('site.default_project_title') }}">
                                 </div>
                                 <div class="ps-info-wrap">
-                                    <div class="ps-title">Nhận diện thương hiệu</div>
+                                    <div class="ps-title">{{ __('site.default_project_title') }}</div>
                                     <div class="ps-categories">
                                         <span>Brand identity</span>
                                     </div>
@@ -238,11 +238,11 @@
                                 <div class="col-md-7">
                                     <div class="testimonial-quote">
                                         <p class="quote-text">
-                                            "Chúng tôi tìm đến agency khi thương hiệu đang thiếu sự nhất quán và định hướng rõ ràng. Đội ngũ đã giúp chúng tôi nhìn lại toàn bộ câu chuyện thương hiệu, từ chiến lược đến hệ thống nhận diện."
+                                            "{{ __('site.default_review_quote') }}"
                                         </p>
                                         <div class="quote-author">
                                             <h4 class="author-name">Nguyễn Minh Anh</h4>
-                                            <p class="author-position">Giám đốc Marketing</p>
+                                            <p class="author-position">{{ __('site.default_author_role') }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -322,7 +322,7 @@
                     @php
                         $thumbUrl = !empty($blog->thumbnail) ? (str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset(ltrim($blog->thumbnail, '/'))) : asset('assets/images/project1.png');
                         $detailUrl = route('news.detail', $blog->slug);
-                        $blogTitle = $blog->getTitle(session('locale', 'vi'));
+                        $blogTitle = $blog->getTitle();
                     @endphp
                     <div class="blog-card">
                         <div class="blog-img-wrap">
@@ -345,7 +345,7 @@
                         </div>
                         <h3 class="blog-title">
                             <a href="{{ route('news') }}" class="text-decoration-none" style="color: inherit;">
-                                Chưa có bài viết nào được đăng tải.
+                                {{ __('site.no_blogs_home') }}
                             </a>
                         </h3>
                     </div>

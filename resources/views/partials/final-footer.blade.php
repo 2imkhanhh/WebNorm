@@ -4,7 +4,7 @@
         <video class="footer-bg-video" autoplay loop muted playsinline>
             <source src="{{ asset('assets/images/video_norm_ios.mov') }}" type="video/quicktime">
             <source src="{{ asset('assets/images/video_norm.webm') }}" type="video/webm">
-            Trình duyệt của bạn không hỗ trợ thẻ video.
+            {{ __('site.video_unsupported') }}
         </video>
         <div class="footer-video-overlay"></div>
         <div class="container-fluid px-4 px-md-5 w-100" style="position: relative; z-index: 2;">

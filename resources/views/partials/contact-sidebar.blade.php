@@ -1,10 +1,10 @@
 <div class="contact-overlay" id="contactOverlay"></div>
 <div class="contact-sidebar" id="contactSidebar" data-lenis-prevent>
     <div class="contact-header">
-        <span class="contact-close" id="contactClose">Close</span>
+        <span class="contact-close" id="contactClose">{{ __('site.contact_close') }}</span>
     </div>
     <div class="contact-content">
-        <h2 class="contact-title">Chúng tôi có thể giúp bạn điều gì?</h2>
+        <h2 class="contact-title">{{ __('site.contact_services_heading') }}</h2>
         <div class="contact-options group-1" id="contactServiceOptions">
             @if(isset($globalServices) && count($globalServices) > 0)
                 @foreach($globalServices as $svc)
@@ -16,31 +16,30 @@
                 <button type="button" class="contact-pill" data-value="Thiết kế website">Thiết kế website</button>
                 <button type="button" class="contact-pill" data-value="Thiết kế sản phẩm">Thiết kế sản phẩm</button>
             @endif
-            <button type="button" class="contact-pill" data-value="Khác">Khác</button>
+            <button type="button" class="contact-pill" data-other="1" data-value="{{ __('site.contact_other') }}">{{ __('site.contact_other') }}</button>
         </div>
 
-        <h2 class="contact-title">Ngân sách dự kiến của bạn là bao nhiêu?</h2>
+        <h2 class="contact-title">{{ __('site.contact_budget_heading') }}</h2>
         <div class="contact-options group-2" id="contactBudgetOptions">
-            <button type="button" class="contact-pill" data-value="Dưới 50 triệu">Dưới 50 triệu</button>
-            <button type="button" class="contact-pill" data-value="50 - 100 triệu">50 - 100 triệu</button>
-            <button type="button" class="contact-pill" data-value="100 - 200 triệu">100 - 200 triệu</button>
-            <button type="button" class="contact-pill" data-value="Trên 200 triệu">Trên 200 triệu</button>
+            @foreach(__('site.contact_budget_options') as $budgetOpt)
+                <button type="button" class="contact-pill" data-value="{{ $budgetOpt }}">{{ $budgetOpt }}</button>
+            @endforeach
         </div>
 
-        <h2 class="contact-title">Thông tin</h2>
+        <h2 class="contact-title">{{ __('site.contact_info_heading') }}</h2>
         <form class="contact-form" id="contactForm" action="{{ route('contact.submit') }}" method="POST">
             @csrf
             <div class="contact-form-row">
-                <input type="text" name="name" id="contactName" placeholder="Tên của bạn" class="contact-input" required>
-                <input type="email" name="email" id="contactEmail" placeholder="Email" class="contact-input" required>
+                <input type="text" name="name" id="contactName" placeholder="{{ __('site.contact_placeholder_name') }}" class="contact-input" required>
+                <input type="email" name="email" id="contactEmail" placeholder="{{ __('site.contact_placeholder_email') }}" class="contact-input" required>
             </div>
-            <input type="tel" inputmode="tel" name="phone" id="contactPhone" placeholder="Số điện thoại" class="contact-input mb-3" style="width: 100%;" maxlength="20">
-            <textarea name="message" id="contactMessage" placeholder="Hãy chia sẻ ý tưởng, mục tiêu hoặc mong muốn của bạn cho dự án này..." class="contact-textarea" rows="5" required></textarea>
+            <input type="tel" inputmode="tel" name="phone" id="contactPhone" placeholder="{{ __('site.contact_placeholder_phone') }}" class="contact-input mb-3" style="width: 100%;" maxlength="20">
+            <textarea name="message" id="contactMessage" placeholder="{{ __('site.contact_placeholder_message') }}" class="contact-textarea" rows="5" required></textarea>
             
             <div id="contactFormFeedback" style="display: none; padding: 12px; margin-bottom: 12px; border-radius: 4px; font-size: 14px;"></div>
 
             <button type="submit" class="contact-submit" id="contactSubmitBtn">
-                GỬI THÔNG TIN <i class='bx bx-right-arrow-alt'></i>
+                {{ __('site.contact_submit') }} <i class='bx bx-right-arrow-alt'></i>
             </button>
         </form>
         <div class="contact-footer">
@@ -91,13 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 feedbackBox.style.display = 'block';
                 feedbackBox.style.background = '#fee2e2';
                 feedbackBox.style.color = '#991b1b';
-                feedbackBox.textContent = 'Số điện thoại không hợp lệ (chỉ nhập số, từ 8 đến 15 chữ số).';
+                feedbackBox.textContent = @json(__('site.contact_err_phone_invalid'));
                 phoneInput.focus();
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'ĐANG GỬI...';
+            submitBtn.textContent = @json(__('site.contact_sending'));
 
             const selectedServices = Array.from(document.querySelectorAll('#contactServiceOptions .contact-pill.active'))
                 .map(p => p.dataset.value || p.textContent.trim());
@@ -129,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     feedbackBox.style.display = 'block';
                     feedbackBox.style.background = '#dcfce7';
                     feedbackBox.style.color = '#166534';
-                    feedbackBox.textContent = data.message || 'Cảm ơn bạn! Yêu cầu đã được gửi thành công.';
+                    feedbackBox.textContent = data.message || @json(__('site.contact_success'));
                     contactForm.reset();
                     document.querySelectorAll('.contact-pill.active').forEach(p => p.classList.remove('active'));
                 } else {
@@ -137,16 +136,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     feedbackBox.style.display = 'block';
                     feedbackBox.style.background = '#fee2e2';
                     feedbackBox.style.color = '#991b1b';
-                    feedbackBox.textContent = firstError || data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.';
+                    feedbackBox.textContent = firstError || data.message || @json(__('site.contact_error_generic'));
                 }
             } catch (err) {
                 feedbackBox.style.display = 'block';
                 feedbackBox.style.background = '#fee2e2';
                 feedbackBox.style.color = '#991b1b';
-                feedbackBox.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại sau.';
+                feedbackBox.textContent = @json(__('site.contact_error_network'));
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `GỬI THÔNG TIN <i class='bx bx-right-arrow-alt'></i>`;
+                submitBtn.innerHTML = `${@json(__('site.contact_submit'))} <i class='bx bx-right-arrow-alt'></i>`;
             }
         });
     }

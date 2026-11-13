@@ -120,7 +120,8 @@ const isPagesRoute = computed(() => {
 
 const previewDraftUrl = computed(() => {
   const slug = selectedPageSlug.value || '/';
-  return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
+  const lang = currentLanguage.value || 'vi';
+  return slug + (slug.includes('?') ? '&' : '?') + `preview=draft&lang=${lang}`;
 });
 
 // Danh sách trang phục vụ dropdown chuyển trang

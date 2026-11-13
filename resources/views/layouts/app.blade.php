@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="UTF-8" />
@@ -8,26 +8,25 @@
     <meta name="format-detection" content="telephone=no">
 
     <!-- SEO -->
-    <title>@yield('title', 'Brand Design Agency')</title>
-    <meta name="description" content="@yield('description', 'Brand Design Agency cung cấp giải pháp thiết kế thương hiệu, logo, bộ nhận diện thương hiệu chuyên nghiệp và sáng tạo.')">
-    <meta name="keywords"
-        content="thiết kế thương hiệu, thiết kế logo, brand design, agency thiết kế, bộ nhận diện thương hiệu">
+    <title>@yield('title', __('site.meta_title_default'))</title>
+    <meta name="description" content="@yield('description', __('site.meta_description_default'))">
+    <meta name="keywords" content="{{ __('site.meta_keywords_default') }}">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="@yield('canonical', 'https://norm.vn/')">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="@yield('og_url', 'https://norm.vn/')">
-    <meta property="og:title" content="@yield('title', 'Brand Design Agency')">
-    <meta property="og:description" content="@yield('description', 'Brand Design Agency cung cấp giải pháp thiết kế thương hiệu, logo, bộ nhận diện thương hiệu chuyên nghiệp và sáng tạo.')">
+    <meta property="og:title" content="@yield('title', __('site.meta_title_default'))">
+    <meta property="og:description" content="@yield('description', __('site.meta_description_default'))">
     <meta property="og:image" content="{{ asset('assets/images/logo.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="Brand Design Agency">
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ __('site.og_locale') }}">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('title', 'Brand Design Agency')">
-    <meta name="twitter:description" content="@yield('description', 'Brand Design Agency cung cấp giải pháp thiết kế thương hiệu, logo, bộ nhận diện thương hiệu chuyên nghiệp và sáng tạo.')">
+    <meta name="twitter:title" content="@yield('title', __('site.meta_title_default'))">
+    <meta name="twitter:description" content="@yield('description', __('site.meta_description_default'))">
     <meta name="twitter:image" content="{{ asset('assets/images/logo.png') }}">
 
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}" />
@@ -46,7 +45,7 @@
       "@@type": "ProfessionalService",
       "name": "Brand Design Agency",
       "url": "https://norm.vn/",
-      "description": "Đơn vị chuyên cung cấp giải pháp thiết kế thương hiệu và logo chuyên nghiệp.",
+      "description": "{{ __('site.schema_description') }}",
       "image": "https://norm.vn/assets/images/logo.png",
       "sameAs": [
         "https://www.facebook.com/",
@@ -90,7 +89,7 @@
     @endif
 
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-    <script src="{{ asset('assets/js/script.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}?v={{ filemtime(public_path('assets/js/script.js')) }}"></script>
 
     <!-- Realtime Bridge Listener for Website Studio -->
     <script>

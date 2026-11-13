@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Bài viết')
+@section('title', __('site.title_news'))
 @section('body_class', 'news-page')
 
 @push('styles')
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     @empty
-                    <div class="col-12 py-5 text-center text-muted">Chưa có bài viết nào được đăng tải.</div>
+                    <div class="col-12 py-5 text-center text-muted">{{ __('site.no_blogs_home') }}</div>
                     @endforelse
                 </div>
             </div>

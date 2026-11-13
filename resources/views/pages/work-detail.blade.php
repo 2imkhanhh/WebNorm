@@ -1,13 +1,10 @@
 @extends('layouts.app')
 
 @php
-    $locale = request('lang', request('locale', session('locale', app()->getLocale() ?: 'vi')));
-    if ($locale !== 'en') {
-        $locale = 'vi';
-    }
+    $locale = app()->getLocale();
 @endphp
 
-@section('title', ($project ? $project->getTitle('vi') : 'Chi tiết dự án') . ' | Brand Design Agency')
+@section('title', ($project ? $project->getTitle($locale) : __('site.title_work_detail')) . ' | Brand Design Agency')
 @section('body_class', 'work-detail-page')
 
 @push('styles')
@@ -21,7 +18,7 @@
             <div class="row">
                 <div class="col-12 col-md-6">
                     <h1 class="intro-slogan">
-                        {{ $project ? ($project->getTitle('vi') ?: $project->getSlogan('vi')) : 'Chắc ở đây nó sẽ là 1 câu quote hay slogan gì đó của thương hiệu em ạ' }}
+                        {{ $project ? $project->getSlogan($locale) : '' }}
                     </h1>
                 </div>
 
@@ -30,21 +27,21 @@
                 <div class="col-12 col-md-6 offset-md-6">
                     <div class="intro-right-content">
                         <p class="intro-desc">
-                            {{ $project && !empty($project->getDescription('vi')) ? $project->getDescription('vi') : ($project && !empty($project->getDescription('en')) ? $project->getDescription('en') : 'Thiết kế bộ nhận diện thương hiệu số toàn diện.') }}
+                            {{ $project && !empty($project->getDescription($locale)) ? $project->getDescription($locale) : __('site.work_default_desc') }}
                         </p>
 
                         <div class="intro-meta">
                             <div class="meta-item">
-                                <span class="meta-label">Khách hàng</span>
+                                <span class="meta-label">{{ __('site.work_client_label') }}</span>
                                 <span class="meta-value">{{ ($project && !empty($project->client)) ? $project->client : 'Tiên Phong Co Ltd' }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-label">Dịch vụ</span>
-                                <span class="meta-value">{!! ($project && !empty($project->getCategory('vi'))) ? nl2br(e($project->getCategory('vi'))) : 'Branding Identity /<br>Web & App Design' !!}</span>
+                                <span class="meta-label">{{ __('site.work_services_label') }}</span>
+                                <span class="meta-value">{!! ($project && !empty($project->getCategory($locale))) ? nl2br(e($project->getCategory($locale))) : 'Branding Identity /<br>Web & App Design' !!}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="meta-label">Thời gian</span>
-                                <span class="meta-value">{{ ($project && !empty($project->year)) ? $project->year : 'Tháng 1/2025' }}</span>
+                                <span class="meta-label">{{ __('site.work_year_label') }}</span>
+                                <span class="meta-value">{{ ($project && !empty($project->year)) ? $project->year : '01/2025' }}</span>
                             </div>
                         </div>
                     </div>
@@ -56,7 +53,7 @@
     <!-- 2. Hero Banner Section -->
     <section class="project-hero-section">
         <div class="hero-image-wrap">
-            <img src="{{ $project ? $project->getHeroImage() : asset('assets/images/gotrail.jpg') }}" alt="{{ $project ? $project->getTitle('vi') : 'Gotrail Project' }}" class="hero-image">
+            <img src="{{ $project ? $project->getHeroImage() : asset('assets/images/gotrail.jpg') }}" alt="{{ $project ? $project->getTitle($locale) : 'Gotrail Project' }}" class="hero-image">
         </div>
     </section>
 
@@ -65,12 +62,12 @@
         <div class="container-fluid norm-container">
             <div class="row align-items-start overview-content-row">
                 <div class="col-12 col-md-3">
-                    <span class="label-side">{{ $project ? $project->getOverviewTitle('vi') : '• Tổng quan về dự án' }}</span>
+                    <span class="label-side">{{ $project ? $project->getOverviewTitle($locale) : '• ' . __('site.work_overview_label') }}</span>
                 </div>
                 <div class="col-12 col-md-9 col-lg-9">
                     <div class="overview-text-block">
                         @php
-                            $overviewText = $project ? $project->getOverviewText('vi') : null;
+                            $overviewText = $project ? $project->getOverviewText($locale) : null;
                         @endphp
                         @if($overviewText)
                             @foreach(explode("\n\n", str_replace("\r\n", "\n", $overviewText)) as $para)
@@ -80,7 +77,7 @@
                             @endforeach
                         @else
                             <p class="overview-text">
-                                NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa tính cách thương hiệu một cách rõ nét.
+                                {{ $project ? $project->getOverviewText($locale) : '' }}
                             </p>
                         @endif
                     </div>
@@ -89,7 +86,7 @@
                     @endphp
                     @if(!empty($overviewImg))
                     <div class="overview-image-wrapper">
-                        <img src="{{ $overviewImg }}" alt="{{ $project ? $project->getTitle('vi') : 'Project Overview Mockups' }}" class="overview-img">
+                        <img src="{{ $overviewImg }}" alt="{{ $project ? $project->getTitle($locale) : 'Project Overview Mockups' }}" class="overview-img">
                     </div>
                     @endif
                 </div>
@@ -110,10 +107,10 @@
                         $isFull = ($idx % 5 === 2);
                     @endphp
                     <div class="{{ $isFull ? 'col-12' : 'col-12 col-md-6' }}">
-                        <img src="{{ $imgUrl }}" alt="{{ $project ? $project->getTitle('vi') : 'Gallery image' }} {{ $idx + 1 }}" class="gallery-img">
+                        <img src="{{ $imgUrl }}" alt="{{ $project ? $project->getTitle($locale) : 'Gallery image' }} {{ $idx + 1 }}" class="gallery-img">
                     </div>
                 @empty
-                    <div class="col-12 text-center py-4 text-muted">Chưa có ảnh trong bộ sưu tập.</div>
+                    <div class="col-12 text-center py-4 text-muted">{{ __('site.work_gallery_empty') }}</div>
                 @endforelse
             </div>
         </div>
@@ -128,7 +125,7 @@
         <div class="container-fluid norm-container">
             <div class="row align-items-start overview-content-row">
                 <div class="col-12 col-md-2 offset-md-5">
-                    <span class="label-side text-nowrap">• Đội ngũ thực hiện</span>
+                    <span class="label-side text-nowrap">{{ __('site.work_credits_label') }}</span>
                 </div>
                 <div class="col-12 col-md-5 col-lg-5">
                     <div class="credits-list">
@@ -157,14 +154,14 @@
         <div class="container-fluid norm-container">
             <div class="row align-items-center">
                 <div class="col-12 col-md-6">
-                    <h2 class="explore-title">KHÁM PHÁ TIẾP?</h2>
+                    <h2 class="explore-title">{{ __('site.work_explore_next') }}</h2>
                 </div>
                 <div class="col-12 col-md-6 mt-4 mt-md-0">
                     <div class="next-project-wrapper">
-                        <img src="{{ !empty($nextProject->thumbnail) ? (str_starts_with($nextProject->thumbnail, 'http') ? $nextProject->thumbnail : asset($nextProject->thumbnail)) : asset('assets/images/work3.jpg') }}" alt="{{ $nextProject->getTitle('vi') }}" class="next-project-img">
+                        <img src="{{ !empty($nextProject->thumbnail) ? (str_starts_with($nextProject->thumbnail, 'http') ? $nextProject->thumbnail : asset($nextProject->thumbnail)) : asset('assets/images/work3.jpg') }}" alt="{{ $nextProject->getTitle($locale) }}" class="next-project-img">
 
                         <a href="{{ route('work.detail', $nextProject->slug) }}" class="btn-next-project">
-                            XEM DỰ ÁN <i class='bx bx-right-arrow-alt'></i>
+                            {{ __('site.work_view_project') }} <i class='bx bx-right-arrow-alt'></i>
                         </a>
                     </div>
                 </div>

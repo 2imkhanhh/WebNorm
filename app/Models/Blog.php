@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\NormHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class Blog extends Model
@@ -31,24 +32,24 @@ class Blog extends Model
         'is_featured' => 'boolean',
     ];
 
-    public function getTitle(string $lang = 'vi'): string
+    public function getTitle(?string $lang = null): string
     {
-        return is_array($this->title) ? ($this->title[$lang] ?? $this->title['vi'] ?? '') : ($this->title ?? '');
+        return NormHelper::val($this->title, '', $lang);
     }
 
-    public function getExcerpt(string $lang = 'vi'): string
+    public function getExcerpt(?string $lang = null): string
     {
-        return is_array($this->excerpt) ? ($this->excerpt[$lang] ?? $this->excerpt['vi'] ?? '') : ($this->excerpt ?? '');
+        return NormHelper::val($this->excerpt, '', $lang);
     }
 
-    public function getContent(string $lang = 'vi'): string
+    public function getContent(?string $lang = null): string
     {
-        return is_array($this->content) ? ($this->content[$lang] ?? $this->content['vi'] ?? '') : ($this->content ?? '');
+        return NormHelper::val($this->content, '', $lang);
     }
 
-    public function getAuthorRole(string $lang = 'vi'): string
+    public function getAuthorRole(?string $lang = null): string
     {
-        return is_array($this->author_role) ? ($this->author_role[$lang] ?? $this->author_role['vi'] ?? '') : ($this->author_role ?? '');
+        return NormHelper::val($this->author_role, '', $lang);
     }
 }
 

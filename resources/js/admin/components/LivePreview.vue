@@ -23,6 +23,7 @@ import {
   currentDevice,
   frameContainerStyle,
   selectedPageSlug,
+  currentLanguage,
 } from '../composables/useAdmin';
 
 const iframeEl = ref(null);
@@ -30,7 +31,8 @@ const previewAreaRef = ref(null);
 
 const iframeSrc = computed(() => {
   const slug = selectedPageSlug.value || '/';
-  return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
+  const lang = currentLanguage.value || 'vi';
+  return slug + (slug.includes('?') ? '&' : '?') + `preview=draft&lang=${lang}`;
 });
 
 onMounted(() => {

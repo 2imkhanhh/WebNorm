@@ -25,7 +25,7 @@
             @foreach($services as $svc)
             @php
                 $numStr = str_pad(rtrim($svc->number, '/'), 2, '0', STR_PAD_LEFT);
-                $locale = session('locale', 'vi');
+                $locale = app()->getLocale();
                 $svcTitle = $svc->getTitle($locale);
                 $listItems = $svc->getListItems($locale);
                 $iconUrl = !empty($svc->icon)

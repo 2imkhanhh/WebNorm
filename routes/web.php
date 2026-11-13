@@ -14,6 +14,14 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
+// Language Switcher
+Route::get('/lang/{locale}', function (string $locale) {
+    $targetLocale = $locale === 'en' ? 'en' : 'vi';
+    session(['locale' => $targetLocale]);
+
+    return redirect()->back();
+})->whereIn('locale', ['vi', 'en'])->name('lang.switch');
+
 // Client Routes (Blade Views with Dynamic Database Content)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about-us', [HomeController::class, 'about'])->name('about');
@@ -32,11 +40,11 @@ Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
         'budget' => 'nullable|string',
         'message' => 'nullable|string',
     ], [
-        'name.required' => 'Vui lòng nhập tên của bạn.',
-        'email.required' => 'Vui lòng nhập email.',
-        'email.email' => 'Địa chỉ email không hợp lệ.',
-        'phone.regex' => 'Số điện thoại không hợp lệ (chỉ nhập số, từ 8 đến 15 chữ số).',
-        'phone.max' => 'Số điện thoại tối đa 20 ký tự.',
+        'name.required' => __('site.contact_err_name'),
+        'email.required' => __('site.contact_err_email_required'),
+        'email.email' => __('site.contact_err_email_invalid'),
+        'phone.regex' => __('site.contact_err_phone_invalid'),
+        'phone.max' => __('site.contact_err_phone_max'),
     ]);
 
     $contact = \App\Models\Contact::create($validated);
@@ -47,7 +55,7 @@ Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
         \Illuminate\Support\Facades\Log::warning('Contact email notification failed: ' . $e->getMessage());
     }
 
-    return response()->json(['success' => true, 'message' => 'Cảm ơn bạn đã liên hệ! Norm sẽ phản hồi sớm nhất.']);
+    return response()->json(['success' => true, 'message' => __('site.contact_success')]);
 })->name('contact.submit');
 
 // Admin Authentication Routes

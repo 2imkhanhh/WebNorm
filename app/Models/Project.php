@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\NormHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
@@ -39,39 +40,34 @@ class Project extends Model
             ->orderBy('id');
     }
 
-    public function getTitle(string $lang = 'vi'): string
+    public function getTitle(?string $lang = null): string
     {
-        return is_array($this->title) ? ($this->title[$lang] ?? $this->title['vi'] ?? '') : ($this->title ?? '');
+        return NormHelper::val($this->title, '', $lang);
     }
 
-    public function getSlogan(string $lang = 'vi'): string
+    public function getSlogan(?string $lang = null): string
     {
+        $resolvedLang = NormHelper::locale($lang);
         $slogan = $this->content['slogan'] ?? null;
-        if (is_array($slogan)) {
-            $val = $slogan[$lang] ?? $slogan['vi'] ?? '';
-            if (!empty($val)) {
-                return $val;
-            }
-        } elseif (is_string($slogan) && !empty($slogan)) {
-            return $slogan;
+        $val = NormHelper::val($slogan, '', $resolvedLang);
+        if (!empty($val)) {
+            return $val;
         }
-        return $this->getTitle($lang);
+        return $this->getTitle($resolvedLang);
     }
 
-    public function getCategory(string $lang = 'vi'): string
+    public function getCategory(?string $lang = null): string
     {
+        $resolvedLang = NormHelper::locale($lang);
         if ($this->relationLoaded('categories') && $this->categories->isNotEmpty()) {
-            return $this->categories->map(fn($c) => $c->getName($lang))->join(' • ');
+            return $this->categories->map(fn($c) => $c->getName($resolvedLang))->join(' • ');
         }
-        if (is_array($this->category)) {
-            return $this->category[$lang] ?? $this->category['vi'] ?? '';
-        }
-        return (string) ($this->category ?? '');
+        return NormHelper::val($this->category, '', $resolvedLang);
     }
 
-    public function getDescription(string $lang = 'vi'): string
+    public function getDescription(?string $lang = null): string
     {
-        return is_array($this->description) ? ($this->description[$lang] ?? $this->description['vi'] ?? '') : ($this->description ?? '');
+        return NormHelper::val($this->description, '', $lang);
     }
 
     public static function formatImagePath(?string $path, string $default = ''): string
@@ -97,39 +93,33 @@ class Project extends Model
         return asset('assets/images/gotrail.jpg');
     }
 
-    public function getOverviewTitle(string $lang = 'vi'): string
+    public function getOverviewTitle(?string $lang = null): string
     {
+        $resolvedLang = NormHelper::locale($lang);
+        $fallback = $resolvedLang === 'en' ? 'Project Overview' : 'Tổng quan về dự án';
         $title = $this->content['overview_title'] ?? null;
-        $val = '';
-        if (is_array($title)) {
-            $val = $title[$lang] ?? $title['vi'] ?? ($lang === 'en' ? 'Project Overview' : 'Tổng quan về dự án');
-        } elseif (is_string($title) && !empty($title)) {
-            $val = $title;
-        } else {
-            $val = $lang === 'en' ? 'Project Overview' : 'Tổng quan về dự án';
-        }
+        $val = NormHelper::val($title, $fallback, $resolvedLang);
         $val = preg_replace('/^[•\s\-\*]+/u', '', trim($val));
-        return '• ' . (empty($val) ? ($lang === 'en' ? 'Project Overview' : 'Tổng quan về dự án') : $val);
+        return '• ' . (empty($val) ? $fallback : $val);
     }
 
-    public function getOverviewText(string $lang = 'vi'): string
+    public function getOverviewText(?string $lang = null): string
     {
+        $resolvedLang = NormHelper::locale($lang);
         $text = $this->content['overview_text'] ?? null;
-        if (is_array($text)) {
-            $val = $text[$lang] ?? $text['vi'] ?? '';
-            if (!empty($val)) {
-                return $val;
-            }
-        } elseif (is_string($text) && !empty($text)) {
-            return $text;
+        $val = NormHelper::val($text, '', $resolvedLang);
+        if (!empty($val)) {
+            return $val;
         }
 
-        $desc = $this->getDescription($lang);
+        $desc = $this->getDescription($resolvedLang);
         if (!empty($desc)) {
             return $desc;
         }
 
-        return "NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa tính cách thương hiệu một cách rõ nét.";
+        return $resolvedLang === 'en'
+            ? 'NÔRM Creative is a next-generation creative agency driven by fresh, modern, youthful energy. Built around culture and open design thinking, we bring each brand story and personality to life across every deliverable.'
+            : 'NÔRM Creative ra đời với một tinh thần mới mẻ, hiện đại, trẻ trung và phá cách. Lấy văn hoá làm cốt lõi, kết hợp cùng tư duy thiết kế mở, chúng tôi đưa câu chuyện và cá tính thương hiệu vào từng sản phẩm thiết kế, từ đó thổi hồn, kiến tạo bản sắc và khắc họa tính cách thương hiệu một cách rõ nét.';
     }
 
     public function getOverviewImage(): string

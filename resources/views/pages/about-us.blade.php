@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Về chúng tôi')
+@section('title', __('site.title_about'))
 @section('body_class', 'about-page')
 
 @push('styles')
@@ -349,7 +349,7 @@
                                     </div>
                                     <p class="step-desc">{{ $stepDesc }}</p>
                                     <div class="step-image-wrapper">
-                                        <img src="{{ $stepImgUrl }}" alt="Bước {{ $idx + 1 }}" class="img-fluid">
+                                        <img src="{{ $stepImgUrl }}" alt="{{ __('site.step_alt') }} {{ $idx + 1 }}" class="img-fluid">
                                     </div>
                                 </div>
                             @endforeach
