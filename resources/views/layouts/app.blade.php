@@ -95,8 +95,59 @@
     <!-- Realtime Bridge Listener for Website Studio -->
     <script>
         window.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'STUDIO_LIVE_UPDATE') {
+            if (!event.data) return;
+
+            if (event.data.type === 'STUDIO_LANG_UPDATE') {
+                window.__CURRENT_LOCALE__ = event.data.lang;
+                document.documentElement.lang = event.data.lang;
+            }
+
+            if (event.data.type === 'STUDIO_SCROLL_TO_SECTION') {
+                const secId = event.data.sectionId;
+                const container = document.querySelector(`[data-studio-container="${secId}"]`) || document.getElementById(secId);
+                if (container) {
+                    if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+                        window.lenis.scrollTo(container, { offset: -40, duration: 1.0 });
+                    } else {
+                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+
+            if (event.data.type === 'STUDIO_SCROLL_TO_WORKFLOW_STEP') {
+                const sIdx = Number(event.data.stepIndex);
+                const wfSec = document.getElementById('workflowSection');
+                if (wfSec && !isNaN(sIdx)) {
+                    const isDesktop = window.innerWidth > 1024;
+                    if (isDesktop) {
+                        const track = document.getElementById('workflowSliderTrack');
+                        const total = track ? track.querySelectorAll('.workflow-step').length : 3;
+                        const p = total > 1 ? (sIdx / (total - 1)) : 0;
+                        const maxScroll = wfSec.offsetHeight - window.innerHeight;
+                        const targetY = wfSec.offsetTop + (p * maxScroll);
+                        if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+                            window.lenis.scrollTo(targetY, { duration: 0.8 });
+                        } else {
+                            window.scrollTo({ top: targetY, behavior: 'smooth' });
+                        }
+                    } else {
+                        const track = document.getElementById('workflowSliderTrack');
+                        const steps = track ? track.querySelectorAll('.workflow-step') : [];
+                        if (steps[sIdx]) {
+                            if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+                                window.lenis.scrollTo(steps[sIdx], { offset: -60, duration: 0.8 });
+                            } else {
+                                steps[sIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (event.data.type === 'STUDIO_LIVE_UPDATE') {
                 const { fieldKey, value } = event.data;
+                const currentLang = event.data.lang || window.__CURRENT_LOCALE__ || document.documentElement.lang || 'vi';
+                window.__CURRENT_LOCALE__ = currentLang;
 
                 // Handle footer words animation
                 if (fieldKey === 'footer_line1_old') {
@@ -171,15 +222,95 @@
                 } else if (fieldKey === 'about_btn_url') {
                     const btn = document.querySelector('a[data-studio-key="about_btn_text"]');
                     if (btn) btn.href = value;
+                } else if (fieldKey === 'workflow_steps') {
+                    const track = document.getElementById('workflowSliderTrack');
+                    if (track) {
+                        let steps = value;
+                        if (typeof steps === 'string') {
+                            try { steps = JSON.parse(steps); } catch (e) {}
+                        }
+                        if (steps && typeof steps === 'object' && !Array.isArray(steps)) {
+                            steps = Object.values(steps);
+                        }
+
+                        if (Array.isArray(steps)) {
+                            const getLangVal = (obj) => {
+                                if (obj === null || obj === undefined) return '';
+                                if (typeof obj === 'string') return obj;
+                                if (typeof obj === 'object') {
+                                    if (obj[currentLang] !== undefined && obj[currentLang] !== null) return obj[currentLang];
+                                    if (obj.vi !== undefined && obj.vi !== null) return obj.vi;
+                                    if (obj.en !== undefined && obj.en !== null) return obj.en;
+                                    return '';
+                                }
+                                return String(obj);
+                            };
+
+                            const existingSteps = track.querySelectorAll('.workflow-step');
+                            if (existingSteps.length === steps.length) {
+                                // Smooth in-place DOM update without resetting classes, scroll, or layout
+                                existingSteps.forEach((stepEl, idx) => {
+                                    const step = steps[idx] || {};
+                                    const numEl = stepEl.querySelector('.step-number');
+                                    if (numEl) numEl.textContent = String(idx + 1).padStart(2, '0') + '/';
+
+                                    const titleEl = stepEl.querySelector('.step-title');
+                                    if (titleEl) titleEl.textContent = getLangVal(step.title);
+
+                                    const descEl = stepEl.querySelector('.step-desc');
+                                    if (descEl) descEl.textContent = getLangVal(step.desc);
+
+                                    const imgEl = stepEl.querySelector('.step-image-wrapper img');
+                                    if (imgEl) {
+                                        let rawImg = getLangVal(step.image) || ('/assets/images/gallery' + ((idx % 9) + 1) + '.jpg');
+                                        const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(/^\//, '');
+                                        if (imgEl.getAttribute('src') !== imgSrc) {
+                                            imgEl.src = imgSrc;
+                                        }
+                                    }
+                                });
+                            } else {
+                                // Steps added or removed -> re-render track items
+                                track.innerHTML = steps.map((step, idx) => {
+                                    const num = String(idx + 1).padStart(2, '0') + '/';
+                                    const isActive = idx === 0 ? 'is-active' : '';
+                                    const title = getLangVal(step.title);
+                                    const desc = getLangVal(step.desc);
+                                    let rawImg = getLangVal(step.image) || ('/assets/images/gallery' + ((idx % 9) + 1) + '.jpg');
+                                    const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(/^\//, '');
+                                    return `
+                                        <div class="col-12 workflow-step ${isActive}">
+                                            <div class="step-top">
+                                                <span class="step-number d-block sync-gap">${num}</span>
+                                                <h3 class="step-title m-0">${title}</h3>
+                                            </div>
+                                            <p class="step-desc">${desc}</p>
+                                            <div class="step-image-wrapper">
+                                                <img src="${imgSrc}" alt="Bước ${idx + 1}" class="img-fluid">
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('');
+                                window.dispatchEvent(new Event('resize'));
+                            }
+                        }
+                    }
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);
                     if (target) {
+                        let textVal = value;
+                        if (textVal && typeof textVal === 'object') {
+                            textVal = textVal[currentLang] ?? textVal.vi ?? textVal.en ?? '';
+                        }
+                        if (fieldKey === 'workflow_label' || fieldKey === 'story_label') {
+                            textVal = String(textVal || '').replace(/^[•\s\-\*]+/u, '').trim();
+                        }
                         if (target.tagName === 'IMG') {
-                            const fullSrc = (value || '').startsWith('http') ? value : '/' + (value || '').replace(/^\//, '');
+                            const fullSrc = (textVal || '').startsWith('http') ? textVal : '/' + (textVal || '').replace(/^\//, '');
                             target.src = fullSrc;
                         } else {
-                            target.textContent = value;
+                            target.textContent = textVal;
                         }
                     }
                 }

@@ -6,7 +6,7 @@
       :style="frameContainerStyle"
     >
       <iframe
-        ref="previewIframe"
+        ref="iframeEl"
         :src="iframeSrc"
         class="live-iframe"
         @load="onIframeLoaded"
@@ -16,22 +16,42 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import {
-  previewAreaRef,
+  previewAreaRef as sharedPreviewArea,
   previewIframe,
   currentDevice,
   frameContainerStyle,
   selectedPageSlug,
 } from '../composables/useAdmin';
 
+const iframeEl = ref(null);
+const previewAreaRef = ref(null);
+
 const iframeSrc = computed(() => {
   const slug = selectedPageSlug.value || '/';
   return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
 });
 
+onMounted(() => {
+  if (iframeEl.value) {
+    previewIframe.value = iframeEl.value;
+  }
+  if (previewAreaRef.value) {
+    sharedPreviewArea.value = previewAreaRef.value;
+  }
+});
+
+watch(iframeEl, (newEl) => {
+  if (newEl) {
+    previewIframe.value = newEl;
+  }
+});
+
 const onIframeLoaded = () => {
-  // Hook xử lý khi iframe load hoàn tất (nếu cần bắt tín hiệu)
+  if (iframeEl.value) {
+    previewIframe.value = iframeEl.value;
+  }
 };
 </script>
 

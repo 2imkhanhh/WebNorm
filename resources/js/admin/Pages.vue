@@ -50,7 +50,8 @@
         <div v-show="openSectionId === section.id" class="section-body">
           <div v-for="field in section.fields" :key="field.key" class="field-group"
             :class="{ 'field-compact': field.key && field.key.startsWith('hero_tagline_') }">
-            <label v-if="field.type !== 'gallery'" class="field-label">{{ field.label }}</label>
+            <label v-if="field.type !== 'gallery' && field.type !== 'repeater'" class="field-label">{{ field.label
+            }}</label>
 
             <!-- Text Input with fixed bullet dot -->
             <div
@@ -92,28 +93,18 @@
 
             <!-- Image Field (Clean Upload Row without raw path input) -->
             <div v-else-if="field.type === 'image'" class="pages-image-upload-row">
-              <div
-                class="pages-image-thumb"
-                @click="triggerMediaUpload(section.id, field, 'image/*')"
-                title="Nhấn để đổi ảnh"
-              >
-                <img
-                  v-if="getFieldValue(field)"
+              <div class="pages-image-thumb" @click="triggerMediaUpload(section.id, field, 'image/*')"
+                title="Nhấn để đổi ảnh">
+                <img v-if="getFieldValue(field)"
                   :src="getFieldValue(field).startsWith('http') ? getFieldValue(field) : '/' + getFieldValue(field).replace(/^\//, '')"
-                  alt="Preview"
-                />
+                  alt="Preview" />
                 <div v-else class="preview-empty-icon">
                   <i class="bx bx-image-alt"></i>
                 </div>
               </div>
               <div class="pages-image-btn-wrap">
-                <button
-                  type="button"
-                  class="btn-upload-file"
-                  :disabled="isUploadingMedia"
-                  @click="triggerMediaUpload(section.id, field, 'image/*')"
-                  title="Tải ảnh từ máy tính"
-                >
+                <button type="button" class="btn-upload-file" :disabled="isUploadingMedia"
+                  @click="triggerMediaUpload(section.id, field, 'image/*')" title="Tải ảnh từ máy tính">
                   <i class="bx" :class="isFieldUploading(field) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                   <span>{{ isFieldUploading(field) ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
                 </button>
@@ -172,6 +163,76 @@
                 </div>
               </div>
             </div>
+
+            <!-- Repeater / List Field (Workflow Steps CRUD) -->
+            <div v-else-if="field.type === 'repeater' || field.key === 'workflow_steps'" class="workflow-repeater-wrap">
+              <label class="field-label" style="margin-bottom: 2px;">Các bước quy trình</label>
+
+              <div class="workflow-step-cards-list">
+                <div v-for="(step, sIdx) in getRepeaterItems(field)" :key="step.id || sIdx" class="workflow-step-card"
+                  @click="onStepFocus(sIdx)">
+                  <div class="workflow-step-card-header">
+                    <div class="step-card-left">
+                      <span class="step-badge">Bước {{ String(sIdx + 1).padStart(2, '0') }}</span>
+                      <span class="step-card-title-preview" :title="getStepPreviewTitle(step)">
+                        {{ getStepPreviewTitle(step) || '(Chưa nhập tiêu đề)' }}
+                      </span>
+                    </div>
+                    <div class="step-card-actions">
+                      <button type="button" class="btn-step-action btn-step-del"
+                        @click.stop="removeRepeaterStep(section.id, field, sIdx)" title="Xóa bước này">
+                        <i class="bx bx-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="workflow-step-card-body">
+                    <div class="step-field-inner">
+                      <label class="step-field-label">Tiêu đề bước</label>
+                      <input type="text" class="field-input" :value="getStepTitle(step)"
+                        :placeholder="currentLanguage === 'en' ? 'Nhập tiêu đề tiếng Anh...' : 'Ví dụ: Trao đổi & tìm hiểu...'"
+                        @focus="onStepFocus(sIdx)"
+                        @input="updateStepTitle(section.id, field, sIdx, $event.target.value)" />
+                    </div>
+
+                    <div class="step-field-inner">
+                      <label class="step-field-label">Mô tả chi tiết</label>
+                      <textarea class="field-textarea" rows="3" :value="getStepDesc(step)"
+                        :placeholder="currentLanguage === 'en' ? 'Nhập mô tả tiếng Anh...' : 'Nội dung mô tả chi tiết của bước này...'"
+                        @focus="onStepFocus(sIdx)"
+                        @input="updateStepDesc(section.id, field, sIdx, $event.target.value)"></textarea>
+                    </div>
+
+                    <div class="step-field-inner">
+                      <label class="step-field-label">Hình ảnh minh họa</label>
+                      <div class="pages-image-upload-row">
+                        <div class="pages-image-thumb" @click="triggerStepImageUpload(section.id, field, sIdx)"
+                          title="Nhấn để đổi ảnh">
+                          <img v-if="getStepImage(step)"
+                            :src="getStepImage(step).startsWith('http') ? getStepImage(step) : '/' + getStepImage(step).replace(/^\//, '')"
+                            alt="Step image" />
+                          <div v-else class="preview-empty-icon">
+                            <i class="bx bx-image-alt"></i>
+                          </div>
+                        </div>
+                        <div class="pages-image-btn-wrap">
+                          <button type="button" class="btn-upload-file" :disabled="isStepUploading(sIdx)"
+                            @click="triggerStepImageUpload(section.id, field, sIdx)" title="Tải ảnh từ máy tính">
+                            <i class="bx" :class="isStepUploading(sIdx) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                            <span>{{ isStepUploading(sIdx) ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" class="btn-add-step" @click="addRepeaterStep(section.id, field)">
+                <i class="bx bx-plus-circle"></i>
+                <span>Thêm bước</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -184,6 +245,10 @@
     <!-- Hidden native file input for gallery multi-upload -->
     <input type="file" ref="galleryFileInputRef" style="display: none;" multiple accept="image/*"
       @change="handleGalleryUploadSelected" />
+
+    <!-- Hidden native file input for step image upload -->
+    <input type="file" ref="stepFileInputRef" style="display: none;" accept="image/*"
+      @change="handleStepImageUploadSelected" />
   </Layout>
 </template>
 
@@ -321,11 +386,35 @@ const defaultPages = [
       },
       {
         id: 'about_workflow',
-        title: 'Quy trình làm việc (Workflow)',
+        title: 'Quy trình làm việc',
         fields: [
-          { key: 'step1_title', label: 'Bước 1: Tên bước', type: 'text', value: { vi: 'Nghiên cứu & Định vị', en: 'Research & Positioning' } },
-          { key: 'step2_title', label: 'Bước 2: Tên bước', type: 'text', value: { vi: 'Xây dựng ý tưởng', en: 'Concept Ideation' } },
-          { key: 'step3_title', label: 'Bước 3: Tên bước', type: 'text', value: { vi: 'Thiết kế hoàn thiện', en: 'Final Delivery' } },
+          { key: 'workflow_label', label: 'Nhãn tiêu đề', type: 'text', prefix: '•', value: { vi: 'Quy trình làm việc', en: 'Workflow' } },
+          { key: 'workflow_slogan', label: 'Mô tả / Slogan', type: 'textarea', rows: 3, value: { vi: 'Chúng tôi tạo ra những không gian sáng tạo và giàu tính gợi mở, thúc đẩy những trải nghiệm sâu sắc hơn của con người.', en: 'We create innovative and thought-provoking environments that foster deeper human experiences.' } },
+          {
+            key: 'workflow_steps',
+            label: 'Danh sách các bước quy trình',
+            type: 'repeater',
+            value: [
+              {
+                id: 1,
+                title: { vi: 'Trao đổi & tìm hiểu', en: 'Discovery & Consultation' },
+                desc: { vi: 'Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu, xác định tầm nhìn và kỳ vọng chung.', en: 'Organize an online session to gather in-depth brand insights, defining shared vision and expectations.' },
+                image: '/assets/images/gallery1.jpg',
+              },
+              {
+                id: 2,
+                title: { vi: 'Khởi tạo & ký kết', en: 'Initiation & Agreement' },
+                desc: { vi: 'Thống nhất phương án hợp tác, ký kết hợp đồng và xác lập các mốc thời gian triển khai cụ thể.', en: 'Finalize the scope of collaboration, sign the contract, and establish clear delivery milestones.' },
+                image: '/assets/images/gallery2.jpg',
+              },
+              {
+                id: 3,
+                title: { vi: 'Thiết kế & hoàn thiện', en: 'Design & Execution' },
+                desc: { vi: 'Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm cuối cùng.', en: 'Execute creative design based on agreed directions and deliver the finalized outputs.' },
+                image: '/assets/images/gallery3.jpg',
+              },
+            ],
+          },
         ],
       },
     ],
@@ -429,6 +518,15 @@ const formattedDraftTime = computed(() => {
 
 const toggleSection = (id) => {
   openSectionId.value = openSectionId.value === id ? null : id;
+  if (openSectionId.value && previewIframe.value && previewIframe.value.contentWindow) {
+    previewIframe.value.contentWindow.postMessage(
+      {
+        type: 'STUDIO_SCROLL_TO_SECTION',
+        sectionId: id,
+      },
+      '*'
+    );
+  }
 };
 
 watch(selectedPageSlug, () => {
@@ -626,6 +724,180 @@ const setGalleryItems = (sectionId, field, items) => {
   onFieldChange(sectionId, field.key, items);
 };
 
+// Workflow Steps Repeater helpers
+const stepFileInputRef = ref(null);
+const isUploadingStepImage = ref(false);
+const activeStepUploadTarget = ref({ sectionId: null, field: null, stepIdx: null });
+
+const getRepeaterItems = (field) => {
+  if (!field) return [];
+  let val = field.value;
+  if (typeof val === 'string') {
+    try {
+      val = JSON.parse(val);
+    } catch (e) {
+      val = [];
+    }
+  }
+  return Array.isArray(val) ? val : [];
+};
+
+const getStepTitle = (step) => {
+  if (!step || !step.title) return '';
+  if (typeof step.title === 'object') {
+    return step.title[currentLanguage.value] !== undefined ? step.title[currentLanguage.value] : '';
+  }
+  return currentLanguage.value === 'vi' ? step.title : '';
+};
+
+const getStepDesc = (step) => {
+  if (!step || !step.desc) return '';
+  if (typeof step.desc === 'object') {
+    return step.desc[currentLanguage.value] !== undefined ? step.desc[currentLanguage.value] : '';
+  }
+  return currentLanguage.value === 'vi' ? step.desc : '';
+};
+
+const getStepPreviewTitle = (step) => {
+  if (!step || !step.title) return '';
+  if (typeof step.title === 'object') {
+    return step.title[currentLanguage.value] || step.title.vi || step.title.en || '';
+  }
+  return step.title;
+};
+
+const getStepImage = (step) => {
+  if (!step) return '';
+  let img = step.image || '';
+  if (img && typeof img === 'object') {
+    img = img[currentLanguage.value] || img.vi || '';
+  }
+  return img;
+};
+
+const updateStepTitle = (sectionId, field, stepIdx, newVal) => {
+  const items = [...getRepeaterItems(field)];
+  if (!items[stepIdx]) return;
+  const currentStep = { ...items[stepIdx] };
+  let titleObj = currentStep.title;
+  if (!titleObj || typeof titleObj !== 'object') {
+    titleObj = { vi: titleObj || '', en: titleObj || '' };
+  } else {
+    titleObj = { ...titleObj };
+  }
+  titleObj[currentLanguage.value] = newVal;
+  currentStep.title = titleObj;
+  items[stepIdx] = currentStep;
+  field.value = items;
+  onFieldChange(sectionId, field.key, items);
+};
+
+const updateStepDesc = (sectionId, field, stepIdx, newVal) => {
+  const items = [...getRepeaterItems(field)];
+  if (!items[stepIdx]) return;
+  const currentStep = { ...items[stepIdx] };
+  let descObj = currentStep.desc;
+  if (!descObj || typeof descObj !== 'object') {
+    descObj = { vi: descObj || '', en: descObj || '' };
+  } else {
+    descObj = { ...descObj };
+  }
+  descObj[currentLanguage.value] = newVal;
+  currentStep.desc = descObj;
+  items[stepIdx] = currentStep;
+  field.value = items;
+  onFieldChange(sectionId, field.key, items);
+};
+
+const onStepFocus = (stepIdx) => {
+  if (previewIframe.value && previewIframe.value.contentWindow) {
+    previewIframe.value.contentWindow.postMessage(
+      {
+        type: 'STUDIO_SCROLL_TO_WORKFLOW_STEP',
+        stepIndex: stepIdx,
+      },
+      '*'
+    );
+  }
+};
+
+const addRepeaterStep = (sectionId, field) => {
+  const items = [...getRepeaterItems(field)];
+  const nextNum = items.length + 1;
+  const newStep = {
+    id: Date.now(),
+    title: { vi: `Bước ${nextNum}: Tiêu đề mới`, en: `Step ${nextNum}: New title` },
+    desc: { vi: 'Nội dung mô tả cho bước mới...', en: 'Description for new step...' },
+    image: `/assets/images/gallery${((nextNum - 1) % 9) + 1}.jpg`,
+  };
+  items.push(newStep);
+  field.value = items;
+  onFieldChange(sectionId, field.key, items);
+  setTimeout(() => onStepFocus(items.length - 1), 80);
+};
+
+const removeRepeaterStep = (sectionId, field, stepIdx) => {
+  const items = [...getRepeaterItems(field)];
+  if (items.length <= 1) {
+    alert('Quy trình phải có ít nhất 1 bước!');
+    return;
+  }
+  if (!confirm(`Bạn có chắc muốn xóa Bước ${stepIdx + 1}?`)) return;
+  items.splice(stepIdx, 1);
+  field.value = items;
+  onFieldChange(sectionId, field.key, items);
+  setTimeout(() => onStepFocus(Math.max(0, stepIdx - 1)), 80);
+};
+
+const moveRepeaterStep = (sectionId, field, stepIdx, direction) => {
+  const items = [...getRepeaterItems(field)];
+  const targetIdx = stepIdx + direction;
+  if (targetIdx < 0 || targetIdx >= items.length) return;
+  const temp = items[stepIdx];
+  items[stepIdx] = items[targetIdx];
+  items[targetIdx] = temp;
+  field.value = items;
+  onFieldChange(sectionId, field.key, items);
+};
+
+const isStepUploading = (stepIdx) => {
+  return isUploadingStepImage.value && activeStepUploadTarget.value.stepIdx === stepIdx;
+};
+
+const triggerStepImageUpload = (sectionId, field, stepIdx) => {
+  activeStepUploadTarget.value = { sectionId, field, stepIdx };
+  if (stepFileInputRef.value) {
+    stepFileInputRef.value.value = '';
+    stepFileInputRef.value.click();
+  }
+};
+
+const handleStepImageUploadSelected = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  isUploadingStepImage.value = true;
+  try {
+    const uploadedPath = await uploadSingleMediaFile(file);
+    if (uploadedPath) {
+      const { sectionId, field, stepIdx } = activeStepUploadTarget.value;
+      if (sectionId && field && stepIdx !== null) {
+        const items = [...getRepeaterItems(field)];
+        if (items[stepIdx]) {
+          const currentStep = { ...items[stepIdx] };
+          currentStep.image = uploadedPath;
+          items[stepIdx] = currentStep;
+          field.value = items;
+          onFieldChange(sectionId, field.key, items);
+          onStepFocus(stepIdx);
+        }
+      }
+    }
+  } finally {
+    isUploadingStepImage.value = false;
+  }
+};
+
 // Update field value
 const updateField = (sectionId, field, newVal) => {
   if (!field.value || typeof field.value !== 'object') {
@@ -640,16 +912,55 @@ const onFieldChange = (sectionId, fieldKey, value) => {
   hasUnsavedChanges.value = true;
   if (!previewIframe.value || !previewIframe.value.contentWindow) return;
 
+  let cleanValue = value;
+  try {
+    cleanValue = JSON.parse(JSON.stringify(value));
+  } catch (e) {
+    console.warn('Could not serialize value for postMessage', e);
+  }
+
   previewIframe.value.contentWindow.postMessage(
     {
       type: 'STUDIO_LIVE_UPDATE',
       sectionId,
       fieldKey,
-      value,
+      value: cleanValue,
+      lang: currentLanguage.value,
     },
     '*'
   );
 };
+
+// Đồng bộ toàn bộ nội dung preview khi chuyển tab ngôn ngữ (VI <-> EN)
+watch(currentLanguage, (newLang) => {
+  if (previewIframe.value && previewIframe.value.contentWindow) {
+    previewIframe.value.contentWindow.postMessage(
+      {
+        type: 'STUDIO_LANG_UPDATE',
+        lang: newLang,
+      },
+      '*'
+    );
+  }
+
+  if (currentPageData.value && currentPageData.value.sections) {
+    currentPageData.value.sections.forEach((sec) => {
+      if (sec.fields) {
+        sec.fields.forEach((f) => {
+          if (f.key === 'workflow_steps') {
+            onFieldChange(sec.id, f.key, f.value);
+          } else if (f.type !== 'gallery') {
+            let val = f.value;
+            if (val && typeof val === 'object') {
+              val = val[newLang] ?? val.vi ?? '';
+            }
+            onFieldChange(sec.id, f.key, val);
+          }
+        });
+      }
+    });
+  }
+});
 
 // Save logic to backend MySQL database via Inertia
 const savePagesToDatabase = (isDraft = false) => {

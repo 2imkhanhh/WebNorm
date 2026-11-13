@@ -288,16 +288,44 @@
         </div>
     </section>
 
-    <section class="workflow-section" id="workflowSection">
+    @php
+        $rawSteps = $pageContents['workflow_steps'] ?? null;
+        if (is_string($rawSteps)) {
+            $decoded = json_decode($rawSteps, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $rawSteps = $decoded;
+            }
+        }
+        if (!is_array($rawSteps) || empty($rawSteps)) {
+            $rawSteps = [
+                [
+                    'title' => ['vi' => 'Trao đổi & tìm hiểu', 'en' => 'Discovery & Consultation'],
+                    'desc' => ['vi' => 'Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu, xác định tầm nhìn và kỳ vọng chung.', 'en' => 'Organize an online session to gather in-depth brand insights, defining shared vision and expectations.'],
+                    'image' => '/assets/images/gallery1.jpg',
+                ],
+                [
+                    'title' => ['vi' => 'Khởi tạo & ký kết', 'en' => 'Initiation & Agreement'],
+                    'desc' => ['vi' => 'Thống nhất phương án hợp tác, ký kết hợp đồng và xác lập các mốc thời gian triển khai cụ thể.', 'en' => 'Finalize the scope of collaboration, sign the contract, and establish clear delivery milestones.'],
+                    'image' => '/assets/images/gallery2.jpg',
+                ],
+                [
+                    'title' => ['vi' => 'Thiết kế & hoàn thiện', 'en' => 'Design & Execution'],
+                    'desc' => ['vi' => 'Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm cuối cùng.', 'en' => 'Execute creative design based on agreed directions and deliver the finalized outputs.'],
+                    'image' => '/assets/images/gallery3.jpg',
+                ],
+            ];
+        }
+    @endphp
+
+    <section class="workflow-section" id="workflowSection" data-studio-container="about_workflow">
         <div class="workflow-sticky-zone">
             <div class="container-fluid px-4 px-md-5">
                 <div class="row align-items-start workflow-content-row">
 
                     <div class="col-12 col-lg-3" style="position: relative; z-index: 1;">
-                        <span class="label-side d-block sync-gap">• Quy trình làm việc</span>
-                        <p class="workflow-slogan m-0">
-                            We create innovative and thought-provoking environments that foster deeper human
-                            experiences.
+                        <span class="label-side d-block sync-gap">• <span data-studio-key="workflow_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['workflow_label'] ?? null, 'Quy trình làm việc'), '• ') }}</span></span>
+                        <p class="workflow-slogan m-0" data-studio-key="workflow_slogan">
+                            @normVal($pageContents['workflow_slogan'] ?? null, 'We create innovative and thought-provoking environments that foster deeper human experiences.')
                         </p>
                     </div>
 
@@ -305,47 +333,26 @@
                         style="position: relative; z-index: 10;">
 
                         <div class="row flex-nowrap workflow-slider-track" id="workflowSliderTrack">
-                            <div class="col-12 workflow-step is-active">
-                                <div class="step-top">
-                                    <span class="step-number d-block sync-gap">01/</span>
-                                    <h3 class="step-title m-0">Trao đổi & tìm hiểu</h3>
+                            @foreach($rawSteps as $idx => $step)
+                                @php
+                                    $stepNum = sprintf('%02d/', $idx + 1);
+                                    $isActive = $idx === 0 ? 'is-active' : '';
+                                    $stepTitle = \App\Helpers\NormHelper::val($step['title'] ?? '', '');
+                                    $stepDesc = \App\Helpers\NormHelper::val($step['desc'] ?? '', '');
+                                    $stepImg = $step['image'] ?? ('/assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
+                                    $stepImgUrl = !empty($stepImg) ? (str_starts_with($stepImg, 'http') ? $stepImg : asset(ltrim($stepImg, '/'))) : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
+                                @endphp
+                                <div class="col-12 workflow-step {{ $isActive }}">
+                                    <div class="step-top">
+                                        <span class="step-number d-block sync-gap">{{ $stepNum }}</span>
+                                        <h3 class="step-title m-0">{{ $stepTitle }}</h3>
+                                    </div>
+                                    <p class="step-desc">{{ $stepDesc }}</p>
+                                    <div class="step-image-wrapper">
+                                        <img src="{{ $stepImgUrl }}" alt="Bước {{ $idx + 1 }}" class="img-fluid">
+                                    </div>
                                 </div>
-                                <p class="step-desc">
-                                    Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu,
-                                    xác định tầm nhìn và kỳ vọng chung.
-                                </p>
-                                <div class="step-image-wrapper">
-                                    <img src="{{ asset('assets/images/gallery1.jpg') }}" alt="Bước 1" class="img-fluid">
-                                </div>
-                            </div>
-
-                            <div class="col-12 workflow-step">
-                                <div class="step-top">
-                                    <span class="step-number d-block sync-gap">02/</span>
-                                    <h3 class="step-title m-0">Khởi tạo & ký kết</h3>
-                                </div>
-                                <p class="step-desc">
-                                    Bắt khách phải ký
-                                </p>
-                                <div class="step-image-wrapper">
-                                    <img src="{{ asset('assets/images/gallery2.jpg') }}" alt="Bước 2" class="img-fluid">
-                                </div>
-                            </div>
-
-                            <div class="col-12 workflow-step">
-                                <div class="step-top">
-                                    <span class="step-number d-block sync-gap">03/</span>
-                                    <h3 class="step-title m-0">Thiết kế & hoàn thiện</h3>
-                                </div>
-                                <p class="step-desc">
-                                    Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm
-                                    cuối cùng.
-                                </p>
-                                <div class="step-image-wrapper">
-                                    <img src="{{ asset('assets/images/gallery3.jpg') }}" alt="Bước 3" class="img-fluid">
-                                </div>
-                            </div>
-
+                            @endforeach
                         </div>
                     </div>
 
@@ -800,8 +807,6 @@
             const workflowTrack = document.getElementById('workflowSliderTrack');
 
             if (workflowSection && workflowSlogan && workflowTrack) {
-                const steps = workflowTrack.querySelectorAll('.workflow-step');
-
                 let isDesktop = window.innerWidth > 1024;
                 let targetWfProgress = 0;
                 let currentWfProgress = 0;
@@ -809,11 +814,12 @@
                 function calculateActiveWorkflowStep() {
                     if (isDesktop) return;
 
+                    const liveSteps = workflowTrack.querySelectorAll('.workflow-step');
                     let activeItem = null;
                     let minDistance = Infinity;
                     const viewportCenter = window.innerHeight / 2;
 
-                    steps.forEach(step => {
+                    liveSteps.forEach(step => {
                         const rect = step.getBoundingClientRect();
                         const itemCenter = rect.top + rect.height / 2;
                         const distance = Math.abs(viewportCenter - itemCenter);
@@ -824,7 +830,7 @@
                         }
                     });
 
-                    steps.forEach(step => step.classList.remove('is-active'));
+                    liveSteps.forEach(step => step.classList.remove('is-active'));
                     if (activeItem) activeItem.classList.add('is-active');
                 }
 
@@ -852,9 +858,10 @@
                         const trackMove = currentWfProgress * -maxTrackScroll;
                         workflowTrack.style.transform = `translateX(${trackMove}px)`;
 
-                        if (steps.length > 0) {
-                            let activeIndex = Math.round(currentWfProgress * (steps.length - 1));
-                            steps.forEach((step, index) => {
+                        const liveSteps = workflowTrack.querySelectorAll('.workflow-step');
+                        if (liveSteps.length > 0) {
+                            let activeIndex = Math.round(currentWfProgress * (liveSteps.length - 1));
+                            liveSteps.forEach((step, index) => {
                                 step.classList.toggle('is-active', index === activeIndex);
                             });
                         }
