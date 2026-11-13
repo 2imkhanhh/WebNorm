@@ -506,7 +506,7 @@ body.dark-mode .members-section .member-role {
     }
 }
 
-@media (max-width: 765px) {
+@media (max-width: 767.98px) {
     :root {
         --item-width: 25vw;
         --item-gap: 3vw;

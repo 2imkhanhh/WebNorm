@@ -11,6 +11,7 @@
 }
 
 .preview-frame-container {
+  box-sizing: content-box !important;
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
