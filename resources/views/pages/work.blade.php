@@ -135,7 +135,8 @@
             const loadMoreBtn = document.getElementById('loadMoreBtn');
             const emptyFilterMsg = document.getElementById('workEmptyFilterMsg');
 
-            let currentItems = 9;
+            const ITEMS_PER_LOAD = 6;
+            let currentItems = ITEMS_PER_LOAD;
             let currentFilter = 'all';
 
             function updateProjects() {
@@ -200,7 +201,7 @@
                     btn.classList.add('wh-dark');
 
                     currentFilter = btn.getAttribute('data-filter');
-                    currentItems = 9;
+                    currentItems = ITEMS_PER_LOAD;
                     updateProjects();
                 });
             });
@@ -208,7 +209,7 @@
             if (loadMoreBtn) {
                 loadMoreBtn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    currentItems += 9;
+                    currentItems += ITEMS_PER_LOAD;
                     updateProjects();
                 });
             }
