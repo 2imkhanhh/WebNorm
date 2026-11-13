@@ -509,6 +509,8 @@ function initContactPopup(triggers) {
         const isMultiSelect = group.classList.contains('group-1');
         const pills = group.querySelectorAll('.contact-pill');
         pills.forEach(pill => {
+            if (pill.dataset.pillBound) return;
+            pill.dataset.pillBound = '1';
             pill.addEventListener('click', () => {
                 if (isMultiSelect) {
                     const isKhac = pill.textContent.trim().toLowerCase() === 'khác';
@@ -533,16 +535,6 @@ function initContactPopup(triggers) {
             });
         });
     });
-
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Thông tin đã được gửi!');
-            closePopup();
-            contactForm.reset();
-        });
-    }
 }
 
 // Lenis Scroll

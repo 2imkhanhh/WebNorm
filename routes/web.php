@@ -27,10 +27,16 @@ Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
-        'phone' => 'nullable|string|max:50',
+        'phone' => ['nullable', 'string', 'max:20', 'regex:/^(?=(?:.*\d){8,15})[0-9+\-\.\s\(\)]+$/'],
         'services' => 'nullable|array',
         'budget' => 'nullable|string',
         'message' => 'nullable|string',
+    ], [
+        'name.required' => 'Vui lòng nhập tên của bạn.',
+        'email.required' => 'Vui lòng nhập email.',
+        'email.email' => 'Địa chỉ email không hợp lệ.',
+        'phone.regex' => 'Số điện thoại không hợp lệ (chỉ nhập số, từ 8 đến 15 chữ số).',
+        'phone.max' => 'Số điện thoại tối đa 20 ký tự.',
     ]);
 
     \App\Models\Contact::create($validated);

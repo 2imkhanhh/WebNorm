@@ -34,7 +34,7 @@
                 <input type="text" name="name" id="contactName" placeholder="Tên của bạn" class="contact-input" required>
                 <input type="email" name="email" id="contactEmail" placeholder="Email" class="contact-input" required>
             </div>
-            <input type="text" name="phone" id="contactPhone" placeholder="Số điện thoại" class="contact-input mb-3" style="width: 100%;">
+            <input type="tel" inputmode="tel" name="phone" id="contactPhone" placeholder="Số điện thoại" class="contact-input mb-3" style="width: 100%;" maxlength="20">
             <textarea name="message" id="contactMessage" placeholder="Hãy chia sẻ ý tưởng, mục tiêu hoặc mong muốn của bạn cho dự án này..." class="contact-textarea" rows="5" required></textarea>
             
             <div id="contactFormFeedback" style="display: none; padding: 12px; margin-bottom: 12px; border-radius: 4px; font-size: 14px;"></div>
@@ -72,23 +72,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contactForm');
     const feedbackBox = document.getElementById('contactFormFeedback');
     const submitBtn = document.getElementById('contactSubmitBtn');
-    
-    // Toggle active state for pills
-    document.querySelectorAll('.contact-options .contact-pill').forEach(pill => {
-        pill.addEventListener('click', function() {
-            const parent = this.parentElement;
-            if (parent.classList.contains('group-2')) {
-                parent.querySelectorAll('.contact-pill').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-            } else {
-                this.classList.toggle('active');
-            }
+    const phoneInput = document.getElementById('contactPhone');
+    const phoneRegex = /^(?=(?:.*\d){8,15})[0-9+\-\.\s()]+$/;
+
+    if (phoneInput) {
+        phoneInput.addEventListener('input', () => {
+            phoneInput.value = phoneInput.value.replace(/[^0-9+\-\.\s()]/g, '');
         });
-    });
+    }
 
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            feedbackBox.style.display = 'none';
+
+            const phoneVal = phoneInput ? phoneInput.value.trim() : '';
+            if (phoneVal && !phoneRegex.test(phoneVal)) {
+                feedbackBox.style.display = 'block';
+                feedbackBox.style.background = '#fee2e2';
+                feedbackBox.style.color = '#991b1b';
+                feedbackBox.textContent = 'Số điện thoại không hợp lệ (chỉ nhập số, từ 8 đến 15 chữ số).';
+                phoneInput.focus();
+                return;
+            }
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'ĐANG GỬI...';
 
@@ -100,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 name: document.getElementById('contactName').value,
                 email: document.getElementById('contactEmail').value,
-                phone: document.getElementById('contactPhone').value,
+                phone: phoneVal,
                 message: document.getElementById('contactMessage').value,
                 services: selectedServices,
                 budget: selectedBudget,
@@ -126,10 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     contactForm.reset();
                     document.querySelectorAll('.contact-pill.active').forEach(p => p.classList.remove('active'));
                 } else {
+                    const firstError = data.errors ? Object.values(data.errors).flat()[0] : null;
                     feedbackBox.style.display = 'block';
                     feedbackBox.style.background = '#fee2e2';
                     feedbackBox.style.color = '#991b1b';
-                    feedbackBox.textContent = data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.';
+                    feedbackBox.textContent = firstError || data.message || 'Có lỗi xảy ra, vui lòng thử lại sau.';
                 }
             } catch (err) {
                 feedbackBox.style.display = 'block';

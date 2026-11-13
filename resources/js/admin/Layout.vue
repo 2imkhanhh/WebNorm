@@ -40,19 +40,13 @@
         <Link href="/admin/reviews" class="nav-rail-item" :class="{ active: isCurrent('Reviews') }"
           title="Đánh giá khách hàng">
           <i class="bx bx-star"></i>
-          <span>Reviews</span>
+          <span>Đánh giá</span>
         </Link>
 
         <Link href="/admin/leads" class="nav-rail-item" :class="{ active: isCurrent('Contacts') }"
           title="Khách hàng liên hệ">
           <i class="bx bx-envelope"></i>
           <span>Liên hệ</span>
-        </Link>
-
-        <Link href="/admin/media" class="nav-rail-item" :class="{ active: isCurrent('Media') }"
-          title="Thư viện hình ảnh">
-          <i class="bx bx-image-alt"></i>
-          <span>Thư viện</span>
         </Link>
 
         <Link href="/admin/settings" class="nav-rail-item" :class="{ active: isCurrent('Settings') }"
@@ -111,7 +105,7 @@ const isDashboard = computed(() => {
 });
 
 const isFullWidth = computed(() => {
-  return page.component === 'Dashboard' || page.component === 'Projects' || page.component === 'Services' || page.component === 'Reviews' || page.component === 'Blogs' || page.component === 'Settings';
+  return page.component === 'Dashboard' || page.component === 'Projects' || page.component === 'Services' || page.component === 'Reviews' || page.component === 'Blogs' || page.component === 'Settings' || page.component === 'Contacts';
 });
 
 const MIN_SIDEBAR_WIDTH = 320;
