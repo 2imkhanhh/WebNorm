@@ -39,7 +39,13 @@ Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
         'phone.max' => 'Số điện thoại tối đa 20 ký tự.',
     ]);
 
-    \App\Models\Contact::create($validated);
+    $contact = \App\Models\Contact::create($validated);
+
+    try {
+        \App\Services\MailConfigService::sendContactNotification($contact);
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::warning('Contact email notification failed: ' . $e->getMessage());
+    }
 
     return response()->json(['success' => true, 'message' => 'Cảm ơn bạn đã liên hệ! Norm sẽ phản hồi sớm nhất.']);
 })->name('contact.submit');
@@ -112,6 +118,7 @@ Route::prefix('admin')->group(function () {
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
         Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
+        Route::post('/settings/test-mail', [SettingController::class, 'testMail'])->name('admin.settings.test-mail');
 
         // Redirect old studio route
         Route::get('/studio/{any?}', function () {

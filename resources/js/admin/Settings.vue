@@ -314,6 +314,103 @@
             </div>
           </div>
 
+          <!-- 3b. Cấu hình Email & SMTP -->
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div>
+                <h2 class="settings-card-title">
+                  <i class="bx bx-envelope"></i> Cấu hình Email &amp; SMTP
+                </h2>
+              </div>
+              <label class="mail-toggle-label">
+                <input v-model="form.mail_enabled" type="checkbox" />
+                <span>{{ form.mail_enabled ? 'Đang bật' : 'Đang tắt' }}</span>
+              </label>
+            </div>
+
+            <div class="settings-grid-2 mb-3">
+              <div class="form-group-custom">
+                <label><span>Email nhận thông báo</span></label>
+                <input v-model="form.mail_to_address" type="text" class="form-control-custom"
+                  placeholder="info@norm.vn (nhiều email cách nhau bằng dấu phẩy)" />
+                <span class="form-hint-custom">Nếu để trống sẽ lấy theo Email liên hệ ở mục trên.</span>
+              </div>
+
+              <div class="form-group-custom">
+                <label><span>SMTP Host</span></label>
+                <select v-model="selectedSmtpHostPreset" @change="handleSmtpHostPresetChange"
+                  class="form-control-custom">
+                  <option v-for="item in smtpHostPresets" :key="item.host" :value="item.host">
+                    {{ item.label }}
+                  </option>
+                  <option value="custom">Khác (tự nhập)...</option>
+                </select>
+                <input v-if="selectedSmtpHostPreset === 'custom'" v-model="form.mail_host" type="text"
+                  class="form-control-custom mt-2" placeholder="Nhập SMTP Host (vd: mail.domain.com)" />
+              </div>
+            </div>
+
+            <div class="settings-grid-3 mb-3">
+              <div class="form-group-custom">
+                <label><span>SMTP Port</span></label>
+                <input v-model="form.mail_port" type="number" class="form-control-custom" placeholder="587" />
+              </div>
+
+              <div class="form-group-custom">
+                <label><span>Bảo mật</span></label>
+                <select v-model="form.mail_encryption" class="form-control-custom">
+                  <option value="tls">TLS / STARTTLS (cổng 587)</option>
+                  <option value="ssl">SSL (cổng 465)</option>
+                </select>
+              </div>
+
+              <div class="form-group-custom">
+                <label><span>Tài khoản SMTP</span></label>
+                <input v-model="form.mail_username" type="text" class="form-control-custom"
+                  placeholder="your-email@gmail.com" autocomplete="off" />
+              </div>
+            </div>
+
+            <div class="settings-grid-3 mb-3">
+              <div class="form-group-custom">
+                <label><span>Mật khẩu SMTP / App Password</span></label>
+                <div class="mail-password-wrap">
+                  <input v-model="form.mail_password" :type="showMailPassword ? 'text' : 'password'"
+                    class="form-control-custom"
+                    :placeholder="mailPasswordSet ? '•••••••• (đã lưu, để trống nếu giữ nguyên)' : 'Nhập mật khẩu hoặc App Password'"
+                    autocomplete="new-password" />
+                  <button type="button" class="btn-toggle-pass" @click="showMailPassword = !showMailPassword"
+                    :title="showMailPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'">
+                    <i class="bx" :class="showMailPassword ? 'bx-hide' : 'bx-show'"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group-custom">
+                <label><span>Email gửi đi</span></label>
+                <input v-model="form.mail_from_address" type="email" class="form-control-custom"
+                  placeholder="noreply@norm.vn" />
+              </div>
+
+              <div class="form-group-custom">
+                <label><span>Tên người gửi</span></label>
+                <input v-model="form.mail_from_name" type="text" class="form-control-custom"
+                  placeholder="Norm Studio" />
+              </div>
+            </div>
+
+            <div class="mail-test-row">
+              <button type="button" class="btn-test-mail" :disabled="isTestingMail" @click="sendTestMail">
+                <i class="bx" :class="isTestingMail ? 'bx-loader-alt bx-spin' : 'bx-send'"></i>
+                <span>{{ isTestingMail ? 'Đang gửi email thử...' : 'Gửi email thử nghiệm' }}</span>
+              </button>
+              <span v-if="testMailResult" class="mail-test-feedback"
+                :class="testMailResult.success ? 'success' : 'error'">
+                {{ testMailResult.message }}
+              </span>
+            </div>
+          </div>
+
           <!-- Bottom Submit Bar -->
           <div class="settings-bottom-bar">
             <button type="submit" class="btn-save-settings-main" :disabled="isSaving">
@@ -404,6 +501,17 @@ const initFormData = () => ({
   address_vi: getVal('address', 'vi') || 'Số 110 Nguyễn Ngọc Nại, P. Phương Liệt, TP. Hà Nội',
   address_en: getVal('address', 'en') || 'No. 110 Nguyen Ngoc Nai street, Phuong Liet ward, Ha Noi city, Vietnam',
 
+  // Mail / SMTP config
+  mail_enabled: Boolean(props.settings.mail_enabled),
+  mail_to_address: props.settings.mail_to_address || '',
+  mail_host: props.settings.mail_host || 'smtp.gmail.com',
+  mail_port: props.settings.mail_port || 587,
+  mail_encryption: props.settings.mail_encryption || 'tls',
+  mail_username: props.settings.mail_username || '',
+  mail_password: '',
+  mail_from_address: props.settings.mail_from_address || '',
+  mail_from_name: props.settings.mail_from_name || 'Norm Studio',
+
   // Socials
   social_facebook: props.settings.social_facebook || 'https://facebook.com',
   social_instagram: props.settings.social_instagram || 'https://instagram.com',
@@ -412,7 +520,39 @@ const initFormData = () => ({
   social_dribbble: props.settings.social_dribbble || 'https://dribbble.com',
 });
 
+const smtpHostPresets = [
+  { host: 'smtp.gmail.com', label: 'smtp.gmail.com (Gmail)', port: 587, encryption: 'tls' },
+  { host: 'smtp.office365.com', label: 'smtp.office365.com (Outlook / 365)', port: 587, encryption: 'tls' },
+  { host: 'smtp.zoho.com', label: 'smtp.zoho.com (Zoho Mail)', port: 465, encryption: 'ssl' },
+  { host: 'smtp.mail.yahoo.com', label: 'smtp.mail.yahoo.com (Yahoo Mail)', port: 465, encryption: 'ssl' },
+  { host: 'sandbox.smtp.mailtrap.io', label: 'sandbox.smtp.mailtrap.io (Mailtrap)', port: 2525, encryption: 'tls' },
+];
+
 const form = reactive(initFormData());
+const selectedSmtpHostPreset = ref(
+  smtpHostPresets.some((p) => p.host === form.mail_host) ? form.mail_host : 'custom'
+);
+
+const handleSmtpHostPresetChange = () => {
+  if (selectedSmtpHostPreset.value === 'custom') {
+    if (smtpHostPresets.some((p) => p.host === form.mail_host)) {
+      form.mail_host = '';
+    }
+    return;
+  }
+
+  const preset = smtpHostPresets.find((p) => p.host === selectedSmtpHostPreset.value);
+  if (preset) {
+    form.mail_host = preset.host;
+    form.mail_port = preset.port;
+    form.mail_encryption = preset.encryption;
+  }
+};
+
+const mailPasswordSet = ref(Boolean(props.settings.mail_password_set));
+const showMailPassword = ref(false);
+const isTestingMail = ref(false);
+const testMailResult = ref(null);
 
 const renderKey = ref(0);
 let isInitialized = false;
@@ -565,6 +705,17 @@ const saveSettings = () => {
       email: form.email,
       address: { vi: form.address_vi, en: form.address_en },
 
+      // Mail / SMTP config
+      mail_enabled: form.mail_enabled,
+      mail_to_address: form.mail_to_address,
+      mail_host: form.mail_host,
+      mail_port: form.mail_port ? Number(form.mail_port) : 587,
+      mail_encryption: form.mail_encryption,
+      mail_username: form.mail_username,
+      mail_password: form.mail_password,
+      mail_from_address: form.mail_from_address,
+      mail_from_name: form.mail_from_name,
+
       // Social URLs
       social_facebook: form.social_facebook,
       social_instagram: form.social_instagram,
@@ -577,6 +728,15 @@ const saveSettings = () => {
   router.post('/admin/settings', payload, {
     preserveScroll: true,
     onSuccess: () => {
+      if (form.mail_password) {
+        isReverting = true;
+        mailPasswordSet.value = true;
+        form.mail_password = '';
+        setTimeout(() => {
+          isReverting = false;
+          hasUnsavedChanges.value = false;
+        }, 50);
+      }
       isSaving.value = false;
       hasUnsavedChanges.value = false;
       alert('Đã xuất bản cài đặt website thành công vào cơ sở dữ liệu!');
@@ -586,6 +746,49 @@ const saveSettings = () => {
       alert('Lỗi lưu cài đặt: ' + JSON.stringify(err));
     },
   });
+};
+
+const sendTestMail = async () => {
+  isTestingMail.value = true;
+  testMailResult.value = null;
+
+  const csrfToken =
+    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+  try {
+    const response = await fetch('/admin/settings/test-mail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken,
+      },
+      body: JSON.stringify({
+        mail_host: form.mail_host,
+        mail_port: form.mail_port ? Number(form.mail_port) : 587,
+        mail_encryption: form.mail_encryption,
+        mail_username: form.mail_username,
+        mail_password: form.mail_password,
+        mail_from_address: form.mail_from_address,
+        mail_from_name: form.mail_from_name,
+        mail_to_address: form.mail_to_address || form.email,
+      }),
+    });
+
+    const data = await response.json();
+    testMailResult.value = {
+      success: Boolean(data.success),
+      message: data.message || (data.success ? 'Gửi email thử thành công!' : 'Gửi email thử thất bại.'),
+    };
+  } catch (err) {
+    testMailResult.value = {
+      success: false,
+      message: 'Lỗi kết nối: ' + err.message,
+    };
+  } finally {
+    isTestingMail.value = false;
+  }
 };
 
 onMounted(() => {
