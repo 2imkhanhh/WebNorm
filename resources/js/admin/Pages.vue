@@ -977,9 +977,8 @@ const updateField = (sectionId, field, newVal) => {
   onFieldChange(sectionId, field.key, newVal);
 };
 
-// Đồng bộ thay đổi tức thời sang Iframe qua postMessage
-const onFieldChange = (sectionId, fieldKey, value) => {
-  hasUnsavedChanges.value = true;
+// Đồng bộ thay đổi tức thời sang Iframe qua postMessage (không tự đánh dấu chưa lưu)
+const syncPreviewField = (sectionId, fieldKey, value) => {
   if (!previewIframe.value || !previewIframe.value.contentWindow) return;
 
   let cleanValue = value;
@@ -1001,6 +1000,12 @@ const onFieldChange = (sectionId, fieldKey, value) => {
   );
 };
 
+// Đánh dấu có thay đổi chưa lưu khi người dùng chỉnh sửa nội dung và đồng bộ sang Iframe
+const onFieldChange = (sectionId, fieldKey, value) => {
+  hasUnsavedChanges.value = true;
+  syncPreviewField(sectionId, fieldKey, value);
+};
+
 // Đồng bộ toàn bộ nội dung preview khi chuyển tab ngôn ngữ (VI <-> EN)
 watch(currentLanguage, (newLang) => {
   if (previewIframe.value && previewIframe.value.contentWindow) {
@@ -1018,13 +1023,13 @@ watch(currentLanguage, (newLang) => {
       if (sec.fields) {
         sec.fields.forEach((f) => {
           if (f.type === 'repeater' || f.key === 'workflow_steps') {
-            onFieldChange(sec.id, f.key, f.value);
+            syncPreviewField(sec.id, f.key, f.value);
           } else if (f.type !== 'gallery') {
             let val = f.value;
             if (val && typeof val === 'object') {
               val = val[newLang] ?? val.vi ?? '';
             }
-            onFieldChange(sec.id, f.key, val);
+            syncPreviewField(sec.id, f.key, val);
           }
         });
       }
