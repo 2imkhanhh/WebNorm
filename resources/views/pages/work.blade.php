@@ -99,7 +99,7 @@
                 @php
                     $catSlugs = $p->categories->pluck('slug')->implode(',');
                 @endphp
-                <a href="{{ route('work.detail', $p->slug) }}" class="project-card"
+                <a href="{{ \App\Helpers\NormHelper::localizedRoute('work.detail', $p->slug) }}" class="project-card"
                     data-category-slugs="{{ $catSlugs }}" data-category="{{ strtolower($p->getCategory($locale)) }}"
                     data-featured="{{ $p->is_featured ? '1' : '0' }}">
                     <div class="project-img-wrap">

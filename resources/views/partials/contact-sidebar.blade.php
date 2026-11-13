@@ -27,7 +27,7 @@
         </div>
 
         <h2 class="contact-title">{{ __('site.contact_info_heading') }}</h2>
-        <form class="contact-form" id="contactForm" action="{{ route('contact.submit') }}" method="POST">
+        <form class="contact-form" id="contactForm" action="{{ route('contact.submit', ['lang' => app()->getLocale()]) }}" method="POST">
             @csrf
             <div class="contact-form-row">
                 <input type="text" name="name" id="contactName" placeholder="{{ __('site.contact_placeholder_name') }}" class="contact-input" required>

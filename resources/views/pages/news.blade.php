@@ -30,14 +30,14 @@
                     @forelse($blogs as $blog)
                     <div class="col-12 col-md-4">
                         <div class="news-card">
-                            <a href="{{ route('news.detail', $blog->slug) }}" class="news-image-wrapper">
+                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news.detail', $blog->slug) }}" class="news-image-wrapper">
                                 <img src="{{ !empty($blog->thumbnail) ? (str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset($blog->thumbnail)) : asset('assets/images/news1.png') }}" alt="{{ $blog->getTitle() }}" class="img-fluid w-100">
                             </a>
                             <div class="news-meta">
                                 <span class="news-date">{{ $blog->published_at ? (app()->getLocale() === 'en' ? $blog->published_at->format('d M Y') : $blog->published_at->format('d \T\h\gn Y')) : '' }}</span>
                             </div>
                             <h3 class="news-card-title">
-                                <a href="{{ route('news.detail', $blog->slug) }}">{{ $blog->getTitle() }}</a>
+                                <a href="{{ \App\Helpers\NormHelper::localizedRoute('news.detail', $blog->slug) }}">{{ $blog->getTitle() }}</a>
                             </h3>
                         </div>
                     </div>

@@ -7,22 +7,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no">
 
+    @php
+        $currentCanonicalUrl = \App\Helpers\NormHelper::canonicalUrl();
+        $viAlternateUrl = \App\Helpers\NormHelper::canonicalUrl('vi');
+        $enAlternateUrl = \App\Helpers\NormHelper::canonicalUrl('en');
+        $altOgLocale = app()->getLocale() === 'en' ? 'vi_VN' : 'en_US';
+    @endphp
     <!-- SEO -->
     <title>@yield('title', __('site.meta_title_default'))</title>
     <meta name="description" content="@yield('description', __('site.meta_description_default'))">
     <meta name="keywords" content="{{ __('site.meta_keywords_default') }}">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="@yield('canonical', 'https://norm.vn/')">
+    <meta name="robots" content="{{ !empty($isPreviewDraft) ? 'noindex, nofollow' : 'index, follow' }}">
+    <link rel="canonical" href="@yield('canonical', $currentCanonicalUrl)">
+    <link rel="alternate" hreflang="vi" href="{{ $viAlternateUrl }}" />
+    <link rel="alternate" hreflang="en" href="{{ $enAlternateUrl }}" />
+    <link rel="alternate" hreflang="x-default" href="{{ $viAlternateUrl }}" />
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="@yield('og_url', 'https://norm.vn/')">
+    <meta property="og:url" content="@yield('og_url', $currentCanonicalUrl)">
     <meta property="og:title" content="@yield('title', __('site.meta_title_default'))">
     <meta property="og:description" content="@yield('description', __('site.meta_description_default'))">
     <meta property="og:image" content="{{ asset('assets/images/logo.png') }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="Brand Design Agency">
+    <meta property="og:site_name" content="{{ \App\Helpers\NormHelper::setting('site_name', 'Brand Design Agency') }}">
     <meta property="og:locale" content="{{ __('site.og_locale') }}">
+    <meta property="og:locale:alternate" content="{{ $altOgLocale }}">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', __('site.meta_title_default'))">
@@ -43,10 +53,10 @@
     {
       "@@context": "https://schema.org",
       "@@type": "ProfessionalService",
-      "name": "Brand Design Agency",
-      "url": "https://norm.vn/",
+      "name": "{{ \App\Helpers\NormHelper::setting('site_name', 'Brand Design Agency') }}",
+      "url": "{{ $currentCanonicalUrl }}",
       "description": "{{ __('site.schema_description') }}",
-      "image": "https://norm.vn/assets/images/logo.png",
+      "image": "{{ asset('assets/images/logo.png') }}",
       "sameAs": [
         "https://www.facebook.com/",
         "https://www.instagram.com/"

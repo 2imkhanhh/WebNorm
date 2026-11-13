@@ -5,6 +5,7 @@
 @endphp
 
 @section('title', ($project ? $project->getTitle($locale) : __('site.title_work_detail')) . ' | Brand Design Agency')
+@section('description', $project && $project->getDescription($locale) ? \Illuminate\Support\Str::limit(strip_tags($project->getDescription($locale)), 160) : __('site.meta_description_default'))
 @section('body_class', 'work-detail-page')
 
 @push('styles')
@@ -160,7 +161,7 @@
                     <div class="next-project-wrapper">
                         <img src="{{ !empty($nextProject->thumbnail) ? (str_starts_with($nextProject->thumbnail, 'http') ? $nextProject->thumbnail : asset($nextProject->thumbnail)) : asset('assets/images/work3.jpg') }}" alt="{{ $nextProject->getTitle($locale) }}" class="next-project-img">
 
-                        <a href="{{ route('work.detail', $nextProject->slug) }}" class="btn-next-project">
+                        <a href="{{ \App\Helpers\NormHelper::localizedRoute('work.detail', $nextProject->slug) }}" class="btn-next-project">
                             {{ __('site.work_view_project') }} <i class='bx bx-right-arrow-alt'></i>
                         </a>
                     </div>

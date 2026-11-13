@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', ($blog ? $blog->getTitle() . ' | ' : '') . __('site.title_news_detail'))
+@section('description', $blog && $blog->getExcerpt() ? \Illuminate\Support\Str::limit(strip_tags($blog->getExcerpt()), 160) : __('site.meta_description_default'))
 @section('body_class', 'news-detail-page')
 
 @push('styles')
@@ -62,7 +63,7 @@
     <section class="blog-slider-section">
         <div class="container-fluid px-4 px-md-5">
             <div class="d-flex justify-content-end mb-4">
-                <a href="{{ route('news') }}" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">{{ __('site.news_more_articles') }}</a>
+                <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}" class="link-more text-uppercase" style="color: #111; margin-top: 100px;">{{ __('site.news_more_articles') }}</a>
             </div>
 
             <div class="blog-slider-container">
@@ -73,12 +74,12 @@
                     @endphp
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="{{ route('news.detail', $rel->slug) }}" class="d-block w-100 h-100">
+                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news.detail', $rel->slug) }}" class="d-block w-100 h-100">
                                 <img src="{{ $relThumb }}" alt="{{ $rel->getTitle() }}">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="{{ route('news.detail', $rel->slug) }}" class="text-decoration-none" style="color: inherit;">
+                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news.detail', $rel->slug) }}" class="text-decoration-none" style="color: inherit;">
                                 {{ $rel->getTitle() }}
                             </a>
                         </h3>

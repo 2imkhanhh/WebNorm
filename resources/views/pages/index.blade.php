@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="col-auto hero-ctas d-flex gap-5">
-                    <a href="{{ route('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
+                    <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
                     <a href="#" class="cta-btn nav-contact-trigger">{{ __('site.hero_cta_contact') }}</a>
                 </div>
 
@@ -82,7 +82,7 @@
         </div>
 
         <div class="hero-ctas-mobile">
-            <a href="{{ route('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
+            <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
             <a href="#" class="cta-btn nav-contact-trigger">{{ __('site.hero_cta_contact') }}</a>
         </div>
 
@@ -131,7 +131,7 @@
                 </div>
 
                 <div class="col-md-3 text-start text-md-end mt-4 mt-md-0">
-                    <a href="{{ \App\Helpers\NormHelper::val($pageContents['about_btn_url'] ?? null, '/about-us') }}" class="link-more" data-studio-key="about_btn_text">
+                    <a href="{{ \App\Helpers\NormHelper::localizeUrl(\App\Helpers\NormHelper::val($pageContents['about_btn_url'] ?? null, '/about-us')) }}" class="link-more" data-studio-key="about_btn_text">
                         @normVal($pageContents['about_btn_text'] ?? null, 'ĐỌC THÊM')
                     </a>
                 </div>
@@ -147,14 +147,14 @@
                         <span class="ps-num-current" id="psCurrent">01</span>
                         <span class="ps-num-total" id="psTotal">/{{ str_pad(max(count($projects), 1), 2, '0', STR_PAD_LEFT) }}</span>
                     </div>
-                    <a href="{{ route('work') }}" class="link-more text-uppercase ps-view-all">{{ __('site.view_all_projects') }}</a>
+                    <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}" class="link-more text-uppercase ps-view-all">{{ __('site.view_all_projects') }}</a>
                 </div>
 
                 <div class="ps-horizontal-viewport">
                     <div class="ps-horizontal-track" id="psTrack">
                         @forelse($projects as $p)
                         <div class="ps-project-item">
-                            <a href="{{ route('work.detail', $p->slug) }}" class="ps-card-inner text-decoration-none text-reset">
+                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('work.detail', $p->slug) }}" class="ps-card-inner text-decoration-none text-reset">
                                 <div class="ps-img-wrap">
                                     <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}">
                                 </div>
@@ -311,7 +311,7 @@
     <section class="blog-slider-section">
         <div class="container-fluid blog-custom-container">
             <div class="d-flex justify-content-end mb-4">
-                <a href="{{ \App\Helpers\NormHelper::val($pageContents['blog_btn_url'] ?? null, '/news') }}" class="link-more text-uppercase" style="margin-top: 100px;" data-studio-key="blog_btn_text">
+                <a href="{{ \App\Helpers\NormHelper::localizeUrl(\App\Helpers\NormHelper::val($pageContents['blog_btn_url'] ?? null, '/news')) }}" class="link-more text-uppercase" style="margin-top: 100px;" data-studio-key="blog_btn_text">
                     @normVal($pageContents['blog_btn_text'] ?? null, 'XEM THÊM BÀI VIẾT')
                 </a>
             </div>
@@ -321,7 +321,7 @@
                     @forelse($blogs as $blog)
                     @php
                         $thumbUrl = !empty($blog->thumbnail) ? (str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset(ltrim($blog->thumbnail, '/'))) : asset('assets/images/project1.png');
-                        $detailUrl = route('news.detail', $blog->slug);
+                        $detailUrl = \App\Helpers\NormHelper::localizedRoute('news.detail', $blog->slug);
                         $blogTitle = $blog->getTitle();
                     @endphp
                     <div class="blog-card">
@@ -339,12 +339,12 @@
                     @empty
                     <div class="blog-card">
                         <div class="blog-img-wrap">
-                            <a href="{{ route('news') }}" class="d-block w-100 h-100">
+                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}" class="d-block w-100 h-100">
                                 <img src="{{ asset('assets/images/project1.png') }}" alt="Blog">
                             </a>
                         </div>
                         <h3 class="blog-title">
-                            <a href="{{ route('news') }}" class="text-decoration-none" style="color: inherit;">
+                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}" class="text-decoration-none" style="color: inherit;">
                                 {{ __('site.no_blogs_home') }}
                             </a>
                         </h3>

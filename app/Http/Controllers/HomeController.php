@@ -115,4 +115,60 @@ class HomeController extends Controller
 
         return view('pages.news-detail', compact('blog', 'relatedBlogs'));
     }
+
+    public function sitemap()
+    {
+        $entries = [
+            ['vi' => route('home'), 'en' => route('en.home'), 'lastmod' => null],
+            ['vi' => route('about'), 'en' => route('en.about'), 'lastmod' => null],
+            ['vi' => route('work'), 'en' => route('en.work'), 'lastmod' => null],
+            ['vi' => route('news'), 'en' => route('en.news'), 'lastmod' => null],
+        ];
+
+        $projects = Project::where('is_active', true)->orderBy('sort_order')->get(['slug', 'updated_at']);
+        foreach ($projects as $project) {
+            if (!$project->slug) {
+                continue;
+            }
+            $entries[] = [
+                'vi' => route('work.detail', $project->slug),
+                'en' => route('en.work.detail', $project->slug),
+                'lastmod' => $project->updated_at?->toAtomString(),
+            ];
+        }
+
+        $blogs = Blog::where('status', 'published')->latest('published_at')->get(['slug', 'updated_at']);
+        foreach ($blogs as $blog) {
+            if (!$blog->slug) {
+                continue;
+            }
+            $entries[] = [
+                'vi' => route('news.detail', $blog->slug),
+                'en' => route('en.news.detail', $blog->slug),
+                'lastmod' => $blog->updated_at?->toAtomString(),
+            ];
+        }
+
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">' . "\n";
+
+        foreach ($entries as $item) {
+            $viUrl = htmlspecialchars($item['vi'], ENT_XML1, 'UTF-8');
+            $enUrl = htmlspecialchars($item['en'], ENT_XML1, 'UTF-8');
+            $lastmodTag = $item['lastmod'] ? "\n        <lastmod>" . htmlspecialchars($item['lastmod'], ENT_XML1, 'UTF-8') . "</lastmod>" : '';
+
+            foreach ([$viUrl, $enUrl] as $locUrl) {
+                $xml .= "    <url>\n";
+                $xml .= "        <loc>{$locUrl}</loc>{$lastmodTag}\n";
+                $xml .= "        <xhtml:link rel=\"alternate\" hreflang=\"vi\" href=\"{$viUrl}\" />\n";
+                $xml .= "        <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"{$enUrl}\" />\n";
+                $xml .= "        <xhtml:link rel=\"alternate\" hreflang=\"x-default\" href=\"{$viUrl}\" />\n";
+                $xml .= "    </url>\n";
+            }
+        }
+
+        $xml .= '</urlset>';
+
+        return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
+    }
 }

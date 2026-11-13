@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\Setting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class NormHelper
 {
@@ -10,6 +12,89 @@ class NormHelper
     {
         $resolved = $lang ?: (app()->getLocale() ?: session('locale', 'vi'));
         return in_array($resolved, ['vi', 'en'], true) ? $resolved : 'vi';
+    }
+
+    /**
+     * Resolve named client route for the active (or specified) language.
+     */
+    public static function localizedRoute(string $name, mixed $parameters = [], ?string $lang = null): string
+    {
+        $targetLang = static::locale($lang);
+        if ($targetLang === 'en' && Route::has('en.' . $name)) {
+            return route('en.' . $name, $parameters);
+        }
+
+        return route($name, $parameters);
+    }
+
+    /**
+     * Localize an internal relative URL (e.g. from Admin link fields) for the active language.
+     */
+    public static function localizeUrl(?string $url, ?string $lang = null): string
+    {
+        $value = trim((string) $url);
+        if ($value === '' || $value === '#') {
+            return $value === '' ? static::localizedRoute('home', [], $lang) : $value;
+        }
+
+        if (preg_match('#^(https?:|//|mailto:|tel:|javascript:)#i', $value)) {
+            return $value;
+        }
+
+        $parts = parse_url($value);
+        $path = '/' . ltrim($parts['path'] ?? '/', '/');
+        $basePath = preg_replace('#^/en(?=/|$)#', '', $path) ?: '/';
+        $targetLang = static::locale($lang);
+        $targetPath = $targetLang === 'en'
+            ? ($basePath === '/' ? '/en' : '/en' . $basePath)
+            : $basePath;
+
+        $result = url($targetPath);
+        if (!empty($parts['query'])) {
+            $result .= '?' . $parts['query'];
+        }
+        if (!empty($parts['fragment'])) {
+            $result .= '#' . $parts['fragment'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Build the equivalent URL of the current request for another locale.
+     */
+    public static function switchLocaleUrl(string $targetLocale, ?Request $request = null, bool $preserveQuery = true): string
+    {
+        $req = $request ?: request();
+        $targetLang = $targetLocale === 'en' ? 'en' : 'vi';
+
+        $path = '/' . ltrim($req->path(), '/');
+        $basePath = preg_replace('#^/en(?=/|$)#', '', $path) ?: '/';
+
+        $targetPath = $targetLang === 'en'
+            ? ($basePath === '/' ? '/en' : '/en' . $basePath)
+            : $basePath;
+
+        $url = url($targetPath);
+
+        if ($preserveQuery) {
+            $query = $req->query();
+            unset($query['lang']);
+            if (!empty($query)) {
+                $url .= '?' . http_build_query($query);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
+     * Build clean canonical/alternate URL without tracking or preview query parameters.
+     */
+    public static function canonicalUrl(?string $lang = null, ?Request $request = null): string
+    {
+        $targetLang = static::locale($lang);
+        return static::switchLocaleUrl($targetLang, $request, false);
     }
 
     /**

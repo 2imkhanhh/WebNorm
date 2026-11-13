@@ -14,21 +14,44 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-// Language Switcher
-Route::get('/lang/{locale}', function (string $locale) {
+// Legacy /lang/{locale} redirector -> redirect to clean SEO URL (/ or /en/...)
+Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string $locale) {
     $targetLocale = $locale === 'en' ? 'en' : 'vi';
-    session(['locale' => $targetLocale]);
+    $referer = (string) $request->headers->get('referer', '');
+    $refererPath = parse_url($referer, PHP_URL_PATH) ?: '/';
+    $basePath = preg_replace('#^/en(?=/|$)#', '', '/' . ltrim($refererPath, '/')) ?: '/';
 
-    return redirect()->back();
+    $targetPath = $targetLocale === 'en'
+        ? ($basePath === '/' ? '/en' : '/en' . $basePath)
+        : $basePath;
+
+    return redirect($targetPath);
 })->whereIn('locale', ['vi', 'en'])->name('lang.switch');
 
-// Client Routes (Blade Views with Dynamic Database Content)
+// Redirect /vi prefix (if visited) to canonical Vietnamese root URLs
+Route::get('/vi', fn () => redirect('/', 301));
+Route::get('/vi/{any}', fn (string $any) => redirect('/' . ltrim($any, '/'), 301))->where('any', '.*');
+
+// Client Routes - Vietnamese Default
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about-us', [HomeController::class, 'about'])->name('about');
 Route::get('/work', [HomeController::class, 'work'])->name('work');
 Route::get('/work/{slug?}', [HomeController::class, 'workDetail'])->name('work.detail');
 Route::get('/news', [HomeController::class, 'news'])->name('news');
 Route::get('/news/{slug?}', [HomeController::class, 'newsDetail'])->name('news.detail');
+
+// Client Routes - English (/en prefix for SEO)
+Route::prefix('en')->name('en.')->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/about-us', [HomeController::class, 'about'])->name('about');
+    Route::get('/work', [HomeController::class, 'work'])->name('work');
+    Route::get('/work/{slug?}', [HomeController::class, 'workDetail'])->name('work.detail');
+    Route::get('/news', [HomeController::class, 'news'])->name('news');
+    Route::get('/news/{slug?}', [HomeController::class, 'newsDetail'])->name('news.detail');
+});
+
+// Multilingual Sitemap
+Route::get('/sitemap.xml', [HomeController::class, 'sitemap'])->name('sitemap');
 
 // Client Contact Drawer submission
 Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
