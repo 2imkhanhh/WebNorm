@@ -12,9 +12,13 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    protected function getPageContentMap(string $pageSlug, Request $request): array
+    protected function getPageContentMap(string $pageSlug, Request $request, ?array $fieldKeys = null): array
     {
-        $contents = PageContent::where('page_slug', $pageSlug)->get();
+        $query = PageContent::where('page_slug', $pageSlug);
+        if ($fieldKeys !== null) {
+            $query->whereIn('field_key', $fieldKeys);
+        }
+        $contents = $query->get();
         $isPreview = auth()->check() && $request->query('preview') === 'draft';
         view()->share('isPreviewDraft', $isPreview);
 
@@ -51,8 +55,13 @@ class HomeController extends Controller
 
     public function about(Request $request)
     {
-        $pageContents = $this->getPageContentMap('/about-us', $request);
-        return view('pages.about-us', compact('pageContents'));
+        $pageContents = array_merge(
+            $this->getPageContentMap('/', $request, ['services_label', 'services_statement', 'services_desc']),
+            $this->getPageContentMap('/about-us', $request)
+        );
+        $services = Service::where('is_active', true)->orderBy('sort_order')->get();
+
+        return view('pages.about-us', compact('pageContents', 'services'));
     }
 
     public function work(Request $request)
