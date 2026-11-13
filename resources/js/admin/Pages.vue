@@ -164,23 +164,31 @@
               </div>
             </div>
 
-            <!-- Repeater / List Field (Workflow Steps CRUD) -->
+            <!-- Repeater / List Field (Workflow Steps & Team Members CRUD) -->
             <div v-else-if="field.type === 'repeater' || field.key === 'workflow_steps'" class="workflow-repeater-wrap">
-              <label class="field-label" style="margin-bottom: 2px;">Các bước quy trình</label>
+              <label class="field-label" style="margin-bottom: 2px;">{{ getRepeaterConfig(field).sectionLabel }}</label>
 
               <div class="workflow-step-cards-list">
                 <div v-for="(step, sIdx) in getRepeaterItems(field)" :key="step.id || sIdx" class="workflow-step-card"
-                  @click="onStepFocus(sIdx)">
+                  @click="onStepFocus(field, sIdx)">
                   <div class="workflow-step-card-header">
                     <div class="step-card-left">
-                      <span class="step-badge">Bước {{ String(sIdx + 1).padStart(2, '0') }}</span>
-                      <span class="step-card-title-preview" :title="getStepPreviewTitle(step)">
-                        {{ getStepPreviewTitle(step) || '(Chưa nhập tiêu đề)' }}
+                      <span class="step-badge">{{ getRepeaterConfig(field).badgePrefix ? `${getRepeaterConfig(field).badgePrefix} ${String(sIdx + 1).padStart(2, '0')}` : String(sIdx + 1).padStart(2, '0') }}</span>
+                      <span v-if="getRepeaterConfig(field).showHeaderTitle !== false" class="step-card-title-preview" :title="getRepeaterPreviewTitle(field, step)">
+                        {{ getRepeaterPreviewTitle(field, step) || '(Chưa nhập nội dung)' }}
                       </span>
                     </div>
                     <div class="step-card-actions">
+                      <button type="button" class="btn-step-action" :disabled="sIdx === 0"
+                        @click.stop="moveRepeaterStep(section.id, field, sIdx, -1)" title="Di chuyển lên">
+                        <i class="bx bx-chevron-up"></i>
+                      </button>
+                      <button type="button" class="btn-step-action" :disabled="sIdx === getRepeaterItems(field).length - 1"
+                        @click.stop="moveRepeaterStep(section.id, field, sIdx, 1)" title="Di chuyển xuống">
+                        <i class="bx bx-chevron-down"></i>
+                      </button>
                       <button type="button" class="btn-step-action btn-step-del"
-                        @click.stop="removeRepeaterStep(section.id, field, sIdx)" title="Xóa bước này">
+                        @click.stop="removeRepeaterStep(section.id, field, sIdx)" title="Xóa mục này">
                         <i class="bx bx-trash"></i>
                       </button>
                     </div>
@@ -188,38 +196,45 @@
 
                   <div class="workflow-step-card-body">
                     <div class="step-field-inner">
-                      <label class="step-field-label">Tiêu đề bước</label>
-                      <input type="text" class="field-input" :value="getStepTitle(step)"
-                        :placeholder="currentLanguage === 'en' ? 'Nhập tiêu đề tiếng Anh...' : 'Ví dụ: Trao đổi & tìm hiểu...'"
-                        @focus="onStepFocus(sIdx)"
-                        @input="updateStepTitle(section.id, field, sIdx, $event.target.value)" />
+                      <label class="step-field-label">{{ getRepeaterConfig(field).primaryLabel }}</label>
+                      <input type="text" class="field-input"
+                        :value="getRepeaterItemField(step, getRepeaterConfig(field).primaryKey)"
+                        :placeholder="currentLanguage === 'en' ? getRepeaterConfig(field).primaryPlaceholderEn : getRepeaterConfig(field).primaryPlaceholderVi"
+                        @focus="onStepFocus(field, sIdx)"
+                        @input="updateRepeaterItemField(section.id, field, sIdx, getRepeaterConfig(field).primaryKey, $event.target.value)" />
                     </div>
 
                     <div class="step-field-inner">
-                      <label class="step-field-label">Mô tả chi tiết</label>
-                      <textarea class="field-textarea" rows="3" :value="getStepDesc(step)"
-                        :placeholder="currentLanguage === 'en' ? 'Nhập mô tả tiếng Anh...' : 'Nội dung mô tả chi tiết của bước này...'"
-                        @focus="onStepFocus(sIdx)"
-                        @input="updateStepDesc(section.id, field, sIdx, $event.target.value)"></textarea>
+                      <label class="step-field-label">{{ getRepeaterConfig(field).secondaryLabel }}</label>
+                      <input v-if="getRepeaterConfig(field).secondaryType === 'input'" type="text" class="field-input"
+                        :value="getRepeaterItemField(step, getRepeaterConfig(field).secondaryKey)"
+                        :placeholder="currentLanguage === 'en' ? getRepeaterConfig(field).secondaryPlaceholderEn : getRepeaterConfig(field).secondaryPlaceholderVi"
+                        @focus="onStepFocus(field, sIdx)"
+                        @input="updateRepeaterItemField(section.id, field, sIdx, getRepeaterConfig(field).secondaryKey, $event.target.value)" />
+                      <textarea v-else class="field-textarea" rows="3"
+                        :value="getRepeaterItemField(step, getRepeaterConfig(field).secondaryKey)"
+                        :placeholder="currentLanguage === 'en' ? getRepeaterConfig(field).secondaryPlaceholderEn : getRepeaterConfig(field).secondaryPlaceholderVi"
+                        @focus="onStepFocus(field, sIdx)"
+                        @input="updateRepeaterItemField(section.id, field, sIdx, getRepeaterConfig(field).secondaryKey, $event.target.value)"></textarea>
                     </div>
 
                     <div class="step-field-inner">
-                      <label class="step-field-label">Hình ảnh minh họa</label>
+                      <label class="step-field-label">{{ getRepeaterConfig(field).imageLabel }}</label>
                       <div class="pages-image-upload-row">
                         <div class="pages-image-thumb" @click="triggerStepImageUpload(section.id, field, sIdx)"
                           title="Nhấn để đổi ảnh">
                           <img v-if="getStepImage(step)"
                             :src="getStepImage(step).startsWith('http') ? getStepImage(step) : '/' + getStepImage(step).replace(/^\//, '')"
-                            alt="Step image" />
+                            alt="Item image" />
                           <div v-else class="preview-empty-icon">
                             <i class="bx bx-image-alt"></i>
                           </div>
                         </div>
                         <div class="pages-image-btn-wrap">
-                          <button type="button" class="btn-upload-file" :disabled="isStepUploading(sIdx)"
+                          <button type="button" class="btn-upload-file" :disabled="isStepUploading(field, sIdx)"
                             @click="triggerStepImageUpload(section.id, field, sIdx)" title="Tải ảnh từ máy tính">
-                            <i class="bx" :class="isStepUploading(sIdx) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
-                            <span>{{ isStepUploading(sIdx) ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                            <i class="bx" :class="isStepUploading(field, sIdx) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                            <span>{{ isStepUploading(field, sIdx) ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
                           </button>
                         </div>
                       </div>
@@ -230,7 +245,7 @@
 
               <button type="button" class="btn-add-step" @click="addRepeaterStep(section.id, field)">
                 <i class="bx bx-plus-circle"></i>
-                <span>Thêm bước</span>
+                <span>{{ getRepeaterConfig(field).addButtonText }}</span>
               </button>
             </div>
           </div>
@@ -413,6 +428,28 @@ const defaultPages = [
                 desc: { vi: 'Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm cuối cùng.', en: 'Execute creative design based on agreed directions and deliver the finalized outputs.' },
                 image: '/assets/images/gallery3.jpg',
               },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'about_members',
+        title: 'Thành viên',
+        fields: [
+          { key: 'members_heading_1', label: 'Tiêu đề dòng 1', type: 'text', value: { vi: 'GẶP GỠ', en: 'MEET' } },
+          { key: 'members_heading_2', label: 'Tiêu đề dòng 2', type: 'text', value: { vi: 'THÀNH VIÊN', en: 'THE TEAM' } },
+          {
+            key: 'members_list',
+            label: 'Danh sách thành viên',
+            type: 'repeater',
+            value: [
+              { id: 1, name: { vi: 'Mạnh Thọ', en: 'Manh Tho' }, role: { vi: 'CEO - CO founder', en: 'CEO - CO founder' }, image: '/assets/images/team1.png' },
+              { id: 2, name: { vi: 'Loan Ng', en: 'Loan Ng' }, role: { vi: 'Marketing Executive', en: 'Marketing Executive' }, image: '/assets/images/team2.png' },
+              { id: 3, name: { vi: 'Yen Nguyen', en: 'Yen Nguyen' }, role: { vi: 'UI/UX designer', en: 'UI/UX designer' }, image: '/assets/images/team3.png' },
+              { id: 4, name: { vi: 'Duw', en: 'Duw' }, role: { vi: 'Junior designer', en: 'Junior designer' }, image: '/assets/images/team4.png' },
+              { id: 5, name: { vi: 'Yen Nguyen', en: 'Yen Nguyen' }, role: { vi: 'UI/UX designer', en: 'UI/UX designer' }, image: '/assets/images/team3.png' },
+              { id: 6, name: { vi: 'Mạnh Thọ', en: 'Manh Tho' }, role: { vi: 'CEO - CO founder', en: 'CEO - CO founder' }, image: '/assets/images/team1.png' },
+              { id: 7, name: { vi: 'Loan Ng', en: 'Loan Ng' }, role: { vi: 'Marketing Executive', en: 'Marketing Executive' }, image: '/assets/images/team2.png' },
             ],
           },
         ],
@@ -724,10 +761,67 @@ const setGalleryItems = (sectionId, field, items) => {
   onFieldChange(sectionId, field.key, items);
 };
 
-// Workflow Steps Repeater helpers
+// Repeater helpers (Workflow Steps & Team Members)
 const stepFileInputRef = ref(null);
 const isUploadingStepImage = ref(false);
 const activeStepUploadTarget = ref({ sectionId: null, field: null, stepIdx: null });
+
+const repeaterConfigs = {
+  members_list: {
+    sectionLabel: 'Danh sách thành viên',
+    badgePrefix: '',
+    showHeaderTitle: false,
+    primaryKey: 'name',
+    primaryLabel: 'Họ tên thành viên',
+    primaryPlaceholderVi: 'Ví dụ: Mạnh Thọ...',
+    primaryPlaceholderEn: 'E.g. Manh Tho...',
+    secondaryKey: 'role',
+    secondaryLabel: 'Vai trò / Chức vụ',
+    secondaryType: 'input',
+    secondaryPlaceholderVi: 'Ví dụ: CEO - CO founder...',
+    secondaryPlaceholderEn: 'E.g. CEO - CO founder...',
+    imageLabel: 'Ảnh đại diện',
+    addButtonText: 'Thêm thành viên',
+    minItems: 0,
+    minMessage: '',
+    confirmDeleteLabel: 'Thành viên',
+    defaultImage: (nextNum) => `/assets/images/team${((nextNum - 1) % 4) + 1}.png`,
+    createItem: (nextNum) => ({
+      id: Date.now(),
+      name: { vi: `Thành viên ${nextNum}`, en: `Member ${nextNum}` },
+      role: { vi: 'Vị trí / Chức vụ', en: 'Role / Position' },
+      image: `/assets/images/team${((nextNum - 1) % 4) + 1}.png`,
+    }),
+  },
+  workflow_steps: {
+    sectionLabel: 'Các bước quy trình',
+    badgePrefix: 'Bước',
+    primaryKey: 'title',
+    primaryLabel: 'Tiêu đề bước',
+    primaryPlaceholderVi: 'Ví dụ: Trao đổi & tìm hiểu...',
+    primaryPlaceholderEn: 'Nhập tiêu đề tiếng Anh...',
+    secondaryKey: 'desc',
+    secondaryLabel: 'Mô tả chi tiết',
+    secondaryType: 'textarea',
+    secondaryPlaceholderVi: 'Nội dung mô tả chi tiết của bước này...',
+    secondaryPlaceholderEn: 'Nhập mô tả tiếng Anh...',
+    imageLabel: 'Hình ảnh minh họa',
+    addButtonText: 'Thêm bước',
+    minItems: 1,
+    minMessage: 'Quy trình phải có ít nhất 1 bước!',
+    confirmDeleteLabel: 'Bước',
+    createItem: (nextNum) => ({
+      id: Date.now(),
+      title: { vi: `Bước ${nextNum}: Tiêu đề mới`, en: `Step ${nextNum}: New title` },
+      desc: { vi: 'Nội dung mô tả cho bước mới...', en: 'Description for new step...' },
+      image: `/assets/images/gallery${((nextNum - 1) % 9) + 1}.jpg`,
+    }),
+  },
+};
+
+const getRepeaterConfig = (field) => {
+  return repeaterConfigs[field?.key] || repeaterConfigs.workflow_steps;
+};
 
 const getRepeaterItems = (field) => {
   if (!field) return [];
@@ -742,28 +836,22 @@ const getRepeaterItems = (field) => {
   return Array.isArray(val) ? val : [];
 };
 
-const getStepTitle = (step) => {
-  if (!step || !step.title) return '';
-  if (typeof step.title === 'object') {
-    return step.title[currentLanguage.value] !== undefined ? step.title[currentLanguage.value] : '';
+const getRepeaterItemField = (item, propKey) => {
+  if (!item || !item[propKey]) return '';
+  if (typeof item[propKey] === 'object') {
+    return item[propKey][currentLanguage.value] !== undefined ? item[propKey][currentLanguage.value] : '';
   }
-  return currentLanguage.value === 'vi' ? step.title : '';
+  return currentLanguage.value === 'vi' ? item[propKey] : '';
 };
 
-const getStepDesc = (step) => {
-  if (!step || !step.desc) return '';
-  if (typeof step.desc === 'object') {
-    return step.desc[currentLanguage.value] !== undefined ? step.desc[currentLanguage.value] : '';
+const getRepeaterPreviewTitle = (field, item) => {
+  const key = getRepeaterConfig(field).primaryKey;
+  const val = item?.[key];
+  if (!val) return '';
+  if (typeof val === 'object') {
+    return val[currentLanguage.value] || val.vi || val.en || '';
   }
-  return currentLanguage.value === 'vi' ? step.desc : '';
-};
-
-const getStepPreviewTitle = (step) => {
-  if (!step || !step.title) return '';
-  if (typeof step.title === 'object') {
-    return step.title[currentLanguage.value] || step.title.vi || step.title.en || '';
-  }
-  return step.title;
+  return val;
 };
 
 const getStepImage = (step) => {
@@ -775,42 +863,26 @@ const getStepImage = (step) => {
   return img;
 };
 
-const updateStepTitle = (sectionId, field, stepIdx, newVal) => {
+const updateRepeaterItemField = (sectionId, field, stepIdx, propKey, newVal) => {
   const items = [...getRepeaterItems(field)];
   if (!items[stepIdx]) return;
-  const currentStep = { ...items[stepIdx] };
-  let titleObj = currentStep.title;
-  if (!titleObj || typeof titleObj !== 'object') {
-    titleObj = { vi: titleObj || '', en: titleObj || '' };
+  const currentItem = { ...items[stepIdx] };
+  let fieldObj = currentItem[propKey];
+  if (!fieldObj || typeof fieldObj !== 'object') {
+    fieldObj = { vi: fieldObj || '', en: fieldObj || '' };
   } else {
-    titleObj = { ...titleObj };
+    fieldObj = { ...fieldObj };
   }
-  titleObj[currentLanguage.value] = newVal;
-  currentStep.title = titleObj;
-  items[stepIdx] = currentStep;
+  fieldObj[currentLanguage.value] = newVal;
+  currentItem[propKey] = fieldObj;
+  items[stepIdx] = currentItem;
   field.value = items;
   onFieldChange(sectionId, field.key, items);
 };
 
-const updateStepDesc = (sectionId, field, stepIdx, newVal) => {
-  const items = [...getRepeaterItems(field)];
-  if (!items[stepIdx]) return;
-  const currentStep = { ...items[stepIdx] };
-  let descObj = currentStep.desc;
-  if (!descObj || typeof descObj !== 'object') {
-    descObj = { vi: descObj || '', en: descObj || '' };
-  } else {
-    descObj = { ...descObj };
-  }
-  descObj[currentLanguage.value] = newVal;
-  currentStep.desc = descObj;
-  items[stepIdx] = currentStep;
-  field.value = items;
-  onFieldChange(sectionId, field.key, items);
-};
-
-const onStepFocus = (stepIdx) => {
-  if (previewIframe.value && previewIframe.value.contentWindow) {
+const onStepFocus = (field, stepIdx) => {
+  if (!previewIframe.value || !previewIframe.value.contentWindow) return;
+  if (field?.key === 'workflow_steps') {
     previewIframe.value.contentWindow.postMessage(
       {
         type: 'STUDIO_SCROLL_TO_WORKFLOW_STEP',
@@ -822,31 +894,27 @@ const onStepFocus = (stepIdx) => {
 };
 
 const addRepeaterStep = (sectionId, field) => {
+  const cfg = getRepeaterConfig(field);
   const items = [...getRepeaterItems(field)];
   const nextNum = items.length + 1;
-  const newStep = {
-    id: Date.now(),
-    title: { vi: `Bước ${nextNum}: Tiêu đề mới`, en: `Step ${nextNum}: New title` },
-    desc: { vi: 'Nội dung mô tả cho bước mới...', en: 'Description for new step...' },
-    image: `/assets/images/gallery${((nextNum - 1) % 9) + 1}.jpg`,
-  };
-  items.push(newStep);
+  items.push(cfg.createItem(nextNum));
   field.value = items;
   onFieldChange(sectionId, field.key, items);
-  setTimeout(() => onStepFocus(items.length - 1), 80);
+  setTimeout(() => onStepFocus(field, items.length - 1), 80);
 };
 
 const removeRepeaterStep = (sectionId, field, stepIdx) => {
+  const cfg = getRepeaterConfig(field);
   const items = [...getRepeaterItems(field)];
-  if (items.length <= 1) {
-    alert('Quy trình phải có ít nhất 1 bước!');
+  if (cfg.minItems > 0 && items.length <= cfg.minItems) {
+    alert(cfg.minMessage);
     return;
   }
-  if (!confirm(`Bạn có chắc muốn xóa Bước ${stepIdx + 1}?`)) return;
+  if (!confirm(`Bạn có chắc muốn xóa ${cfg.confirmDeleteLabel} ${stepIdx + 1}?`)) return;
   items.splice(stepIdx, 1);
   field.value = items;
   onFieldChange(sectionId, field.key, items);
-  setTimeout(() => onStepFocus(Math.max(0, stepIdx - 1)), 80);
+  setTimeout(() => onStepFocus(field, Math.max(0, stepIdx - 1)), 80);
 };
 
 const moveRepeaterStep = (sectionId, field, stepIdx, direction) => {
@@ -860,8 +928,12 @@ const moveRepeaterStep = (sectionId, field, stepIdx, direction) => {
   onFieldChange(sectionId, field.key, items);
 };
 
-const isStepUploading = (stepIdx) => {
-  return isUploadingStepImage.value && activeStepUploadTarget.value.stepIdx === stepIdx;
+const isStepUploading = (field, stepIdx) => {
+  return (
+    isUploadingStepImage.value &&
+    activeStepUploadTarget.value.field?.key === field?.key &&
+    activeStepUploadTarget.value.stepIdx === stepIdx
+  );
 };
 
 const triggerStepImageUpload = (sectionId, field, stepIdx) => {
@@ -889,7 +961,7 @@ const handleStepImageUploadSelected = async (e) => {
           items[stepIdx] = currentStep;
           field.value = items;
           onFieldChange(sectionId, field.key, items);
-          onStepFocus(stepIdx);
+          onStepFocus(field, stepIdx);
         }
       }
     }
@@ -947,7 +1019,7 @@ watch(currentLanguage, (newLang) => {
     currentPageData.value.sections.forEach((sec) => {
       if (sec.fields) {
         sec.fields.forEach((f) => {
-          if (f.key === 'workflow_steps') {
+          if (f.type === 'repeater' || f.key === 'workflow_steps') {
             onFieldChange(sec.id, f.key, f.value);
           } else if (f.type !== 'gallery') {
             let val = f.value;

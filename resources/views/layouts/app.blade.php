@@ -295,6 +295,76 @@
                             }
                         }
                     }
+                } else if (fieldKey === 'members_list') {
+                    const grid = document.getElementById('membersGridContainer');
+                    if (grid) {
+                        let members = value;
+                        if (typeof members === 'string') {
+                            try { members = JSON.parse(members); } catch (e) {}
+                        }
+                        if (members && typeof members === 'object' && !Array.isArray(members)) {
+                            members = Object.values(members);
+                        }
+
+                        if (Array.isArray(members)) {
+                            const getLangVal = (obj) => {
+                                if (obj === null || obj === undefined) return '';
+                                if (typeof obj === 'string') return obj;
+                                if (typeof obj === 'object') {
+                                    if (obj[currentLang] !== undefined && obj[currentLang] !== null) return obj[currentLang];
+                                    if (obj.vi !== undefined && obj.vi !== null) return obj.vi;
+                                    if (obj.en !== undefined && obj.en !== null) return obj.en;
+                                    return '';
+                                }
+                                return String(obj);
+                            };
+                            const escHtml = (str) => String(str || '')
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;')
+                                .replace(/"/g, '&quot;')
+                                .replace(/'/g, '&#39;');
+
+                            const patterns = [
+                                ['member', 'spacer', 'member', 'member'],
+                                ['spacer', 'member', 'spacer', 'member'],
+                                ['member', 'spacer', 'member', 'spacer'],
+                            ];
+                            let cursor = 0;
+                            let pIdx = 0;
+                            let rowsHtml = '';
+
+                            while (cursor < members.length) {
+                                const pattern = patterns[pIdx % patterns.length];
+                                let slotsHtml = '';
+                                for (const slotType of pattern) {
+                                    if (slotType === 'member' && cursor < members.length) {
+                                        const m = members[cursor] || {};
+                                        const name = getLangVal(m.name);
+                                        const role = getLangVal(m.role);
+                                        const rawImg = getLangVal(m.image) || '/assets/images/team1.png';
+                                        const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(/^\//, '');
+                                        slotsHtml += `
+                                            <div class="col-6 col-md-3 member-item">
+                                                <div class="member-card">
+                                                    <img src="${escHtml(imgSrc)}" alt="${escHtml(name)}">
+                                                    <h4 class="member-name">${escHtml(name)}</h4>
+                                                    <p class="member-role">${escHtml(role)}</p>
+                                                </div>
+                                            </div>
+                                        `;
+                                        cursor++;
+                                    } else {
+                                        slotsHtml += '<div class="col-md-3 d-none d-md-block"></div>';
+                                    }
+                                }
+                                rowsHtml += `<div class="row member-row">${slotsHtml}</div>`;
+                                pIdx++;
+                            }
+
+                            grid.innerHTML = rowsHtml;
+                        }
+                    }
                 } else {
                     // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);

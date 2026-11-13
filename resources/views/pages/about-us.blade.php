@@ -363,80 +363,119 @@
 
     @include('partials.services-section', ['introContainerClass' => 'px-4'])
 
-    <section class="members-section">
+    @php
+        $rawMembers = $pageContents['members_list'] ?? null;
+        if (is_string($rawMembers)) {
+            $decodedMembers = json_decode($rawMembers, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decodedMembers)) {
+                $rawMembers = $decodedMembers;
+            }
+        }
+        if (!is_array($rawMembers)) {
+            $rawMembers = [
+                [
+                    'name' => ['vi' => 'Mạnh Thọ', 'en' => 'Manh Tho'],
+                    'role' => ['vi' => 'CEO - CO founder', 'en' => 'CEO - CO founder'],
+                    'image' => '/assets/images/team1.png',
+                ],
+                [
+                    'name' => ['vi' => 'Loan Ng', 'en' => 'Loan Ng'],
+                    'role' => ['vi' => 'Marketing Executive', 'en' => 'Marketing Executive'],
+                    'image' => '/assets/images/team2.png',
+                ],
+                [
+                    'name' => ['vi' => 'Yen Nguyen', 'en' => 'Yen Nguyen'],
+                    'role' => ['vi' => 'UI/UX designer', 'en' => 'UI/UX designer'],
+                    'image' => '/assets/images/team3.png',
+                ],
+                [
+                    'name' => ['vi' => 'Duw', 'en' => 'Duw'],
+                    'role' => ['vi' => 'Junior designer', 'en' => 'Junior designer'],
+                    'image' => '/assets/images/team4.png',
+                ],
+                [
+                    'name' => ['vi' => 'Yen Nguyen', 'en' => 'Yen Nguyen'],
+                    'role' => ['vi' => 'UI/UX designer', 'en' => 'UI/UX designer'],
+                    'image' => '/assets/images/team3.png',
+                ],
+                [
+                    'name' => ['vi' => 'Mạnh Thọ', 'en' => 'Manh Tho'],
+                    'role' => ['vi' => 'CEO - CO founder', 'en' => 'CEO - CO founder'],
+                    'image' => '/assets/images/team1.png',
+                ],
+                [
+                    'name' => ['vi' => 'Loan Ng', 'en' => 'Loan Ng'],
+                    'role' => ['vi' => 'Marketing Executive', 'en' => 'Marketing Executive'],
+                    'image' => '/assets/images/team2.png',
+                ],
+            ];
+        } else {
+            $rawMembers = array_values($rawMembers);
+        }
+
+        // Staggered 4-column row cycle (3 + 2 + 2 = 7 members per cycle)
+        $memberRowPatterns = [
+            ['member', 'spacer', 'member', 'member'],
+            ['spacer', 'member', 'spacer', 'member'],
+            ['member', 'spacer', 'member', 'spacer'],
+        ];
+        $memberRows = [];
+        $memberCursor = 0;
+        $patternIdx = 0;
+        $totalMembers = count($rawMembers);
+
+        while ($memberCursor < $totalMembers) {
+            $pattern = $memberRowPatterns[$patternIdx % count($memberRowPatterns)];
+            $rowSlots = [];
+            foreach ($pattern as $slotType) {
+                if ($slotType === 'member' && $memberCursor < $totalMembers) {
+                    $rowSlots[] = ['type' => 'member', 'data' => $rawMembers[$memberCursor]];
+                    $memberCursor++;
+                } else {
+                    $rowSlots[] = ['type' => 'spacer'];
+                }
+            }
+            $memberRows[] = $rowSlots;
+            $patternIdx++;
+        }
+    @endphp
+
+    <section class="members-section" data-studio-container="about_members">
         <div class="container-fluid px-4 px-md-5">
             <div class="row">
                 <div class="col-12 testimonial-title-container">
-                    <h2 class="testimonial-title text-left scroll-slide-left">GẶP GỠ</h2>
-                    <h2 class="testimonial-title text-right scroll-slide-right">THÀNH VIÊN</h2>
+                    <h2 class="testimonial-title text-left scroll-slide-left" data-studio-key="members_heading_1">@normVal($pageContents['members_heading_1'] ?? null, 'GẶP GỠ')</h2>
+                    <h2 class="testimonial-title text-right scroll-slide-right" data-studio-key="members_heading_2">@normVal($pageContents['members_heading_2'] ?? null, 'THÀNH VIÊN')</h2>
                 </div>
             </div>
 
-            <div class="members-grid-container mt-5">
-
-                <div class="row member-row">
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team1.png') }}" alt="Manh Tho">
-                            <h4 class="member-name">Mạnh Thọ</h4>
-                            <p class="member-role">CEO - CO founder</p>
-                        </div>
+            <div class="members-grid-container mt-5" id="membersGridContainer">
+                @foreach($memberRows as $rowSlots)
+                    <div class="row member-row">
+                        @foreach($rowSlots as $slot)
+                            @if($slot['type'] === 'member')
+                                @php
+                                    $m = $slot['data'];
+                                    $mName = \App\Helpers\NormHelper::val($m['name'] ?? '', '');
+                                    $mRole = \App\Helpers\NormHelper::val($m['role'] ?? '', '');
+                                    $mImg = $m['image'] ?? '/assets/images/team1.png';
+                                    $mImgUrl = !empty($mImg)
+                                        ? (str_starts_with($mImg, 'http') ? $mImg : asset(ltrim($mImg, '/')))
+                                        : asset('assets/images/team1.png');
+                                @endphp
+                                <div class="col-6 col-md-3 member-item">
+                                    <div class="member-card">
+                                        <img src="{{ $mImgUrl }}" alt="{{ $mName }}">
+                                        <h4 class="member-name">{{ $mName }}</h4>
+                                        <p class="member-role">{{ $mRole }}</p>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="col-md-3 d-none d-md-block"></div>
+                            @endif
+                        @endforeach
                     </div>
-                    <div class="col-md-3 d-none d-md-block"></div>
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team2.png') }}" alt="Loan Ng">
-                            <h4 class="member-name">Loan Ng</h4>
-                            <p class="member-role">Marketing Executive</p>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team3.png') }}" alt="Thanh Vien 3">
-                            <h4 class="member-name">Yen Nguyen</h4>
-                            <p class="member-role">UI/UX designer</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row member-row">
-                    <div class="col-md-3 d-none d-md-block"></div>
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team4.png') }}" alt="Duw">
-                            <h4 class="member-name">Duw</h4>
-                            <p class="member-role">Junior designer</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-none d-md-block"></div>
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team3.png') }}" alt="Yen Nguyen">
-                            <h4 class="member-name">Yen Nguyen</h4>
-                            <p class="member-role">UI/UX designer</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row member-row">
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team1.png') }}" alt="Member 5">
-                            <h4 class="member-name">Mạnh Thọ</h4>
-                            <p class="member-role">CEO - CO founder</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-none d-md-block"></div>
-                    <div class="col-6 col-md-3 member-item">
-                        <div class="member-card">
-                            <img src="{{ asset('assets/images/team2.png') }}" alt="Member 6">
-                            <h4 class="member-name">Loan Ng</h4>
-                            <p class="member-role">Marketing Executive</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-none d-md-block"></div>
-                </div>
-
+                @endforeach
             </div>
         </div>
     </section>
