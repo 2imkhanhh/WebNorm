@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\PageContent;
 use App\Models\Project;
+use App\Models\ProjectCategory;
 use App\Models\Review;
 use App\Models\Service;
 use App\Models\Setting;
@@ -68,7 +69,8 @@ class HomeController extends Controller
     {
         $pageContents = $this->getPageContentMap('/work', $request);
         $projects = Project::where('is_active', true)->with('categories')->orderBy('sort_order')->get();
-        return view('pages.work', compact('pageContents', 'projects'));
+        $categories = ProjectCategory::orderBy('sort_order')->orderBy('id')->get();
+        return view('pages.work', compact('pageContents', 'projects', 'categories'));
     }
 
     public function workDetail(Request $request, $slug = null)

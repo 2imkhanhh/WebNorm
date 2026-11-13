@@ -4,24 +4,86 @@
 @section('body_class', 'work-page')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/work.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/work.css') }}?v={{ filemtime(public_path('assets/css/work.css')) }}">
 @endpush
 
 @section('content')
-<section class="work-hero-section">
-        <div class="work-hero-container">
+    @php
+        $locale = session('locale', 'vi');
+        $filterAllLabel = \App\Helpers\NormHelper::val($pageContents['filter_all'] ?? null, 'TẤT CẢ DỰ ÁN');
+        $filterFeaturedLabel = \App\Helpers\NormHelper::val($pageContents['filter_featured'] ?? null, 'NỔI BẬT');
+
+        $dynamicFilters = [
+            [
+                'filter' => 'featured',
+                'label' => $filterFeaturedLabel,
+                'studioKey' => 'filter_featured',
+            ],
+        ];
+
+        if (isset($categories) && $categories->isNotEmpty()) {
+            foreach ($categories as $cat) {
+                $dynamicFilters[] = [
+                    'filter' => $cat->slug,
+                    'label' => $cat->getName($locale),
+                    'studioKey' => null,
+                ];
+            }
+        }
+
+        // Group filter items into staggered editorial rows while keeping long names from colliding
+        $filterRows = [];
+        $count = count($dynamicFilters);
+        $idx = 0;
+        $alignRightNext = true;
+
+        while ($idx < $count) {
+            $curr = $dynamicFilters[$idx];
+            $currLen = mb_strlen(trim($curr['label']), 'UTF-8');
+
+            if ($idx + 1 < $count) {
+                $next = $dynamicFilters[$idx + 1];
+                $nextLen = mb_strlen(trim($next['label']), 'UTF-8');
+
+                if ($currLen <= 18 && $nextLen <= 18 && $currLen + $nextLen <= 28) {
+                    $filterRows[] = [
+                        'class' => 'wh-space-between',
+                        'items' => [$curr, $next],
+                    ];
+                    $idx += 2;
+                    $alignRightNext = true;
+                    continue;
+                }
+            }
+
+            $filterRows[] = [
+                'class' => $alignRightNext ? 'wh-right' : '',
+                'items' => [$curr],
+            ];
+            $alignRightNext = !$alignRightNext;
+            $idx++;
+        }
+
+        $hasLongFilter = count($dynamicFilters) > 3
+            || mb_strlen(trim($filterAllLabel), 'UTF-8') > 16
+            || collect($dynamicFilters)->contains(fn($item) => mb_strlen(trim($item['label']), 'UTF-8') > 15);
+    @endphp
+
+    <section class="work-hero-section">
+        <div class="work-hero-container {{ $hasLongFilter ? 'has-long-filter' : '' }}">
             <div class="wh-line">
-                <a href="#" class="wh-text wh-dark filter-btn" data-filter="all" data-studio-key="filter_all">@normVal($pageContents['filter_all'] ?? null, 'TẤT CẢ DỰ ÁN')</a>
+                <a href="#" class="wh-text wh-dark filter-btn" data-filter="all"
+                    data-studio-key="filter_all">{{ $filterAllLabel }}</a>
             </div>
 
-            <div class="wh-line wh-space-between">
-                <a href="#" class="wh-text wh-light filter-btn" data-filter="featured" data-studio-key="filter_featured">@normVal($pageContents['filter_featured'] ?? null, 'NỔI BẬT')</a>
-                <a href="#" class="wh-text wh-light filter-btn" data-filter="identity" data-studio-key="filter_identity">@normVal($pageContents['filter_identity'] ?? null, 'NHẬN DIỆN')</a>
-            </div>
-
-            <div class="wh-line wh-right">
-                <a href="#" class="wh-text wh-light filter-btn" data-filter="website" data-studio-key="filter_website">@normVal($pageContents['filter_website'] ?? null, 'WEBSITE')</a>
-            </div>
+            @foreach ($filterRows as $row)
+                <div class="wh-line {{ $row['class'] }}">
+                    @foreach ($row['items'] as $item)
+                        <a href="#" class="wh-text wh-light filter-btn" data-filter="{{ $item['filter'] }}"
+                            @if ($item['studioKey']) data-studio-key="{{ $item['studioKey'] }}" @endif>{{ $item['label'] }}</a>
+                    @endforeach
+                </div>
+            @endforeach
         </div>
     </section>
 
@@ -34,18 +96,28 @@
 
         <div class="work-grid">
             @forelse($projects as $p)
-            <a href="{{ route('work.detail', $p->slug) }}" class="project-card" data-category="{{ strtolower($p->getCategory()) }}" data-featured="{{ $p->is_featured ? '1' : '0' }}">
-                <div class="project-img-wrap">
-                    <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}" class="project-img">
-                </div>
-                <div class="project-info">
-                    <h3 class="project-title">{{ $p->getTitle() }}</h3>
-                    <p class="project-category">{{ $p->getCategory() }}</p>
-                </div>
-            </a>
+                @php
+                    $catSlugs = $p->categories->pluck('slug')->implode(',');
+                @endphp
+                <a href="{{ route('work.detail', $p->slug) }}" class="project-card"
+                    data-category-slugs="{{ $catSlugs }}" data-category="{{ strtolower($p->getCategory()) }}"
+                    data-featured="{{ $p->is_featured ? '1' : '0' }}">
+                    <div class="project-img-wrap">
+                        <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}"
+                            alt="{{ $p->getTitle() }}" class="project-img">
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">{{ $p->getTitle() }}</h3>
+                        <p class="project-category">{{ $p->getCategory() }}</p>
+                    </div>
+                </a>
             @empty
-            <div class="col-12 py-5 text-center text-muted">Chưa có dự án nào được cập nhật.</div>
+                <div class="col-12 py-5 text-center text-muted">Chưa có dự án nào được cập nhật.</div>
             @endforelse
+        </div>
+
+        <div id="workEmptyFilterMsg" class="py-5 text-center text-muted" style="display: none;">
+            Chưa có dự án nào trong danh mục này.
         </div>
 
         <div class="load-more-wrap">
@@ -53,14 +125,15 @@
         </div>
     </section>
 
-    @endsection
+@endsection
 
 @push('scripts')
-<script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const filterBtns = document.querySelectorAll('.filter-btn');
             const projects = document.querySelectorAll('.project-card');
             const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const emptyFilterMsg = document.getElementById('workEmptyFilterMsg');
 
             let currentItems = 9;
             let currentFilter = 'all';
@@ -70,10 +143,19 @@
                 let matchingCount = 0;
 
                 projects.forEach(project => {
-
+                    const slugs = (project.getAttribute('data-category-slugs') || '').split(',').filter(
+                        Boolean);
                     const category = (project.getAttribute('data-category') || '').toLowerCase();
                     const isFeatured = project.getAttribute('data-featured') === '1';
-                    const matchesFilter = currentFilter === 'all' || (currentFilter === 'featured' ? isFeatured : category.includes(currentFilter));
+
+                    let matchesFilter = false;
+                    if (currentFilter === 'all') {
+                        matchesFilter = true;
+                    } else if (currentFilter === 'featured') {
+                        matchesFilter = isFeatured;
+                    } else {
+                        matchesFilter = slugs.includes(currentFilter) || category.includes(currentFilter);
+                    }
 
                     if (matchesFilter) {
                         matchingCount++;
@@ -92,6 +174,10 @@
                         project.style.display = 'none';
                     }
                 });
+
+                if (emptyFilterMsg && projects.length > 0) {
+                    emptyFilterMsg.style.display = matchingCount === 0 ? 'block' : 'none';
+                }
 
                 if (loadMoreBtn) {
                     if (matchingCount > currentItems) {

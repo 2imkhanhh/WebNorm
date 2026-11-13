@@ -466,10 +466,8 @@ const defaultPages = [
         id: 'work_hero',
         title: 'Banner Dự án & Bộ lọc',
         fields: [
-          { key: 'filter_all', label: 'Nút bộ lọc 1', type: 'text', value: { vi: 'TẤT CẢ DỰ ÁN', en: 'ALL PROJECTS' } },
-          { key: 'filter_featured', label: 'Nút bộ lọc 2', type: 'text', value: { vi: 'NỔI BẬT', en: 'FEATURED' } },
-          { key: 'filter_identity', label: 'Nút bộ lọc 3', type: 'text', value: { vi: 'NHẬN DIỆN', en: 'IDENTITY' } },
-          { key: 'filter_website', label: 'Nút bộ lọc 4', type: 'text', value: { vi: 'WEBSITE', en: 'WEBSITE' } },
+          { key: 'filter_all', label: 'Nhãn nút "Tất cả dự án"', type: 'text', value: { vi: 'TẤT CẢ DỰ ÁN', en: 'ALL PROJECTS' } },
+          { key: 'filter_featured', label: 'Nhãn nút "Nổi bật"', type: 'text', value: { vi: 'NỔI BẬT', en: 'FEATURED' } },
         ],
       },
     ],

@@ -15,12 +15,17 @@ body.work-page {
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: clamp(4px, 0.8vw, 14px);
 }
 
 .wh-line {
     display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: clamp(20px, 3.5vw, 64px);
+    row-gap: clamp(4px, 0.8vw, 14px);
     width: 100%;
-    line-height: 1.2;
+    line-height: 1.15;
 }
 
 .wh-space-between {
@@ -31,14 +36,26 @@ body.work-page {
     justify-content: flex-end;
 }
 
+.wh-right .wh-text {
+    text-align: right;
+}
+
 .wh-text {
     font-family: 'AeonikPro', sans-serif;
     font-size: clamp(40px, 8vw, 130px);
     font-weight: 500;
+    line-height: 1.08;
     letter-spacing: -0.02em;
     text-decoration: none;
+    text-transform: uppercase;
+    max-width: 100%;
+    overflow-wrap: break-word;
     transition: color 0.3s ease, opacity 0.3s ease;
     display: inline-block;
+}
+
+.work-hero-container.has-long-filter .wh-text {
+    font-size: clamp(26px, 5.2vw, 92px);
 }
 
 .wh-dark {
@@ -318,6 +335,10 @@ body.dark-mode .work-list-section .load-more-btn:hover {
         font-size: clamp(36px, 7vw, 80px);
     }
 
+    .work-hero-container.has-long-filter .wh-text {
+        font-size: clamp(24px, 5.2vw, 64px);
+    }
+
     .work-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 32px 40px;
@@ -347,6 +368,10 @@ body.dark-mode .work-list-section .load-more-btn:hover {
     .wh-text {
         font-size: clamp(28px, 9vw, 52px);
         letter-spacing: -0.01em;
+    }
+
+    .work-hero-container.has-long-filter .wh-text {
+        font-size: clamp(22px, 7vw, 44px);
     }
 
     .work-list-section {
