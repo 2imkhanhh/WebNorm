@@ -253,15 +253,15 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.login.submit') }}" method="POST">
+        <form action="{{ route('admin.login.submit') }}" method="POST" autocomplete="off">
             @csrf
 
             <div class="form-group">
-                <label for="email" class="form-label">Email quản trị</label>
+                <label for="email" class="form-label">Email</label>
                 <div class="input-wrap">
                     <i class='bx bx-envelope input-icon-left'></i>
                     <input type="email" id="email" name="email" class="form-control"
-                        value="{{ old('email', 'admin@norm.vn') }}" required autofocus placeholder="admin@norm.vn">
+                        value="{{ old('email') }}" required autofocus autocomplete="off" placeholder="Nhập email">
                 </div>
             </div>
 
@@ -269,8 +269,8 @@
                 <label for="password" class="form-label">Mật khẩu</label>
                 <div class="input-wrap">
                     <i class='bx bx-lock-alt input-icon-left'></i>
-                    <input type="password" id="password" name="password" class="form-control" value="admin123" required
-                        placeholder="••••••••">
+                    <input type="password" id="password" name="password" class="form-control" required
+                        autocomplete="new-password" placeholder="Nhập mật khẩu">
                     <button type="button" class="toggle-password-btn" id="togglePassword" aria-label="Hiện/ẩn mật khẩu">
                         <i class='bx bx-hide' id="eyeIcon"></i>
                     </button>
@@ -297,7 +297,6 @@
             });
         }
     </script>
-</body>
 </body>
 
 </html>
