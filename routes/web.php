@@ -79,14 +79,14 @@ Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
     }
 
     return response()->json(['success' => true, 'message' => __('site.contact_success')]);
-})->name('contact.submit');
+})->middleware('throttle:10,1')->name('contact.submit');
 
 // Admin Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:15,1')->name('admin.login.submit');
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
     // Protected Admin Dashboard Routes (Inertia.js)

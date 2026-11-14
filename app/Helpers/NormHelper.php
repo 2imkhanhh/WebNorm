@@ -138,5 +138,26 @@ class NormHelper
         }
         return static::val($val, (string) $default, $lang);
     }
+
+    /**
+     * Strip unsafe executable tags, inline event handlers, and javascript: URIs from rich HTML.
+     */
+    public static function sanitizeHtml(?string $html): string
+    {
+        if ($html === null || $html === '') {
+            return '';
+        }
+
+        // Remove dangerous paired tags including their inner payload
+        $clean = preg_replace('/<(script|iframe|object|embed|svg|form|meta|base)\b[^>]*>.*?<\/\1>/is', '', $html) ?? $html;
+        // Remove standalone dangerous void/unclosed tags
+        $clean = preg_replace('/<(script|iframe|object|embed|svg|form|meta|base)\b[^>]*\/?>/is', '', $clean) ?? $clean;
+        // Strip inline event handlers (onclick, onerror, onload, etc.)
+        $clean = preg_replace('/\s+on[a-z]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/is', '', $clean) ?? $clean;
+        // Neutralize javascript: / vbscript: / data:text/html schemes in href/src
+        $clean = preg_replace('/(href|src)\s*=\s*(["\'])\s*(?:javascript|vbscript|data\s*:\s*text\/html)\s*:[^"\']*\2/is', '$1="#"', $clean) ?? $clean;
+
+        return $clean;
+    }
 }
 

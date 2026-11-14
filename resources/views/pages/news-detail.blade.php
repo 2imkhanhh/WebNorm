@@ -49,7 +49,7 @@
                             $articleBody = $blog ? $blog->getContent() : '';
                         @endphp
                         @if(!empty($articleBody))
-                            {!! $articleBody !!}
+                            {!! \App\Helpers\NormHelper::sanitizeHtml($articleBody) !!}
                         @else
                             <p>{{ __('site.news_content_updating') }}</p>
                         @endif

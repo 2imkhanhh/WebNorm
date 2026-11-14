@@ -7,11 +7,46 @@ use App\Models\Setting;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class SettingController extends Controller
 {
+    /**
+     * Whitelist of permitted setting keys persisted from Admin Settings.
+     */
+    private const ALLOWED_KEYS = [
+        'logo',
+        'model_3d',
+        'copyright',
+        'footer_btn_text',
+        'footer_social_title',
+        'footer_line1_old',
+        'footer_line1_new',
+        'footer_line2_old',
+        'footer_line2_new',
+        'footer_line3_old',
+        'footer_line3_new',
+        'hotline',
+        'email',
+        'address',
+        'mail_enabled',
+        'mail_to_address',
+        'mail_host',
+        'mail_port',
+        'mail_encryption',
+        'mail_username',
+        'mail_password',
+        'mail_from_address',
+        'mail_from_name',
+        'social_facebook',
+        'social_instagram',
+        'social_linkedin',
+        'social_behance',
+        'social_dribbble',
+    ];
+
     public function index()
     {
         $allSettings = Setting::all();
@@ -31,9 +66,12 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         $items = $request->input('settings', []);
+        if (! is_array($items)) {
+            return back()->withErrors(['settings' => 'Dữ liệu cài đặt không hợp lệ.']);
+        }
 
         foreach ($items as $key => $value) {
-            if ($key === 'mail_password_set') {
+            if (! in_array($key, self::ALLOWED_KEYS, true)) {
                 continue;
             }
 
@@ -100,9 +138,15 @@ class SettingController extends Controller
                 'message' => 'Đã gửi email thử nghiệm tới: ' . implode(', ', $resolved['recipients']),
             ]);
         } catch (\Throwable $e) {
+            Log::warning('SMTP test mail failed: ' . $e->getMessage());
+
+            $errorDetail = config('app.debug')
+                ? $e->getMessage()
+                : 'Không thể kết nối máy chủ SMTP. Vui lòng kiểm tra Host, Port, Email và Mật khẩu ứng dụng.';
+
             return response()->json([
                 'success' => false,
-                'message' => 'Gửi thử thất bại: ' . $e->getMessage(),
+                'message' => 'Gửi thử thất bại: ' . $errorDetail,
             ], 500);
         }
     }
