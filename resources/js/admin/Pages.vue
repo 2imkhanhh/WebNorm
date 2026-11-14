@@ -284,6 +284,13 @@ import {
   onDiscardDraftHandler,
   previewIframe,
 } from './composables/useAdmin';
+import {
+  askConfirm,
+  extractErrorMessage,
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from './composables/useFeedback';
 
 const props = defineProps({
   initialPages: {
@@ -619,7 +626,7 @@ const handleLinkSelectChange = (sectionId, field, selectedVal) => {
 // Single media upload worker
 const uploadSingleMediaFile = async (file) => {
   if (file.size > 40 * 1024 * 1024) {
-    alert(`Dung lượng tệp "${file.name}" không được vượt quá 40MB!`);
+    notifyWarning(`Dung lượng tệp "${file.name}" không được vượt quá 40MB!`);
     return null;
   }
   const formData = new FormData();
@@ -641,11 +648,11 @@ const uploadSingleMediaFile = async (file) => {
     if (data && data.success && data.file_path) {
       return data.file_path;
     } else {
-      alert('Không thể tải tệp lên: ' + (data?.message || 'Lỗi không xác định'));
+      notifyError('Không thể tải tệp lên: ' + (data?.message || 'Lỗi không xác định'));
       return null;
     }
   } catch (err) {
-    alert('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
+    notifyError('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
     return null;
   }
 };
@@ -901,14 +908,20 @@ const addRepeaterStep = (sectionId, field) => {
   setTimeout(() => onStepFocus(field, items.length - 1), 80);
 };
 
-const removeRepeaterStep = (sectionId, field, stepIdx) => {
+const removeRepeaterStep = async (sectionId, field, stepIdx) => {
   const cfg = getRepeaterConfig(field);
   const items = [...getRepeaterItems(field)];
   if (cfg.minItems > 0 && items.length <= cfg.minItems) {
-    alert(cfg.minMessage);
+    notifyWarning(cfg.minMessage);
     return;
   }
-  if (!confirm(`Bạn có chắc muốn xóa ${cfg.confirmDeleteLabel} ${stepIdx + 1}?`)) return;
+  const ok = await askConfirm({
+    title: `Xóa ${cfg.confirmDeleteLabel}`,
+    message: `Bạn có chắc muốn xóa ${cfg.confirmDeleteLabel} ${stepIdx + 1}?`,
+    confirmText: 'Xóa',
+    variant: 'danger',
+  });
+  if (!ok) return;
   items.splice(stepIdx, 1);
   field.value = items;
   onFieldChange(sectionId, field.key, items);
@@ -1100,19 +1113,25 @@ const savePagesToDatabase = (isDraft = false) => {
             baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
         }
 
-        alert(isDraft ? 'Đã lưu bản nháp thành công!' : 'Đã xuất bản thành công!');
+        notifySuccess(isDraft ? 'Đã lưu bản nháp thành công!' : 'Đã xuất bản thành công!');
       },
       onError: (err) => {
         isSaving.value = false;
         isSavingDraft.value = false;
-        alert('Có lỗi xảy ra khi lưu: ' + JSON.stringify(err));
+        notifyError('Có lỗi xảy ra khi lưu: ' + extractErrorMessage(err));
       },
     }
   );
 };
 
-const handleDiscardDraft = () => {
-  if (!confirm('Bạn có chắc chắn muốn xóa bản nháp này không?')) {
+const handleDiscardDraft = async () => {
+  const ok = await askConfirm({
+    title: 'Xóa bản nháp',
+    message: 'Bạn có chắc chắn muốn xóa bản nháp này không?',
+    confirmText: 'Xóa bản nháp',
+    variant: 'danger',
+  });
+  if (!ok) {
     return;
   }
 
@@ -1157,18 +1176,24 @@ const handleDiscardDraft = () => {
             baseSlug + (baseSlug.includes('?') ? '&' : '?') + 'preview=draft&t=' + Date.now();
         }
 
-        alert('Đã xóa bản nháp thành công!');
+        notifySuccess('Đã xóa bản nháp thành công!');
       },
       onError: (err) => {
         isDiscardingDraft.value = false;
-        alert('Có lỗi xảy ra khi xóa bản nháp: ' + JSON.stringify(err));
+        notifyError('Có lỗi xảy ra khi xóa bản nháp: ' + extractErrorMessage(err));
       },
     }
   );
 };
 
-const revertChanges = () => {
-  if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại nội dung đã lưu gần nhất?')) {
+const revertChanges = async () => {
+  const ok = await askConfirm({
+    title: 'Hủy thay đổi chưa lưu',
+    message: 'Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại nội dung đã lưu gần nhất?',
+    confirmText: 'Hủy thay đổi',
+    variant: 'warning',
+  });
+  if (ok) {
     // Restore strictly from pristine snapshot
     pages.value = clone(originalPagesSnapshot.value);
     renderKey.value++;

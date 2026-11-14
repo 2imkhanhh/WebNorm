@@ -578,6 +578,13 @@ import {
   onSaveHandler,
   onDraftHandler,
 } from './composables/useAdmin';
+import {
+  askConfirm,
+  extractErrorMessage,
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from './composables/useFeedback';
 
 const props = defineProps({
   projects: {
@@ -1017,7 +1024,7 @@ const triggerGalleryUpload = () => {
 
 const uploadSingleFile = async (file) => {
   if (file.size > 50 * 1024 * 1024) {
-    alert('Dung lượng tệp không được vượt quá 50MB!');
+    notifyWarning('Dung lượng tệp không được vượt quá 50MB!');
     return null;
   }
   const formData = new FormData();
@@ -1129,7 +1136,7 @@ watch(currentLanguage, () => {
 const saveCategory = () => {
   const val = categoryInputName.value.trim();
   if (!val) {
-    alert(currentLanguage.value === 'en' ? 'Please enter category name!' : 'Vui lòng nhập tên danh mục!');
+    notifyWarning(currentLanguage.value === 'en' ? 'Please enter category name!' : 'Vui lòng nhập tên danh mục!');
     return;
   }
 
@@ -1152,28 +1159,32 @@ const saveCategory = () => {
       onSuccess: () => {
         isSavingCategory.value = false;
         cancelEditCategory();
+        notifySuccess(isEditing ? 'Đã cập nhật danh mục!' : 'Đã thêm danh mục mới!');
       },
       onError: (err) => {
         isSavingCategory.value = false;
-        alert('Lỗi lưu danh mục: ' + JSON.stringify(err));
+        notifyError('Lỗi lưu danh mục: ' + extractErrorMessage(err));
       },
     }
   );
 };
 
-const deleteCategory = (cat) => {
-  if (
-    !confirm(
-      `Bạn có chắc chắn muốn xóa danh mục "${getTrans(cat.name)}" không?`
-    )
-  ) {
+const deleteCategory = async (cat) => {
+  const ok = await askConfirm({
+    title: 'Xóa danh mục',
+    message: `Bạn có chắc chắn muốn xóa danh mục "${getTrans(cat.name)}" không?`,
+    confirmText: 'Xóa danh mục',
+    variant: 'danger',
+  });
+  if (!ok) {
     return;
   }
 
   router.delete(`/admin/project-categories/${cat.id}`, {
     preserveScroll: true,
+    onSuccess: () => notifySuccess(`Đã xóa danh mục "${getTrans(cat.name)}".`),
     onError: (err) => {
-      alert('Lỗi khi xóa danh mục: ' + JSON.stringify(err));
+      notifyError('Lỗi khi xóa danh mục: ' + extractErrorMessage(err));
     },
   });
 };
@@ -1182,17 +1193,17 @@ const deleteCategory = (cat) => {
 const submitForm = () => {
   const currentTitle = (modalLang.value === 'en' ? form.title_en : form.title_vi) || form.title_vi || form.title_en;
   if (!currentTitle || !currentTitle.trim()) {
-    alert(modalLang.value === 'en' ? 'Vui lòng nhập tên dự án!' : 'Vui lòng nhập tên dự án!');
+    notifyWarning('Vui lòng nhập tên dự án!');
     return;
   }
 
   if (!form.slug || !form.slug.trim()) {
-    alert('Vui lòng nhập đường dẫn tĩnh');
+    notifyWarning('Vui lòng nhập đường dẫn tĩnh');
     return;
   }
 
   if (!form.category_ids || form.category_ids.length === 0) {
-    alert('Vui lòng chọn ít nhất 1 danh mục cho dự án!');
+    notifyWarning('Vui lòng chọn ít nhất 1 danh mục cho dự án!');
     return;
   }
 
@@ -1255,8 +1266,14 @@ const submitForm = () => {
 };
 
 // Delete action
-const confirmDelete = (p) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa dự án "${getTrans(p.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`)) {
+const confirmDelete = async (p) => {
+  const ok = await askConfirm({
+    title: 'Xóa dự án',
+    message: `Bạn có chắc chắn muốn xóa dự án "${getTrans(p.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi database sau khi bạn bấm "Xuất bản")`,
+    confirmText: 'Xóa dự án',
+    variant: 'danger',
+  });
+  if (ok) {
     localProjects.value = localProjects.value.filter((item) => item.id !== p.id);
     if (typeof p.id === 'number' || (typeof p.id === 'string' && !p.id.startsWith('temp_'))) {
       deletedIds.value.push(p.id);
@@ -1266,8 +1283,14 @@ const confirmDelete = (p) => {
 };
 
 // Revert back to database state
-const revertChanges = () => {
-  if (confirm('Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?')) {
+const revertChanges = async () => {
+  const ok = await askConfirm({
+    title: 'Hủy thay đổi chưa lưu',
+    message: 'Hủy bỏ các thay đổi vừa làm trên màn hình và quay lại dữ liệu gốc trong database?',
+    confirmText: 'Hủy thay đổi',
+    variant: 'warning',
+  });
+  if (ok) {
     syncFromProps();
   }
 };
@@ -1286,11 +1309,11 @@ const publishProjects = () => {
       onSuccess: () => {
         isSaving.value = false;
         hasUnsavedChanges.value = false;
-        alert('Đã xuất bản thay đổi dự án vào cơ sở dữ liệu thành công!');
+        notifySuccess('Đã xuất bản thay đổi dự án vào cơ sở dữ liệu thành công!');
       },
       onError: (err) => {
         isSaving.value = false;
-        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+        notifyError('Lỗi xuất bản: ' + extractErrorMessage(err));
       },
     }
   );

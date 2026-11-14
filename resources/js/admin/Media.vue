@@ -84,6 +84,7 @@
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import { askConfirm, extractErrorMessage, notifyError, notifySuccess } from './composables/useFeedback';
 
 defineProps({
   media: {
@@ -125,10 +126,11 @@ const uploadFile = (file) => {
     onSuccess: () => {
       isUploading.value = false;
       if (fileInputRef.value) fileInputRef.value.value = '';
+      notifySuccess('Đã tải tệp lên thành công!');
     },
     onError: (err) => {
       isUploading.value = false;
-      alert('Tải lên thất bại: ' + JSON.stringify(err));
+      notifyError('Tải lên thất bại: ' + extractErrorMessage(err));
     },
   });
 };
@@ -159,10 +161,17 @@ const copyPath = (m) => {
   });
 };
 
-const confirmDelete = (m) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa tệp "${m.name}"?`)) {
+const confirmDelete = async (m) => {
+  const ok = await askConfirm({
+    title: 'Xóa tệp media',
+    message: `Bạn có chắc chắn muốn xóa tệp "${m.name}"?`,
+    confirmText: 'Xóa',
+    variant: 'danger',
+  });
+  if (ok) {
     router.delete(`/admin/media/${m.id}`, {
       preserveScroll: true,
+      onSuccess: () => notifySuccess(`Đã xóa tệp "${m.name}".`),
     });
   }
 };

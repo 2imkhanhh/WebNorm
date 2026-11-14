@@ -441,6 +441,13 @@ import {
   onSaveHandler,
   onDraftHandler,
 } from './composables/useAdmin';
+import {
+  askConfirm,
+  extractErrorMessage,
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from './composables/useFeedback';
 
 const props = defineProps({
   settings: {
@@ -606,10 +613,10 @@ const handleLogoUploadSelected = async (e) => {
       form.logo = finalPath;
       hasUnsavedChanges.value = true;
     } else {
-      alert('Không thể tải logo lên: ' + (data.message || 'Lỗi không xác định'));
+      notifyError('Không thể tải logo lên: ' + (data.message || 'Lỗi không xác định'));
     }
   } catch (err) {
-    alert('Có lỗi xảy ra khi tải logo: ' + err.message);
+    notifyError('Có lỗi xảy ra khi tải logo: ' + err.message);
   } finally {
     isUploadingLogo.value = false;
   }
@@ -631,7 +638,7 @@ const handle3DUploadSelected = async (e) => {
   if (!file) return;
 
   if (file.size > 50 * 1024 * 1024) {
-    alert('Dung lượng tệp 3D không được vượt quá 50MB!');
+    notifyWarning('Dung lượng tệp 3D không được vượt quá 50MB!');
     return;
   }
 
@@ -658,17 +665,23 @@ const handle3DUploadSelected = async (e) => {
       form.model_3d = finalPath;
       hasUnsavedChanges.value = true;
     } else {
-      alert('Không thể tải tệp lên: ' + (data.message || 'Lỗi không xác định'));
+      notifyError('Không thể tải tệp lên: ' + (data.message || 'Lỗi không xác định'));
     }
   } catch (err) {
-    alert('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
+    notifyError('Có lỗi xảy ra khi tải tệp lên máy chủ: ' + err.message);
   } finally {
     isUploading3D.value = false;
   }
 };
 
-const revertSettings = () => {
-  if (confirm('Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại cài đặt gốc trong cơ sở dữ liệu?')) {
+const revertSettings = async () => {
+  const ok = await askConfirm({
+    title: 'Hủy thay đổi chưa lưu',
+    message: 'Hủy bỏ các thay đổi vừa chỉnh sửa và quay lại cài đặt gốc trong cơ sở dữ liệu?',
+    confirmText: 'Hủy thay đổi',
+    variant: 'warning',
+  });
+  if (ok) {
     isReverting = true;
     Object.assign(form, initFormData());
     renderKey.value++;
@@ -739,11 +752,11 @@ const saveSettings = () => {
       }
       isSaving.value = false;
       hasUnsavedChanges.value = false;
-      alert('Đã xuất bản cài đặt website thành công vào cơ sở dữ liệu!');
+      notifySuccess('Đã xuất bản cài đặt website thành công vào cơ sở dữ liệu!');
     },
     onError: (err) => {
       isSaving.value = false;
-      alert('Lỗi lưu cài đặt: ' + JSON.stringify(err));
+      notifyError('Lỗi lưu cài đặt: ' + extractErrorMessage(err));
     },
   });
 };

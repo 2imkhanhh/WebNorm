@@ -76,6 +76,8 @@
         <LivePreview />
       </template>
     </main>
+
+    <AdminFeedback />
   </div>
 </template>
 
@@ -84,6 +86,8 @@ import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import Topbar from './components/Topbar.vue';
 import LivePreview from './components/LivePreview.vue';
+import AdminFeedback from './components/AdminFeedback.vue';
+import { askConfirm } from './composables/useFeedback';
 import {
   calculateAutoFit,
   isAutoFit,
@@ -171,7 +175,13 @@ onMounted(() => {
     if (isAutoFit.value) calculateAutoFit();
   });
 
+  let bypassLeaveGuard = false;
+
   const removeRouterGuard = router.on('before', (event) => {
+    if (bypassLeaveGuard) {
+      bypassLeaveGuard = false;
+      return;
+    }
     // Không chặn khi đang thực hiện các request lưu (save, save draft, discard) hoặc request gửi dữ liệu POST/PUT/DELETE
     if (isSaving.value || isSavingDraft.value || isDiscardingDraft.value) {
       return;
@@ -182,9 +192,21 @@ onMounted(() => {
     }
 
     if (hasUnsavedChanges.value) {
-      if (!confirm('Bạn đang có thay đổi chưa lưu. Nếu rời khỏi trang này, các thay đổi chưa lưu sẽ bị hủy. Bạn có chắc chắn muốn rời đi không?')) {
-        event.preventDefault();
-      }
+      event.preventDefault();
+      const targetUrl = event.detail?.visit?.url?.href || event.detail?.visit?.url;
+      askConfirm({
+        title: 'Thay đổi chưa được lưu',
+        message: 'Bạn đang có thay đổi chưa lưu. Nếu rời khỏi trang này, các thay đổi chưa lưu sẽ bị hủy. Bạn có chắc chắn muốn rời đi không?',
+        confirmText: 'Rời khỏi trang',
+        cancelText: 'Ở lại',
+        variant: 'warning',
+      }).then((confirmed) => {
+        if (confirmed && targetUrl) {
+          hasUnsavedChanges.value = false;
+          bypassLeaveGuard = true;
+          router.visit(targetUrl);
+        }
+      });
     }
   });
 

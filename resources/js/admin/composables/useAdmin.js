@@ -1,4 +1,5 @@
 import { ref, computed, nextTick } from 'vue';
+import { notifySuccess } from './useFeedback';
 
 // 1. Device preview state
 export const devices = [
@@ -39,7 +40,7 @@ export const saveDraft = () => {
     setTimeout(() => {
       isSavingDraft.value = false;
       hasUnsavedChanges.value = false;
-      alert('Đã lưu bản nháp thành công!');
+      notifySuccess('Đã lưu bản nháp thành công!');
     }, 400);
   }
 };
@@ -58,7 +59,7 @@ export const saveChanges = () => {
     setTimeout(() => {
       isSaving.value = false;
       hasUnsavedChanges.value = false;
-      alert('Đã xuất bản cấu hình thành công!');
+      notifySuccess('Đã xuất bản cấu hình thành công!');
     }, 400);
   }
 };

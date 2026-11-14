@@ -223,6 +223,13 @@ import {
   onSaveHandler,
   onDraftHandler,
 } from './composables/useAdmin';
+import {
+  askConfirm,
+  extractErrorMessage,
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from './composables/useFeedback';
 
 const props = defineProps({
   blogs: {
@@ -312,7 +319,7 @@ const triggerFileInput = () => {
 
 const uploadSingleFile = async (file) => {
   if (file.size > 50 * 1024 * 1024) {
-    alert('Dung lượng tệp không được vượt quá 50MB!');
+    notifyWarning('Dung lượng tệp không được vượt quá 50MB!');
     return null;
   }
   const formData = new FormData();
@@ -334,7 +341,7 @@ const uploadSingleFile = async (file) => {
     return null;
   } catch (err) {
     console.error('Lỗi tải ảnh:', err);
-    alert('Lỗi tải ảnh lên máy chủ!');
+    notifyError('Lỗi tải ảnh lên máy chủ!');
     return null;
   }
 };
@@ -408,11 +415,11 @@ watch(
 const submitForm = () => {
   const currentTitle = form.title_vi || form.title_en;
   if (!currentTitle || !currentTitle.trim()) {
-    alert('Vui lòng nhập tiêu đề bài viết!');
+    notifyWarning('Vui lòng nhập tiêu đề bài viết!');
     return;
   }
   if (!form.slug || !form.slug.trim()) {
-    alert('Vui lòng nhập đường dẫn tĩnh (Slug)!');
+    notifyWarning('Vui lòng nhập đường dẫn tĩnh (Slug)!');
     return;
   }
 
@@ -463,12 +470,14 @@ const submitForm = () => {
   isModalOpen.value = false;
 };
 
-const confirmDelete = (b) => {
-  if (
-    confirm(
-      `Bạn có chắc chắn muốn xóa bài viết "${getTrans(b.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`
-    )
-  ) {
+const confirmDelete = async (b) => {
+  const ok = await askConfirm({
+    title: 'Xóa bài viết',
+    message: `Bạn có chắc chắn muốn xóa bài viết "${getTrans(b.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`,
+    confirmText: 'Xóa bài viết',
+    variant: 'danger',
+  });
+  if (ok) {
     localBlogs.value = localBlogs.value.filter((item) => item.id !== b.id);
     if (typeof b.id === 'number' || (typeof b.id === 'string' && !b.id.startsWith('temp_'))) {
       deletedIds.value.push(b.id);
@@ -490,11 +499,11 @@ const publishBlogs = () => {
       onSuccess: () => {
         isSaving.value = false;
         hasUnsavedChanges.value = false;
-        alert('Đã xuất bản bài viết vào cơ sở dữ liệu thành công!');
+        notifySuccess('Đã xuất bản bài viết vào cơ sở dữ liệu thành công!');
       },
       onError: (err) => {
         isSaving.value = false;
-        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+        notifyError('Lỗi xuất bản: ' + extractErrorMessage(err));
       },
     }
   );

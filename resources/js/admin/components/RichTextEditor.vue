@@ -186,6 +186,7 @@
 
 <script setup>
 import { ref, watch, onMounted, nextTick } from 'vue';
+import { notifyError, notifyWarning } from '../composables/useFeedback';
 
 const props = defineProps({
   modelValue: {
@@ -269,7 +270,7 @@ const handleImageSelected = async (e) => {
   if (!file) return;
 
   if (file.size > 50 * 1024 * 1024) {
-    alert('Dung lượng ảnh không được vượt quá 50MB!');
+    notifyWarning('Dung lượng ảnh không được vượt quá 50MB!');
     return;
   }
 
@@ -304,11 +305,11 @@ const handleImageSelected = async (e) => {
       document.execCommand('insertHTML', false, imageHtml);
       triggerChange();
     } else {
-      alert('Không thể tải ảnh lên máy chủ, vui lòng thử lại!');
+      notifyError('Không thể tải ảnh lên máy chủ, vui lòng thử lại!');
     }
   } catch (err) {
     console.error('Lỗi tải ảnh:', err);
-    alert('Lỗi tải ảnh lên máy chủ!');
+    notifyError('Lỗi tải ảnh lên máy chủ!');
   } finally {
     isUploadingImage.value = false;
     e.target.value = '';

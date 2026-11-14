@@ -205,6 +205,13 @@ import {
   onSaveHandler,
   onDraftHandler,
 } from './composables/useAdmin';
+import {
+  askConfirm,
+  extractErrorMessage,
+  notifyError,
+  notifySuccess,
+  notifyWarning,
+} from './composables/useFeedback';
 
 const props = defineProps({
   reviews: {
@@ -339,7 +346,7 @@ const triggerFileInput = () => {
 
 const uploadSingleFile = async (file) => {
   if (file.size > 50 * 1024 * 1024) {
-    alert('Dung lượng tệp không được vượt quá 50MB!');
+    notifyWarning('Dung lượng tệp không được vượt quá 50MB!');
     return null;
   }
   const formData = new FormData();
@@ -361,7 +368,7 @@ const uploadSingleFile = async (file) => {
     return null;
   } catch (err) {
     console.error('Lỗi tải ảnh:', err);
-    alert('Lỗi tải ảnh lên máy chủ!');
+    notifyError('Lỗi tải ảnh lên máy chủ!');
     return null;
   }
 };
@@ -380,13 +387,13 @@ const handleFileUpload = async (e) => {
 
 const submitForm = () => {
   if (!form.author || !form.author.trim()) {
-    alert('Vui lòng nhập tên người đánh giá!');
+    notifyWarning('Vui lòng nhập tên người đánh giá!');
     return;
   }
 
   const currentContent = (modalLang.value === 'en' ? form.content_en : form.content_vi) || form.content_vi || form.content_en;
   if (!currentContent || !currentContent.trim()) {
-    alert('Vui lòng nhập nội dung đánh giá!');
+    notifyWarning('Vui lòng nhập nội dung đánh giá!');
     return;
   }
 
@@ -423,8 +430,14 @@ const submitForm = () => {
   isModalOpen.value = false;
 };
 
-const confirmDelete = (r) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`)) {
+const confirmDelete = async (r) => {
+  const ok = await askConfirm({
+    title: 'Xóa đánh giá',
+    message: `Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`,
+    confirmText: 'Xóa đánh giá',
+    variant: 'danger',
+  });
+  if (ok) {
     localReviews.value = localReviews.value.filter((item) => item.id !== r.id);
     if (typeof r.id === 'number' || (typeof r.id === 'string' && !r.id.startsWith('temp_'))) {
       deletedIds.value.push(r.id);
@@ -446,11 +459,11 @@ const publishReviews = () => {
       onSuccess: () => {
         isSaving.value = false;
         hasUnsavedChanges.value = false;
-        alert('Đã xuất bản đánh giá vào cơ sở dữ liệu thành công!');
+        notifySuccess('Đã xuất bản đánh giá vào cơ sở dữ liệu thành công!');
       },
       onError: (err) => {
         isSaving.value = false;
-        alert('Lỗi xuất bản: ' + JSON.stringify(err));
+        notifyError('Lỗi xuất bản: ' + extractErrorMessage(err));
       },
     }
   );

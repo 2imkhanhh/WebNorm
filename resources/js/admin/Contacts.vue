@@ -101,6 +101,7 @@
 <script setup>
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import { askConfirm, notifySuccess } from './composables/useFeedback';
 
 defineProps({
   contacts: {
@@ -131,10 +132,17 @@ const updateLeadStatus = (contact, newStatus) => {
   );
 };
 
-const confirmDelete = (contact) => {
-  if (confirm(`Bạn có chắc chắn muốn xóa liên hệ từ "${contact.name}" không?`)) {
+const confirmDelete = async (contact) => {
+  const ok = await askConfirm({
+    title: 'Xóa liên hệ',
+    message: `Bạn có chắc chắn muốn xóa liên hệ từ "${contact.name}" không?`,
+    confirmText: 'Xóa',
+    variant: 'danger',
+  });
+  if (ok) {
     router.delete(`/admin/leads/${contact.id}`, {
       preserveScroll: true,
+      onSuccess: () => notifySuccess('Đã xóa thông tin liên hệ.'),
     });
   }
 };
