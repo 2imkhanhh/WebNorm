@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production') || str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
         // Blade directives for dynamic multilingual values
         Blade::directive('normVal', function ($expression) {
             return "<?php echo \App\Helpers\NormHelper::val({$expression}); ?>";

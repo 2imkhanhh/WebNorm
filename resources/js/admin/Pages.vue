@@ -173,8 +173,11 @@
                   @click="onStepFocus(field, sIdx)">
                   <div class="workflow-step-card-header">
                     <div class="step-card-left">
-                      <span class="step-badge">{{ getRepeaterConfig(field).badgePrefix ? `${getRepeaterConfig(field).badgePrefix} ${String(sIdx + 1).padStart(2, '0')}` : String(sIdx + 1).padStart(2, '0') }}</span>
-                      <span v-if="getRepeaterConfig(field).showHeaderTitle !== false" class="step-card-title-preview" :title="getRepeaterPreviewTitle(field, step)">
+                      <span class="step-badge">{{ getRepeaterConfig(field).badgePrefix ?
+                        `${getRepeaterConfig(field).badgePrefix} ${String(sIdx + 1).padStart(2, '0')}` : String(sIdx +
+                          1).padStart(2, '0') }}</span>
+                      <span v-if="getRepeaterConfig(field).showHeaderTitle !== false" class="step-card-title-preview"
+                        :title="getRepeaterPreviewTitle(field, step)">
                         {{ getRepeaterPreviewTitle(field, step) || '(Chưa nhập nội dung)' }}
                       </span>
                     </div>
@@ -183,7 +186,8 @@
                         @click.stop="moveRepeaterStep(section.id, field, sIdx, -1)" title="Di chuyển lên">
                         <i class="bx bx-chevron-up"></i>
                       </button>
-                      <button type="button" class="btn-step-action" :disabled="sIdx === getRepeaterItems(field).length - 1"
+                      <button type="button" class="btn-step-action"
+                        :disabled="sIdx === getRepeaterItems(field).length - 1"
                         @click.stop="moveRepeaterStep(section.id, field, sIdx, 1)" title="Di chuyển xuống">
                         <i class="bx bx-chevron-down"></i>
                       </button>
@@ -233,7 +237,8 @@
                         <div class="pages-image-btn-wrap">
                           <button type="button" class="btn-upload-file" :disabled="isStepUploading(field, sIdx)"
                             @click="triggerStepImageUpload(section.id, field, sIdx)" title="Tải ảnh từ máy tính">
-                            <i class="bx" :class="isStepUploading(field, sIdx) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                            <i class="bx"
+                              :class="isStepUploading(field, sIdx) ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
                             <span>{{ isStepUploading(field, sIdx) ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
                           </button>
                         </div>
@@ -321,7 +326,7 @@ const defaultPages = [
       },
       {
         id: 'intro_about',
-        title: 'Khối Giới thiệu',
+        title: 'Giới thiệu',
         fields: [
           { key: 'about_label', label: 'Nhãn tiêu đề', type: 'text', prefix: '•', value: { vi: 'Về chúng tôi', en: 'About us' } },
           { key: 'about_desc', label: 'Nội dung mô tả', type: 'textarea', rows: 4, value: { vi: 'Có rất nhiều lý do tại sao xây dựng thương hiệu và tiếp thị lại quan trọng. Vô số sách viết về chủ đề này, nhưng tất cả đều quy về một điều đơn giản: tại sao mọi người nên quan tâm đến sự tồn tại của bạn? Chúng tôi tạo ra những trải nghiệm khiến mọi người chú ý và quan tâm.', en: 'There are countless reasons why branding and marketing matter. Endless books have been written on this topic, but it all comes down to one simple question: why should anyone care about your existence? We create experiences that make people notice and care.' } },
@@ -331,7 +336,7 @@ const defaultPages = [
       },
       {
         id: 'intro_services',
-        title: 'Khối Giới thiệu Dịch vụ',
+        title: 'Giới thiệu Dịch vụ',
         fields: [
           { key: 'services_label', label: 'Nhãn tiêu đề', type: 'text', prefix: '•', value: { vi: 'Dịch vụ', en: 'Services' } },
           { key: 'services_statement', label: 'Tuyên ngôn dịch vụ (Statement)', type: 'textarea', rows: 3, value: { vi: 'Chúng tôi giúp doanh nghiệp xây dựng thương hiệu rõ ràng, nhất quán để truyền tải giá trị khác biệt và tăng trưởng.', en: 'We help businesses build clear, consistent brands to convey distinct value and drive growth.' } },
@@ -340,7 +345,7 @@ const defaultPages = [
       },
       {
         id: 'intro_testimonials',
-        title: 'Khối Trải nghiệm khách hàng',
+        title: 'Trải nghiệm khách hàng',
         fields: [
           { key: 'testimonial_title_1', label: 'Dòng tiêu đề 1', type: 'text', value: { vi: 'TRẢI NGHIỆM', en: 'CLIENT' } },
           { key: 'testimonial_title_2', label: 'Dòng tiêu đề 2', type: 'text', value: { vi: 'KHÁCH HÀNG', en: 'EXPERIENCES' } },
@@ -348,7 +353,7 @@ const defaultPages = [
       },
       {
         id: 'intro_blog',
-        title: 'Khối Giới thiệu Blog',
+        title: 'Giới thiệu Blog',
         fields: [
           { key: 'blog_label', label: 'Nhãn tiêu đề', type: 'text', prefix: '•', value: { vi: 'Blog', en: 'Blog' } },
           { key: 'blog_statement', label: 'Giới thiệu bài viết', type: 'textarea', rows: 3, value: { vi: 'Chia sẻ góc nhìn về thương hiệu, thiết kế và chiến lược giúp doanh nghiệp phát triển bền vững.', en: 'Sharing perspectives on branding, design, and strategy to help businesses grow sustainably.' } },
