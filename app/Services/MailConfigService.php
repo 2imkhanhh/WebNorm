@@ -86,8 +86,6 @@ class MailConfigService
             $toRaw = (string) Setting::get('email', '');
         }
         $recipients = static::parseRecipients($toRaw);
-
-        // Laravel 12 uses 'smtps' for implicit SSL (typically port 465) and 'smtp' for STARTTLS / plain SMTP.
         $scheme = ($encryption === 'ssl' || ($encryption === '' && $port === 465)) ? 'smtps' : 'smtp';
 
         config([
@@ -121,9 +119,6 @@ class MailConfigService
         ];
     }
 
-    /**
-     * Send contact notification email if enabled and configured in settings.
-     */
     public static function sendContactNotification(Contact $contact): bool
     {
         $enabled = filter_var(Setting::get('mail_enabled', false), FILTER_VALIDATE_BOOLEAN);
@@ -141,4 +136,3 @@ class MailConfigService
         return true;
     }
 }
-

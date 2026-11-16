@@ -25,9 +25,6 @@ class PageContent extends Model
         'draft_updated_at' => 'datetime',
     ];
 
-    /**
-     * Helper to get a field value in specific language
-     */
     public function getTranslated(string $lang = 'vi')
     {
         if (is_array($this->value)) {
@@ -36,4 +33,3 @@ class PageContent extends Model
         return $this->value ?? '';
     }
 }
-

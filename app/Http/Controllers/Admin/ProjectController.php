@@ -28,12 +28,9 @@ class ProjectController extends Controller
         $deletedIds = $request->input('deleted_ids', []);
 
         DB::transaction(function () use ($items, $deletedIds) {
-            // Delete items that were removed in the staging UI
             if (!empty($deletedIds)) {
                 Project::whereIn('id', $deletedIds)->delete();
             }
-
-            // Sync and save pending items
             foreach ($items as $index => $itemData) {
                 $id = $itemData['id'] ?? null;
 
@@ -117,7 +114,6 @@ class ProjectController extends Controller
             'is_featured' => 'nullable|boolean',
         ]);
 
-        // Normalize bilingual values
         if (is_string($validated['title'])) {
             $validated['title'] = ['vi' => $validated['title'], 'en' => $validated['title']];
         }

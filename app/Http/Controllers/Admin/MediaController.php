@@ -101,7 +101,6 @@ class MediaController extends Controller
         $baseSlug = Str::slug(pathinfo($originalName, PATHINFO_FILENAME)) ?: 'upload';
         $safeName = time() . '_' . Str::lower(Str::random(8)) . '_' . Str::limit($baseSlug, 40, '') . '.' . $ext;
 
-        // Save to storage/app/public/uploads (accessible via public/storage/uploads)
         $file->storeAs('uploads', $safeName, 'public');
 
         $fileSize = $file->getSize();

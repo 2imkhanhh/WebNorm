@@ -41,7 +41,6 @@ class PageContentController extends Controller
                         }
                     }
 
-                    // Value given to frontend editor: draft_value if exists, otherwise published value
                     $currentValue = $fieldHasDraft ? $f->draft_value : $f->value;
 
                     $fieldList[] = [
@@ -61,7 +60,6 @@ class PageContentController extends Controller
                 $sectionTitle = $first->section_title ?? $sectionId;
                 $titles = $fields->pluck('section_title')->map(fn($t) => trim($t ?? ''))->filter()->unique();
                 if ($titles->count() > 1) {
-                    // If user manually changed section_title on any row in DB, prefer the latest updated/created row
                     $latestRow = $fields->sortByDesc('updated_at')->first();
                     if ($latestRow && !empty($latestRow->section_title)) {
                         $sectionTitle = trim($latestRow->section_title);

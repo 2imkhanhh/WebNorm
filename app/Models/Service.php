@@ -35,14 +35,10 @@ class Service extends Model
         return NormHelper::val($this->description, '', $lang);
     }
 
-    /**
-     * Get bullet list items for frontend service-content-wrapper
-     */
     public function getListItems(?string $lang = null): array
     {
         $resolvedLang = NormHelper::locale($lang);
 
-        // 1. If explicit 'content' array exists for language
         if (is_array($this->content)) {
             if (isset($this->content[$resolvedLang]) && is_array($this->content[$resolvedLang]) && !empty($this->content[$resolvedLang])) {
                 return $this->content[$resolvedLang];
@@ -50,21 +46,17 @@ class Service extends Model
             if (isset($this->content['vi']) && is_array($this->content['vi']) && !empty($this->content['vi'])) {
                 return $this->content['vi'];
             }
-            // Flat array of strings: ["Item 1", "Item 2"]
             if (!empty($this->content) && isset($this->content[0])) {
                 return $this->content;
             }
         }
 
-        // 2. Parse from description
         $desc = $this->getDescription($resolvedLang);
         if (!empty($desc)) {
-            // Newline-separated lines
             if (str_contains($desc, "\n")) {
                 $lines = array_map('trim', explode("\n", $desc));
                 return array_values(array_filter($lines, fn($l) => $l !== ''));
             }
-            // Comma-separated list
             if (str_contains($desc, ',')) {
                 $items = array_map('trim', explode(',', $desc));
                 $cleaned = array_map(fn($i) => rtrim($i, '.'), $items);
@@ -76,4 +68,3 @@ class Service extends Model
         return [];
     }
 }
-
