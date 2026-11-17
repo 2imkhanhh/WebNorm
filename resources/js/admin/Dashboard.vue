@@ -28,17 +28,8 @@
           </div>
         </div>
 
-        <!-- Metric Cards Grid (6 Cards in Norm Monochrome Style) -->
+        <!-- Metric Cards Grid (4 Cards in Norm Monochrome Style) -->
         <div class="overview-metrics-grid">
-          <Link href="/admin/pages" class="metric-card">
-            <div class="metric-icon-wrap">
-              <i class="bx bx-globe"></i>
-            </div>
-            <div class="metric-number">{{ metrics.pages_count || 4 }}</div>
-            <div class="metric-title">Trang nội dung</div>
-            <div class="metric-subtitle">Trang chủ, Dự án, Tin tức, Về chúng tôi</div>
-          </Link>
-
           <Link href="/admin/projects" class="metric-card">
             <div class="metric-icon-wrap">
               <i class="bx bx-briefcase-alt"></i>
@@ -55,15 +46,6 @@
             <div class="metric-number">{{ metrics.services_count || 0 }}</div>
             <div class="metric-title">Dịch vụ cốt lõi</div>
             <div class="metric-subtitle">Các gói dịch vụ doanh nghiệp</div>
-          </Link>
-
-          <Link href="/admin/reviews" class="metric-card">
-            <div class="metric-icon-wrap">
-              <i class="bx bx-star"></i>
-            </div>
-            <div class="metric-number">{{ metrics.reviews_count || 0 }}</div>
-            <div class="metric-title">Đánh giá đối tác</div>
-            <div class="metric-subtitle">Lời chứng thực khách hàng</div>
           </Link>
 
           <Link href="/admin/news" class="metric-card">
