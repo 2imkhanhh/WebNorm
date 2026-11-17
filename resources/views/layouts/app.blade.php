@@ -45,8 +45,10 @@
     <!-- CSS & Scripts -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ asset('assets/bootstrap/css/bootstrap.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/contact.css') }}?v={{ filemtime(public_path('assets/css/contact.css')) }}" />
+    <link rel="stylesheet"
+        href="{{ asset('assets/css/style.css') }}?v={{ filemtime(public_path('assets/css/style.css')) }}" />
+    <link rel="stylesheet"
+        href="{{ asset('assets/css/contact.css') }}?v={{ filemtime(public_path('assets/css/contact.css')) }}" />
     @stack('styles')
 
     <script type="application/ld+json">
@@ -85,17 +87,21 @@
     @include('partials.contact-sidebar')
 
     @if (!empty($isPreviewDraft))
-    <div id="draftPreviewNotification" style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 99999; background: #0f172a; color: #f8fafc; padding: 9px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.15); font-family: sans-serif;">
-        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 8px #3b82f6;"></span>
-        <span>Đang xem <strong>Bản nháp (Draft Preview)</strong></span>
-        <a href="{{ request()->url() }}" style="margin-left: 8px; color: #38bdf8; text-decoration: none; font-size: 12px; background: rgba(56,189,248,0.15); padding: 4px 10px; border-radius: 6px; font-weight: 600;">Xem bản Live</a>
-    </div>
-    <script>
-        if (window.self !== window.top) {
-            var el = document.getElementById('draftPreviewNotification');
-            if (el) el.style.display = 'none';
-        }
-    </script>
+        <div id="draftPreviewNotification"
+            style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 99999; background: #0f172a; color: #f8fafc; padding: 9px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.15); font-family: sans-serif;">
+            <span
+                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; box-shadow: 0 0 8px #3b82f6;"></span>
+            <span>Đang xem <strong>Bản nháp (Draft Preview)</strong></span>
+            <a href="{{ request()->url() }}"
+                style="margin-left: 8px; color: #38bdf8; text-decoration: none; font-size: 12px; background: rgba(56,189,248,0.15); padding: 4px 10px; border-radius: 6px; font-weight: 600;">Xem
+                bản Live</a>
+        </div>
+        <script>
+            if (window.self !== window.top) {
+                var el = document.getElementById('draftPreviewNotification');
+                if (el) el.style.display = 'none';
+            }
+        </script>
     @endif
 
     <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
@@ -113,12 +119,19 @@
 
             if (event.data.type === 'STUDIO_SCROLL_TO_SECTION') {
                 const secId = event.data.sectionId;
-                const container = document.querySelector(`[data-studio-container="${secId}"]`) || document.getElementById(secId);
+                const container = document.querySelector(`[data-studio-container="${secId}"]`) || document
+                    .getElementById(secId);
                 if (container) {
                     if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-                        window.lenis.scrollTo(container, { offset: -40, duration: 1.0 });
+                        window.lenis.scrollTo(container, {
+                            offset: -40,
+                            duration: 1.0
+                        });
                     } else {
-                        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        container.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                 }
             }
@@ -135,18 +148,29 @@
                         const maxScroll = wfSec.offsetHeight - window.innerHeight;
                         const targetY = wfSec.offsetTop + (p * maxScroll);
                         if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-                            window.lenis.scrollTo(targetY, { duration: 0.8 });
+                            window.lenis.scrollTo(targetY, {
+                                duration: 0.8
+                            });
                         } else {
-                            window.scrollTo({ top: targetY, behavior: 'smooth' });
+                            window.scrollTo({
+                                top: targetY,
+                                behavior: 'smooth'
+                            });
                         }
                     } else {
                         const track = document.getElementById('workflowSliderTrack');
                         const steps = track ? track.querySelectorAll('.workflow-step') : [];
                         if (steps[sIdx]) {
                             if (window.lenis && typeof window.lenis.scrollTo === 'function') {
-                                window.lenis.scrollTo(steps[sIdx], { offset: -60, duration: 0.8 });
+                                window.lenis.scrollTo(steps[sIdx], {
+                                    offset: -60,
+                                    duration: 0.8
+                                });
                             } else {
-                                steps[sIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                steps[sIdx].scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
                             }
                         }
                     }
@@ -154,8 +178,12 @@
             }
 
             if (event.data.type === 'STUDIO_LIVE_UPDATE') {
-                const { fieldKey, value } = event.data;
-                const currentLang = event.data.lang || window.__CURRENT_LOCALE__ || document.documentElement.lang || 'vi';
+                const {
+                    fieldKey,
+                    value
+                } = event.data;
+                const currentLang = event.data.lang || window.__CURRENT_LOCALE__ || document.documentElement.lang ||
+                    'vi';
                 window.__CURRENT_LOCALE__ = currentLang;
 
                 // Handle footer words animation
@@ -198,7 +226,8 @@
                     const cleanVal = (value || '').trim();
                     const fullSrc = cleanVal.startsWith('http') ? cleanVal : '/' + cleanVal.replace(/^\//, '');
                     const cleanLower = cleanVal.split('?')[0].toLowerCase();
-                    const isVid = cleanLower.endsWith('.mp4') || cleanLower.endsWith('.webm') || cleanLower.endsWith('.mov') || cleanLower.endsWith('.avi');
+                    const isVid = cleanLower.endsWith('.mp4') || cleanLower.endsWith('.webm') || cleanLower
+                        .endsWith('.mov') || cleanLower.endsWith('.avi');
 
                     const container = document.querySelector('[data-studio-container="hero_video"]');
                     if (container) {
@@ -236,7 +265,9 @@
                     if (track) {
                         let steps = value;
                         if (typeof steps === 'string') {
-                            try { steps = JSON.parse(steps); } catch (e) {}
+                            try {
+                                steps = JSON.parse(steps);
+                            } catch (e) {}
                         }
                         if (steps && typeof steps === 'object' && !Array.isArray(steps)) {
                             steps = Object.values(steps);
@@ -247,7 +278,8 @@
                                 if (obj === null || obj === undefined) return '';
                                 if (typeof obj === 'string') return obj;
                                 if (typeof obj === 'object') {
-                                    if (obj[currentLang] !== undefined && obj[currentLang] !== null) return obj[currentLang];
+                                    if (obj[currentLang] !== undefined && obj[currentLang] !== null) return obj[
+                                        currentLang];
                                     if (obj.vi !== undefined && obj.vi !== null) return obj.vi;
                                     if (obj.en !== undefined && obj.en !== null) return obj.en;
                                     return '';
@@ -271,22 +303,25 @@
 
                                     const imgEl = stepEl.querySelector('.step-image-wrapper img');
                                     if (imgEl) {
-                                        let rawImg = getLangVal(step.image) || ('/assets/images/gallery' + ((idx % 9) + 1) + '.jpg');
-                                        const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(/^\//, '');
+                                        let rawImg = getLangVal(step.image) || ('/assets/images/gallery' + (
+                                            (idx % 9) + 1) + '.jpg');
+                                        const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg
+                                            .replace(/^\//, '');
                                         if (imgEl.getAttribute('src') !== imgSrc) {
                                             imgEl.src = imgSrc;
                                         }
                                     }
                                 });
                             } else {
-                                // Steps added or removed -> re-render track items
                                 track.innerHTML = steps.map((step, idx) => {
                                     const num = String(idx + 1).padStart(2, '0') + '/';
                                     const isActive = idx === 0 ? 'is-active' : '';
                                     const title = getLangVal(step.title);
                                     const desc = getLangVal(step.desc);
-                                    let rawImg = getLangVal(step.image) || ('/assets/images/gallery' + ((idx % 9) + 1) + '.jpg');
-                                    const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(/^\//, '');
+                                    let rawImg = getLangVal(step.image) || ('/assets/images/gallery' + ((
+                                        idx % 9) + 1) + '.jpg');
+                                    const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg
+                                        .replace(/^\//, '');
                                     return `
                                         <div class="col-12 workflow-step ${isActive}">
                                             <div class="step-top">
@@ -309,7 +344,9 @@
                     if (grid) {
                         let members = value;
                         if (typeof members === 'string') {
-                            try { members = JSON.parse(members); } catch (e) {}
+                            try {
+                                members = JSON.parse(members);
+                            } catch (e) {}
                         }
                         if (members && typeof members === 'object' && !Array.isArray(members)) {
                             members = Object.values(members);
@@ -320,7 +357,8 @@
                                 if (obj === null || obj === undefined) return '';
                                 if (typeof obj === 'string') return obj;
                                 if (typeof obj === 'object') {
-                                    if (obj[currentLang] !== undefined && obj[currentLang] !== null) return obj[currentLang];
+                                    if (obj[currentLang] !== undefined && obj[currentLang] !== null) return obj[
+                                        currentLang];
                                     if (obj.vi !== undefined && obj.vi !== null) return obj.vi;
                                     if (obj.en !== undefined && obj.en !== null) return obj.en;
                                     return '';
@@ -352,7 +390,8 @@
                                         const name = getLangVal(m.name);
                                         const role = getLangVal(m.role);
                                         const rawImg = getLangVal(m.image) || '/assets/images/team1.png';
-                                        const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(/^\//, '');
+                                        const imgSrc = rawImg.startsWith('http') ? rawImg : '/' + rawImg.replace(
+                                            /^\//, '');
                                         slotsHtml += `
                                             <div class="col-6 col-md-3 member-item">
                                                 <div class="member-card">
@@ -375,7 +414,6 @@
                         }
                     }
                 } else {
-                    // Try generic matching with data-studio-key or class
                     const target = document.querySelector(`[data-studio-key="${fieldKey}"]`);
                     if (target) {
                         let textVal = value;
@@ -386,7 +424,8 @@
                             textVal = String(textVal || '').replace(/^[•\s\-\*]+/u, '').trim();
                         }
                         if (target.tagName === 'IMG') {
-                            const fullSrc = (textVal || '').startsWith('http') ? textVal : '/' + (textVal || '').replace(/^\//, '');
+                            const fullSrc = (textVal || '').startsWith('http') ? textVal : '/' + (textVal || '')
+                                .replace(/^\//, '');
                             target.src = fullSrc;
                         } else {
                             target.textContent = textVal;
