@@ -1,11 +1,10 @@
 <footer class="footer-section" id="footerSection">
     <div class="footer-sticky footer-cursor-zone" id="footerCursorZone">
 
-        <video class="footer-bg-video" autoplay loop muted playsinline>
-            <source src="{{ asset('assets/images/video_norm_ios.mov') }}" type="video/quicktime">
-            <source src="{{ asset('assets/images/video_norm.webm') }}" type="video/webm">
-            {{ __('site.video_unsupported') }}
-        </video>
+        <canvas class="footer-bg-video" id="footerBgCanvas" aria-hidden="true"></canvas>
+        <video class="footer-bg-video-source" id="footerBgVideo" loop muted playsinline preload="none"
+            data-src="{{ asset('assets/images/video_norm_stacked.mp4') }}?v={{ file_exists(public_path('assets/images/video_norm_stacked.mp4')) ? filemtime(public_path('assets/images/video_norm_stacked.mp4')) : '1' }}"
+            aria-hidden="true"></video>
         <div class="footer-video-overlay"></div>
         <div class="container-fluid px-4 px-md-5 w-100" style="position: relative; z-index: 2;">
             <div class="row align-items-center">

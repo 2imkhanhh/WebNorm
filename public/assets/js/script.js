@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', calculateActiveService);
 // footer scroll text
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
+    const finalFooterSection = document.querySelector('.final-footer-section');
     const footerLines = document.querySelectorAll('.footer-line');
 
     if (!footerSection || footerLines.length === 0) return;
@@ -185,6 +186,13 @@ function initFooterScrollText() {
             document.body.classList.remove('dark-mode');
         }
 
+        const finalFooterTop = finalFooterSection ? finalFooterSection.offsetTop : (footerTop + footerSection.offsetHeight);
+        if ((scrollY + windowHeight) >= finalFooterTop - 50) {
+            document.body.classList.add('dark-mode-instant');
+        } else {
+            document.body.classList.remove('dark-mode-instant');
+        }
+
         let scrolledInside = Math.max(0, scrollY - footerTop);
         const maxScroll = footerSection.offsetHeight - windowHeight;
         if (scrolledInside > maxScroll) scrolledInside = maxScroll;
@@ -214,6 +222,287 @@ function initFooterScrollText() {
             }, 50);
         }
     }, { passive: true });
+}
+
+// footer stacked-alpha WebGL background video
+function initFooterBgVideo() {
+    const footerSection = document.getElementById('footerSection');
+    const canvas = document.getElementById('footerBgCanvas');
+    const video = document.getElementById('footerBgVideo');
+
+    if (!footerSection || !canvas || !video) return;
+
+    let isLoaded = false;
+    let isInView = false;
+    let rafId = null;
+    let vfcId = null;
+    let lastVideoTime = -1;
+
+    function loadVideoSource() {
+        if (isLoaded) return;
+        const src = video.getAttribute('data-src');
+        if (!src) return;
+        isLoaded = true;
+        video.src = src;
+        video.load();
+    }
+
+    const gl = canvas.getContext('webgl', {
+        alpha: true,
+        premultipliedAlpha: true,
+        antialias: false,
+        powerPreference: 'default',
+    }) || canvas.getContext('experimental-webgl', {
+        alpha: true,
+        premultipliedAlpha: true,
+        antialias: false,
+    });
+
+    let renderFrameFn = null;
+    let resizeCanvasFn = null;
+
+    if (gl) {
+        const vsSource = `
+            attribute vec2 aPos;
+            attribute vec2 aTex;
+            varying vec2 vTex;
+            void main() {
+                gl_Position = vec4(aPos, 0.0, 1.0);
+                vTex = aTex;
+            }
+        `;
+        const fsSource = `
+            precision mediump float;
+            uniform sampler2D uTex;
+            uniform vec2 uScale;
+            varying vec2 vTex;
+            void main() {
+                vec2 uv = (vTex - 0.5) * uScale + 0.5;
+                if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+                    discard;
+                }
+                float safeY = clamp(uv.y, 0.002, 0.998);
+                vec3 rgb = texture2D(uTex, vec2(uv.x, safeY * 0.5)).rgb;
+                float rawA = texture2D(uTex, vec2(uv.x, safeY * 0.5 + 0.5)).r;
+                float alpha = clamp((rawA - 0.03) / 0.94, 0.0, 1.0);
+                if (alpha < 0.02) {
+                    discard;
+                }
+                gl_FragColor = vec4(rgb, alpha);
+            }
+        `;
+
+        const compile = (type, source) => {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                gl.deleteShader(shader);
+                return null;
+            }
+            return shader;
+        };
+
+        const vs = compile(gl.VERTEX_SHADER, vsSource);
+        const fs = compile(gl.FRAGMENT_SHADER, fsSource);
+
+        if (vs && fs) {
+            const program = gl.createProgram();
+            gl.attachShader(program, vs);
+            gl.attachShader(program, fs);
+            gl.linkProgram(program);
+
+            if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                gl.useProgram(program);
+
+                const quadBuffer = gl.createBuffer();
+                gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+                    -1, -1, 0, 1,
+                     1, -1, 1, 1,
+                    -1,  1, 0, 0,
+                     1,  1, 1, 0,
+                ]), gl.STATIC_DRAW);
+
+                const aPos = gl.getAttribLocation(program, 'aPos');
+                const aTex = gl.getAttribLocation(program, 'aTex');
+                gl.enableVertexAttribArray(aPos);
+                gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 16, 0);
+                gl.enableVertexAttribArray(aTex);
+                gl.vertexAttribPointer(aTex, 2, gl.FLOAT, false, 16, 8);
+
+                const uScale = gl.getUniformLocation(program, 'uScale');
+                const texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
+                let coverScaleX = 1;
+                let coverScaleY = 1;
+
+                resizeCanvasFn = () => {
+                    const rect = canvas.getBoundingClientRect();
+                    if (!rect.width || !rect.height) return;
+                    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                    const targetW = Math.min(Math.round(rect.width * dpr), 1280);
+                    const targetH = Math.round(targetW * (rect.height / rect.width));
+                    if (canvas.width !== targetW || canvas.height !== targetH) {
+                        canvas.width = targetW;
+                        canvas.height = targetH;
+                        gl.viewport(0, 0, targetW, targetH);
+                    }
+
+                    const videoW = video.videoWidth || 1280;
+                    const videoH = (video.videoHeight ? video.videoHeight / 2 : 720);
+                    const videoAspect = videoW / videoH;
+                    const canvasAspect = rect.width / rect.height;
+
+                    if (canvasAspect > videoAspect) {
+                        coverScaleX = 1;
+                        coverScaleY = videoAspect / canvasAspect;
+                    } else {
+                        coverScaleX = canvasAspect / videoAspect;
+                        coverScaleY = 1;
+                    }
+                    gl.uniform2f(uScale, coverScaleX, coverScaleY);
+                };
+
+                renderFrameFn = (forceUpload = false) => {
+                    if (video.readyState < 2 || video.videoWidth === 0) return;
+                    if (!forceUpload && video.currentTime === lastVideoTime) return;
+                    lastVideoTime = video.currentTime;
+
+                    gl.bindTexture(gl.TEXTURE_2D, texture);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video);
+                    gl.clearColor(0, 0, 0, 0);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                };
+            }
+        }
+    }
+
+    // Fallback 2D canvas if WebGL is unavailable
+    if (!renderFrameFn) {
+        const ctx2d = canvas.getContext('2d');
+        if (ctx2d) {
+            resizeCanvasFn = () => {
+                const rect = canvas.getBoundingClientRect();
+                if (!rect.width || !rect.height) return;
+                const targetW = Math.min(Math.round(rect.width), 960);
+                const targetH = Math.round(targetW * (rect.height / rect.width));
+                canvas.width = targetW;
+                canvas.height = targetH;
+            };
+            renderFrameFn = (forceUpload = false) => {
+                if (video.readyState < 2 || video.videoWidth === 0) return;
+                if (!forceUpload && video.currentTime === lastVideoTime) return;
+                lastVideoTime = video.currentTime;
+                const vw = video.videoWidth;
+                const halfH = Math.floor(video.videoHeight / 2);
+                const cw = canvas.width;
+                const ch = canvas.height;
+                const scale = Math.max(cw / vw, ch / halfH);
+                const dw = vw * scale;
+                const dh = halfH * scale;
+                const dx = (cw - dw) / 2;
+                const dy = (ch - dh) / 2;
+                ctx2d.clearRect(0, 0, cw, ch);
+                ctx2d.drawImage(video, 0, 0, vw, halfH, dx, dy, dw, dh);
+            };
+        }
+    }
+
+    if (!renderFrameFn || !resizeCanvasFn) return;
+
+    function stopRenderLoop() {
+        if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+        if (vfcId !== null && typeof video.cancelVideoFrameCallback === 'function') {
+            video.cancelVideoFrameCallback(vfcId);
+            vfcId = null;
+        }
+    }
+
+    function startRenderLoop() {
+        if (!isInView) return;
+        stopRenderLoop();
+
+        if (typeof video.requestVideoFrameCallback === 'function') {
+            const onVideoFrame = () => {
+                if (!isInView) {
+                    vfcId = null;
+                    return;
+                }
+                renderFrameFn(true);
+                vfcId = video.requestVideoFrameCallback(onVideoFrame);
+            };
+            vfcId = video.requestVideoFrameCallback(onVideoFrame);
+        } else {
+            const onRaf = () => {
+                if (!isInView) {
+                    rafId = null;
+                    return;
+                }
+                renderFrameFn(false);
+                rafId = requestAnimationFrame(onRaf);
+            };
+            rafId = requestAnimationFrame(onRaf);
+        }
+    }
+
+    video.addEventListener('loadedmetadata', () => {
+        resizeCanvasFn();
+        renderFrameFn(true);
+    });
+
+    video.addEventListener('loadeddata', () => {
+        renderFrameFn(true);
+        if (isInView) {
+            video.play().catch(() => {});
+            startRenderLoop();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        resizeCanvasFn();
+        renderFrameFn(true);
+    }, { passive: true });
+
+    if (typeof IntersectionObserver !== 'undefined') {
+        const preloadObserver = new IntersectionObserver((entries) => {
+            if (entries.some(e => e.isIntersecting)) {
+                loadVideoSource();
+                preloadObserver.disconnect();
+            }
+        }, { rootMargin: '1200px 0px' });
+        preloadObserver.observe(footerSection);
+
+        const playbackObserver = new IntersectionObserver((entries) => {
+            isInView = entries.some(e => e.isIntersecting);
+            if (isInView) {
+                loadVideoSource();
+                resizeCanvasFn();
+                video.play().catch(() => {});
+                startRenderLoop();
+            } else {
+                video.pause();
+                stopRenderLoop();
+            }
+        }, { rootMargin: '200px 0px' });
+        playbackObserver.observe(footerSection);
+    } else {
+        loadVideoSource();
+        isInView = true;
+        resizeCanvasFn();
+        video.play().catch(() => {});
+        startRenderLoop();
+    }
 }
 
 // footer cursor button
@@ -319,6 +608,7 @@ function initFooterCursorBtn() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initFooterScrollText();
+    initFooterBgVideo();
     initFooterCursorBtn();
 });
 
