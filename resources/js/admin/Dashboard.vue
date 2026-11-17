@@ -67,6 +67,9 @@
           </Link>
         </div>
 
+        <!-- Traffic Analytics Charts -->
+        <TrafficAnalytics :traffic="traffic" />
+
         <!-- Recent Contacts Section -->
         <div class="recent-leads-section" v-if="recentContacts && recentContacts.length > 0">
           <div class="leads-header d-flex justify-content-between align-items-center mb-3">
@@ -109,6 +112,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import TrafficAnalytics from './components/TrafficAnalytics.vue';
 
 defineProps({
   metrics: {
@@ -118,6 +122,10 @@ defineProps({
   recentContacts: {
     type: Array,
     default: () => [],
+  },
+  traffic: {
+    type: Object,
+    default: () => ({}),
   },
 });
 </script>

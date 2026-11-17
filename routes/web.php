@@ -14,13 +14,11 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-// Legacy /lang/{locale} redirector -> redirect to clean SEO URL (/ or /en/...)
 Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string $locale) {
     $targetLocale = $locale === 'en' ? 'en' : 'vi';
     $referer = (string) $request->headers->get('referer', '');
     $refererPath = parse_url($referer, PHP_URL_PATH) ?: '/';
     $basePath = preg_replace('#^/en(?=/|$)#', '', '/' . ltrim($refererPath, '/')) ?: '/';
-
     $targetPath = $targetLocale === 'en'
         ? ($basePath === '/' ? '/en' : '/en' . $basePath)
         : $basePath;
@@ -28,32 +26,29 @@ Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string
     return redirect($targetPath);
 })->whereIn('locale', ['vi', 'en'])->name('lang.switch');
 
-// Redirect /vi prefix (if visited) to canonical Vietnamese root URLs
-Route::get('/vi', fn () => redirect('/', 301));
-Route::get('/vi/{any}', fn (string $any) => redirect('/' . ltrim($any, '/'), 301))->where('any', '.*');
+Route::get('/vi', fn() => redirect('/', 301));
+Route::get('/vi/{any}', fn(string $any) => redirect('/' . ltrim($any, '/'), 301))->where('any', '.*');
 
-// Client Routes - Vietnamese Default
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/about-us', [HomeController::class, 'about'])->name('about');
-Route::get('/work', [HomeController::class, 'work'])->name('work');
-Route::get('/work/{slug?}', [HomeController::class, 'workDetail'])->name('work.detail');
-Route::get('/news', [HomeController::class, 'news'])->name('news');
-Route::get('/news/{slug?}', [HomeController::class, 'newsDetail'])->name('news.detail');
-
-// Client Routes - English (/en prefix for SEO)
-Route::prefix('en')->name('en.')->group(function () {
+Route::middleware(\App\Http\Middleware\TrackPageVisit::class)->group(function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/about-us', [HomeController::class, 'about'])->name('about');
     Route::get('/work', [HomeController::class, 'work'])->name('work');
     Route::get('/work/{slug?}', [HomeController::class, 'workDetail'])->name('work.detail');
     Route::get('/news', [HomeController::class, 'news'])->name('news');
     Route::get('/news/{slug?}', [HomeController::class, 'newsDetail'])->name('news.detail');
+
+    Route::prefix('en')->name('en.')->group(function () {
+        Route::get('/', [HomeController::class, 'index'])->name('home');
+        Route::get('/about-us', [HomeController::class, 'about'])->name('about');
+        Route::get('/work', [HomeController::class, 'work'])->name('work');
+        Route::get('/work/{slug?}', [HomeController::class, 'workDetail'])->name('work.detail');
+        Route::get('/news', [HomeController::class, 'news'])->name('news');
+        Route::get('/news/{slug?}', [HomeController::class, 'newsDetail'])->name('news.detail');
+    });
 });
 
-// Multilingual Sitemap
 Route::get('/sitemap.xml', [HomeController::class, 'sitemap'])->name('sitemap');
 
-// Client Contact Drawer submission
 Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
     $validated = $request->validate([
         'name' => 'required|string|max:255',
@@ -81,15 +76,12 @@ Route::post('/contact/submit', function (\Illuminate\Http\Request $request) {
     return response()->json(['success' => true, 'message' => __('site.contact_success')]);
 })->middleware('throttle:10,1')->name('contact.submit');
 
-// Admin Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-
 Route::prefix('admin')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:15,1')->name('admin.login.submit');
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-    // Protected Admin Dashboard Routes (Inertia.js)
     Route::middleware('auth')->group(function () {
         Route::get('/', function () {
             return redirect()->route('admin.dashboard');
@@ -110,7 +102,7 @@ Route::prefix('admin')->group(function () {
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
         Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
 
-        // Project Categories (CRUD)
+        // Project Categories 
         Route::post('/project-categories', [ProjectCategoryController::class, 'store'])->name('admin.project-categories.store');
         Route::put('/project-categories/{category}', [ProjectCategoryController::class, 'update'])->name('admin.project-categories.update');
         Route::delete('/project-categories/{category}', [ProjectCategoryController::class, 'destroy'])->name('admin.project-categories.destroy');
