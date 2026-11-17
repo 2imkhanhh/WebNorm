@@ -4,9 +4,9 @@
 @section('body_class', 'about-page')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/about-us.css') }}?v={{ filemtime(public_path('assets/css/about-us.css')) }}">
+    <link rel="stylesheet"
+        href="{{ asset('assets/css/about-us.css') }}?v={{ filemtime(public_path('assets/css/about-us.css')) }}">
     <style>
-        /* Đảm bảo Body là block để position: sticky hoạt động chuẩn trên Chrome/Edge */
         body.about-page {
             display: block !important;
             background: #FFFFFF !important;
@@ -20,7 +20,6 @@
             position: relative !important;
         }
 
-        /* Sticky zone: Đặt overflow: visible và padding-top để tuyệt đối không cắt dấu hỏi trên chữ Ả */
         .solution-sticky-zone {
             position: -webkit-sticky !important;
             position: sticky !important;
@@ -37,7 +36,6 @@
             padding-top: 10px !important;
         }
 
-        /* Font size & spacing chuẩn khớp 100% template tĩnh (Ảnh 2) */
         .solution-sticky-zone .testimonial-title {
             font-size: 8vw !important;
             line-height: 1 !important;
@@ -49,7 +47,6 @@
             font-weight: 500 !important;
         }
 
-        /* Dòng 1: GIẢI PHÁP - Khớp vị trí padding-left: 12vw và margin-left: 2% của file tĩnh */
         .solution-sticky-zone .solution-text-1 {
             margin-left: 2% !important;
             padding-left: 12vw !important;
@@ -58,13 +55,13 @@
             overflow: visible !important;
         }
 
-        /* Dòng 2: THIẾT KẾ CHO - Canh phải trọn chiều rộng block khớp Ảnh 2 */
         .solution-sticky-zone .solution-right-group {
             width: 100% !important;
             text-align: right !important;
             padding-right: 13% !important;
             margin: 0 !important;
         }
+
         .solution-sticky-zone .solution-right-group .testimonial-title {
             display: block !important;
             width: 100% !important;
@@ -72,7 +69,6 @@
             margin-top: 20px !important;
         }
 
-        /* Dòng 3: THƯƠNG HIỆU / DOANH NGHIỆP - Canh phải khớp lề dòng 2 */
         .solution-sticky-zone .brand-line {
             position: relative !important;
             overflow: hidden !important;
@@ -114,7 +110,6 @@
             clip-path: inset(100% 0 0 0);
         }
 
-        /* Section intro bên dưới: Nằm dưới và che phủ khi cuộn qua */
         .about-intro-section {
             position: relative !important;
             z-index: 3 !important;
@@ -127,28 +122,34 @@
                 height: 140vh !important;
                 margin-top: 15vw !important;
             }
+
             .solution-sticky-zone {
                 top: 20vh !important;
                 padding-top: 20px !important;
             }
+
             .solution-sticky-zone .testimonial-title {
                 font-size: 9vw !important;
                 line-height: 1 !important;
             }
+
             .solution-sticky-zone .solution-text-1 {
                 padding-left: 6vw !important;
                 margin-left: 2% !important;
             }
+
             .solution-sticky-zone .solution-right-group {
                 padding-right: 4% !important;
                 margin-top: 1.5vw !important;
             }
+
             .solution-sticky-zone .solution-right-group .testimonial-title {
                 display: block !important;
                 width: 100% !important;
                 text-align: right !important;
                 margin-top: 1.5vw !important;
             }
+
             .solution-sticky-zone .brand-line {
                 margin-right: 4% !important;
                 padding-right: 0.8em !important;
@@ -162,28 +163,34 @@
                 margin-top: 20vw !important;
                 height: 120vh !important;
             }
+
             .solution-sticky-zone {
                 top: 15vh !important;
                 padding-top: 15px !important;
             }
+
             .solution-sticky-zone .testimonial-title {
                 font-size: 11vw !important;
                 line-height: 1.1 !important;
             }
+
             .solution-sticky-zone .solution-text-1 {
                 margin-left: 0 !important;
                 padding-left: 0 !important;
             }
+
             .solution-sticky-zone .solution-right-group {
                 padding-right: 3% !important;
                 margin-top: 4vw !important;
             }
+
             .solution-sticky-zone .solution-right-group .testimonial-title {
                 display: block !important;
                 width: 100% !important;
                 text-align: right !important;
                 margin-top: 4vw !important;
             }
+
             .solution-sticky-zone .brand-line {
                 padding-right: 0.8em !important;
                 margin-top: 4vw !important;
@@ -219,9 +226,13 @@
 
     <section class="about-hero-gallery" data-studio-container="hero_gallery">
         <div class="gallery-track" id="galleryTrack">
-            @foreach($heroGallery as $idx => $img)
+            @foreach ($heroGallery as $idx => $img)
                 @php
-                    $imgSrc = !empty($img) ? (str_starts_with($img, 'http') ? $img : asset(ltrim($img, '/'))) : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
+                    $imgSrc = !empty($img)
+                        ? (str_starts_with($img, 'http')
+                            ? $img
+                            : asset(ltrim($img, '/')))
+                        : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
                 @endphp
                 <div class="gallery-item"><img src="{{ $imgSrc }}" alt="Gallery {{ $idx + 1 }}"></div>
             @endforeach
@@ -234,10 +245,12 @@
                 <div class="row">
                     <div class="col-12 testimonial-title-container">
 
-                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1" data-studio-key="about_heading_1">@normVal($pageContents['about_heading_1'] ?? null, 'GIẢI PHÁP')</h2>
+                        <h2 class="testimonial-title text-left scroll-slide-left solution-text-1"
+                            data-studio-key="about_heading_1">@normVal($pageContents['about_heading_1'] ?? null, 'GIẢI PHÁP')</h2>
 
                         <div class="solution-right-group">
-                            <h2 class="testimonial-title scroll-slide-right" data-studio-key="about_heading_2">@normVal($pageContents['about_heading_2'] ?? null, 'THIẾT KẾ CHO')</h2>
+                            <h2 class="testimonial-title scroll-slide-right" data-studio-key="about_heading_2">
+                                @normVal($pageContents['about_heading_2'] ?? null, 'THIẾT KẾ CHO')</h2>
                         </div>
 
                         <h2 class="testimonial-title brand-line scroll-slide-up">
@@ -256,7 +269,8 @@
             <div class="row align-items-start about-content-row">
 
                 <div class="col-md-3">
-                    <span class="label-side">• <span data-studio-key="story_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['story_label'] ?? null, 'Về chúng tôi'), '• ') }}</span></span>
+                    <span class="label-side">• <span
+                            data-studio-key="story_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['story_label'] ?? null, 'Về chúng tôi'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-lg-7 col-md-9 custom-nudge">
@@ -275,8 +289,15 @@
                     </div>
 
                     @php
-                        $storyImg = \App\Helpers\NormHelper::val($pageContents['story_image'] ?? null, '/assets/images/team-photo.jpg');
-                        $storyImgUrl = !empty($storyImg) ? (str_starts_with($storyImg, 'http') ? $storyImg : asset(ltrim($storyImg, '/'))) : asset('assets/images/team-photo.jpg');
+                        $storyImg = \App\Helpers\NormHelper::val(
+                            $pageContents['story_image'] ?? null,
+                            '/assets/images/team-photo.jpg',
+                        );
+                        $storyImgUrl = !empty($storyImg)
+                            ? (str_starts_with($storyImg, 'http')
+                                ? $storyImg
+                                : asset(ltrim($storyImg, '/')))
+                            : asset('assets/images/team-photo.jpg');
                     @endphp
                     <div class="team-image-wrapper">
                         <img src="{{ $storyImgUrl }}" alt="Team" class="team-img" data-studio-key="story_image">
@@ -300,17 +321,31 @@
             $rawSteps = [
                 [
                     'title' => ['vi' => 'Trao đổi & tìm hiểu', 'en' => 'Discovery & Consultation'],
-                    'desc' => ['vi' => 'Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu, xác định tầm nhìn và kỳ vọng chung.', 'en' => 'Organize an online session to gather in-depth brand insights, defining shared vision and expectations.'],
+                    'desc' => [
+                        'vi' =>
+                            'Tổ chức buổi trao đổi trực tuyến để thu thập thông tin chuyên sâu về thương hiệu, xác định tầm nhìn và kỳ vọng chung.',
+                        'en' =>
+                            'Organize an online session to gather in-depth brand insights, defining shared vision and expectations.',
+                    ],
                     'image' => '/assets/images/gallery1.jpg',
                 ],
                 [
                     'title' => ['vi' => 'Khởi tạo & ký kết', 'en' => 'Initiation & Agreement'],
-                    'desc' => ['vi' => 'Thống nhất phương án hợp tác, ký kết hợp đồng và xác lập các mốc thời gian triển khai cụ thể.', 'en' => 'Finalize the scope of collaboration, sign the contract, and establish clear delivery milestones.'],
+                    'desc' => [
+                        'vi' =>
+                            'Thống nhất phương án hợp tác, ký kết hợp đồng và xác lập các mốc thời gian triển khai cụ thể.',
+                        'en' =>
+                            'Finalize the scope of collaboration, sign the contract, and establish clear delivery milestones.',
+                    ],
                     'image' => '/assets/images/gallery2.jpg',
                 ],
                 [
                     'title' => ['vi' => 'Thiết kế & hoàn thiện', 'en' => 'Design & Execution'],
-                    'desc' => ['vi' => 'Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm cuối cùng.', 'en' => 'Execute creative design based on agreed directions and deliver the finalized outputs.'],
+                    'desc' => [
+                        'vi' =>
+                            'Triển khai thiết kế dựa trên các định hướng đã thống nhất và hoàn thiện sản phẩm cuối cùng.',
+                        'en' => 'Execute creative design based on agreed directions and deliver the finalized outputs.',
+                    ],
                     'image' => '/assets/images/gallery3.jpg',
                 ],
             ];
@@ -323,7 +358,8 @@
                 <div class="row align-items-start workflow-content-row">
 
                     <div class="col-12 col-lg-3" style="position: relative; z-index: 1;">
-                        <span class="label-side d-block sync-gap">• <span data-studio-key="workflow_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['workflow_label'] ?? null, 'Quy trình làm việc'), '• ') }}</span></span>
+                        <span class="label-side d-block sync-gap">• <span
+                                data-studio-key="workflow_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['workflow_label'] ?? null, 'Quy trình làm việc'), '• ') }}</span></span>
                         <p class="workflow-slogan m-0" data-studio-key="workflow_slogan">
                             @normVal($pageContents['workflow_slogan'] ?? null, 'We create innovative and thought-provoking environments that foster deeper human experiences.')
                         </p>
@@ -333,14 +369,18 @@
                         style="position: relative; z-index: 10;">
 
                         <div class="row flex-nowrap workflow-slider-track" id="workflowSliderTrack">
-                            @foreach($rawSteps as $idx => $step)
+                            @foreach ($rawSteps as $idx => $step)
                                 @php
                                     $stepNum = sprintf('%02d/', $idx + 1);
                                     $isActive = $idx === 0 ? 'is-active' : '';
                                     $stepTitle = \App\Helpers\NormHelper::val($step['title'] ?? '', '');
                                     $stepDesc = \App\Helpers\NormHelper::val($step['desc'] ?? '', '');
-                                    $stepImg = $step['image'] ?? ('/assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
-                                    $stepImgUrl = !empty($stepImg) ? (str_starts_with($stepImg, 'http') ? $stepImg : asset(ltrim($stepImg, '/'))) : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
+                                    $stepImg = $step['image'] ?? '/assets/images/gallery' . (($idx % 9) + 1) . '.jpg';
+                                    $stepImgUrl = !empty($stepImg)
+                                        ? (str_starts_with($stepImg, 'http')
+                                            ? $stepImg
+                                            : asset(ltrim($stepImg, '/')))
+                                        : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
                                 @endphp
                                 <div class="col-12 workflow-step {{ $isActive }}">
                                     <div class="step-top">
@@ -349,7 +389,8 @@
                                     </div>
                                     <p class="step-desc">{{ $stepDesc }}</p>
                                     <div class="step-image-wrapper">
-                                        <img src="{{ $stepImgUrl }}" alt="{{ __('site.step_alt') }} {{ $idx + 1 }}" class="img-fluid">
+                                        <img src="{{ $stepImgUrl }}"
+                                            alt="{{ __('site.step_alt') }} {{ $idx + 1 }}" class="img-fluid">
                                     </div>
                                 </div>
                             @endforeach
@@ -413,7 +454,6 @@
             $rawMembers = array_values($rawMembers);
         }
 
-        // Staggered 4-column row cycle (3 + 2 + 2 = 7 members per cycle)
         $memberRowPatterns = [
             ['member', 'spacer', 'member', 'member'],
             ['spacer', 'member', 'spacer', 'member'],
@@ -444,23 +484,27 @@
         <div class="container-fluid px-4 px-md-5">
             <div class="row">
                 <div class="col-12 testimonial-title-container">
-                    <h2 class="testimonial-title text-left scroll-slide-left" data-studio-key="members_heading_1">@normVal($pageContents['members_heading_1'] ?? null, 'GẶP GỠ')</h2>
-                    <h2 class="testimonial-title text-right scroll-slide-right" data-studio-key="members_heading_2">@normVal($pageContents['members_heading_2'] ?? null, 'THÀNH VIÊN')</h2>
+                    <h2 class="testimonial-title text-left scroll-slide-left" data-studio-key="members_heading_1">
+                        @normVal($pageContents['members_heading_1'] ?? null, 'GẶP GỠ')</h2>
+                    <h2 class="testimonial-title text-right scroll-slide-right" data-studio-key="members_heading_2">
+                        @normVal($pageContents['members_heading_2'] ?? null, 'THÀNH VIÊN')</h2>
                 </div>
             </div>
 
             <div class="members-grid-container mt-5" id="membersGridContainer">
-                @foreach($memberRows as $rowSlots)
+                @foreach ($memberRows as $rowSlots)
                     <div class="row member-row">
-                        @foreach($rowSlots as $slot)
-                            @if($slot['type'] === 'member')
+                        @foreach ($rowSlots as $slot)
+                            @if ($slot['type'] === 'member')
                                 @php
                                     $m = $slot['data'];
                                     $mName = \App\Helpers\NormHelper::val($m['name'] ?? '', '');
                                     $mRole = \App\Helpers\NormHelper::val($m['role'] ?? '', '');
                                     $mImg = $m['image'] ?? '/assets/images/team1.png';
                                     $mImgUrl = !empty($mImg)
-                                        ? (str_starts_with($mImg, 'http') ? $mImg : asset(ltrim($mImg, '/')))
+                                        ? (str_starts_with($mImg, 'http')
+                                            ? $mImg
+                                            : asset(ltrim($mImg, '/')))
                                         : asset('assets/images/team1.png');
                                 @endphp
                                 <div class="col-6 col-md-3 member-item">
@@ -488,7 +532,6 @@
             const track = document.getElementById('galleryTrack');
             if (!track) return;
 
-            // Remove previous clones if any
             track.querySelectorAll('[data-clone="true"]').forEach(el => el.remove());
 
             const originalItems = Array.from(track.querySelectorAll('.gallery-item:not([data-clone="true"])'));
