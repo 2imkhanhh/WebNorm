@@ -87,7 +87,7 @@
                     @endphp
                     @if(!empty($overviewImg))
                     <div class="overview-image-wrapper">
-                        <img src="{{ $overviewImg }}" alt="{{ $project ? $project->getTitle($locale) : 'Project Overview Mockups' }}" class="overview-img">
+                        <img src="{{ $overviewImg }}" alt="{{ $project ? $project->getTitle($locale) : 'Project Overview Mockups' }}" class="overview-img" loading="lazy">
                     </div>
                     @endif
                 </div>
@@ -108,7 +108,7 @@
                         $isFull = ($idx % 5 === 2);
                     @endphp
                     <div class="{{ $isFull ? 'col-12' : 'col-12 col-md-6' }}">
-                        <img src="{{ $imgUrl }}" alt="{{ $project ? $project->getTitle($locale) : 'Gallery image' }} {{ $idx + 1 }}" class="gallery-img">
+                        <img src="{{ $imgUrl }}" alt="{{ $project ? $project->getTitle($locale) : 'Gallery image' }} {{ $idx + 1 }}" class="gallery-img" loading="lazy">
                     </div>
                 @empty
                     <div class="col-12 text-center py-4 text-muted">{{ __('site.work_gallery_empty') }}</div>
@@ -159,7 +159,7 @@
                 </div>
                 <div class="col-12 col-md-6 mt-4 mt-md-0">
                     <div class="next-project-wrapper">
-                        <img src="{{ !empty($nextProject->thumbnail) ? (str_starts_with($nextProject->thumbnail, 'http') ? $nextProject->thumbnail : asset($nextProject->thumbnail)) : asset('assets/images/work3.jpg') }}" alt="{{ $nextProject->getTitle($locale) }}" class="next-project-img">
+                        <img src="{{ !empty($nextProject->thumbnail) ? (str_starts_with($nextProject->thumbnail, 'http') ? $nextProject->thumbnail : asset($nextProject->thumbnail)) : asset('assets/images/work3.jpg') }}" alt="{{ $nextProject->getTitle($locale) }}" class="next-project-img" loading="lazy">
 
                         <a href="{{ \App\Helpers\NormHelper::localizedRoute('work.detail', $nextProject->slug) }}" class="btn-next-project">
                             {{ __('site.work_view_project') }} <i class='bx bx-right-arrow-alt'></i>

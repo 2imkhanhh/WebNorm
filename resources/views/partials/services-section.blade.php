@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="col-12 col-md-5 mt-4 mt-md-0">
                                     <div class="service-image-viewport">
-                                        <img src="{{ $iconUrl }}" alt="{{ $svcTitle }}" class="service-img">
+                                        <img src="{{ $iconUrl }}" alt="{{ $svcTitle }}" class="service-img" loading="lazy">
                                     </div>
                                 </div>
                             </div>

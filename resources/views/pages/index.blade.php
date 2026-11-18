@@ -129,7 +129,7 @@
                             </video>
                         @else
                             <img class="w-100 d-block hero-media-el" style="border-radius: 8px; object-fit: cover;"
-                                src="{{ $heroMediaSrc }}" alt="Hero Media" data-studio-key="hero_video">
+                                src="{{ $heroMediaSrc }}" alt="Hero Media" data-studio-key="hero_video" loading="lazy">
                         @endif
                     </div>
                 </div>
@@ -179,7 +179,7 @@
                                     class="ps-card-inner text-decoration-none text-reset">
                                     <div class="ps-img-wrap">
                                         <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}"
-                                            alt="{{ $p->getTitle() }}">
+                                            alt="{{ $p->getTitle() }}" loading="lazy">
                                     </div>
                                     <div class="ps-info-wrap">
                                         <div class="ps-title">{{ $p->getTitle() }}</div>
@@ -194,7 +194,7 @@
                                 <div class="ps-card-inner">
                                     <div class="ps-img-wrap">
                                         <img src="{{ asset('assets/images/project1.png') }}"
-                                            alt="{{ __('site.default_project_title') }}">
+                                            alt="{{ __('site.default_project_title') }}" loading="lazy">
                                     </div>
                                     <div class="ps-info-wrap">
                                         <div class="ps-title">{{ __('site.default_project_title') }}</div>
@@ -237,7 +237,7 @@
                                     <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
                                         <div class="testimonial-avatar">
                                             <img src="{{ !empty($rev->avatar) ? (str_starts_with($rev->avatar, 'http') ? $rev->avatar : asset($rev->avatar)) : asset('assets/images/avatar.png') }}"
-                                                alt="{{ $rev->author }}">
+                                                alt="{{ $rev->author }}" loading="lazy">
                                         </div>
                                     </div>
                                     <div class="col-md-7">
@@ -258,7 +258,7 @@
                                 <div class="row align-items-start">
                                     <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
                                         <div class="testimonial-avatar">
-                                            <img src="{{ asset('assets/images/avatar.png') }}" alt="Nguyễn Minh Anh">
+                                            <img src="{{ asset('assets/images/avatar.png') }}" alt="Nguyễn Minh Anh" loading="lazy">
                                         </div>
                                     </div>
                                     <div class="col-md-7">
@@ -374,7 +374,7 @@
                             <div class="blog-img-wrap">
                                 <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}"
                                     class="d-block w-100 h-100">
-                                    <img src="{{ asset('assets/images/project1.png') }}" alt="Blog">
+                                    <img src="{{ asset('assets/images/project1.png') }}" alt="Blog" loading="lazy">
                                 </a>
                             </div>
                             <h3 class="blog-title">

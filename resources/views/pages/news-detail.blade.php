@@ -75,7 +75,7 @@
                     <div class="blog-card">
                         <div class="blog-img-wrap">
                             <a href="{{ \App\Helpers\NormHelper::localizedRoute('news.detail', $rel->slug) }}" class="d-block w-100 h-100">
-                                <img src="{{ $relThumb }}" alt="{{ $rel->getTitle() }}">
+                                <img src="{{ $relThumb }}" alt="{{ $rel->getTitle() }}" loading="lazy">
                             </a>
                         </div>
                         <h3 class="blog-title">

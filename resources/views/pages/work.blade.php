@@ -64,9 +64,10 @@
             $idx++;
         }
 
-        $hasLongFilter = count($dynamicFilters) > 3
-            || mb_strlen(trim($filterAllLabel), 'UTF-8') > 16
-            || collect($dynamicFilters)->contains(fn($item) => mb_strlen(trim($item['label']), 'UTF-8') > 15);
+        $hasLongFilter =
+            count($dynamicFilters) > 3 ||
+            mb_strlen(trim($filterAllLabel), 'UTF-8') > 16 ||
+            collect($dynamicFilters)->contains(fn($item) => mb_strlen(trim($item['label']), 'UTF-8') > 15);
     @endphp
 
     <section class="work-hero-section">
@@ -90,7 +91,8 @@
     <section class="work-list-section">
         <div class="work-list-header">
             <a href="#" class="view-list-btn" id="viewToggleBtn">
-                <i class='bx bx-menu' id="viewToggleIcon"></i> <span id="viewToggleText">{{ __('site.work_view_list') }}</span>
+                <i class='bx bx-menu' id="viewToggleIcon"></i> <span
+                    id="viewToggleText">{{ __('site.work_view_list') }}</span>
             </a>
         </div>
 
@@ -104,7 +106,7 @@
                     data-featured="{{ $p->is_featured ? '1' : '0' }}">
                     <div class="project-img-wrap">
                         <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}"
-                            alt="{{ $p->getTitle($locale) }}" class="project-img">
+                            alt="{{ $p->getTitle($locale) }}" class="project-img" loading="lazy">
                     </div>
                     <div class="project-info">
                         <h3 class="project-title">{{ $p->getTitle($locale) }}</h3>
@@ -121,7 +123,8 @@
         </div>
 
         <div class="load-more-wrap">
-            <a href="#" class="load-more-btn" id="loadMoreBtn" style="display: none;">{{ __('site.work_load_more') }}</a>
+            <a href="#" class="load-more-btn" id="loadMoreBtn"
+                style="display: none;">{{ __('site.work_load_more') }}</a>
         </div>
     </section>
 
@@ -214,7 +217,6 @@
                 });
             }
 
-            // initial display
             updateProjects();
 
             // View Toggle Logic

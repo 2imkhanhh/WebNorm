@@ -300,7 +300,7 @@
                             : asset('assets/images/team-photo.jpg');
                     @endphp
                     <div class="team-image-wrapper">
-                        <img src="{{ $storyImgUrl }}" alt="Team" class="team-img" data-studio-key="story_image">
+                        <img src="{{ $storyImgUrl }}" alt="Team" class="team-img" data-studio-key="story_image" loading="lazy">
                     </div>
 
                 </div>
@@ -390,7 +390,7 @@
                                     <p class="step-desc">{{ $stepDesc }}</p>
                                     <div class="step-image-wrapper">
                                         <img src="{{ $stepImgUrl }}"
-                                            alt="{{ __('site.step_alt') }} {{ $idx + 1 }}" class="img-fluid">
+                                            alt="{{ __('site.step_alt') }} {{ $idx + 1 }}" class="img-fluid" loading="lazy">
                                     </div>
                                 </div>
                             @endforeach
@@ -509,7 +509,7 @@
                                 @endphp
                                 <div class="col-6 col-md-3 member-item">
                                     <div class="member-card">
-                                        <img src="{{ $mImgUrl }}" alt="{{ $mName }}">
+                                        <img src="{{ $mImgUrl }}" alt="{{ $mName }}" loading="lazy">
                                         <h4 class="member-name">{{ $mName }}</h4>
                                         <p class="member-role">{{ $mRole }}</p>
                                     </div>
