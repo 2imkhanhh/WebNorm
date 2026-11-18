@@ -42,22 +42,24 @@
 
     <!-- Right: Actions -->
     <div class="topbar-right">
-      <div class="status-indicator">
+      <div class="status-indicator" :title="draftStatusTooltip">
         <span class="status-dot"
-          :class="{ unsaved: hasUnsavedChanges, draft: !hasUnsavedChanges && hasPendingDraft }"></span>
+          :class="{ unsaved: hasUnsavedChanges, draft: !hasUnsavedChanges && hasAnyPendingDraft }"></span>
         <span v-if="hasUnsavedChanges" class="status-text-unsaved">Có thay đổi chưa lưu</span>
-        <span v-else-if="hasPendingDraft" class="status-text-draft">Có bản nháp chưa xuất bản</span>
+        <span v-else-if="hasAnyPendingDraft" class="status-text-draft">Có bản nháp chưa xuất bản</span>
         <span v-else class="status-text-live">Đã xuất bản</span>
       </div>
 
-      <button class="btn-draft" :disabled="isSavingDraft || isSaving" @click="saveDraft">
-        <span v-if="isSavingDraft">Đang lưu...</span>
-        <span v-else>Lưu nháp</span>
-      </button>
-      <button class="btn-publish" :disabled="isSaving || isSavingDraft" @click="saveChanges">
-        <span v-if="isSaving">Đang lưu...</span>
-        <span v-else>Xuất bản</span>
-      </button>
+      <template v-if="hasEditorActions">
+        <button class="btn-draft" :disabled="isSavingDraft || isSaving" @click="saveDraft">
+          <span v-if="isSavingDraft">Đang lưu...</span>
+          <span v-else>Lưu nháp</span>
+        </button>
+        <button class="btn-publish" :disabled="isSaving || isSavingDraft" @click="saveChanges">
+          <span v-if="isSaving">Đang lưu...</span>
+          <span v-else>Xuất bản</span>
+        </button>
+      </template>
 
       <div class="user-menu-wrapper" ref="userMenuRef">
         <div class="user-trigger" @click="toggleUserMenu">
@@ -76,7 +78,7 @@
               <span>Xem bản nháp</span>
             </a>
 
-            <a :href="selectedPageSlug" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
+            <a :href="publishedUrl" target="_blank" class="dropdown-item" @click="isUserMenuOpen = false">
               <i class="bx bx-globe"></i>
               <span>Mở website đã xuất bản</span>
             </a>
@@ -118,13 +120,48 @@ const isPagesRoute = computed(() => {
   return page.component === 'Pages';
 });
 
-const previewDraftUrl = computed(() => {
-  const slug = selectedPageSlug.value || '/';
-  const lang = currentLanguage.value || 'vi';
-  return slug + (slug.includes('?') ? '&' : '?') + `preview=draft&lang=${lang}`;
+const hasEditorActions = computed(() => {
+  return ['Pages', 'Projects', 'Services', 'Blogs', 'Reviews', 'Settings'].includes(page.component);
 });
 
-// Danh sách trang phục vụ dropdown chuyển trang
+const hasAnyPendingDraft = computed(() => {
+  return Boolean(hasPendingDraft.value || page.props.draftStatus?.has_any);
+});
+
+const draftStatusTooltip = computed(() => {
+  if (hasUnsavedChanges.value) {
+    return 'Bạn đang có thay đổi chưa lưu ở trang này';
+  }
+  const labels = page.props.draftStatus?.labels || [];
+  if (hasAnyPendingDraft.value && labels.length > 0) {
+    return 'Đang có bản nháp chưa xuất bản tại: ' + labels.join(', ');
+  }
+  if (hasAnyPendingDraft.value) {
+    return 'Đang có bản nháp chưa xuất bản';
+  }
+  return 'Tất cả nội dung đã được xuất bản';
+});
+
+const activeTargetPath = computed(() => {
+  if (page.component === 'Pages') return selectedPageSlug.value || '/';
+  if (page.component === 'Projects') return '/work';
+  if (page.component === 'Blogs') return '/news';
+  return '/';
+});
+
+const previewDraftUrl = computed(() => {
+  const slug = activeTargetPath.value;
+  const lang = currentLanguage.value || 'vi';
+  const targetSlug = lang === 'en' ? (slug === '/' ? '/en' : '/en' + slug) : slug;
+  return targetSlug + (targetSlug.includes('?') ? '&' : '?') + 'preview=draft';
+});
+
+const publishedUrl = computed(() => {
+  const slug = activeTargetPath.value;
+  const lang = currentLanguage.value || 'vi';
+  return lang === 'en' ? (slug === '/' ? '/en' : '/en' + slug) : slug;
+});
+
 const pageList = [
   { name: 'Trang chủ', slug: '/' },
   { name: 'Về chúng tôi', slug: '/about-us' },
@@ -132,7 +169,6 @@ const pageList = [
   { name: 'Bài viết / Tin tức', slug: '/news' },
 ];
 
-// Logic quản lý thông tin User & Menu Dropdown
 const currentUser = computed(() => {
   return page.props.auth?.user?.name || window.__STUDIO_USER__ || 'Admin';
 });

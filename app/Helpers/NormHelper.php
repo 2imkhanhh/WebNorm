@@ -15,16 +15,33 @@ class NormHelper
     }
 
     /**
+     * Determine whether the current request is an authenticated draft preview.
+     */
+    public static function isDraftPreview(?Request $request = null): bool
+    {
+        $req = $request ?: request();
+        return auth()->check() && $req->query('preview') === 'draft';
+    }
+
+    /**
      * Resolve named client route for the active (or specified) language.
      */
     public static function localizedRoute(string $name, mixed $parameters = [], ?string $lang = null): string
     {
         $targetLang = static::locale($lang);
-        if ($targetLang === 'en' && Route::has('en.' . $name)) {
-            return route('en.' . $name, $parameters);
+        $routeName = ($targetLang === 'en' && Route::has('en.' . $name))
+            ? 'en.' . $name
+            : $name;
+
+        $url = route($routeName, $parameters);
+
+        $query = (string) parse_url($url, PHP_URL_QUERY);
+        parse_str($query, $queryParams);
+        if (static::isDraftPreview() && !array_key_exists('preview', $queryParams)) {
+            $url .= ($query !== '' ? '&' : '?') . 'preview=draft';
         }
 
-        return route($name, $parameters);
+        return $url;
     }
 
     /**
@@ -49,9 +66,17 @@ class NormHelper
             ? ($basePath === '/' ? '/en' : '/en' . $basePath)
             : $basePath;
 
-        $result = url($targetPath);
+        $queryParams = [];
         if (!empty($parts['query'])) {
-            $result .= '?' . $parts['query'];
+            parse_str($parts['query'], $queryParams);
+        }
+        if (static::isDraftPreview() && !array_key_exists('preview', $queryParams)) {
+            $queryParams['preview'] = 'draft';
+        }
+
+        $result = url($targetPath);
+        if (!empty($queryParams)) {
+            $result .= '?' . http_build_query($queryParams);
         }
         if (!empty($parts['fragment'])) {
             $result .= '#' . $parts['fragment'];
@@ -80,6 +105,9 @@ class NormHelper
         if ($preserveQuery) {
             $query = $req->query();
             unset($query['lang']);
+            if (!static::isDraftPreview($req)) {
+                unset($query['preview']);
+            }
             if (!empty($query)) {
                 $url .= '?' . http_build_query($query);
             }
@@ -132,6 +160,18 @@ class NormHelper
      */
     public static function setting(string $key, $default = '', ?string $lang = null)
     {
+        if (static::isDraftPreview() && $key !== 'mail_password' && $key !== 'mail_password_encrypted') {
+            $draft = \App\Services\DraftService::getDraft('settings');
+            $draftSettings = $draft?->payload['settings'] ?? null;
+            if (is_array($draftSettings) && array_key_exists($key, $draftSettings)) {
+                $draftVal = $draftSettings[$key];
+                if ($draftVal === null) {
+                    return static::val($default, (string) $default, $lang);
+                }
+                return static::val($draftVal, (string) $default, $lang);
+            }
+        }
+
         $val = Setting::get($key, null);
         if ($val === null) {
             return static::val($default, (string) $default, $lang);
@@ -148,16 +188,11 @@ class NormHelper
             return '';
         }
 
-        // Remove dangerous paired tags including their inner payload
         $clean = preg_replace('/<(script|iframe|object|embed|svg|form|meta|base)\b[^>]*>.*?<\/\1>/is', '', $html) ?? $html;
-        // Remove standalone dangerous void/unclosed tags
         $clean = preg_replace('/<(script|iframe|object|embed|svg|form|meta|base)\b[^>]*\/?>/is', '', $clean) ?? $clean;
-        // Strip inline event handlers (onclick, onerror, onload, etc.)
         $clean = preg_replace('/\s+on[a-z]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)/is', '', $clean) ?? $clean;
-        // Neutralize javascript: / vbscript: / data:text/html schemes in href/src
         $clean = preg_replace('/(href|src)\s*=\s*(["\'])\s*(?:javascript|vbscript|data\s*:\s*text\/html)\s*:[^"\']*\2/is', '$1="#"', $clean) ?? $clean;
 
         return $clean;
     }
 }
-

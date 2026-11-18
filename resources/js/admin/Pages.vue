@@ -545,7 +545,9 @@ watch(
 
 const previewDraftUrl = computed(() => {
   const slug = selectedPageSlug.value || '/';
-  return slug + (slug.includes('?') ? '&' : '?') + 'preview=draft';
+  const lang = currentLanguage.value || 'vi';
+  const targetSlug = lang === 'en' ? (slug === '/' ? '/en' : '/en' + slug) : slug;
+  return targetSlug + (targetSlug.includes('?') ? '&' : '?') + 'preview=draft';
 });
 
 const formattedDraftTime = computed(() => {
@@ -1095,17 +1097,7 @@ const savePagesToDatabase = (isDraft = false) => {
         hasUnsavedChanges.value = false;
 
         const targetPage = pages.value.find((p) => p.slug === selectedPageSlug.value);
-        if (targetPage) {
-          if (isDraft) {
-            targetPage.has_draft = true;
-            targetPage.draft_updated_at = new Date().toISOString();
-            hasPendingDraft.value = true;
-          } else {
-            targetPage.has_draft = false;
-            targetPage.draft_updated_at = null;
-            hasPendingDraft.value = false;
-          }
-        }
+        hasPendingDraft.value = !!targetPage?.has_draft;
 
         // Update snapshot to freshly saved values
         originalPagesSnapshot.value = clone(pages.value);

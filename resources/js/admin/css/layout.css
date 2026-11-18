@@ -441,4 +441,114 @@
   box-shadow: 0 0 10px #FDFF8E, 0 0 5px #eab308 !important;
 }
 
+/* Shared Draft Status Banner for Full-Width Admin Modules */
+.studio-workspace .draft-active-banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
 
+.studio-workspace .draft-active-banner .banner-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  flex: 1 1 auto;
+  min-width: 180px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+  text-align: left;
+}
+
+.studio-workspace .draft-active-banner .banner-icon-draft {
+  font-size: 17px;
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.studio-workspace .draft-active-banner .banner-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.studio-workspace .draft-active-banner .btn-banner-view,
+.studio-workspace .draft-active-banner .btn-banner-discard {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #ffffff;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.studio-workspace .draft-active-banner .btn-banner-view {
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.studio-workspace .draft-active-banner .btn-banner-view:hover {
+  background: #eff6ff;
+}
+
+.studio-workspace .draft-active-banner .btn-banner-discard {
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.studio-workspace .draft-active-banner .btn-banner-discard:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.studio-workspace .draft-active-banner .btn-banner-discard:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.studio-workspace .sidebar-sections .draft-active-banner {
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.studio-workspace .sidebar-sections .draft-active-banner .banner-info {
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.studio-workspace .sidebar-sections .draft-active-banner .banner-buttons {
+  width: 100%;
+}
+
+.studio-workspace .sidebar-sections .draft-active-banner .btn-banner-view,
+.studio-workspace .sidebar-sections .draft-active-banner .btn-banner-discard {
+  flex: 1;
+  font-size: 11.5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+}

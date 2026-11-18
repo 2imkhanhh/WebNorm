@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Services\DraftService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -13,13 +14,56 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('categories')->orderBy('sort_order')->orderBy('id', 'desc')->get();
         $categories = ProjectCategory::orderBy('sort_order')->orderBy('id')->get();
+        $draft = DraftService::getDraft('projects');
+
+        if ($draft) {
+            $categoriesById = $categories->keyBy('id');
+            $items = collect($draft->payload['items'] ?? [])->map(function ($item) use ($categoriesById) {
+                $catIds = array_values(array_filter(
+                    array_map('intval', is_array($item['category_ids'] ?? null) ? $item['category_ids'] : []),
+                    fn (int $cid) => $categoriesById->has($cid)
+                ));
+                $item['category_ids'] = $catIds;
+                $item['categories'] = collect($catIds)->map(fn (int $cid) => $categoriesById->get($cid))->values()->all();
+                return $item;
+            })->values()->all();
+
+            return Inertia::render('Projects', [
+                'projects' => $items,
+                'categories' => $categories,
+                'deletedIds' => $draft->payload['deleted_ids'] ?? [],
+                'hasDraft' => true,
+                'draftUpdatedAt' => $draft->updated_at?->toIso8601String(),
+            ]);
+        }
+
+        $projects = Project::with('categories')->orderBy('sort_order')->orderBy('id', 'desc')->get();
 
         return Inertia::render('Projects', [
             'projects' => $projects,
             'categories' => $categories,
+            'deletedIds' => [],
+            'hasDraft' => false,
+            'draftUpdatedAt' => null,
         ]);
+    }
+
+    public function saveDraft(Request $request)
+    {
+        DraftService::saveDraft('projects', [
+            'items' => $request->input('items', []),
+            'deleted_ids' => $request->input('deleted_ids', []),
+        ]);
+
+        return back()->with('success', 'Đã lưu bản nháp dự án thành công!');
+    }
+
+    public function discardDraft()
+    {
+        DraftService::discardDraft('projects');
+
+        return back()->with('success', 'Đã xóa bản nháp dự án, quay về dữ liệu đã xuất bản!');
     }
 
     public function publish(Request $request)
@@ -97,6 +141,8 @@ class ProjectController extends Controller
                 }
             }
         });
+
+        DraftService::discardDraft('projects');
 
         return back()->with('success', 'Đã xuất bản danh sách dự án thành công vào cơ sở dữ liệu!');
     }

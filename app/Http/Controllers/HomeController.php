@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\NormHelper;
 use App\Models\Blog;
 use App\Models\PageContent;
 use App\Models\Project;
@@ -9,6 +10,7 @@ use App\Models\ProjectCategory;
 use App\Models\Review;
 use App\Models\Service;
 use App\Models\Setting;
+use App\Services\DraftService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -20,7 +22,7 @@ class HomeController extends Controller
             $query->whereIn('field_key', $fieldKeys);
         }
         $contents = $query->get();
-        $isPreview = auth()->check() && $request->query('preview') === 'draft';
+        $isPreview = NormHelper::isDraftPreview($request);
         view()->share('isPreviewDraft', $isPreview);
 
         $map = [];
@@ -37,14 +39,35 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $pageContents = $this->getPageContentMap('/', $request);
-        $projects = Project::where('is_active', true)
+        $isPreview = NormHelper::isDraftPreview($request);
+
+        $draftProjects = $isPreview ? DraftService::getDraftProjects() : null;
+        $projects = $draftProjects !== null
+            ? $draftProjects->filter(fn($p) => $p->is_active && $p->is_featured)->values()
+            : Project::where('is_active', true)
             ->where('is_featured', true)
             ->with('categories')
             ->orderBy('sort_order')
             ->get();
-        $services = Service::where('is_active', true)->orderBy('sort_order')->get();
-        $reviews = Review::where('is_active', true)->orderBy('sort_order')->get();
-        $blogs = Blog::where('status', 'published')
+
+        $draftServices = $isPreview ? DraftService::getDraftServices() : null;
+        $services = $draftServices !== null
+            ? $draftServices->filter(fn($s) => $s->is_active)->values()
+            : Service::where('is_active', true)->orderBy('sort_order')->get();
+
+        $draftReviews = $isPreview ? DraftService::getDraftReviews() : null;
+        $reviews = $draftReviews !== null
+            ? $draftReviews->filter(fn($r) => $r->is_active)->values()
+            : Review::where('is_active', true)->orderBy('sort_order')->get();
+
+        $draftBlogs = $isPreview ? DraftService::getDraftBlogs() : null;
+        $blogs = $draftBlogs !== null
+            ? $draftBlogs
+            ->filter(fn($b) => $b->status === 'published' && $b->is_featured)
+            ->sortByDesc(fn($b) => sprintf('%012d-%010d', $b->published_at?->timestamp ?? 0, $b->id ?? 0))
+            ->take(10)
+            ->values()
+            : Blog::where('status', 'published')
             ->where('is_featured', true)
             ->latest('published_at')
             ->latest('id')
@@ -60,7 +83,11 @@ class HomeController extends Controller
             $this->getPageContentMap('/', $request, ['services_label', 'services_statement', 'services_desc']),
             $this->getPageContentMap('/about-us', $request)
         );
-        $services = Service::where('is_active', true)->orderBy('sort_order')->get();
+        $isPreview = NormHelper::isDraftPreview($request);
+        $draftServices = $isPreview ? DraftService::getDraftServices() : null;
+        $services = $draftServices !== null
+            ? $draftServices->filter(fn($s) => $s->is_active)->values()
+            : Service::where('is_active', true)->orderBy('sort_order')->get();
 
         return view('pages.about-us', compact('pageContents', 'services'));
     }
@@ -68,13 +95,35 @@ class HomeController extends Controller
     public function work(Request $request)
     {
         $pageContents = $this->getPageContentMap('/work', $request);
-        $projects = Project::where('is_active', true)->with('categories')->orderBy('sort_order')->get();
+        $isPreview = NormHelper::isDraftPreview($request);
+        $draftProjects = $isPreview ? DraftService::getDraftProjects() : null;
+        $projects = $draftProjects !== null
+            ? $draftProjects->filter(fn($p) => $p->is_active)->values()
+            : Project::where('is_active', true)->with('categories')->orderBy('sort_order')->get();
         $categories = ProjectCategory::orderBy('sort_order')->orderBy('id')->get();
         return view('pages.work', compact('pageContents', 'projects', 'categories'));
     }
 
     public function workDetail(Request $request, $slug = null)
     {
+        $isPreview = NormHelper::isDraftPreview($request);
+        view()->share('isPreviewDraft', $isPreview);
+
+        $draftProjects = $isPreview ? DraftService::getDraftProjects() : null;
+        if ($draftProjects !== null) {
+            $activeProjects = $draftProjects->filter(fn($p) => $p->is_active)->values();
+            $project = $slug ? $draftProjects->firstWhere('slug', $slug) : null;
+            if (! $project) {
+                $project = $activeProjects->first();
+            }
+            $otherProjects = $activeProjects
+                ->filter(fn($p) => $project ? ($p->slug !== $project->slug) : true)
+                ->take(3)
+                ->values();
+
+            return view('pages.work-detail', compact('project', 'otherProjects'));
+        }
+
         $project = null;
         if ($slug) {
             $project = Project::with('categories')->where('slug', $slug)->first();
@@ -94,12 +143,37 @@ class HomeController extends Controller
     public function news(Request $request)
     {
         $pageContents = $this->getPageContentMap('/news', $request);
-        $blogs = Blog::where('status', 'published')->latest('published_at')->get();
+        $isPreview = NormHelper::isDraftPreview($request);
+        $draftBlogs = $isPreview ? DraftService::getDraftBlogs() : null;
+        $blogs = $draftBlogs !== null
+            ? $draftBlogs
+            ->filter(fn($b) => $b->status === 'published')
+            ->sortByDesc(fn($b) => $b->published_at?->timestamp ?? 0)
+            ->values()
+            : Blog::where('status', 'published')->latest('published_at')->get();
         return view('pages.news', compact('pageContents', 'blogs'));
     }
 
     public function newsDetail(Request $request, $slug = null)
     {
+        $isPreview = NormHelper::isDraftPreview($request);
+        view()->share('isPreviewDraft', $isPreview);
+
+        $draftBlogs = $isPreview ? DraftService::getDraftBlogs() : null;
+        if ($draftBlogs !== null) {
+            $publishedBlogs = $draftBlogs->filter(fn($b) => $b->status === 'published')->values();
+            $blog = $slug ? $draftBlogs->firstWhere('slug', $slug) : null;
+            if (! $blog) {
+                $blog = $publishedBlogs->first();
+            }
+            $relatedBlogs = $publishedBlogs
+                ->filter(fn($b) => $blog ? ($b->slug !== $blog->slug) : true)
+                ->take(3)
+                ->values();
+
+            return view('pages.news-detail', compact('blog', 'relatedBlogs'));
+        }
+
         $blog = null;
         if ($slug) {
             $blog = Blog::where('slug', $slug)->first();
@@ -166,7 +240,6 @@ class HomeController extends Controller
                 $xml .= "    </url>\n";
             }
         }
-
         $xml .= '</urlset>';
 
         return response($xml, 200, ['Content-Type' => 'application/xml; charset=UTF-8']);

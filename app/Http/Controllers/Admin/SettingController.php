@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\DraftService;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -55,12 +56,80 @@ class SettingController extends Controller
             $settings[$s->key] = $s->value;
         }
 
-        $settings['mail_password_set'] = ! empty($settings['mail_password']);
+        $hasPassword = ! empty($settings['mail_password']);
+        $draft = DraftService::getDraft('settings');
+        $hasDraft = false;
+        $draftUpdatedAt = null;
+
+        if ($draft && is_array($draft->payload)) {
+            $hasDraft = true;
+            $draftUpdatedAt = $draft->updated_at?->toIso8601String();
+            $draftItems = $draft->payload['settings'] ?? [];
+            foreach ($draftItems as $k => $v) {
+                if ($k === 'mail_password_encrypted') {
+                    if (! empty($v)) {
+                        $hasPassword = true;
+                    }
+                    continue;
+                }
+                if (in_array($k, self::ALLOWED_KEYS, true)) {
+                    $settings[$k] = $v;
+                }
+            }
+        }
+
+        $settings['mail_password_set'] = $hasPassword;
         $settings['mail_password'] = '';
 
         return Inertia::render('Settings', [
             'settings' => $settings,
+            'hasDraft' => $hasDraft,
+            'draftUpdatedAt' => $draftUpdatedAt,
         ]);
+    }
+
+    public function saveDraft(Request $request)
+    {
+        $items = $request->input('settings', []);
+        if (! is_array($items)) {
+            return back()->withErrors(['settings' => 'Dữ liệu cài đặt không hợp lệ.']);
+        }
+
+        $existingDraft = DraftService::getDraft('settings');
+        $existingEncryptedPassword = $existingDraft?->payload['settings']['mail_password_encrypted'] ?? null;
+
+        $draftSettings = [];
+        foreach ($items as $key => $value) {
+            if (! in_array($key, self::ALLOWED_KEYS, true)) {
+                continue;
+            }
+
+            if ($key === 'mail_password') {
+                if (is_string($value) && $value !== '') {
+                    $draftSettings['mail_password_encrypted'] = Crypt::encryptString($value);
+                } elseif (! empty($existingEncryptedPassword)) {
+                    $draftSettings['mail_password_encrypted'] = $existingEncryptedPassword;
+                }
+                continue;
+            }
+
+            if ($key === 'mail_enabled') {
+                $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            }
+
+            $draftSettings[$key] = $value;
+        }
+
+        DraftService::saveDraft('settings', ['settings' => $draftSettings]);
+
+        return back()->with('success', 'Đã lưu bản nháp cài đặt website thành công!');
+    }
+
+    public function discardDraft()
+    {
+        DraftService::discardDraft('settings');
+
+        return back()->with('success', 'Đã xóa bản nháp cài đặt, quay về cấu hình đã xuất bản!');
     }
 
     public function update(Request $request)
@@ -70,16 +139,22 @@ class SettingController extends Controller
             return back()->withErrors(['settings' => 'Dữ liệu cài đặt không hợp lệ.']);
         }
 
+        $existingDraft = DraftService::getDraft('settings');
+        $draftEncryptedPassword = $existingDraft?->payload['settings']['mail_password_encrypted'] ?? null;
+
         foreach ($items as $key => $value) {
             if (! in_array($key, self::ALLOWED_KEYS, true)) {
                 continue;
             }
 
             if ($key === 'mail_password') {
-                if (! is_string($value) || $value === '') {
+                if (is_string($value) && $value !== '') {
+                    $value = Crypt::encryptString($value);
+                } elseif (! empty($draftEncryptedPassword)) {
+                    $value = $draftEncryptedPassword;
+                } else {
                     continue;
                 }
-                $value = Crypt::encryptString($value);
             }
 
             if ($key === 'mail_enabled') {
@@ -91,6 +166,8 @@ class SettingController extends Controller
                 ['value' => $value]
             );
         }
+
+        DraftService::discardDraft('settings');
 
         return back()->with('success', 'Đã lưu cấu hình cài đặt website thành công!');
     }

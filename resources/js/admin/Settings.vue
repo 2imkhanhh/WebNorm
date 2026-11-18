@@ -17,13 +17,8 @@
           </div>
         </div>
 
-        <!-- Staging Alert Banner when settings have unsaved changes -->
-        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
-          <div class="banner-info">
-            <i class="bx bx-info-circle banner-icon"></i>
-            <span>Có thay đổi chưa lưu</span>
-          </div>
-        </div>
+        <!-- Unsaved / Draft Status Banner -->
+        <DraftStatusBanner :has-draft="hasDraft" preview-path="/" @discard="handleDiscardDraft" />
 
         <form @submit.prevent="saveSettings" class="settings-form-layout">
           <div class="settings-card">
@@ -435,11 +430,16 @@
 import { reactive, ref, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import DraftStatusBanner from './components/DraftStatusBanner.vue';
 import {
   hasUnsavedChanges,
+  hasPendingDraft,
   isSaving,
+  isSavingDraft,
+  isDiscardingDraft,
   onSaveHandler,
   onDraftHandler,
+  onDiscardDraftHandler,
 } from './composables/useAdmin';
 import {
   askConfirm,
@@ -453,6 +453,14 @@ const props = defineProps({
   settings: {
     type: Object,
     default: () => ({}),
+  },
+  hasDraft: {
+    type: Boolean,
+    default: false,
+  },
+  draftUpdatedAt: {
+    type: String,
+    default: null,
   },
 });
 
@@ -564,6 +572,23 @@ const testMailResult = ref(null);
 const renderKey = ref(0);
 let isInitialized = false;
 let isReverting = false;
+
+watch(
+  () => [props.settings, props.hasDraft],
+  () => {
+    hasPendingDraft.value = !!props.hasDraft;
+    if (!isInitialized) return;
+    isReverting = true;
+    Object.assign(form, initFormData());
+    mailPasswordSet.value = Boolean(props.settings.mail_password_set);
+    selectedSmtpHostPreset.value = smtpHostPresets.some((p) => p.host === form.mail_host) ? form.mail_host : 'custom';
+    setTimeout(() => {
+      isReverting = false;
+      hasUnsavedChanges.value = false;
+    }, 50);
+  },
+  { immediate: true }
+);
 
 watch(
   () => ({ ...form }),
@@ -693,52 +718,108 @@ const revertSettings = async () => {
   }
 };
 
+const buildSettingsPayload = () => ({
+  settings: {
+    logo: form.logo,
+    model_3d: form.model_3d,
+    copyright: form.copyright,
+
+    // Footer CTA & Social title
+    footer_btn_text: { vi: form.footer_btn_text_vi, en: form.footer_btn_text_en },
+    footer_social_title: { vi: form.footer_social_title_vi, en: form.footer_social_title_en },
+
+    // Footer Animation Words
+    footer_line1_old: { vi: form.footer_line1_old_vi, en: form.footer_line1_old_en },
+    footer_line1_new: { vi: form.footer_line1_new_vi, en: form.footer_line1_new_en },
+    footer_line2_old: { vi: form.footer_line2_old_vi, en: form.footer_line2_old_en },
+    footer_line2_new: { vi: form.footer_line2_new_vi, en: form.footer_line2_new_en },
+    footer_line3_old: { vi: form.footer_line3_old_vi, en: form.footer_line3_old_en },
+    footer_line3_new: { vi: form.footer_line3_new_vi, en: form.footer_line3_new_en },
+
+    // Contact info
+    hotline: form.hotline,
+    email: form.email,
+    address: { vi: form.address_vi, en: form.address_en },
+
+    // Mail / SMTP config
+    mail_enabled: form.mail_enabled,
+    mail_to_address: form.mail_to_address,
+    mail_host: form.mail_host,
+    mail_port: form.mail_port ? Number(form.mail_port) : 587,
+    mail_encryption: form.mail_encryption,
+    mail_username: form.mail_username,
+    mail_password: form.mail_password,
+    mail_from_address: form.mail_from_address,
+    mail_from_name: form.mail_from_name,
+
+    // Social URLs
+    social_facebook: form.social_facebook,
+    social_instagram: form.social_instagram,
+    social_linkedin: form.social_linkedin,
+    social_behance: form.social_behance,
+    social_dribbble: form.social_dribbble,
+  },
+});
+
+const saveDraftSettings = () => {
+  isSavingDraft.value = true;
+  router.post('/admin/settings/draft', buildSettingsPayload(), {
+    preserveScroll: true,
+    onSuccess: () => {
+      if (form.mail_password) {
+        isReverting = true;
+        mailPasswordSet.value = true;
+        form.mail_password = '';
+        setTimeout(() => {
+          isReverting = false;
+          hasUnsavedChanges.value = false;
+        }, 50);
+      }
+      isSavingDraft.value = false;
+      hasUnsavedChanges.value = false;
+      hasPendingDraft.value = true;
+      notifySuccess('Đã lưu bản nháp cài đặt website thành công!');
+    },
+    onError: (err) => {
+      isSavingDraft.value = false;
+      notifyError('Lỗi lưu bản nháp: ' + extractErrorMessage(err));
+    },
+  });
+};
+
+const handleDiscardDraft = async () => {
+  const ok = await askConfirm({
+    title: 'Xóa bản nháp',
+    message: 'Bạn có chắc chắn muốn xóa bản nháp cài đặt này và quay về cấu hình đã xuất bản không?',
+    confirmText: 'Xóa bản nháp',
+    variant: 'danger',
+  });
+  if (!ok) return;
+
+  isDiscardingDraft.value = true;
+  router.post(
+    '/admin/settings/discard-draft',
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isDiscardingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
+        notifySuccess('Đã xóa bản nháp cài đặt thành công!');
+      },
+      onError: (err) => {
+        isDiscardingDraft.value = false;
+        notifyError('Có lỗi xảy ra khi xóa bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
 const saveSettings = () => {
   isSaving.value = true;
-  const payload = {
-    settings: {
-      logo: form.logo,
-      model_3d: form.model_3d,
-      copyright: form.copyright,
 
-      // Footer CTA & Social title
-      footer_btn_text: { vi: form.footer_btn_text_vi, en: form.footer_btn_text_en },
-      footer_social_title: { vi: form.footer_social_title_vi, en: form.footer_social_title_en },
-
-      // Footer Animation Words
-      footer_line1_old: { vi: form.footer_line1_old_vi, en: form.footer_line1_old_en },
-      footer_line1_new: { vi: form.footer_line1_new_vi, en: form.footer_line1_new_en },
-      footer_line2_old: { vi: form.footer_line2_old_vi, en: form.footer_line2_old_en },
-      footer_line2_new: { vi: form.footer_line2_new_vi, en: form.footer_line2_new_en },
-      footer_line3_old: { vi: form.footer_line3_old_vi, en: form.footer_line3_old_en },
-      footer_line3_new: { vi: form.footer_line3_new_vi, en: form.footer_line3_new_en },
-
-      // Contact info
-      hotline: form.hotline,
-      email: form.email,
-      address: { vi: form.address_vi, en: form.address_en },
-
-      // Mail / SMTP config
-      mail_enabled: form.mail_enabled,
-      mail_to_address: form.mail_to_address,
-      mail_host: form.mail_host,
-      mail_port: form.mail_port ? Number(form.mail_port) : 587,
-      mail_encryption: form.mail_encryption,
-      mail_username: form.mail_username,
-      mail_password: form.mail_password,
-      mail_from_address: form.mail_from_address,
-      mail_from_name: form.mail_from_name,
-
-      // Social URLs
-      social_facebook: form.social_facebook,
-      social_instagram: form.social_instagram,
-      social_linkedin: form.social_linkedin,
-      social_behance: form.social_behance,
-      social_dribbble: form.social_dribbble,
-    },
-  };
-
-  router.post('/admin/settings', payload, {
+  router.post('/admin/settings', buildSettingsPayload(), {
     preserveScroll: true,
     onSuccess: () => {
       if (form.mail_password) {
@@ -752,6 +833,7 @@ const saveSettings = () => {
       }
       isSaving.value = false;
       hasUnsavedChanges.value = false;
+      hasPendingDraft.value = false;
       notifySuccess('Đã xuất bản cài đặt website thành công vào cơ sở dữ liệu!');
     },
     onError: (err) => {
@@ -807,13 +889,16 @@ const sendTestMail = async () => {
 onMounted(() => {
   isInitialized = true;
   onSaveHandler.value = saveSettings;
-  onDraftHandler.value = saveSettings;
+  onDraftHandler.value = saveDraftSettings;
+  onDiscardDraftHandler.value = handleDiscardDraft;
 });
 
 onUnmounted(() => {
   onSaveHandler.value = null;
   onDraftHandler.value = null;
+  onDiscardDraftHandler.value = null;
   hasUnsavedChanges.value = false;
+  hasPendingDraft.value = false;
 });
 </script>
 

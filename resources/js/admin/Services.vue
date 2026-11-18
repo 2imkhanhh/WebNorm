@@ -30,13 +30,8 @@
           </div>
         </div>
 
-        <!-- Staging Alert Banner when changes are pending publish -->
-        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
-          <div class="banner-info">
-            <i class="bx bx-info-circle banner-icon"></i>
-            <span>Có thay đổi chưa lưu</span>
-          </div>
-        </div>
+        <!-- Unsaved / Draft Status Banner -->
+        <DraftStatusBanner :has-draft="hasDraft" preview-path="/" @discard="handleDiscardDraft" />
 
         <!-- Services Grid -->
         <div v-if="filteredServices && filteredServices.length > 0" class="services-card-grid">
@@ -189,12 +184,17 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import DraftStatusBanner from './components/DraftStatusBanner.vue';
 import {
   currentLanguage,
   hasUnsavedChanges,
+  hasPendingDraft,
   isSaving,
+  isSavingDraft,
+  isDiscardingDraft,
   onSaveHandler,
   onDraftHandler,
+  onDiscardDraftHandler,
 } from './composables/useAdmin';
 import {
   askConfirm,
@@ -208,6 +208,18 @@ const props = defineProps({
   services: {
     type: Array,
     default: () => [],
+  },
+  deletedIds: {
+    type: Array,
+    default: () => [],
+  },
+  hasDraft: {
+    type: Boolean,
+    default: false,
+  },
+  draftUpdatedAt: {
+    type: String,
+    default: null,
   },
 });
 
@@ -223,12 +235,13 @@ const isUploading = ref(false);
 
 const syncFromProps = () => {
   localServices.value = JSON.parse(JSON.stringify(props.services || []));
-  deletedIds.value = [];
+  deletedIds.value = JSON.parse(JSON.stringify(props.deletedIds || []));
+  hasPendingDraft.value = !!props.hasDraft;
   renderKey.value++;
   hasUnsavedChanges.value = false;
 };
 
-watch(() => props.services, syncFromProps, { immediate: true });
+watch(() => [props.services, props.deletedIds, props.hasDraft], syncFromProps, { immediate: true });
 
 watch(
   currentLanguage,
@@ -421,6 +434,10 @@ const submitForm = () => {
     return;
   }
 
+  const viDesc = form.description_vi || form.description_en || '';
+  const enDesc = form.description_en || form.description_vi || '';
+  const parseLines = (str) => String(str || '').split('\n').map((l) => l.trim()).filter(Boolean);
+
   const payloadData = {
     number: String(form.number || '01').replace(/[\/\s]+$/g, '').trim(),
     title: {
@@ -428,8 +445,12 @@ const submitForm = () => {
       en: form.title_en || form.title_vi,
     },
     description: {
-      vi: form.description_vi || form.description_en,
-      en: form.description_en || form.description_vi,
+      vi: viDesc,
+      en: enDesc,
+    },
+    content: {
+      vi: parseLines(viDesc),
+      en: parseLines(enDesc),
     },
     icon: form.icon,
   };
@@ -471,6 +492,59 @@ const confirmDelete = async (s) => {
   }
 };
 
+const saveDraftServices = () => {
+  isSavingDraft.value = true;
+  router.post(
+    '/admin/services/draft',
+    {
+      items: localServices.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSavingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = true;
+        notifySuccess('Đã lưu bản nháp dịch vụ thành công!');
+      },
+      onError: (err) => {
+        isSavingDraft.value = false;
+        notifyError('Lỗi lưu bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
+const handleDiscardDraft = async () => {
+  const ok = await askConfirm({
+    title: 'Xóa bản nháp',
+    message: 'Bạn có chắc chắn muốn xóa bản nháp dịch vụ này và quay về dữ liệu đã xuất bản không?',
+    confirmText: 'Xóa bản nháp',
+    variant: 'danger',
+  });
+  if (!ok) return;
+
+  isDiscardingDraft.value = true;
+  router.post(
+    '/admin/services/discard-draft',
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isDiscardingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
+        notifySuccess('Đã xóa bản nháp dịch vụ thành công!');
+      },
+      onError: (err) => {
+        isDiscardingDraft.value = false;
+        notifyError('Có lỗi xảy ra khi xóa bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
 const publishServices = () => {
   isSaving.value = true;
   router.post(
@@ -484,6 +558,7 @@ const publishServices = () => {
       onSuccess: () => {
         isSaving.value = false;
         hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
         notifySuccess('Đã xuất bản dịch vụ vào cơ sở dữ liệu thành công!');
       },
       onError: (err) => {
@@ -496,13 +571,16 @@ const publishServices = () => {
 
 onMounted(() => {
   onSaveHandler.value = publishServices;
-  onDraftHandler.value = publishServices;
+  onDraftHandler.value = saveDraftServices;
+  onDiscardDraftHandler.value = handleDiscardDraft;
 });
 
 onUnmounted(() => {
   onSaveHandler.value = null;
   onDraftHandler.value = null;
+  onDiscardDraftHandler.value = null;
   hasUnsavedChanges.value = false;
+  hasPendingDraft.value = false;
 });
 </script>
 

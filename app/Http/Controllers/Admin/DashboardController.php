@@ -7,6 +7,7 @@ use App\Models\Blog;
 use App\Models\Contact;
 use App\Models\Project;
 use App\Models\Service;
+use App\Services\DraftService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -30,6 +31,7 @@ class DashboardController extends Controller
             'metrics' => $metrics,
             'recentContacts' => $recentContacts,
             'traffic' => $traffic,
+            'hasAnyDraft' => DraftService::hasAnyDraft(),
         ]);
     }
 

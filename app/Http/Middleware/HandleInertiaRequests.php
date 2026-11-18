@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\DraftService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -44,6 +45,9 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                 ] : null,
             ],
+            'draftStatus' => fn () => ($request->user() && $request->is('admin*'))
+                ? DraftService::getSummary()
+                : null,
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Helpers\NormHelper;
 use App\Models\Service;
 use App\Models\Setting;
+use App\Services\DraftService;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
@@ -42,16 +43,30 @@ class AppServiceProvider extends ServiceProvider
         // Share settings & services to all Blade views
         View::composer('*', function ($view) {
             try {
+                $isPreview = NormHelper::isDraftPreview();
+
                 if (Schema::hasTable('settings')) {
                     $rawSettings = Setting::all();
                     $settings = [];
                     foreach ($rawSettings as $s) {
                         $settings[$s->key] = $s->value;
                     }
+                    if ($isPreview && ($draftSettings = DraftService::getDraft('settings'))) {
+                        $draftItems = $draftSettings->payload['settings'] ?? [];
+                        foreach ($draftItems as $k => $v) {
+                            if ($k === 'mail_password_encrypted' || $k === 'mail_password') {
+                                continue;
+                            }
+                            $settings[$k] = $v;
+                        }
+                    }
                     $view->with('settings', $settings);
                 }
                 if (Schema::hasTable('services')) {
-                    $globalServices = Service::where('is_active', true)->orderBy('sort_order')->get();
+                    $draftServices = $isPreview ? DraftService::getDraftServices() : null;
+                    $globalServices = $draftServices !== null
+                        ? $draftServices->filter(fn ($s) => $s->is_active)->values()
+                        : Service::where('is_active', true)->orderBy('sort_order')->get();
                     $view->with('globalServices', $globalServices);
                 }
             } catch (\Throwable $e) {

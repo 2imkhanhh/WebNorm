@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Services\DraftService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -12,11 +13,42 @@ class BlogController extends Controller
 {
     public function index()
     {
+        $draft = DraftService::getDraft('blogs');
+
+        if ($draft) {
+            return Inertia::render('Blogs', [
+                'blogs' => $draft->payload['items'] ?? [],
+                'deletedIds' => $draft->payload['deleted_ids'] ?? [],
+                'hasDraft' => true,
+                'draftUpdatedAt' => $draft->updated_at?->toIso8601String(),
+            ]);
+        }
+
         $blogs = Blog::latest('published_at')->latest('id')->get();
 
         return Inertia::render('Blogs', [
             'blogs' => $blogs,
+            'deletedIds' => [],
+            'hasDraft' => false,
+            'draftUpdatedAt' => null,
         ]);
+    }
+
+    public function saveDraft(Request $request)
+    {
+        DraftService::saveDraft('blogs', [
+            'items' => $request->input('items', []),
+            'deleted_ids' => $request->input('deleted_ids', []),
+        ]);
+
+        return back()->with('success', 'Đã lưu bản nháp bài viết thành công!');
+    }
+
+    public function discardDraft()
+    {
+        DraftService::discardDraft('blogs');
+
+        return back()->with('success', 'Đã xóa bản nháp bài viết, quay về dữ liệu đã xuất bản!');
     }
 
     public function publish(Request $request)
@@ -75,6 +107,8 @@ class BlogController extends Controller
                 }
             }
         });
+
+        DraftService::discardDraft('blogs');
 
         return back()->with('success', 'Đã xuất bản tin tức vào cơ sở dữ liệu thành công!');
     }

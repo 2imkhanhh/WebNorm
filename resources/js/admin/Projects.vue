@@ -32,13 +32,8 @@
           </div>
         </div>
 
-        <!-- Staging Alert Banner when changes are pending publish -->
-        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
-          <div class="banner-info">
-            <i class="bx bx-info-circle banner-icon"></i>
-            <span>Có thay đổi chưa lưu</span>
-          </div>
-        </div>
+        <!-- Unsaved / Draft Status Banner -->
+        <DraftStatusBanner :has-draft="hasDraft" preview-path="/work" @discard="handleDiscardDraft" />
 
         <!-- Filter Bar -->
         <div class="projects-filter-bar">
@@ -84,8 +79,8 @@
             </div>
 
             <div class="project-card-footer-actions">
-              <a :href="'/work/' + p.slug" target="_blank" class="btn-card-preview-live"
-                title="Xem trang chi tiết thực tế trên website">
+              <a :href="getProjectDetailUrl(p)" target="_blank" class="btn-card-preview-live"
+                title="Xem trang chi tiết dự án">
                 <i class="bx bx-link-external"></i> Xem chi tiết
               </a>
               <div class="card-action-btns-right d-flex gap-1">
@@ -177,9 +172,7 @@
 
         <!-- Form Body -->
         <form @submit.prevent="submitForm" class="tab-pane-content">
-          <!-- TAB 1: THÔNG TIN CHUNG (2 Cột khoa học) -->
           <div v-if="activeTab === 'basic'" class="project-tab-body">
-            <!-- Cột trái: Thông tin chính -->
             <div class="project-form-main">
               <!-- Tên dự án -->
               <div class="form-group-custom">
@@ -192,7 +185,6 @@
                   placeholder="E.g. Tien Phong Identity" @input="onTitleInput" required />
               </div>
 
-              <!-- Đường dẫn tĩnh (Slug) -->
               <div class="form-group-custom">
                 <label class="form-label-custom">
                   Đường dẫn tĩnh <span class="text-danger">*</span>
@@ -204,7 +196,6 @@
                 </div>
               </div>
 
-              <!-- Danh mục dự án (Pills) -->
               <div class="form-group-custom">
                 <div class="d-flex justify-content-between align-items-center">
                   <label class="form-label-custom">
@@ -226,7 +217,6 @@
                 </span>
               </div>
 
-              <!-- Năm & Khách hàng -->
               <div class="form-row-2col">
                 <div class="form-group-custom">
                   <label class="form-label-custom">Năm thực hiện</label>
@@ -241,7 +231,6 @@
                       </button>
                     </div>
 
-                    <!-- Calendar Dropdown Popup -->
                     <div v-if="isCalendarOpen" class="calendar-dropdown" @click.stop>
                       <div class="calendar-header">
                         <button type="button" class="btn-cal-nav" @click="calYear--" title="Năm trước">
@@ -270,7 +259,6 @@
               </div>
             </div>
 
-            <!-- Cột phải: Ảnh đại diện & Mô tả -->
             <div class="project-form-side">
               <!-- Thumbnail Upload -->
               <div class="form-group-custom">
@@ -299,7 +287,6 @@
                 </div>
               </div>
 
-              <!-- Mô tả dự án / Giới thiệu đầu trang chi tiết -->
               <div class="form-group-custom">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <label class="form-label-custom m-0">Mô tả dự án</label>
@@ -310,7 +297,6 @@
                   placeholder="E.g. Comprehensive digital brand identity design..."></textarea>
               </div>
 
-              <!-- Featured Checkbox Card -->
               <div class="project-featured-card">
                 <label class="featured-checkbox-label">
                   <input v-model="form.is_featured" type="checkbox" class="featured-checkbox-input" />
@@ -323,9 +309,7 @@
             </div>
           </div>
 
-          <!-- TAB 2: NỘI DUNG TRANG CHI TIẾT (/work/{slug}) -->
           <div v-if="activeTab === 'detail'" class="project-tab-body-detail">
-            <!-- 1. Hero Banner Section -->
             <div class="detail-card-section">
               <div class="detail-card-header">
                 <div class="detail-card-title-wrap">
@@ -356,7 +340,6 @@
               </div>
             </div>
 
-            <!-- 2. Overview Section -->
             <div class="detail-card-section">
               <div class="detail-card-header">
                 <div class="detail-card-title-wrap">
@@ -413,7 +396,6 @@
               </div>
             </div>
 
-            <!-- 3. Gallery Images Section -->
             <div class="detail-card-section">
               <div class="detail-card-header">
                 <div class="detail-card-title-wrap">
@@ -426,7 +408,7 @@
                 <button type="button" class="btn-detail-action" :disabled="isUploadingGallery"
                   @click="triggerGalleryUpload">
                   <i class="bx" :class="isUploadingGallery ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
-                  <span>{{ isUploadingGallery ? 'Đang tải ảnh...' : '+ Tải nhiều ảnh cùng lúc' }}</span>
+                  <span>{{ isUploadingGallery ? 'Đang tải ảnh...' : ' Tải nhiều ảnh cùng lúc' }}</span>
                 </button>
               </div>
 
@@ -446,7 +428,6 @@
               </div>
             </div>
 
-            <!-- 4. Credits Section -->
             <div class="detail-card-section">
               <div class="detail-card-header">
                 <div class="detail-card-title-wrap">
@@ -480,7 +461,6 @@
             </div>
           </div>
 
-          <!-- Modal Footer -->
           <div class="studio-modal-footer d-flex justify-content-end align-items-center gap-2 mt-3 pt-3 border-top">
             <button v-if="activeTab === 'basic'" type="button" class="btn-tab-switch" @click="activeTab = 'detail'">
               Tiếp tục sang Chi tiết dự án <i class="bx bx-right-arrow-alt"></i>
@@ -496,7 +476,6 @@
       </div>
     </div>
 
-    <!-- Category Manager Modal (Full CRUD) -->
     <div v-if="isCategoryModalOpen" class="studio-modal-backdrop" @click.self="isCategoryModalOpen = false">
       <div class="studio-modal-dialog" style="max-width: 540px;">
         <div class="studio-modal-header d-flex justify-content-between align-items-center">
@@ -509,7 +488,6 @@
         </div>
 
         <div class="studio-modal-body">
-          <!-- 1-Row Add / Edit Action Bar -->
           <form @submit.prevent="saveCategory" class="category-action-bar">
             <div class="category-input-wrap">
               <input ref="categoryInputRef" v-model="categoryInputName" type="text" class="category-input"
@@ -527,7 +505,6 @@
             </button>
           </form>
 
-          <!-- List of existing categories -->
           <div class="category-list-header">
             <span class="modal-label m-0 fw-semibold">Danh sách danh mục ({{ localCategories.length }})</span>
           </div>
@@ -571,12 +548,17 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
+import DraftStatusBanner from './components/DraftStatusBanner.vue';
 import {
   currentLanguage,
   hasUnsavedChanges,
+  hasPendingDraft,
   isSaving,
+  isSavingDraft,
+  isDiscardingDraft,
   onSaveHandler,
   onDraftHandler,
+  onDiscardDraftHandler,
 } from './composables/useAdmin';
 import {
   askConfirm,
@@ -594,6 +576,18 @@ const props = defineProps({
   categories: {
     type: Array,
     default: () => [],
+  },
+  deletedIds: {
+    type: Array,
+    default: () => [],
+  },
+  hasDraft: {
+    type: Boolean,
+    default: false,
+  },
+  draftUpdatedAt: {
+    type: String,
+    default: null,
   },
 });
 
@@ -746,14 +740,21 @@ watch(currentLanguage, (newLang) => {
   }
 }, { immediate: true });
 
+const getProjectDetailUrl = (p) => {
+  const lang = currentLanguage.value || 'vi';
+  const basePath = lang === 'en' ? `/en/work/${p.slug}` : `/work/${p.slug}`;
+  return props.hasDraft || p._isNew || p._isModified ? `${basePath}?preview=draft` : basePath;
+};
+
 const syncFromProps = () => {
   localProjects.value = JSON.parse(JSON.stringify(props.projects || []));
-  deletedIds.value = [];
+  deletedIds.value = JSON.parse(JSON.stringify(props.deletedIds || []));
+  hasPendingDraft.value = !!props.hasDraft;
   renderKey.value++;
   hasUnsavedChanges.value = false;
 };
 
-watch(() => props.projects, syncFromProps, { immediate: true });
+watch(() => [props.projects, props.deletedIds, props.hasDraft], syncFromProps, { immediate: true });
 watch(
   () => props.categories,
   (newVal) => {
@@ -1295,6 +1296,61 @@ const revertChanges = async () => {
   }
 };
 
+// Save draft without modifying live projects
+const saveDraftProjects = () => {
+  isSavingDraft.value = true;
+  router.post(
+    '/admin/projects/draft',
+    {
+      items: localProjects.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSavingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = true;
+        notifySuccess('Đã lưu bản nháp dự án thành công!');
+      },
+      onError: (err) => {
+        isSavingDraft.value = false;
+        notifyError('Lỗi lưu bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
+// Discard draft and revert to published database projects
+const handleDiscardDraft = async () => {
+  const ok = await askConfirm({
+    title: 'Xóa bản nháp',
+    message: 'Bạn có chắc chắn muốn xóa bản nháp dự án này và quay về dữ liệu đã xuất bản không?',
+    confirmText: 'Xóa bản nháp',
+    variant: 'danger',
+  });
+  if (!ok) return;
+
+  isDiscardingDraft.value = true;
+  router.post(
+    '/admin/projects/discard-draft',
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isDiscardingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
+        notifySuccess('Đã xóa bản nháp dự án thành công!');
+      },
+      onError: (err) => {
+        isDiscardingDraft.value = false;
+        notifyError('Có lỗi xảy ra khi xóa bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
 // Publish batch changes to database
 const publishProjects = () => {
   isSaving.value = true;
@@ -1309,6 +1365,7 @@ const publishProjects = () => {
       onSuccess: () => {
         isSaving.value = false;
         hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
         notifySuccess('Đã xuất bản thay đổi dự án vào cơ sở dữ liệu thành công!');
       },
       onError: (err) => {
@@ -1321,14 +1378,17 @@ const publishProjects = () => {
 
 onMounted(() => {
   onSaveHandler.value = publishProjects;
-  onDraftHandler.value = publishProjects;
+  onDraftHandler.value = saveDraftProjects;
+  onDiscardDraftHandler.value = handleDiscardDraft;
   document.addEventListener('click', closeCalendarOnClickOutside);
 });
 
 onUnmounted(() => {
   onSaveHandler.value = null;
   onDraftHandler.value = null;
+  onDiscardDraftHandler.value = null;
   hasUnsavedChanges.value = false;
+  hasPendingDraft.value = false;
   document.removeEventListener('click', closeCalendarOnClickOutside);
 });
 </script>

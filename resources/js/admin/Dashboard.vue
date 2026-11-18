@@ -15,7 +15,7 @@
                 Đã có bản xuất bản
               </span>
               <span class="status-pill draft">
-                Chưa có bản nháp
+                {{ hasAnyDraft ? 'Có bản nháp chưa xuất bản' : 'Chưa có bản nháp' }}
               </span>
             </div>
           </div>
@@ -126,6 +126,10 @@ defineProps({
   traffic: {
     type: Object,
     default: () => ({}),
+  },
+  hasAnyDraft: {
+    type: Boolean,
+    default: false,
   },
 });
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Service;
+use App\Services\DraftService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -12,11 +13,42 @@ class ServiceController extends Controller
 {
     public function index()
     {
+        $draft = DraftService::getDraft('services');
+
+        if ($draft) {
+            return Inertia::render('Services', [
+                'services' => $draft->payload['items'] ?? [],
+                'deletedIds' => $draft->payload['deleted_ids'] ?? [],
+                'hasDraft' => true,
+                'draftUpdatedAt' => $draft->updated_at?->toIso8601String(),
+            ]);
+        }
+
         $services = Service::orderBy('sort_order')->orderBy('id', 'asc')->get();
 
         return Inertia::render('Services', [
             'services' => $services,
+            'deletedIds' => [],
+            'hasDraft' => false,
+            'draftUpdatedAt' => null,
         ]);
+    }
+
+    public function saveDraft(Request $request)
+    {
+        DraftService::saveDraft('services', [
+            'items' => $request->input('items', []),
+            'deleted_ids' => $request->input('deleted_ids', []),
+        ]);
+
+        return back()->with('success', 'Đã lưu bản nháp dịch vụ thành công!');
+    }
+
+    public function discardDraft()
+    {
+        DraftService::discardDraft('services');
+
+        return back()->with('success', 'Đã xóa bản nháp dịch vụ, quay về dữ liệu đã xuất bản!');
     }
 
     public function publish(Request $request)
@@ -42,9 +74,9 @@ class ServiceController extends Controller
                 }
 
                 $content = $itemData['content'] ?? null;
-                if (!$content && is_array($description)) {
-                    $viLines = array_values(array_filter(array_map('trim', explode("\n", $description['vi'] ?? ''))));
-                    $enLines = array_values(array_filter(array_map('trim', explode("\n", $description['en'] ?? ''))));
+                if (is_array($description)) {
+                    $viLines = array_values(array_filter(array_map('trim', explode("\n", (string) ($description['vi'] ?? '')))));
+                    $enLines = array_values(array_filter(array_map('trim', explode("\n", (string) ($description['en'] ?? '')))));
                     if (!empty($viLines) || !empty($enLines)) {
                         $content = [
                             'vi' => !empty($viLines) ? $viLines : null,
@@ -69,6 +101,8 @@ class ServiceController extends Controller
                 }
             }
         });
+
+        DraftService::discardDraft('services');
 
         return back()->with('success', 'Đã xuất bản dịch vụ vào cơ sở dữ liệu thành công!');
     }

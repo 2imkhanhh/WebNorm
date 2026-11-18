@@ -23,6 +23,12 @@ Route::get('/lang/{locale}', function (\Illuminate\Http\Request $request, string
         ? ($basePath === '/' ? '/en' : '/en' . $basePath)
         : $basePath;
 
+    $refererQuery = [];
+    parse_str((string) parse_url($referer, PHP_URL_QUERY), $refererQuery);
+    if (auth()->check() && ($refererQuery['preview'] ?? null) === 'draft') {
+        $targetPath .= '?preview=draft';
+    }
+
     return redirect($targetPath);
 })->whereIn('locale', ['vi', 'en'])->name('lang.switch');
 
@@ -97,6 +103,8 @@ Route::prefix('admin')->group(function () {
 
         // Projects
         Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
+        Route::post('/projects/draft', [ProjectController::class, 'saveDraft'])->name('admin.projects.draft');
+        Route::post('/projects/discard-draft', [ProjectController::class, 'discardDraft'])->name('admin.projects.discard-draft');
         Route::post('/projects/publish', [ProjectController::class, 'publish'])->name('admin.projects.publish');
         Route::post('/projects', [ProjectController::class, 'store'])->name('admin.projects.store');
         Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
@@ -109,6 +117,8 @@ Route::prefix('admin')->group(function () {
 
         // Services
         Route::get('/services', [ServiceController::class, 'index'])->name('admin.services');
+        Route::post('/services/draft', [ServiceController::class, 'saveDraft'])->name('admin.services.draft');
+        Route::post('/services/discard-draft', [ServiceController::class, 'discardDraft'])->name('admin.services.discard-draft');
         Route::post('/services/publish', [ServiceController::class, 'publish'])->name('admin.services.publish');
         Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
         Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
@@ -116,6 +126,8 @@ Route::prefix('admin')->group(function () {
 
         // News & Blogs
         Route::get('/news', [BlogController::class, 'index'])->name('admin.news');
+        Route::post('/news/draft', [BlogController::class, 'saveDraft'])->name('admin.news.draft');
+        Route::post('/news/discard-draft', [BlogController::class, 'discardDraft'])->name('admin.news.discard-draft');
         Route::post('/news/publish', [BlogController::class, 'publish'])->name('admin.news.publish');
         Route::post('/news', [BlogController::class, 'store'])->name('admin.news.store');
         Route::put('/news/{blog}', [BlogController::class, 'update'])->name('admin.news.update');
@@ -123,6 +135,8 @@ Route::prefix('admin')->group(function () {
 
         // Reviews
         Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews');
+        Route::post('/reviews/draft', [ReviewController::class, 'saveDraft'])->name('admin.reviews.draft');
+        Route::post('/reviews/discard-draft', [ReviewController::class, 'discardDraft'])->name('admin.reviews.discard-draft');
         Route::post('/reviews/publish', [ReviewController::class, 'publish'])->name('admin.reviews.publish');
         Route::post('/reviews', [ReviewController::class, 'store'])->name('admin.reviews.store');
         Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('admin.reviews.update');
@@ -140,6 +154,8 @@ Route::prefix('admin')->group(function () {
 
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+        Route::post('/settings/draft', [SettingController::class, 'saveDraft'])->name('admin.settings.draft');
+        Route::post('/settings/discard-draft', [SettingController::class, 'discardDraft'])->name('admin.settings.discard-draft');
         Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
         Route::post('/settings/test-mail', [SettingController::class, 'testMail'])->name('admin.settings.test-mail');
 

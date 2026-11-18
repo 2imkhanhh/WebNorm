@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Review;
+use App\Services\DraftService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -12,11 +13,42 @@ class ReviewController extends Controller
 {
     public function index()
     {
+        $draft = DraftService::getDraft('reviews');
+
+        if ($draft) {
+            return Inertia::render('Reviews', [
+                'reviews' => $draft->payload['items'] ?? [],
+                'deletedIds' => $draft->payload['deleted_ids'] ?? [],
+                'hasDraft' => true,
+                'draftUpdatedAt' => $draft->updated_at?->toIso8601String(),
+            ]);
+        }
+
         $reviews = Review::orderBy('sort_order')->latest('id')->get();
 
         return Inertia::render('Reviews', [
             'reviews' => $reviews,
+            'deletedIds' => [],
+            'hasDraft' => false,
+            'draftUpdatedAt' => null,
         ]);
+    }
+
+    public function saveDraft(Request $request)
+    {
+        DraftService::saveDraft('reviews', [
+            'items' => $request->input('items', []),
+            'deleted_ids' => $request->input('deleted_ids', []),
+        ]);
+
+        return back()->with('success', 'Đã lưu bản nháp đánh giá thành công!');
+    }
+
+    public function discardDraft()
+    {
+        DraftService::discardDraft('reviews');
+
+        return back()->with('success', 'Đã xóa bản nháp đánh giá, quay về dữ liệu đã xuất bản!');
     }
 
     public function publish(Request $request)
@@ -57,6 +89,8 @@ class ReviewController extends Controller
                 }
             }
         });
+
+        DraftService::discardDraft('reviews');
 
         return back()->with('success', 'Đã xuất bản đánh giá vào cơ sở dữ liệu thành công!');
     }

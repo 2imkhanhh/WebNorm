@@ -97,13 +97,29 @@ class PageContentController extends Controller
         if ($action === 'draft') {
             foreach ($fields as $f) {
                 if (isset($f['page_slug'], $f['section_id'], $f['key'])) {
-                    PageContent::where('page_slug', $f['page_slug'])
+                    $row = PageContent::where('page_slug', $f['page_slug'])
                         ->where('section_id', $f['section_id'])
                         ->where('field_key', $f['key'])
-                        ->update([
-                            'draft_value' => $f['value'],
+                        ->first();
+
+                    if (! $row) {
+                        continue;
+                    }
+
+                    $newValue = $f['value'] ?? null;
+                    if ($this->valuesMatch($row->value, $newValue)) {
+                        if ($row->draft_value !== null) {
+                            $row->update([
+                                'draft_value' => null,
+                                'draft_updated_at' => null,
+                            ]);
+                        }
+                    } else {
+                        $row->update([
+                            'draft_value' => $newValue,
                             'draft_updated_at' => now(),
                         ]);
+                    }
                 }
             }
 
@@ -140,5 +156,23 @@ class PageContentController extends Controller
         }
 
         return back()->with('error', 'Không tìm thấy trang để hủy bản nháp.');
+    }
+
+    private function valuesMatch(mixed $published, mixed $candidate): bool
+    {
+        $normalize = function (mixed $val) use (&$normalize): mixed {
+            if (is_array($val)) {
+                if (! array_is_list($val)) {
+                    ksort($val);
+                }
+                foreach ($val as $k => $v) {
+                    $val[$k] = $normalize($v);
+                }
+            }
+            return $val;
+        };
+
+        return json_encode($normalize($published), JSON_UNESCAPED_UNICODE)
+            === json_encode($normalize($candidate), JSON_UNESCAPED_UNICODE);
     }
 }

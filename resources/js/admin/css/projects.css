@@ -547,6 +547,10 @@
   font-weight: 600;
   color: #334155;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
 .badge-lang-hint {

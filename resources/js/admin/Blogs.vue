@@ -30,13 +30,8 @@
           </div>
         </div>
 
-        <!-- Staging Alert Banner when changes are pending publish -->
-        <div v-if="hasUnsavedChanges" class="staging-alert-banner">
-          <div class="banner-info">
-            <i class="bx bx-info-circle banner-icon"></i>
-            <span>Có thay đổi chưa lưu</span>
-          </div>
-        </div>
+        <!-- Unsaved / Draft Status Banner -->
+        <DraftStatusBanner :has-draft="hasDraft" preview-path="/news" @discard="handleDiscardDraft" />
 
         <!-- Blogs Card Grid -->
         <div v-if="filteredBlogs && filteredBlogs.length > 0" class="blogs-card-grid">
@@ -216,12 +211,17 @@ import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { router } from '@inertiajs/vue3';
 import Layout from './Layout.vue';
 import RichTextEditor from './components/RichTextEditor.vue';
+import DraftStatusBanner from './components/DraftStatusBanner.vue';
 import {
   currentLanguage,
   hasUnsavedChanges,
+  hasPendingDraft,
   isSaving,
+  isSavingDraft,
+  isDiscardingDraft,
   onSaveHandler,
   onDraftHandler,
+  onDiscardDraftHandler,
 } from './composables/useAdmin';
 import {
   askConfirm,
@@ -235,6 +235,18 @@ const props = defineProps({
   blogs: {
     type: Array,
     default: () => [],
+  },
+  deletedIds: {
+    type: Array,
+    default: () => [],
+  },
+  hasDraft: {
+    type: Boolean,
+    default: false,
+  },
+  draftUpdatedAt: {
+    type: String,
+    default: null,
   },
 });
 
@@ -250,12 +262,13 @@ const isUploading = ref(false);
 
 const syncFromProps = () => {
   localBlogs.value = JSON.parse(JSON.stringify(props.blogs || []));
-  deletedIds.value = [];
+  deletedIds.value = JSON.parse(JSON.stringify(props.deletedIds || []));
+  hasPendingDraft.value = !!props.hasDraft;
   renderKey.value++;
   hasUnsavedChanges.value = false;
 };
 
-watch(() => props.blogs, syncFromProps, { immediate: true });
+watch(() => [props.blogs, props.deletedIds, props.hasDraft], syncFromProps, { immediate: true });
 
 const form = reactive({
   title_vi: '',
@@ -486,6 +499,59 @@ const confirmDelete = async (b) => {
   }
 };
 
+const saveDraftBlogs = () => {
+  isSavingDraft.value = true;
+  router.post(
+    '/admin/news/draft',
+    {
+      items: localBlogs.value,
+      deleted_ids: deletedIds.value,
+    },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isSavingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = true;
+        notifySuccess('Đã lưu bản nháp bài viết thành công!');
+      },
+      onError: (err) => {
+        isSavingDraft.value = false;
+        notifyError('Lỗi lưu bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
+const handleDiscardDraft = async () => {
+  const ok = await askConfirm({
+    title: 'Xóa bản nháp',
+    message: 'Bạn có chắc chắn muốn xóa bản nháp bài viết này và quay về dữ liệu đã xuất bản không?',
+    confirmText: 'Xóa bản nháp',
+    variant: 'danger',
+  });
+  if (!ok) return;
+
+  isDiscardingDraft.value = true;
+  router.post(
+    '/admin/news/discard-draft',
+    {},
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        isDiscardingDraft.value = false;
+        hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
+        notifySuccess('Đã xóa bản nháp bài viết thành công!');
+      },
+      onError: (err) => {
+        isDiscardingDraft.value = false;
+        notifyError('Có lỗi xảy ra khi xóa bản nháp: ' + extractErrorMessage(err));
+      },
+    }
+  );
+};
+
 const publishBlogs = () => {
   isSaving.value = true;
   router.post(
@@ -499,6 +565,7 @@ const publishBlogs = () => {
       onSuccess: () => {
         isSaving.value = false;
         hasUnsavedChanges.value = false;
+        hasPendingDraft.value = false;
         notifySuccess('Đã xuất bản bài viết vào cơ sở dữ liệu thành công!');
       },
       onError: (err) => {
@@ -511,13 +578,16 @@ const publishBlogs = () => {
 
 onMounted(() => {
   onSaveHandler.value = publishBlogs;
-  onDraftHandler.value = publishBlogs;
+  onDraftHandler.value = saveDraftBlogs;
+  onDiscardDraftHandler.value = handleDiscardDraft;
 });
 
 onUnmounted(() => {
   onSaveHandler.value = null;
   onDraftHandler.value = null;
+  onDiscardDraftHandler.value = null;
   hasUnsavedChanges.value = false;
+  hasPendingDraft.value = false;
 });
 </script>
 
