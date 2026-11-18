@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Services\DraftService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -85,6 +86,19 @@ class BlogController extends Controller
                     $authorRole = ['vi' => $authorRole, 'en' => $authorRole];
                 }
 
+                $publishedAt = now();
+                if (! empty($itemData['published_at'])) {
+                    try {
+                        $publishedAt = Carbon::parse($itemData['published_at'])
+                            ->setTimezone(config('app.timezone', 'UTC'))
+                            ->format('Y-m-d H:i:s');
+                    } catch (\Throwable) {
+                        $publishedAt = now()->format('Y-m-d H:i:s');
+                    }
+                } else {
+                    $publishedAt = $publishedAt->format('Y-m-d H:i:s');
+                }
+
                 $payload = [
                     'title' => $title,
                     'slug' => $itemData['slug'] ?? ('news-' . ($index + 1)),
@@ -97,11 +111,11 @@ class BlogController extends Controller
                     'author_avatar' => $itemData['author_avatar'] ?? null,
                     'status' => $itemData['status'] ?? 'published',
                     'is_featured' => !empty($itemData['is_featured']),
-                    'published_at' => $itemData['published_at'] ?? now(),
+                    'published_at' => $publishedAt,
                 ];
 
-                if ($id && is_numeric($id) && Blog::find($id)) {
-                    Blog::where('id', $id)->update($payload);
+                if ($id && is_numeric($id) && ($existing = Blog::find($id))) {
+                    $existing->update($payload);
                 } else {
                     Blog::create($payload);
                 }
