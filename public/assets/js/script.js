@@ -6,7 +6,11 @@ if (hamburger && mobileMenu) {
     hamburger.addEventListener('click', () => {
         const isOpen = mobileMenu.classList.toggle('open');
         hamburger.classList.toggle('active', isOpen);
-        document.body.style.overflow = isOpen ? 'hidden' : '';
+        document.documentElement.style.overflow = isOpen ? 'hidden' : '';
+        if (window.lenis) {
+            if (isOpen) window.lenis.stop();
+            else window.lenis.start();
+        }
     });
 
     document.querySelectorAll('.mobile-menu-item').forEach(link => {
@@ -16,7 +20,8 @@ if (hamburger && mobileMenu) {
             }
             mobileMenu.classList.remove('open');
             hamburger.classList.remove('active');
-            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            if (window.lenis) window.lenis.start();
         });
     });
 }
@@ -604,6 +609,19 @@ function initFooterCursorBtn() {
             footerZone.classList.remove('force-hide-cursor');
         }
     }, { passive: true });
+
+    footerCursorBtn.addEventListener('click', () => {
+        footerCursorBtn.classList.remove('is-visible');
+        footerZone.classList.remove('force-hide-cursor');
+    });
+
+    footerZone.addEventListener('click', (e) => {
+        if (!footerCursorBtn.classList.contains('is-visible')) return;
+        if (e.target.closest('a, button')) return;
+        if (isMouseOverHeader(e.clientY)) return;
+        e.preventDefault();
+        footerCursorBtn.click();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -757,7 +775,8 @@ function initContactPopup(triggers) {
         if (e) e.preventDefault();
         overlay.classList.add('active');
         sidebar.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        if (window.lenis) window.lenis.stop();
     };
 
     triggers.forEach(trigger => {
@@ -769,7 +788,8 @@ function initContactPopup(triggers) {
         sidebar.classList.remove('active');
         const mobileMenu = document.getElementById('mobileMenu');
         if (!(mobileMenu && mobileMenu.classList.contains('open'))) {
-            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            if (window.lenis) window.lenis.start();
         }
     };
 
