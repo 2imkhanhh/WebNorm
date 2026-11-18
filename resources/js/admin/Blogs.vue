@@ -189,9 +189,8 @@
               </label>
             </div>
             <RichTextEditor v-if="modalLang === 'vi'" v-model="form.content_vi"
-              placeholder="Nhập nội dung bài viết tiếng Việt tại đây... (Nhấn Enter để xuống đoạn văn mới)" />
-            <RichTextEditor v-else v-model="form.content_en"
-              placeholder="Write detailed article content in English here... (Press Enter for new paragraph)" />
+              placeholder="Nhập nội dung bài viết tại đây" />
+            <RichTextEditor v-else v-model="form.content_en" placeholder="Write detailed article content in here" />
           </div>
 
           <div class="studio-modal-footer">

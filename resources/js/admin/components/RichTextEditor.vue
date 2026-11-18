@@ -4,7 +4,8 @@
     <div class="rich-editor-toolbar">
       <div class="toolbar-group">
         <!-- Block format: Normal / H2 / H3 / Quote -->
-        <select class="toolbar-select" @change="formatBlock($event.target.value); $event.target.value = ''" title="Kiểu văn bản">
+        <select class="toolbar-select" @change="formatBlock($event.target.value); $event.target.value = ''"
+          title="Kiểu văn bản">
           <option value="" disabled selected>Kiểu chữ...</option>
           <option value="p">Đoạn văn (Thường)</option>
           <option value="h2">Tiêu đề lớn (H2)</option>
@@ -17,36 +18,16 @@
 
       <!-- Text formatting: Bold, Italic, Underline, Strikethrough -->
       <div class="toolbar-group">
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('bold')"
-          title="In đậm (Ctrl+B)"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('bold')" title="In đậm (Ctrl+B)">
           <i class="bx bx-bold"></i>
         </button>
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('italic')"
-          title="In nghiêng (Ctrl+I)"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('italic')" title="In nghiêng (Ctrl+I)">
           <i class="bx bx-italic"></i>
         </button>
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('underline')"
-          title="Gạch chân (Ctrl+U)"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('underline')" title="Gạch chân (Ctrl+U)">
           <i class="bx bx-underline"></i>
         </button>
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('strikeThrough')"
-          title="Gạch ngang chữ"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('strikeThrough')" title="Gạch ngang chữ">
           <i class="bx bx-strikethrough"></i>
         </button>
       </div>
@@ -55,20 +36,11 @@
 
       <!-- Lists -->
       <div class="toolbar-group">
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('insertUnorderedList')"
-          title="Danh sách gạch đầu dòng"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('insertUnorderedList')"
+          title="Danh sách gạch đầu dòng">
           <i class="bx bx-list-ul"></i>
         </button>
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('insertOrderedList')"
-          title="Danh sách đánh số"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('insertOrderedList')" title="Danh sách đánh số">
           <i class="bx bx-list-ol"></i>
         </button>
       </div>
@@ -77,28 +49,13 @@
 
       <!-- Alignments -->
       <div class="toolbar-group">
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('justifyLeft')"
-          title="Căn lề trái"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('justifyLeft')" title="Căn lề trái">
           <i class="bx bx-align-left"></i>
         </button>
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('justifyCenter')"
-          title="Căn lề giữa"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('justifyCenter')" title="Căn lề giữa">
           <i class="bx bx-align-middle"></i>
         </button>
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('justifyRight')"
-          title="Căn lề phải"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('justifyRight')" title="Căn lề phải">
           <i class="bx bx-align-right"></i>
         </button>
       </div>
@@ -107,52 +64,27 @@
 
       <!-- Insert: Link & Image -->
       <div class="toolbar-group">
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="insertLink"
-          title="Chèn liên kết đường dẫn"
-        >
+        <button type="button" class="toolbar-btn" @click="insertLink" title="Chèn liên kết đường dẫn">
           <i class="bx bx-link"></i>
         </button>
 
-        <button
-          type="button"
-          class="toolbar-btn btn-insert-image"
-          :disabled="isUploadingImage"
-          @click="triggerImageUpload"
-          title="Chèn hình ảnh từ máy tính vào bài viết"
-        >
+        <button type="button" class="toolbar-btn btn-insert-image" :disabled="isUploadingImage"
+          @click="triggerImageUpload" title="Chèn hình ảnh từ máy tính vào bài viết">
           <i class="bx" :class="isUploadingImage ? 'bx-loader-alt bx-spin' : 'bx-image-add'"></i>
           <span class="btn-img-text">{{ isUploadingImage ? 'Đang tải...' : 'Chèn ảnh' }}</span>
         </button>
-        <input
-          type="file"
-          ref="imageInputRef"
-          accept="image/*"
-          style="display: none;"
-          @change="handleImageSelected"
-        />
+        <input type="file" ref="imageInputRef" accept="image/*" style="display: none;" @change="handleImageSelected" />
 
-        <button
-          type="button"
-          class="toolbar-btn"
-          @click="execCmd('insertHorizontalRule')"
-          title="Đường phân cách ngang"
-        >
+        <button type="button" class="toolbar-btn" @click="execCmd('insertHorizontalRule')"
+          title="Đường phân cách ngang">
           <i class="bx bx-minus"></i>
         </button>
       </div>
 
       <!-- Mode Switch: Visual vs Code -->
       <div class="toolbar-group toolbar-group-end ms-auto">
-        <button
-          type="button"
-          class="toolbar-btn btn-mode-toggle"
-          :class="{ active: isCodeMode }"
-          @click="toggleMode"
-          :title="isCodeMode ? 'Quay lại soạn thảo trực quan' : 'Xem và sửa mã HTML'"
-        >
+        <button type="button" class="toolbar-btn btn-mode-toggle" :class="{ active: isCodeMode }" @click="toggleMode"
+          :title="isCodeMode ? 'Quay lại soạn thảo trực quan' : 'Xem và sửa mã HTML'">
           <i class="bx" :class="isCodeMode ? 'bx-edit' : 'bx-code-alt'"></i>
           <span>{{ isCodeMode ? 'Trực quan' : 'Mã HTML' }}</span>
         </button>
@@ -160,27 +92,13 @@
     </div>
 
     <!-- Visual Editor Area (WYSIWYG) -->
-    <div
-      v-show="!isCodeMode"
-      ref="editorRef"
-      class="rich-editor-content"
-      contenteditable="true"
-      :data-placeholder="placeholder || 'Nhập nội dung bài viết tại đây... (Nhấn Enter để xuống đoạn văn mới)'"
-      @input="handleInput"
-      @blur="handleBlur"
-      @paste="handlePaste"
-    ></div>
+    <div v-show="!isCodeMode" ref="editorRef" class="rich-editor-content" contenteditable="true"
+      :data-placeholder="placeholder || 'Nhập nội dung bài viết tại đây'" @input="handleInput" @blur="handleBlur"
+      @paste="handlePaste"></div>
 
     <!-- Code Editor Area (Raw HTML mode) -->
-    <textarea
-      v-show="isCodeMode"
-      ref="codeEditorRef"
-      v-model="rawHtml"
-      class="rich-editor-code"
-      rows="14"
-      @input="handleCodeInput"
-      placeholder="Nhập mã HTML bài viết tại đây..."
-    ></textarea>
+    <textarea v-show="isCodeMode" ref="codeEditorRef" v-model="rawHtml" class="rich-editor-code" rows="14"
+      @input="handleCodeInput" placeholder="Nhập mã HTML bài viết tại đây..."></textarea>
   </div>
 </template>
 
@@ -596,4 +514,3 @@ const handlePaste = (e) => {
   box-sizing: border-box;
 }
 </style>
-
