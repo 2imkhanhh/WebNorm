@@ -478,7 +478,7 @@ const submitForm = () => {
 const confirmDelete = async (s) => {
   const ok = await askConfirm({
     title: 'Xóa dịch vụ',
-    message: `Bạn có chắc chắn muốn xóa dịch vụ "${getTrans(s.title)}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`,
+    message: `Bạn có chắc chắn muốn xóa dịch vụ "${getTrans(s.title)}" không?`,
     confirmText: 'Xóa dịch vụ',
     variant: 'danger',
   });

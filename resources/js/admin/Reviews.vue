@@ -446,7 +446,7 @@ const submitForm = () => {
 const confirmDelete = async (r) => {
   const ok = await askConfirm({
     title: 'Xóa đánh giá',
-    message: `Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?\n(Lưu ý: Dữ liệu chỉ thực sự bị xóa khỏi cơ sở dữ liệu sau khi bạn bấm "Xuất bản")`,
+    message: `Bạn có chắc chắn muốn xóa nhận xét của "${r.author}" không?`,
     confirmText: 'Xóa đánh giá',
     variant: 'danger',
   });
