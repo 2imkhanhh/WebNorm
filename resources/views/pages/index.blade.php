@@ -7,7 +7,7 @@
 @endpush
 
 @section('preloader')
-<div id="preloader">
+    <div id="preloader">
         <script>
             if (sessionStorage.getItem('norm_preloader_shown')) {
                 document.getElementById('preloader').style.display = 'none';
@@ -32,14 +32,14 @@
 @endsection
 
 @section('content')
-<section class="hero-section">
+    <section class="hero-section">
         @php
             $model3dVal = !empty($settings['model_3d']) ? $settings['model_3d'] : 'storage/uploads/norm.glb';
             $model3dSrc = str_starts_with($model3dVal, 'http') ? $model3dVal : asset(ltrim($model3dVal, '/'));
         @endphp
-        <model-viewer src="{{ $model3dSrc }}" alt="3D Banner" camera-controls disable-zoom
-            interaction-prompt="none" disable-pan class="hero-3d-model" style="--poster-color: transparent;"
-            shadow-intensity="1" camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
+        <model-viewer src="{{ $model3dSrc }}" alt="3D Banner" camera-controls disable-zoom interaction-prompt="none"
+            disable-pan class="hero-3d-model" style="--poster-color: transparent;" shadow-intensity="1"
+            camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
             max-camera-orbit="30deg 90deg 140%"></model-viewer>
         <div class="container-fluid px-4 px-md-5 h-100">
             <div class="row h-100 align-items-end">
@@ -51,11 +51,13 @@
                 </div>
 
                 <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
-                    <img src="{{ asset('assets/images/banner.png') }}" alt="Placeholder" class="hero-img hero-img-placeholder">
+                    <img src="{{ asset('assets/images/banner.png') }}" alt="Placeholder"
+                        class="hero-img hero-img-placeholder">
                 </div>
 
                 <div class="col-auto hero-ctas d-flex gap-5">
-                    <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
+                    <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}"
+                        class="cta-btn">{{ __('site.hero_cta_work') }}</a>
                     <a href="#" class="cta-btn nav-contact-trigger">{{ __('site.hero_cta_contact') }}</a>
                 </div>
 
@@ -63,7 +65,10 @@
         </div>
 
         @php
-            $heroHeadingRaw = \App\Helpers\NormHelper::val($pageContents['hero_heading'] ?? null, "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ");
+            $heroHeadingRaw = \App\Helpers\NormHelper::val(
+                $pageContents['hero_heading'] ?? null,
+                "NHẬN DIỆN\nCHIẾN LƯỢC\nVĂN HOÁ",
+            );
             $headingLines = preg_split('/\r\n|\r|\n/', trim($heroHeadingRaw));
             $headingLines = array_values(array_filter(array_map('trim', $headingLines), 'strlen'));
             $headingWord1 = $headingLines[0] ?? 'NHẬN DIỆN';
@@ -82,7 +87,8 @@
         </div>
 
         <div class="hero-ctas-mobile">
-            <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}" class="cta-btn">{{ __('site.hero_cta_work') }}</a>
+            <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}"
+                class="cta-btn">{{ __('site.hero_cta_work') }}</a>
             <a href="#" class="cta-btn nav-contact-trigger">{{ __('site.hero_cta_contact') }}</a>
         </div>
 
@@ -100,19 +106,30 @@
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
                     @php
-                        $heroMediaVal = \App\Helpers\NormHelper::val($pageContents['hero_video'] ?? null, 'storage/uploads/main-feature.mp4');
-                        $heroMediaSrc = str_starts_with($heroMediaVal, 'http') ? $heroMediaVal : asset(ltrim($heroMediaVal, '/'));
-                        $heroExt = strtolower(pathinfo(parse_url($heroMediaVal, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
-                        $isHeroVideo = in_array($heroExt, ['mp4', 'webm', 'mov', 'avi']) || str_ends_with(strtolower($heroMediaVal), '.mp4');
+                        $heroMediaVal = \App\Helpers\NormHelper::val(
+                            $pageContents['hero_video'] ?? null,
+                            'storage/uploads/main-feature.mp4',
+                        );
+                        $heroMediaSrc = str_starts_with($heroMediaVal, 'http')
+                            ? $heroMediaVal
+                            : asset(ltrim($heroMediaVal, '/'));
+                        $heroExt = strtolower(
+                            pathinfo(parse_url($heroMediaVal, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION),
+                        );
+                        $isHeroVideo =
+                            in_array($heroExt, ['mp4', 'webm', 'mov', 'avi']) ||
+                            str_ends_with(strtolower($heroMediaVal), '.mp4');
                     @endphp
                     <div class="hero-media-wrapper" data-studio-container="hero_video">
-                        @if($isHeroVideo)
-                            <video class="w-100 d-block hero-media-el" style="border-radius: 8px;" autoplay loop muted playsinline data-studio-key="hero_video">
+                        @if ($isHeroVideo)
+                            <video class="w-100 d-block hero-media-el" style="border-radius: 8px;" autoplay loop muted
+                                playsinline data-studio-key="hero_video">
                                 <source src="{{ $heroMediaSrc }}" type="video/{{ $heroExt === 'webm' ? 'webm' : 'mp4' }}">
                                 {{ __('site.video_unsupported') }}
                             </video>
                         @else
-                            <img class="w-100 d-block hero-media-el" style="border-radius: 8px; object-fit: cover;" src="{{ $heroMediaSrc }}" alt="Hero Media" data-studio-key="hero_video">
+                            <img class="w-100 d-block hero-media-el" style="border-radius: 8px; object-fit: cover;"
+                                src="{{ $heroMediaSrc }}" alt="Hero Media" data-studio-key="hero_video">
                         @endif
                     </div>
                 </div>
@@ -121,7 +138,8 @@
 
             <div class="row align-items-start content-footer" style="margin-bottom: 200px;">
                 <div class="col-md-3">
-                    <span class="si-label">• <span data-studio-key="about_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['about_label'] ?? null, 'Về chúng tôi'), '• ') }}</span></span>
+                    <span class="si-label">• <span
+                            data-studio-key="about_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['about_label'] ?? null, 'Về chúng tôi'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-md-6">
@@ -131,7 +149,8 @@
                 </div>
 
                 <div class="col-md-3 text-start text-md-end mt-4 mt-md-0">
-                    <a href="{{ \App\Helpers\NormHelper::localizeUrl(\App\Helpers\NormHelper::val($pageContents['about_btn_url'] ?? null, '/about-us')) }}" class="link-more" data-studio-key="about_btn_text">
+                    <a href="{{ \App\Helpers\NormHelper::localizeUrl(\App\Helpers\NormHelper::val($pageContents['about_btn_url'] ?? null, '/about-us')) }}"
+                        class="link-more" data-studio-key="about_btn_text">
                         @normVal($pageContents['about_btn_text'] ?? null, 'ĐỌC THÊM')
                     </a>
                 </div>
@@ -145,41 +164,46 @@
                 <div class="ps-counter-top">
                     <div>
                         <span class="ps-num-current" id="psCurrent">01</span>
-                        <span class="ps-num-total" id="psTotal">/{{ str_pad(max(count($projects), 1), 2, '0', STR_PAD_LEFT) }}</span>
+                        <span class="ps-num-total"
+                            id="psTotal">/{{ str_pad(max(count($projects), 1), 2, '0', STR_PAD_LEFT) }}</span>
                     </div>
-                    <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}" class="link-more text-uppercase ps-view-all">{{ __('site.view_all_projects') }}</a>
+                    <a href="{{ \App\Helpers\NormHelper::localizedRoute('work') }}"
+                        class="link-more text-uppercase ps-view-all">{{ __('site.view_all_projects') }}</a>
                 </div>
 
                 <div class="ps-horizontal-viewport">
                     <div class="ps-horizontal-track" id="psTrack">
                         @forelse($projects as $p)
-                        <div class="ps-project-item">
-                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('work.detail', $p->slug) }}" class="ps-card-inner text-decoration-none text-reset">
-                                <div class="ps-img-wrap">
-                                    <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}" alt="{{ $p->getTitle() }}">
-                                </div>
-                                <div class="ps-info-wrap">
-                                    <div class="ps-title">{{ $p->getTitle() }}</div>
-                                    <div class="ps-categories">
-                                        <span>{{ $p->getCategory() }}</span>
+                            <div class="ps-project-item">
+                                <a href="{{ \App\Helpers\NormHelper::localizedRoute('work.detail', $p->slug) }}"
+                                    class="ps-card-inner text-decoration-none text-reset">
+                                    <div class="ps-img-wrap">
+                                        <img src="{{ !empty($p->thumbnail) ? (str_starts_with($p->thumbnail, 'http') ? $p->thumbnail : asset($p->thumbnail)) : asset('assets/images/project1.png') }}"
+                                            alt="{{ $p->getTitle() }}">
                                     </div>
-                                </div>
-                            </a>
-                        </div>
+                                    <div class="ps-info-wrap">
+                                        <div class="ps-title">{{ $p->getTitle() }}</div>
+                                        <div class="ps-categories">
+                                            <span>{{ $p->getCategory() }}</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
                         @empty
-                        <div class="ps-project-item">
-                            <div class="ps-card-inner">
-                                <div class="ps-img-wrap">
-                                    <img src="{{ asset('assets/images/project1.png') }}" alt="{{ __('site.default_project_title') }}">
-                                </div>
-                                <div class="ps-info-wrap">
-                                    <div class="ps-title">{{ __('site.default_project_title') }}</div>
-                                    <div class="ps-categories">
-                                        <span>Brand identity</span>
+                            <div class="ps-project-item">
+                                <div class="ps-card-inner">
+                                    <div class="ps-img-wrap">
+                                        <img src="{{ asset('assets/images/project1.png') }}"
+                                            alt="{{ __('site.default_project_title') }}">
+                                    </div>
+                                    <div class="ps-info-wrap">
+                                        <div class="ps-title">{{ __('site.default_project_title') }}</div>
+                                        <div class="ps-categories">
+                                            <span>Brand identity</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endforelse
                     </div>
                 </div>
@@ -194,7 +218,8 @@
             <div class="row">
                 <div class="col-12 testimonial-title-container" id="testimonialTitleWrap">
                     <h2 class="testimonial-title text-left scroll-slide-left">
-                        <span class="quote-mark">“</span><span data-studio-key="testimonial_title_1">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['testimonial_title_1'] ?? null, 'TRẢI NGHIỆM'), '“" ') }}</span>
+                        <span class="quote-mark">“</span><span
+                            data-studio-key="testimonial_title_1">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['testimonial_title_1'] ?? null, 'TRẢI NGHIỆM'), '“" ') }}</span>
                     </h2>
 
                     <h2 class="testimonial-title text-right scroll-slide-right">
@@ -207,47 +232,48 @@
                 <div class="testi-slider-container">
                     <div class="testi-track" id="testiTrack">
                         @forelse($reviews as $idx => $rev)
-                        <div class="testi-slide {{ $idx === 0 ? 'active' : '' }}">
-                            <div class="row align-items-start">
-                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
-                                    <div class="testimonial-avatar">
-                                        <img src="{{ !empty($rev->avatar) ? (str_starts_with($rev->avatar, 'http') ? $rev->avatar : asset($rev->avatar)) : asset('assets/images/avatar.png') }}" alt="{{ $rev->author }}">
+                            <div class="testi-slide {{ $idx === 0 ? 'active' : '' }}">
+                                <div class="row align-items-start">
+                                    <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                        <div class="testimonial-avatar">
+                                            <img src="{{ !empty($rev->avatar) ? (str_starts_with($rev->avatar, 'http') ? $rev->avatar : asset($rev->avatar)) : asset('assets/images/avatar.png') }}"
+                                                alt="{{ $rev->author }}">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="testimonial-quote">
-                                        <p class="quote-text">
-                                            "{{ $rev->getContent() }}"
-                                        </p>
-                                        <div class="quote-author">
-                                            <h4 class="author-name">{{ $rev->author }}</h4>
-                                            <p class="author-position">{{ $rev->getRole() }}</p>
+                                    <div class="col-md-7">
+                                        <div class="testimonial-quote">
+                                            <p class="quote-text">
+                                                "{{ $rev->getContent() }}"
+                                            </p>
+                                            <div class="quote-author">
+                                                <h4 class="author-name">{{ $rev->author }}</h4>
+                                                <p class="author-position">{{ $rev->getRole() }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @empty
-                        <div class="testi-slide active">
-                            <div class="row align-items-start">
-                                <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
-                                    <div class="testimonial-avatar">
-                                        <img src="{{ asset('assets/images/avatar.png') }}" alt="Nguyễn Minh Anh">
+                            <div class="testi-slide active">
+                                <div class="row align-items-start">
+                                    <div class="col-md-5 d-flex justify-content-md-end mb-4 mb-md-0 pe-md-5">
+                                        <div class="testimonial-avatar">
+                                            <img src="{{ asset('assets/images/avatar.png') }}" alt="Nguyễn Minh Anh">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="testimonial-quote">
-                                        <p class="quote-text">
-                                            "{{ __('site.default_review_quote') }}"
-                                        </p>
-                                        <div class="quote-author">
-                                            <h4 class="author-name">Nguyễn Minh Anh</h4>
-                                            <p class="author-position">{{ __('site.default_author_role') }}</p>
+                                    <div class="col-md-7">
+                                        <div class="testimonial-quote">
+                                            <p class="quote-text">
+                                                "{{ __('site.default_review_quote') }}"
+                                            </p>
+                                            <div class="quote-author">
+                                                <h4 class="author-name">Nguyễn Minh Anh</h4>
+                                                <p class="author-position">{{ __('site.default_author_role') }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         @endforelse
                     </div>
                 </div>
@@ -257,7 +283,8 @@
                     <div class="col-md-4 d-none d-md-block"></div>
                     <div class="col-md-6 d-flex align-items-center gap-4">
                         <div class="testimonial-pagination">
-                            <span class="current">01</span><span class="total">/{{ str_pad(max(count($reviews), 1), 2, '0', STR_PAD_LEFT) }}</span>
+                            <span class="current">01</span><span
+                                class="total">/{{ str_pad(max(count($reviews), 1), 2, '0', STR_PAD_LEFT) }}</span>
                         </div>
                         <div class="testimonial-nav-btns">
                             <button class="nav-btn prev" aria-label="Previous">
@@ -295,7 +322,8 @@
             <div class="row services-intro-row">
 
                 <div class="col-12 col-lg-3 mb-4 mb-lg-0">
-                    <span class="si-label">• <span data-studio-key="blog_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['blog_label'] ?? null, 'Blog'), '• ') }}</span></span>
+                    <span class="si-label">• <span
+                            data-studio-key="blog_label">{{ ltrim(\App\Helpers\NormHelper::val($pageContents['blog_label'] ?? null, 'Blog'), '• ') }}</span></span>
                 </div>
 
                 <div class="col-12 col-lg-9 mb-4 mb-lg-0">
@@ -311,7 +339,8 @@
     <section class="blog-slider-section">
         <div class="container-fluid blog-custom-container">
             <div class="d-flex justify-content-end mb-4">
-                <a href="{{ \App\Helpers\NormHelper::localizeUrl(\App\Helpers\NormHelper::val($pageContents['blog_btn_url'] ?? null, '/news')) }}" class="link-more text-uppercase" style="margin-top: 100px;" data-studio-key="blog_btn_text">
+                <a href="{{ \App\Helpers\NormHelper::localizeUrl(\App\Helpers\NormHelper::val($pageContents['blog_btn_url'] ?? null, '/news')) }}"
+                    class="link-more text-uppercase" style="margin-top: 100px;" data-studio-key="blog_btn_text">
                     @normVal($pageContents['blog_btn_text'] ?? null, 'XEM THÊM BÀI VIẾT')
                 </a>
             </div>
@@ -319,36 +348,42 @@
             <div class="blog-slider-container">
                 <div class="blog-track" id="blogTrack">
                     @forelse($blogs as $blog)
-                    @php
-                        $thumbUrl = !empty($blog->thumbnail) ? (str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset(ltrim($blog->thumbnail, '/'))) : asset('assets/images/project1.png');
-                        $detailUrl = \App\Helpers\NormHelper::localizedRoute('news.detail', $blog->slug);
-                        $blogTitle = $blog->getTitle();
-                    @endphp
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="{{ $detailUrl }}" class="d-block w-100 h-100">
-                                <img src="{{ $thumbUrl }}" alt="{{ $blogTitle }}" loading="lazy">
-                            </a>
+                        @php
+                            $thumbUrl = !empty($blog->thumbnail)
+                                ? (str_starts_with($blog->thumbnail, 'http')
+                                    ? $blog->thumbnail
+                                    : asset(ltrim($blog->thumbnail, '/')))
+                                : asset('assets/images/project1.png');
+                            $detailUrl = \App\Helpers\NormHelper::localizedRoute('news.detail', $blog->slug);
+                            $blogTitle = $blog->getTitle();
+                        @endphp
+                        <div class="blog-card">
+                            <div class="blog-img-wrap">
+                                <a href="{{ $detailUrl }}" class="d-block w-100 h-100">
+                                    <img src="{{ $thumbUrl }}" alt="{{ $blogTitle }}" loading="lazy">
+                                </a>
+                            </div>
+                            <h3 class="blog-title">
+                                <a href="{{ $detailUrl }}" class="text-decoration-none" style="color: inherit;">
+                                    {{ $blogTitle }}
+                                </a>
+                            </h3>
                         </div>
-                        <h3 class="blog-title">
-                            <a href="{{ $detailUrl }}" class="text-decoration-none" style="color: inherit;">
-                                {{ $blogTitle }}
-                            </a>
-                        </h3>
-                    </div>
                     @empty
-                    <div class="blog-card">
-                        <div class="blog-img-wrap">
-                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}" class="d-block w-100 h-100">
-                                <img src="{{ asset('assets/images/project1.png') }}" alt="Blog">
-                            </a>
+                        <div class="blog-card">
+                            <div class="blog-img-wrap">
+                                <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}"
+                                    class="d-block w-100 h-100">
+                                    <img src="{{ asset('assets/images/project1.png') }}" alt="Blog">
+                                </a>
+                            </div>
+                            <h3 class="blog-title">
+                                <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}"
+                                    class="text-decoration-none" style="color: inherit;">
+                                    {{ __('site.no_blogs_home') }}
+                                </a>
+                            </h3>
                         </div>
-                        <h3 class="blog-title">
-                            <a href="{{ \App\Helpers\NormHelper::localizedRoute('news') }}" class="text-decoration-none" style="color: inherit;">
-                                {{ __('site.no_blogs_home') }}
-                            </a>
-                        </h3>
-                    </div>
                     @endforelse
                 </div>
             </div>
@@ -366,10 +401,10 @@
         </div>
     </section>
 
-    @endsection
+@endsection
 
 @push('scripts')
-<script>
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
             const hero3dModel = document.querySelector('.hero-3d-model');
             if (hero3dModel) {
@@ -442,7 +477,9 @@
                         staggerObserver.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.4 });
+            }, {
+                threshold: 0.4
+            });
 
             document.querySelectorAll('.stagger-word').forEach(el => {
                 splitIntoChars(el);
@@ -460,7 +497,10 @@
                             entry.target.classList.remove('is-visible');
                         }
                     });
-                }, { threshold: 0.5, rootMargin: "0px" });
+                }, {
+                    threshold: 0.5,
+                    rootMargin: "0px"
+                });
 
                 animatedTexts.forEach(text => textObserver.observe(text));
             }
@@ -498,7 +538,13 @@
                     const newWidth = window.innerWidth;
 
                     if (cachedWindowHeight === 0 || Math.abs(cachedWindowWidth - newWidth) > 50) {
-                        const dummy = document.createElement('div'); dummy.style.height = '100vh'; dummy.style.position = 'absolute'; dummy.style.visibility = 'hidden'; document.body.appendChild(dummy); cachedWindowHeight = dummy.offsetHeight; document.body.removeChild(dummy);
+                        const dummy = document.createElement('div');
+                        dummy.style.height = '100vh';
+                        dummy.style.position = 'absolute';
+                        dummy.style.visibility = 'hidden';
+                        document.body.appendChild(dummy);
+                        cachedWindowHeight = dummy.offsetHeight;
+                        document.body.removeChild(dummy);
                     }
                     cachedWindowWidth = newWidth;
 
@@ -519,7 +565,9 @@
                 }
 
                 calculateMetrics();
-                window.addEventListener('resize', calculateMetrics, { passive: true });
+                window.addEventListener('resize', calculateMetrics, {
+                    passive: true
+                });
 
                 function updateCarousel() {
                     const scrollY = window.scrollY;
@@ -563,8 +611,10 @@
 
                                 data.infoWrap.style.opacity = opacity;
 
-                                if (data.title) data.title.style.transform = `translateY(${translateY * 0.5}px)`;
-                                if (data.categories) data.categories.style.transform = `translateY(${translateY}px)`;
+                                if (data.title) data.title.style.transform =
+                                    `translateY(${translateY * 0.5}px)`;
+                                if (data.categories) data.categories.style.transform =
+                                    `translateY(${translateY}px)`;
                             } else {
                                 data.infoWrap.style.opacity = '1';
                                 if (data.title) data.title.style.transform = 'none';
@@ -575,6 +625,7 @@
                 }
 
                 let psScrollTicking = false;
+
                 function onPsScroll() {
                     if (!psScrollTicking) {
                         window.requestAnimationFrame(() => {
@@ -585,13 +636,245 @@
                     }
                 }
 
+                function getMaxTranslate() {
+                    return cachedItemTotalWidth * Math.max(totalProjects - 1, 0);
+                }
+
+                function getHorizontalToVerticalRatio() {
+                    const maxTranslate = getMaxTranslate();
+                    if (maxTranslate <= 0 || cachedMaxScroll <= 0) return 1;
+                    return cachedMaxScroll / maxTranslate;
+                }
+
+                function clampShowcaseScroll(y) {
+                    const minScroll = cachedShowcaseTop;
+                    const maxScroll = cachedShowcaseTop + cachedMaxScroll;
+                    return Math.max(minScroll, Math.min(maxScroll, y));
+                }
+
+                function isShowcasePinned() {
+                    const rect = showcase.getBoundingClientRect();
+                    return rect.top <= 2 && rect.bottom >= window.innerHeight - 2;
+                }
+
+                function applyShowcaseScroll(targetY, immediate = false) {
+                    const clampedY = clampShowcaseScroll(targetY);
+                    if (typeof lenis !== 'undefined' && typeof lenis.scrollTo === 'function') {
+                        lenis.scrollTo(clampedY, immediate ? {
+                            immediate: true
+                        } : {
+                            lerp: 0.15
+                        });
+                    } else {
+                        window.scrollTo({
+                            top: clampedY,
+                            behavior: immediate ? 'auto' : 'smooth'
+                        });
+                    }
+                    return clampedY;
+                }
+
+                const HORIZONTAL_WHEEL_SPEED = 1.65;
+                const HORIZONTAL_TOUCH_SPEED = 1.35;
+                const HORIZONTAL_DRAG_SPEED = 1.45;
+
                 if (typeof lenis !== 'undefined') {
                     lenis.on('scroll', updateCarousel);
                 } else {
-                    window.addEventListener('scroll', onPsScroll, { passive: true });
+                    window.addEventListener('scroll', onPsScroll, {
+                        passive: true
+                    });
                 }
 
-                window.addEventListener('resize', onPsScroll, { passive: true });
+                window.addEventListener('resize', onPsScroll, {
+                    passive: true
+                });
+                window.addEventListener('load', () => {
+                    calculateMetrics();
+                    updateCarousel();
+                });
+
+                // Support horizontal trackpad/wheel, Shift+wheel, touch swipe, and mouse drag
+                const psViewport = showcase.querySelector('.ps-horizontal-viewport');
+                let suppressCardClickUntil = 0;
+
+                if (totalProjects > 1) {
+                    // 1. Trackpad horizontal wheel / Shift + vertical wheel
+                    showcase.addEventListener('wheel', (e) => {
+                        if (cachedMaxScroll <= 0 || getMaxTranslate() <= 0) return;
+
+                        let dx = 0;
+                        if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 0) {
+                            dx = e.deltaX;
+                        } else if (e.shiftKey && Math.abs(e.deltaY) > 0) {
+                            dx = e.deltaY;
+                        } else {
+                            return;
+                        }
+
+                        if (!isShowcasePinned()) return;
+
+                        if (e.deltaMode === 1) dx *= 16;
+                        else if (e.deltaMode === 2) dx *= window.innerWidth;
+
+                        const currentY = (typeof lenis !== 'undefined' && typeof lenis.targetScroll ===
+                                'number') ?
+                            lenis.targetScroll :
+                            window.scrollY;
+                        const minScroll = cachedShowcaseTop;
+                        const maxScroll = cachedShowcaseTop + cachedMaxScroll;
+
+                        if ((dx < 0 && currentY <= minScroll + 0.5) || (dx > 0 && currentY >= maxScroll -
+                                0.5)) {
+                            return;
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const nextY = currentY + dx * getHorizontalToVerticalRatio() * HORIZONTAL_WHEEL_SPEED;
+                        applyShowcaseScroll(nextY, false);
+                    }, {
+                        passive: false
+                    });
+
+                    if (psViewport) {
+                        psViewport.addEventListener('click', (e) => {
+                            if (Date.now() < suppressCardClickUntil) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+                        }, true);
+
+                        psViewport.addEventListener('dragstart', (e) => {
+                            e.preventDefault();
+                        });
+
+                        // 2. Touch horizontal swipe (mobile & tablet)
+                        let touchStartX = 0;
+                        let touchStartY = 0;
+                        let touchLastX = 0;
+                        let touchDirection = null;
+                        let touchMovedHorizontally = false;
+                        let touchVelocityX = 0;
+                        let touchLastTime = 0;
+
+                        psViewport.addEventListener('touchstart', (e) => {
+                            if (e.touches.length !== 1) return;
+                            calculateMetrics();
+                            const t = e.touches[0];
+                            touchStartX = t.clientX;
+                            touchStartY = t.clientY;
+                            touchLastX = t.clientX;
+                            touchDirection = null;
+                            touchMovedHorizontally = false;
+                            touchVelocityX = 0;
+                            touchLastTime = performance.now();
+                        }, {
+                            passive: true
+                        });
+
+                        psViewport.addEventListener('touchmove', (e) => {
+                            if (e.touches.length !== 1 || cachedMaxScroll <= 0 || getMaxTranslate() <= 0)
+                                return;
+                            const t = e.touches[0];
+
+                            if (touchDirection === null) {
+                                const totalDx = Math.abs(t.clientX - touchStartX);
+                                const totalDy = Math.abs(t.clientY - touchStartY);
+                                if (totalDx > 6 || totalDy > 6) {
+                                    touchDirection = totalDx > totalDy ? 'x' : 'y';
+                                } else {
+                                    return;
+                                }
+                            }
+
+                            if (touchDirection !== 'x') return;
+
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const now = performance.now();
+                            const dt = Math.max(now - touchLastTime, 8);
+                            const stepDx = touchLastX - t.clientX;
+                            touchVelocityX = stepDx / dt;
+                            touchLastX = t.clientX;
+                            touchLastTime = now;
+
+                            if (Math.abs(t.clientX - touchStartX) > 8) {
+                                touchMovedHorizontally = true;
+                            }
+
+                            const nextY = window.scrollY + stepDx * getHorizontalToVerticalRatio() *
+                                HORIZONTAL_TOUCH_SPEED;
+                            applyShowcaseScroll(nextY, true);
+                        }, {
+                            passive: false
+                        });
+
+                        const finishTouchSwipe = () => {
+                            if (touchDirection === 'x' && touchMovedHorizontally) {
+                                suppressCardClickUntil = Date.now() + 250;
+                                if (Math.abs(touchVelocityX) > 0.12) {
+                                    const momentumY = window.scrollY + touchVelocityX * 340 *
+                                        getHorizontalToVerticalRatio() * HORIZONTAL_TOUCH_SPEED;
+                                    applyShowcaseScroll(momentumY, false);
+                                }
+                            }
+                            touchDirection = null;
+                            touchMovedHorizontally = false;
+                        };
+
+                        psViewport.addEventListener('touchend', finishTouchSwipe, {
+                            passive: true
+                        });
+                        psViewport.addEventListener('touchcancel', finishTouchSwipe, {
+                            passive: true
+                        });
+
+                        // 3. Mouse click-and-drag left/right (desktop)
+                        let isMouseDragging = false;
+                        let mouseStartX = 0;
+                        let mouseLastX = 0;
+                        let mouseDragged = false;
+
+                        psViewport.addEventListener('mousedown', (e) => {
+                            if (e.button !== 0 || cachedMaxScroll <= 0 || getMaxTranslate() <= 0) return;
+                            calculateMetrics();
+                            isMouseDragging = true;
+                            mouseStartX = e.clientX;
+                            mouseLastX = e.clientX;
+                            mouseDragged = false;
+                            psViewport.classList.add('is-dragging');
+                        });
+
+                        window.addEventListener('mousemove', (e) => {
+                            if (!isMouseDragging) return;
+                            const stepDx = mouseLastX - e.clientX;
+                            mouseLastX = e.clientX;
+
+                            if (!mouseDragged && Math.abs(e.clientX - mouseStartX) > 6) {
+                                mouseDragged = true;
+                            }
+
+                            if (mouseDragged) {
+                                const nextY = window.scrollY + stepDx * getHorizontalToVerticalRatio() *
+                                    HORIZONTAL_DRAG_SPEED;
+                                applyShowcaseScroll(nextY, true);
+                            }
+                        });
+
+                        window.addEventListener('mouseup', () => {
+                            if (!isMouseDragging) return;
+                            isMouseDragging = false;
+                            psViewport.classList.remove('is-dragging');
+                            if (mouseDragged) {
+                                suppressCardClickUntil = Date.now() + 250;
+                            }
+                            mouseDragged = false;
+                        });
+                    }
+                }
 
                 updateCarousel();
             }
@@ -708,7 +991,8 @@
 
                     currentSlides.forEach(s => s.classList.remove('active'));
                     if (currentSlides[2]) currentSlides[2].classList.add('active');
-                    if (currentElem && currentSlides[2]) currentElem.textContent = String(currentSlides[2].dataset.index).padStart(2, '0');
+                    if (currentElem && currentSlides[2]) currentElem.textContent = String(currentSlides[2].dataset
+                        .index).padStart(2, '0');
 
                     track.style.transition = `transform ${transitionTime}ms ease-in-out`;
                     track.style.transform = `translate3d(${centerOffset - (slideWidth * 2)}px, 0, 0)`;
@@ -737,7 +1021,8 @@
 
                     currentSlides.forEach(s => s.classList.remove('active'));
                     currentSlides[0].classList.add('active');
-                    if (currentElem) currentElem.textContent = String(currentSlides[0].dataset.index).padStart(2, '0');
+                    if (currentElem) currentElem.textContent = String(currentSlides[0].dataset.index).padStart(2,
+                        '0');
 
                     track.style.transition = `transform ${transitionTime}ms ease-in-out`;
                     track.style.transform = `translate3d(${centerOffset}px, 0, 0)`;
@@ -775,8 +1060,7 @@
                                 const offset = circleCircumference - (progressRatio * circleCircumference);
                                 progressCircle.style.strokeDashoffset = offset;
                             }
-                        }
-                        else if (progressState === 'rewinding') {
+                        } else if (progressState === 'rewinding') {
                             rewindProgressTime += deltaTime;
 
                             if (rewindProgressTime >= rewindDuration) {
@@ -812,11 +1096,15 @@
                         isScrolling = false;
                         lastFrameTime = performance.now();
                     }, 150);
-                }, { passive: true });
+                }, {
+                    passive: true
+                });
 
                 window.addEventListener('resize', () => {
                     updateCarousel(true);
-                }, { passive: true });
+                }, {
+                    passive: true
+                });
 
                 if (testimonialSection) {
                     const observer = new IntersectionObserver((entries) => {
@@ -826,7 +1114,9 @@
                                 lastFrameTime = performance.now();
                             }
                         });
-                    }, { threshold: 0 });
+                    }, {
+                        threshold: 0
+                    });
                     observer.observe(testimonialSection);
                 } else {
                     isInView = true;
@@ -866,7 +1156,7 @@
         });
     </script>
     <script>
-        (function () {
+        (function() {
             const preloader = document.getElementById('preloader');
             if (!preloader || preloader.style.display === 'none') return;
 
@@ -887,7 +1177,11 @@
             const mediaData = mediaElements.map(media => {
                 let weight = 40;
                 totalWeight += weight;
-                return { el: media, weight: weight, loaded: false };
+                return {
+                    el: media,
+                    weight: weight,
+                    loaded: false
+                };
             });
 
             let targetPercent = 0;
@@ -940,7 +1234,9 @@
 
                 setTimeout(() => {
                     preloader.classList.add('loaded');
-                    setTimeout(() => { preloader.remove(); }, 400);
+                    setTimeout(() => {
+                        preloader.remove();
+                    }, 400);
                 }, 100);
             }
 
@@ -959,19 +1255,31 @@
                         if (media.complete) {
                             markLoaded(item);
                         } else {
-                            media.addEventListener('load', () => markLoaded(item), { once: true });
-                            media.addEventListener('error', () => markLoaded(item), { once: true });
+                            media.addEventListener('load', () => markLoaded(item), {
+                                once: true
+                            });
+                            media.addEventListener('error', () => markLoaded(item), {
+                                once: true
+                            });
                         }
                     } else if (media.tagName === 'VIDEO') {
                         if (media.readyState >= 3) {
                             markLoaded(item);
                         } else {
-                            media.addEventListener('canplay', () => markLoaded(item), { once: true });
-                            media.addEventListener('error', () => markLoaded(item), { once: true });
+                            media.addEventListener('canplay', () => markLoaded(item), {
+                                once: true
+                            });
+                            media.addEventListener('error', () => markLoaded(item), {
+                                once: true
+                            });
                         }
                     } else if (media.tagName === 'MODEL-VIEWER') {
-                        media.addEventListener('load', () => markLoaded(item), { once: true });
-                        media.addEventListener('error', () => markLoaded(item), { once: true });
+                        media.addEventListener('load', () => markLoaded(item), {
+                            once: true
+                        });
+                        media.addEventListener('error', () => markLoaded(item), {
+                            once: true
+                        });
                     }
                 });
                 updateRealProgress();
