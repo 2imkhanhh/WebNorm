@@ -70,7 +70,7 @@
         </div>
 
         <div class="footer-dome">
-            <img src="{{ asset('assets/images/footer-background.png') }}" alt="Footer Texture" loading="lazy">
+            <img src="{{ asset('assets/images/footer-background.webp') }}" alt="Footer Texture" loading="lazy">
         </div>
     </div>
 </section>
