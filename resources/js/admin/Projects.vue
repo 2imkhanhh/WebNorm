@@ -130,7 +130,7 @@
     </div>
 
     <!-- Spacious Full Project Editor Modal (Tabs: Cơ bản & Chi tiết dự án) -->
-    <div v-if="isModalOpen" class="studio-modal-backdrop" @click.self="isModalOpen = false">
+    <div v-if="isModalOpen" class="studio-modal-backdrop">
       <div class="studio-modal-dialog-large">
         <div class="studio-modal-header d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center gap-3">
@@ -476,7 +476,7 @@
       </div>
     </div>
 
-    <div v-if="isCategoryModalOpen" class="studio-modal-backdrop" @click.self="isCategoryModalOpen = false">
+    <div v-if="isCategoryModalOpen" class="studio-modal-backdrop">
       <div class="studio-modal-dialog" style="max-width: 540px;">
         <div class="studio-modal-header d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center gap-2">

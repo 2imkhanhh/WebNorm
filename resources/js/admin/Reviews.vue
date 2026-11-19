@@ -90,7 +90,7 @@
     </div>
 
     <!-- Modal Form (Add / Edit Review) -->
-    <div v-if="isModalOpen" class="studio-modal-backdrop" @click.self="isModalOpen = false">
+    <div v-if="isModalOpen" class="studio-modal-backdrop">
       <div class="studio-modal-dialog-review">
         <div class="studio-modal-header">
           <div class="modal-header-left">
