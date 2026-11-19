@@ -2,6 +2,10 @@
 
 @section('title', ($blog ? $blog->getTitle() . ' | ' : '') . __('site.title_news_detail'))
 @section('description', $blog && $blog->getExcerpt() ? \Illuminate\Support\Str::limit(strip_tags($blog->getExcerpt()), 160) : __('site.meta_description_default'))
+@section('og_type', 'article')
+@if($blog && !empty($blog->thumbnail))
+@section('og_image', str_starts_with($blog->thumbnail, 'http') ? $blog->thumbnail : asset(ltrim($blog->thumbnail, '/')))
+@endif
 @section('body_class', 'news-detail-page')
 
 @push('styles')
@@ -35,11 +39,32 @@
                             </div>
                         </div>
 
+                        @php
+                            $shareUrl = \App\Helpers\NormHelper::canonicalUrl();
+                            $shareTitle = $blog ? $blog->getTitle() : 'Hiểu về tư duy thiết kế (design thinking) để nổi bật trong ngành công nghiệp sáng tạo';
+                            $encodedShareUrl = urlencode($shareUrl);
+                            $encodedShareTitle = urlencode($shareTitle);
+                        @endphp
                         <div class="share-actions d-flex align-items-center">
                             <span class="share-text">{{ __('site.news_share') }}</span>
-                            <a href="#" class="share-icon"><i class='bx bxl-linkedin'></i></a>
-                            <a href="#" class="share-icon text-icon">X</a>
-                            <a href="#" class="share-icon"><i class='bx bxl-facebook'></i></a>
+                            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ $encodedShareUrl }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="share-icon js-share-btn"
+                               title="LinkedIn"
+                               aria-label="Share on LinkedIn"><i class='bx bxl-linkedin'></i></a>
+                            <a href="https://twitter.com/intent/tweet?url={{ $encodedShareUrl }}&text={{ $encodedShareTitle }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="share-icon text-icon js-share-btn"
+                               title="X"
+                               aria-label="Share on X">X</a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ $encodedShareUrl }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="share-icon js-share-btn"
+                               title="Facebook"
+                               aria-label="Share on Facebook"><i class='bx bxl-facebook'></i></a>
                         </div>
 
                     </div>
@@ -105,5 +130,29 @@
     @endsection
 
 @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.js-share-btn').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    const url = this.getAttribute('href');
+                    if (!url || url === '#') return;
 
+                    const width = 600;
+                    const height = 520;
+                    const left = Math.max(0, Math.round((window.screen.width - width) / 2));
+                    const top = Math.max(0, Math.round((window.screen.height - height) / 2));
+                    const popup = window.open(
+                        url,
+                        'normSharePopup',
+                        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,resizable=yes,scrollbars=yes`
+                    );
+
+                    if (popup) {
+                        e.preventDefault();
+                        popup.focus();
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

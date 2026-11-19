@@ -23,11 +23,11 @@
     <link rel="alternate" hreflang="en" href="{{ $enAlternateUrl }}" />
     <link rel="alternate" hreflang="x-default" href="{{ $viAlternateUrl }}" />
 
-    <meta property="og:type" content="website">
+    <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="@yield('og_url', $currentCanonicalUrl)">
     <meta property="og:title" content="@yield('title', __('site.meta_title_default'))">
     <meta property="og:description" content="@yield('description', __('site.meta_description_default'))">
-    <meta property="og:image" content="{{ asset('assets/images/logo.png') }}">
+    <meta property="og:image" content="@yield('og_image', asset('assets/images/logo.png'))">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:site_name" content="{{ \App\Helpers\NormHelper::setting('site_name', 'Brand Design Agency') }}">
@@ -37,7 +37,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', __('site.meta_title_default'))">
     <meta name="twitter:description" content="@yield('description', __('site.meta_description_default'))">
-    <meta name="twitter:image" content="{{ asset('assets/images/logo.png') }}">
+    <meta name="twitter:image" content="@yield('og_image', asset('assets/images/logo.png'))">
 
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}" />
     <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
