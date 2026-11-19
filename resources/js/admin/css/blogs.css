@@ -596,6 +596,25 @@
   object-fit: cover;
 }
 
+.blog-preview-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog-preview-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .blog-preview-empty-icon {
   font-size: 24px;
   color: #94a3b8;
@@ -695,4 +714,253 @@
 .btn-submit:hover {
   background: #1e293b;
 }
+
+/* Custom Spacious Date Picker (Day / Month / Year) */
+.blog-calendar-picker-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.blog-calendar-input-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  box-sizing: border-box;
+  min-height: 38px;
+}
+
+.blog-calendar-input-box:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.blog-calendar-icon {
+  font-size: 17px;
+  color: #0f172a;
+  flex-shrink: 0;
+}
+
+.blog-calendar-val {
+  font-weight: 600;
+  color: #0f172a;
+  flex: 1;
+}
+
+.blog-calendar-placeholder {
+  color: #94a3b8;
+  flex: 1;
+  font-size: 13px;
+}
+
+.btn-clear-blog-date {
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-clear-blog-date:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.blog-calendar-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 1100;
+  width: 300px;
+  max-width: calc(100vw - 48px);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.16), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  padding: 12px 14px;
+}
+
+.blog-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.btn-blog-cal-nav {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.btn-blog-cal-nav:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.blog-cal-selectors {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+
+.blog-cal-select {
+  padding: 4px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.blog-cal-select:hover,
+.blog-cal-select:focus {
+  border-color: #0f172a;
+  background: #ffffff;
+}
+
+.blog-cal-select-year {
+  min-width: 70px;
+}
+
+.blog-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+}
+
+.blog-cal-weekday {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  padding: 2px 0;
+  letter-spacing: 0.02em;
+}
+
+.blog-calendar-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.blog-cal-day-btn {
+  height: 30px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #0f172a;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.blog-cal-day-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.blog-cal-day-btn.is-outside {
+  color: #94a3b8;
+}
+
+.blog-cal-day-btn.is-today {
+  border-color: #0f172a;
+  font-weight: 700;
+}
+
+.blog-cal-day-btn.is-selected {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  font-weight: 700;
+}
+
+.blog-cal-day-btn.is-selected:hover {
+  background: #1e293b;
+}
+
+.blog-calendar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-blog-cal-quick {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-blog-cal-quick:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-blog-cal-quick.primary {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #ffffff;
+}
+
+.btn-blog-cal-quick.primary:hover {
+  background: #1e293b;
+}
+
 

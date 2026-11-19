@@ -121,17 +121,104 @@
               <input v-model="form.slug" type="text" class="modal-input" placeholder="duong-dan-bai-viet" required />
             </div>
             <div class="modal-form-group">
-              <label class="modal-label">Tên tác giả</label>
-              <input v-model="form.author" type="text" class="modal-input" placeholder="Nguyễn Minh Anh" />
+              <label class="modal-label">Ngày đăng bài viết</label>
+              <div ref="datePickerWrapRef" class="blog-calendar-picker-wrap">
+                <div class="blog-calendar-input-box" @click="toggleDatePicker">
+                  <i class="bx bx-calendar blog-calendar-icon"></i>
+                  <span v-if="form.published_at" class="blog-calendar-val">
+                    {{ formatDateInputDisplay(form.published_at) }}
+                  </span>
+                  <span v-else class="blog-calendar-placeholder">Chọn ngày / tháng / năm</span>
+                  <button v-if="form.published_at" type="button" class="btn-clear-blog-date"
+                    @click.stop="clearPublishedDate" title="Xóa ngày">
+                    <i class="bx bx-x"></i>
+                  </button>
+                </div>
+
+                <div v-if="isDatePickerOpen" class="blog-calendar-dropdown" @click.stop>
+                  <div class="blog-calendar-header">
+                    <button type="button" class="btn-blog-cal-nav" @click="prevMonth" title="Tháng trước">
+                      <i class="bx bx-chevron-left"></i>
+                    </button>
+
+                    <div class="blog-cal-selectors">
+                      <select v-model.number="pickerMonth" class="blog-cal-select" aria-label="Chọn tháng">
+                        <option v-for="m in 12" :key="m" :value="m">Tháng {{ String(m).padStart(2, '0') }}</option>
+                      </select>
+                      <select v-model.number="pickerYear" class="blog-cal-select blog-cal-select-year"
+                        aria-label="Chọn năm">
+                        <option v-for="y in pickerYears" :key="y" :value="y">{{ y }}</option>
+                      </select>
+                    </div>
+
+                    <button type="button" class="btn-blog-cal-nav" @click="nextMonth" title="Tháng sau">
+                      <i class="bx bx-chevron-right"></i>
+                    </button>
+                  </div>
+
+                  <div class="blog-calendar-weekdays">
+                    <span v-for="wd in ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']" :key="wd"
+                      class="blog-cal-weekday">{{ wd }}</span>
+                  </div>
+
+                  <div class="blog-calendar-days-grid">
+                    <button v-for="cell in calendarDays" :key="cell.key" type="button" class="blog-cal-day-btn"
+                      :class="{
+                        'is-outside': !cell.isCurrentMonth,
+                        'is-today': cell.isoDate === todayIsoDate,
+                        'is-selected': cell.isoDate === form.published_at,
+                      }" @click="selectCalendarDay(cell)">
+                      {{ cell.day }}
+                    </button>
+                  </div>
+
+                  <div class="blog-calendar-footer">
+                    <button type="button" class="btn-blog-cal-quick" @click="clearPublishedDate">Xóa ngày</button>
+                    <button type="button" class="btn-blog-cal-quick primary" @click="selectToday">Hôm nay</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
+          <div class="modal-form-row">
+            <div class="modal-form-group">
+              <label class="modal-label">Tên tác giả</label>
+              <input v-model="form.author" type="text" class="modal-input" placeholder="Nguyễn Minh Anh" />
+            </div>
+            <div class="modal-form-group">
+              <label class="modal-label">Vị trí / Chức vụ tác giả</label>
+              <input v-if="modalLang === 'vi'" v-model="form.author_role_vi" type="text" class="modal-input"
+                placeholder="Giám đốc Marketing" />
+              <input v-else v-model="form.author_role_en" type="text" class="modal-input"
+                placeholder="E.g. Marketing Director" />
+            </div>
+          </div>
+
+          <!-- Author Avatar Upload -->
           <div class="modal-form-group">
-            <label class="modal-label">Vị trí / Chức vụ tác giả</label>
-            <input v-if="modalLang === 'vi'" v-model="form.author_role_vi" type="text" class="modal-input"
-              placeholder="Giám đốc Marketing" />
-            <input v-else v-model="form.author_role_en" type="text" class="modal-input"
-              placeholder="E.g. Marketing Director" />
+            <label class="modal-label">Ảnh đại diện tác giả</label>
+            <div class="blog-upload-row">
+              <div class="blog-preview-avatar">
+                <img v-if="form.author_avatar" :src="getImageUrl(form.author_avatar)" alt="Author Avatar" />
+                <div v-else class="blog-preview-empty-icon">
+                  <i class="bx bx-user"></i>
+                </div>
+              </div>
+              <div class="blog-btn-row">
+                <input type="file" ref="authorAvatarInputRef" accept="image/*" style="display: none"
+                  @change="handleAuthorAvatarUpload" />
+                <button type="button" class="btn-upload-file" :disabled="isUploadingAvatar"
+                  @click="triggerAuthorAvatarInput">
+                  <i class="bx" :class="isUploadingAvatar ? 'bx-loader-alt bx-spin' : 'bx-upload'"></i>
+                  <span>{{ isUploadingAvatar ? 'Đang tải...' : 'Tải ảnh từ máy' }}</span>
+                </button>
+                <button v-if="form.author_avatar" type="button" class="btn-remove-file"
+                  @click="form.author_avatar = ''" title="Xóa ảnh tác giả">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Featured Checkbox Card -->
@@ -257,7 +344,13 @@ const renderKey = ref(0);
 const searchQuery = ref('');
 const modalLang = ref('vi');
 const fileInputRef = ref(null);
+const authorAvatarInputRef = ref(null);
+const datePickerWrapRef = ref(null);
 const isUploading = ref(false);
+const isUploadingAvatar = ref(false);
+const isDatePickerOpen = ref(false);
+const pickerMonth = ref(new Date().getMonth() + 1);
+const pickerYear = ref(new Date().getFullYear());
 
 const syncFromProps = () => {
   localBlogs.value = JSON.parse(JSON.stringify(props.blogs || []));
@@ -281,6 +374,8 @@ const form = reactive({
   author: '',
   author_role_vi: '',
   author_role_en: '',
+  author_avatar: '',
+  published_at: '',
   status: 'published',
   is_featured: false,
 });
@@ -301,9 +396,174 @@ const getImageUrl = (url) => {
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
   const day = String(d.getDate()).padStart(2, '0');
   const month = String(d.getMonth() + 1).padStart(2, '0');
   return `${day} Tháng ${month} ${d.getFullYear()}`;
+};
+
+const toDateInputValue = (dateStr) => {
+  if (!dateStr) return '';
+  if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr.trim())) {
+    return dateStr.trim();
+  }
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getTodayDateInput = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const todayIsoDate = computed(() => getTodayDateInput());
+
+const formatDateInputDisplay = (isoDate) => {
+  if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate || '';
+  const [y, m, d] = isoDate.split('-');
+  return `${d} Tháng ${m}, ${y}`;
+};
+
+const pickerYears = computed(() => {
+  const currentYear = new Date().getFullYear();
+  const minYear = Math.min(2015, pickerYear.value - 5);
+  const maxYear = Math.max(currentYear + 5, pickerYear.value + 5);
+  const list = [];
+  for (let y = minYear; y <= maxYear; y++) {
+    list.push(y);
+  }
+  return list;
+});
+
+const formatIsoDate = (year, month, day) => {
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+};
+
+const calendarDays = computed(() => {
+  const year = pickerYear.value;
+  const month = pickerMonth.value;
+  const firstDay = new Date(year, month - 1, 1);
+  const startOffset = (firstDay.getDay() + 6) % 7; // Monday = 0
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const daysInPrevMonth = new Date(year, month - 1, 0).getDate();
+
+  const prevMonthNum = month === 1 ? 12 : month - 1;
+  const prevMonthYear = month === 1 ? year - 1 : year;
+  const nextMonthNum = month === 12 ? 1 : month + 1;
+  const nextMonthYear = month === 12 ? year + 1 : year;
+
+  const cells = [];
+
+  for (let i = startOffset - 1; i >= 0; i--) {
+    const day = daysInPrevMonth - i;
+    const isoDate = formatIsoDate(prevMonthYear, prevMonthNum, day);
+    cells.push({
+      key: `prev-${isoDate}`,
+      day,
+      month: prevMonthNum,
+      year: prevMonthYear,
+      isCurrentMonth: false,
+      isoDate,
+    });
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isoDate = formatIsoDate(year, month, day);
+    cells.push({
+      key: `curr-${isoDate}`,
+      day,
+      month,
+      year,
+      isCurrentMonth: true,
+      isoDate,
+    });
+  }
+
+  const remaining = 42 - cells.length;
+  for (let day = 1; day <= remaining; day++) {
+    const isoDate = formatIsoDate(nextMonthYear, nextMonthNum, day);
+    cells.push({
+      key: `next-${isoDate}`,
+      day,
+      month: nextMonthNum,
+      year: nextMonthYear,
+      isCurrentMonth: false,
+      isoDate,
+    });
+  }
+
+  return cells;
+});
+
+const toggleDatePicker = () => {
+  if (!isDatePickerOpen.value) {
+    if (form.published_at && /^\d{4}-\d{2}-\d{2}$/.test(form.published_at)) {
+      const [y, m] = form.published_at.split('-').map((n) => parseInt(n, 10));
+      if (y && m) {
+        pickerYear.value = y;
+        pickerMonth.value = m;
+      }
+    } else {
+      const now = new Date();
+      pickerYear.value = now.getFullYear();
+      pickerMonth.value = now.getMonth() + 1;
+    }
+    isDatePickerOpen.value = true;
+  } else {
+    isDatePickerOpen.value = false;
+  }
+};
+
+const prevMonth = () => {
+  if (pickerMonth.value === 1) {
+    pickerMonth.value = 12;
+    pickerYear.value--;
+  } else {
+    pickerMonth.value--;
+  }
+};
+
+const nextMonth = () => {
+  if (pickerMonth.value === 12) {
+    pickerMonth.value = 1;
+    pickerYear.value++;
+  } else {
+    pickerMonth.value++;
+  }
+};
+
+const selectCalendarDay = (cell) => {
+  form.published_at = cell.isoDate;
+  pickerMonth.value = cell.month;
+  pickerYear.value = cell.year;
+  isDatePickerOpen.value = false;
+};
+
+const selectToday = () => {
+  const today = getTodayDateInput();
+  form.published_at = today;
+  const [y, m] = today.split('-').map((n) => parseInt(n, 10));
+  pickerYear.value = y;
+  pickerMonth.value = m;
+  isDatePickerOpen.value = false;
+};
+
+const clearPublishedDate = () => {
+  form.published_at = '';
+  isDatePickerOpen.value = false;
+};
+
+const closeDatePickerOnClickOutside = (e) => {
+  if (isDatePickerOpen.value && datePickerWrapRef.value && !datePickerWrapRef.value.contains(e.target)) {
+    isDatePickerOpen.value = false;
+  }
 };
 
 const filteredBlogs = computed(() => {
@@ -326,6 +586,12 @@ const filteredBlogs = computed(() => {
 const triggerFileInput = () => {
   if (fileInputRef.value) {
     fileInputRef.value.click();
+  }
+};
+
+const triggerAuthorAvatarInput = () => {
+  if (authorAvatarInputRef.value) {
+    authorAvatarInputRef.value.click();
   }
 };
 
@@ -358,17 +624,20 @@ const uploadSingleFile = async (file) => {
   }
 };
 
-const handleFileUpload = async (e) => {
+const uploadImageToField = async (e, field, loadingRef) => {
   const file = e.target.files && e.target.files[0];
   if (!file) return;
-  isUploading.value = true;
+  loadingRef.value = true;
   const path = await uploadSingleFile(file);
   if (path) {
-    form.thumbnail = path;
+    form[field] = path;
   }
-  isUploading.value = false;
+  loadingRef.value = false;
   e.target.value = '';
 };
+
+const handleFileUpload = (e) => uploadImageToField(e, 'thumbnail', isUploading);
+const handleAuthorAvatarUpload = (e) => uploadImageToField(e, 'author_avatar', isUploadingAvatar);
 
 const openCreateModal = () => {
   editingItem.value = null;
@@ -384,8 +653,11 @@ const openCreateModal = () => {
   form.author = '';
   form.author_role_vi = '';
   form.author_role_en = '';
+  form.author_avatar = '';
+  form.published_at = getTodayDateInput();
   form.status = 'published';
   form.is_featured = false;
+  isDatePickerOpen.value = false;
   isModalOpen.value = true;
 };
 
@@ -403,8 +675,11 @@ const openEditModal = (b) => {
   form.author = b.author || '';
   form.author_role_vi = typeof b.author_role === 'object' ? (b.author_role?.vi || '') : (b.author_role || '');
   form.author_role_en = typeof b.author_role === 'object' ? (b.author_role?.en || '') : '';
+  form.author_avatar = b.author_avatar || '';
+  form.published_at = toDateInputValue(b.published_at) || getTodayDateInput();
   form.status = b.status || 'published';
   form.is_featured = !!b.is_featured;
+  isDatePickerOpen.value = false;
   isModalOpen.value = true;
 };
 
@@ -456,9 +731,17 @@ const submitForm = () => {
       vi: form.author_role_vi ? form.author_role_vi.trim() : (form.author_role_en ? form.author_role_en.trim() : ''),
       en: form.author_role_en ? form.author_role_en.trim() : (form.author_role_vi ? form.author_role_vi.trim() : ''),
     },
+    author_avatar: form.author_avatar || null,
     status: form.status || 'published',
     is_featured: !!form.is_featured,
-    published_at: editingItem.value ? editingItem.value.published_at : new Date().toISOString(),
+    published_at:
+      editingItem.value &&
+      editingItem.value.published_at &&
+      form.published_at === toDateInputValue(editingItem.value.published_at)
+        ? editingItem.value.published_at
+        : form.published_at
+          ? `${form.published_at}T12:00:00.000Z`
+          : new Date().toISOString(),
   };
 
   if (editingItem.value) {
@@ -579,6 +862,7 @@ onMounted(() => {
   onSaveHandler.value = publishBlogs;
   onDraftHandler.value = saveDraftBlogs;
   onDiscardDraftHandler.value = handleDiscardDraft;
+  document.addEventListener('click', closeDatePickerOnClickOutside);
 });
 
 onUnmounted(() => {
@@ -587,6 +871,7 @@ onUnmounted(() => {
   onDiscardDraftHandler.value = null;
   hasUnsavedChanges.value = false;
   hasPendingDraft.value = false;
+  document.removeEventListener('click', closeDatePickerOnClickOutside);
 });
 </script>
 
