@@ -51,8 +51,7 @@
                 </div>
 
                 <div class="col hero-image-wrap d-flex justify-content-center align-items-center">
-                    <img src="{{ asset('assets/images/banner.png') }}" alt="Placeholder"
-                        class="hero-img hero-img-placeholder">
+                    <div class="hero-img hero-img-placeholder" aria-hidden="true"></div>
                 </div>
 
                 <div class="col-auto hero-ctas d-flex gap-5">

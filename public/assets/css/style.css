@@ -307,6 +307,7 @@ header.navbar {
 
 .hero-img-placeholder {
   visibility: hidden;
+  aspect-ratio: 1182 / 422;
 }
 
 .hero-3d-model {
