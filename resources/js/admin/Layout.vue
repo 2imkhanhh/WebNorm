@@ -182,7 +182,6 @@ onMounted(() => {
       bypassLeaveGuard = false;
       return;
     }
-    // Không chặn khi đang thực hiện các request lưu (save, save draft, discard) hoặc request gửi dữ liệu POST/PUT/DELETE
     if (isSaving.value || isSavingDraft.value || isDiscardingDraft.value) {
       return;
     }
@@ -218,9 +217,120 @@ onMounted(() => {
   };
   window.addEventListener('beforeunload', handleBeforeUnload);
 
+  // Auto-logout after 30 minutes of inactivity
+  const INACTIVITY_LIMIT_MS = 30 * 60 * 1000;
+  const PING_INTERVAL_MS = 5 * 60 * 1000;
+  const ACTIVITY_STORAGE_KEY = 'norm_admin_last_activity';
+  const activityEvents = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'input', 'click'];
+
+  let lastActivityAt = Date.now();
+  let lastPingAt = Date.now();
+  let hasActivitySincePing = false;
+  let isAutoLoggingOut = false;
+
+  try {
+    localStorage.setItem(ACTIVITY_STORAGE_KEY, String(lastActivityAt));
+  } catch { }
+
+  const markActivity = () => {
+    if (isAutoLoggingOut) return;
+    const now = Date.now();
+    hasActivitySincePing = true;
+    if (now - lastActivityAt >= 1000) {
+      lastActivityAt = now;
+      try {
+        localStorage.setItem(ACTIVITY_STORAGE_KEY, String(now));
+      } catch { }
+    }
+  };
+
+  const performAutoLogout = async () => {
+    if (isAutoLoggingOut) return;
+    isAutoLoggingOut = true;
+    hasUnsavedChanges.value = false;
+    try {
+      localStorage.removeItem(ACTIVITY_STORAGE_KEY);
+    } catch { }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    try {
+      await fetch('/admin/logout?timeout=1', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': csrfToken,
+          Accept: 'application/json',
+        },
+        keepalive: true,
+      });
+    } catch { }
+
+    window.location.href = '/admin/login?timeout=1';
+  };
+
+  const checkInactivity = async () => {
+    if (isAutoLoggingOut) return;
+
+    try {
+      const stored = Number(localStorage.getItem(ACTIVITY_STORAGE_KEY));
+      if (Number.isFinite(stored) && stored > lastActivityAt) {
+        lastActivityAt = stored;
+      }
+    } catch { }
+
+    const now = Date.now();
+    if (now - lastActivityAt >= INACTIVITY_LIMIT_MS) {
+      await performAutoLogout();
+      return;
+    }
+
+    if (hasActivitySincePing && now - lastPingAt >= PING_INTERVAL_MS) {
+      hasActivitySincePing = false;
+      lastPingAt = now;
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+      try {
+        const res = await fetch('/admin/ping', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            Accept: 'application/json',
+          },
+        });
+        if (res.status === 401 || res.status === 419) {
+          await performAutoLogout();
+        }
+      } catch { }
+    }
+  };
+
+  const handleStorageSync = (e) => {
+    if (e.key === ACTIVITY_STORAGE_KEY && e.newValue) {
+      const ts = Number(e.newValue);
+      if (Number.isFinite(ts) && ts > lastActivityAt) {
+        lastActivityAt = ts;
+      }
+    }
+  };
+
+  const handleVisibilityCheck = () => {
+    if (document.visibilityState === 'visible') {
+      checkInactivity();
+    }
+  };
+
+  activityEvents.forEach((evt) => window.addEventListener(evt, markActivity, { passive: true, capture: true }));
+  window.addEventListener('storage', handleStorageSync);
+  window.addEventListener('focus', checkInactivity);
+  document.addEventListener('visibilitychange', handleVisibilityCheck);
+  const inactivityTimer = window.setInterval(checkInactivity, 15000);
+
   onUnmounted(() => {
     removeRouterGuard();
     window.removeEventListener('beforeunload', handleBeforeUnload);
+    activityEvents.forEach((evt) => window.removeEventListener(evt, markActivity, { capture: true }));
+    window.removeEventListener('storage', handleStorageSync);
+    window.removeEventListener('focus', checkInactivity);
+    document.removeEventListener('visibilitychange', handleVisibilityCheck);
+    window.clearInterval(inactivityTimer);
   });
 });
 </script>

@@ -88,7 +88,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:15,1')->name('admin.login.submit');
     Route::post('/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', \App\Http\Middleware\CheckAdminInactivity::class])->group(function () {
+        Route::post('/ping', [AuthController::class, 'ping'])->name('admin.ping');
+
         Route::get('/', function () {
             return redirect()->route('admin.dashboard');
         });

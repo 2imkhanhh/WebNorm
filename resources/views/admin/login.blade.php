@@ -92,13 +92,23 @@
         }
 
         .alert-status {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
+            background: rgba(253, 255, 142, 0.1);
+            border: 1px solid rgba(253, 255, 142, 0.3);
+            color: #FDFF8E;
             padding: 12px 14px;
             border-radius: 10px;
             font-size: 13px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.45;
+        }
+
+        .alert-status i {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
         }
 
         .form-group {
@@ -251,6 +261,11 @@
                 <i class='bx bx-error-circle'></i>
                 <span>{{ $errors->first() }}</span>
             </div>
+        @elseif (request()->boolean('timeout'))
+            <div class="alert-status">
+                <i class='bx bx-time-five'></i>
+                <span>Phiên đăng nhập đã tự động đăng xuất do không có thao tác trong 30 phút. Vui lòng đăng nhập lại.</span>
+            </div>
         @endif
 
         <form action="{{ route('admin.login.submit') }}" method="POST" autocomplete="off">
@@ -285,6 +300,10 @@
     </div>
 
     <script>
+        try {
+            localStorage.removeItem('norm_admin_last_activity');
+        } catch (e) {}
+
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');

@@ -47,11 +47,10 @@ class AuthController extends Controller
             ]);
         }
 
-        $remember = $request->boolean('remember');
-
-        if (Auth::attempt($credentials, $remember)) {
+        if (Auth::attempt($credentials, false)) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
+            $request->session()->put('admin_last_activity', time());
             return redirect()->intended(route('admin.dashboard'));
         }
 
@@ -60,6 +59,14 @@ class AuthController extends Controller
         throw ValidationException::withMessages([
             'email' => 'Email hoặc mật khẩu không chính xác.',
         ]);
+    }
+
+    /**
+     * Keep session alive while admin is actively interacting with the UI.
+     */
+    public function ping()
+    {
+        return response()->json(['ok' => true]);
     }
 
     /**
@@ -72,6 +79,14 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Inertia::location(route('admin.login'));
+        $loginUrl = $request->boolean('timeout')
+            ? route('admin.login', ['timeout' => 1])
+            : route('admin.login');
+
+        if ($request->expectsJson() && !$request->header('X-Inertia')) {
+            return response()->json(['redirect' => $loginUrl]);
+        }
+
+        return Inertia::location($loginUrl);
     }
 }
