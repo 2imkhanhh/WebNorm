@@ -9,7 +9,7 @@
 @section('body_class', 'news-detail-page')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('assets/css/news-detail.css') }}?v=2">
+    <link rel="stylesheet" href="{{ asset('assets/css/news-detail.css') }}?v=4">
 @endpush
 
 @section('content')
@@ -68,6 +68,15 @@
                         </div>
 
                     </div>
+
+                    @php
+                        $articleExcerpt = $blog ? trim($blog->getExcerpt()) : '';
+                    @endphp
+                    @if($articleExcerpt !== '')
+                        <div class="article-excerpt">
+                            {!! nl2br(e($articleExcerpt)) !!}
+                        </div>
+                    @endif
 
                     <div class="article-content">
                         @php
