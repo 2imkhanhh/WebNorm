@@ -1273,6 +1273,23 @@ header.navbar {
   overflow: hidden;
   width: calc(100% + 1.5rem);
   margin-right: -1.5rem;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.blog-slider-container.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.blog-slider-container.is-dragging .blog-card {
+  pointer-events: none;
+}
+
+.blog-slider-container a,
+.blog-slider-container img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .blog-slider-section .link-more {

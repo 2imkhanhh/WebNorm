@@ -636,6 +636,7 @@ const blogPrev = document.getElementById('blogPrev');
 const blogNext = document.getElementById('blogNext');
 
 if (blogTrack && blogPrev && blogNext) {
+    const blogContainer = blogTrack.closest('.blog-slider-container') || blogTrack.parentElement;
     let isBlogAnimating = false;
     const blogTransitionTime = 600;
 
@@ -652,87 +653,231 @@ if (blogTrack && blogPrev && blogNext) {
         }
     }
 
-    blogNext.addEventListener('click', () => {
+    function getBlogStep() {
+        const firstCard = blogTrack.querySelector('.blog-card');
+        if (!firstCard) return 0;
+        const cardWidth = firstCard.offsetWidth;
+        const gap = parseInt(window.getComputedStyle(blogTrack).gap, 10) || 24;
+        return cardWidth + gap;
+    }
+
+    function goBlogNext(duration = blogTransitionTime) {
         if (isBlogAnimating) return;
+        const currentCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+        if (currentCards.length <= 1) return;
         isBlogAnimating = true;
 
-        const currentCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
-        if (currentCards.length === 0) return;
-
-        const cardWidth = currentCards[0].offsetWidth;
-        const gap = parseInt(window.getComputedStyle(blogTrack).gap) || 24;
-        const moveAmount = cardWidth + gap;
-
-        blogTrack.style.transition = `transform ${blogTransitionTime}ms ease-in-out`;
+        const moveAmount = getBlogStep();
+        blogTrack.style.transition = `transform ${duration}ms ease-in-out`;
         blogTrack.style.transform = `translate3d(-${moveAmount}px, 0, 0)`;
 
         setTimeout(() => {
             blogTrack.appendChild(currentCards[0]);
-
             blogTrack.style.transition = 'none';
             blogTrack.style.transform = 'translate3d(0, 0, 0)';
             isBlogAnimating = false;
-        }, blogTransitionTime);
-    });
+        }, duration);
+    }
 
-    blogPrev.addEventListener('click', () => {
+    function goBlogPrev(alreadyPrepended = false, duration = blogTransitionTime) {
         if (isBlogAnimating) return;
+        const currentCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+        if (currentCards.length <= 1) return;
         isBlogAnimating = true;
 
-        const currentCards = Array.from(blogTrack.querySelectorAll('.blog-card'));
-        if (currentCards.length === 0) return;
+        if (!alreadyPrepended) {
+            const moveAmount = getBlogStep();
+            const lastCard = currentCards[currentCards.length - 1];
+            blogTrack.insertBefore(lastCard, currentCards[0]);
 
-        const cardWidth = currentCards[0].offsetWidth;
-        const gap = parseInt(window.getComputedStyle(blogTrack).gap) || 24;
-        const moveAmount = cardWidth + gap;
+            blogTrack.style.transition = 'none';
+            blogTrack.style.transform = `translate3d(-${moveAmount}px, 0, 0)`;
+            blogTrack.offsetHeight;
+        }
 
-        const lastCard = currentCards[currentCards.length - 1];
-        blogTrack.insertBefore(lastCard, currentCards[0]);
-
-        blogTrack.style.transition = 'none';
-        blogTrack.style.transform = `translate3d(-${moveAmount}px, 0, 0)`;
-
-        blogTrack.offsetHeight;
-
-        blogTrack.style.transition = `transform ${blogTransitionTime}ms ease-in-out`;
+        blogTrack.style.transition = `transform ${duration}ms ease-in-out`;
         blogTrack.style.transform = 'translate3d(0, 0, 0)';
 
         setTimeout(() => {
             isBlogAnimating = false;
-        }, blogTransitionTime);
-    });
-
-    let startX = 0;
-    let currentX = 0;
-    let isDragging = false;
-
-    blogTrack.addEventListener('touchstart', (e) => {
-        if (isBlogAnimating) return;
-        startX = e.touches[0].clientX;
-        currentX = startX;
-        isDragging = true;
-    }, { passive: true });
-
-    blogTrack.addEventListener('touchmove', (e) => {
-        if (!isDragging) return;
-        currentX = e.touches[0].clientX;
-    }, { passive: true });
-
-    blogTrack.addEventListener('touchend', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        let diffX = startX - currentX;
-        if (diffX > 50) {
-            blogNext.click();
-        }
-        else if (diffX < -50) {
-            blogPrev.click();
-        }
+        }, duration);
     }
+
+    blogNext.addEventListener('click', () => goBlogNext());
+    blogPrev.addEventListener('click', () => goBlogPrev());
+
+    // Swipe & drag support (touch, mouse drag, horizontal trackpad swipe)
+    let isPointerDown = false;
+    let isHorizontalDrag = false;
+    let dragDirectionLocked = false;
+    let prependedForRightDrag = false;
+    let suppressNextClick = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragDeltaX = 0;
+    let dragStartTime = 0;
+
+    function startBlogDrag(clientX, clientY) {
+        if (isBlogAnimating) return;
+        const currentCards = blogTrack.querySelectorAll('.blog-card');
+        if (currentCards.length <= 1) return;
+
+        isPointerDown = true;
+        isHorizontalDrag = false;
+        dragDirectionLocked = false;
+        prependedForRightDrag = false;
+        dragStartX = clientX;
+        dragStartY = clientY;
+        dragDeltaX = 0;
+        dragStartTime = performance.now();
+    }
+
+    function moveBlogDrag(clientX, clientY, touchEvent = null) {
+        if (!isPointerDown || isBlogAnimating) return;
+
+        const dx = clientX - dragStartX;
+        const dy = clientY - dragStartY;
+
+        if (!dragDirectionLocked) {
+            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+            dragDirectionLocked = true;
+            if (Math.abs(dy) > Math.abs(dx)) {
+                isPointerDown = false;
+                isHorizontalDrag = false;
+                return;
+            }
+            isHorizontalDrag = true;
+            suppressNextClick = true;
+            if (blogContainer) blogContainer.classList.add('is-dragging');
+        }
+
+        if (!isHorizontalDrag) return;
+        if (touchEvent && touchEvent.cancelable) {
+            touchEvent.preventDefault();
+        }
+
+        const step = getBlogStep();
+        if (!step) return;
+
+        dragDeltaX = Math.max(-step * 0.95, Math.min(step * 0.95, dx));
+
+        if (dragDeltaX > 0 && !prependedForRightDrag) {
+            const cards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+            blogTrack.insertBefore(cards[cards.length - 1], cards[0]);
+            prependedForRightDrag = true;
+        } else if (dragDeltaX <= 0 && prependedForRightDrag) {
+            const cards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+            blogTrack.appendChild(cards[0]);
+            prependedForRightDrag = false;
+        }
+
+        const baseX = prependedForRightDrag ? -step : 0;
+        blogTrack.style.transition = 'none';
+        blogTrack.style.transform = `translate3d(${baseX + dragDeltaX}px, 0, 0)`;
+    }
+
+    function endBlogDrag() {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+        if (blogContainer) blogContainer.classList.remove('is-dragging');
+
+        if (!isHorizontalDrag) return;
+        isHorizontalDrag = false;
+
+        const step = getBlogStep();
+        const elapsed = performance.now() - dragStartTime;
+        const isQuickFlick = elapsed < 260 && Math.abs(dragDeltaX) > 28;
+        const threshold = Math.min(step * 0.18, 60);
+
+        if (dragDeltaX < -threshold || (isQuickFlick && dragDeltaX < 0)) {
+            if (prependedForRightDrag) {
+                const cards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+                blogTrack.appendChild(cards[0]);
+                prependedForRightDrag = false;
+            }
+            goBlogNext(420);
+        } else if (dragDeltaX > threshold || (isQuickFlick && dragDeltaX > 0)) {
+            goBlogPrev(prependedForRightDrag, 420);
+            prependedForRightDrag = false;
+        } else if (prependedForRightDrag) {
+            isBlogAnimating = true;
+            blogTrack.style.transition = 'transform 260ms ease-out';
+            blogTrack.style.transform = `translate3d(-${step}px, 0, 0)`;
+            setTimeout(() => {
+                const cards = Array.from(blogTrack.querySelectorAll('.blog-card'));
+                blogTrack.appendChild(cards[0]);
+                blogTrack.style.transition = 'none';
+                blogTrack.style.transform = 'translate3d(0, 0, 0)';
+                prependedForRightDrag = false;
+                isBlogAnimating = false;
+            }, 260);
+        } else {
+            blogTrack.style.transition = 'transform 260ms ease-out';
+            blogTrack.style.transform = 'translate3d(0, 0, 0)';
+        }
+
+        dragDeltaX = 0;
+        setTimeout(() => {
+            suppressNextClick = false;
+        }, 50);
+    }
+
+    const swipeTarget = blogContainer || blogTrack;
+
+    swipeTarget.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+    });
+
+    swipeTarget.addEventListener('click', (e) => {
+        if (suppressNextClick) {
+            e.preventDefault();
+            e.stopPropagation();
+            suppressNextClick = false;
+        }
+    }, true);
+
+    swipeTarget.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        startBlogDrag(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: true });
+
+    swipeTarget.addEventListener('touchmove', (e) => {
+        if (e.touches.length !== 1) return;
+        moveBlogDrag(e.touches[0].clientX, e.touches[0].clientY, e);
+    }, { passive: false });
+
+    swipeTarget.addEventListener('touchend', endBlogDrag);
+    swipeTarget.addEventListener('touchcancel', endBlogDrag);
+
+    swipeTarget.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        startBlogDrag(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        moveBlogDrag(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', endBlogDrag);
+
+    let lastBlogWheelTime = 0;
+    swipeTarget.addEventListener('wheel', (e) => {
+        if (isBlogAnimating) return;
+        if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) || Math.abs(e.deltaX) < 25) return;
+        const currentCards = blogTrack.querySelectorAll('.blog-card');
+        if (currentCards.length <= 1) return;
+
+        e.preventDefault();
+        const now = performance.now();
+        if (now - lastBlogWheelTime < 700) return;
+        lastBlogWheelTime = now;
+
+        if (e.deltaX > 0) {
+            goBlogNext();
+        } else {
+            goBlogPrev();
+        }
+    }, { passive: false });
 
     window.addEventListener('resize', () => {
         blogTrack.style.transition = 'none';
