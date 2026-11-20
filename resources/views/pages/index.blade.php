@@ -37,7 +37,8 @@
             $model3dVal = !empty($settings['model_3d']) ? $settings['model_3d'] : 'storage/uploads/norm.glb';
             $model3dSrc = str_starts_with($model3dVal, 'http') ? $model3dVal : asset(ltrim($model3dVal, '/'));
         @endphp
-        <model-viewer src="{{ $model3dSrc }}" alt="3D Banner" camera-controls disable-zoom interaction-prompt="none"
+        <model-viewer src="{{ $model3dSrc }}" alt="3D Banner" camera-controls disable-zoom
+            interaction-prompt="auto" interaction-prompt-style="basic" interaction-prompt-threshold="800"
             disable-pan class="hero-3d-model" style="--poster-color: transparent;" shadow-intensity="1"
             camera-orbit="0deg 75deg 140%" min-camera-orbit="-30deg 60deg 140%"
             max-camera-orbit="30deg 90deg 140%"></model-viewer>

@@ -37,8 +37,6 @@
 html {
   overflow-x: clip;
   max-width: 100%;
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
 }
 
 body {
@@ -52,8 +50,6 @@ body {
 
   max-width: 100%;
   position: relative;
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
 }
 
 a {
