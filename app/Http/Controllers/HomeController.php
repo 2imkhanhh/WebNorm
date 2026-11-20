@@ -168,7 +168,8 @@ class HomeController extends Controller
             }
             $relatedBlogs = $publishedBlogs
                 ->filter(fn($b) => $blog ? ($b->slug !== $blog->slug) : true)
-                ->take(3)
+                ->sortByDesc(fn($b) => sprintf('%012d-%010d', $b->published_at?->timestamp ?? 0, $b->id ?? 0))
+                ->take(5)
                 ->values();
 
             return view('pages.news-detail', compact('blog', 'relatedBlogs'));
@@ -184,7 +185,9 @@ class HomeController extends Controller
 
         $relatedBlogs = Blog::where('id', '!=', $blog ? $blog->id : 0)
             ->where('status', 'published')
-            ->take(3)
+            ->latest('published_at')
+            ->latest('id')
+            ->take(5)
             ->get();
 
         return view('pages.news-detail', compact('blog', 'relatedBlogs'));
