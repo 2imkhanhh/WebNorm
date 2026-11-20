@@ -1015,6 +1015,27 @@ header.navbar {
   overflow: hidden;
   position: relative;
   padding: 0;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.testi-slider-container.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.testi-slider-container.is-dragging .testi-slide {
+  opacity: 0.65;
+  transition: none;
+}
+
+.testi-slider-container.is-dragging .testi-slide.active {
+  opacity: 1;
+}
+
+.testi-slider-container img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .testi-track {

@@ -900,6 +900,15 @@
                     totalElem.textContent = '/' + String(initialSlides.length).padStart(2, '0');
                 }
 
+                if (initialSlides.length === 2) {
+                    initialSlides.forEach((slide) => {
+                        const clone = slide.cloneNode(true);
+                        clone.classList.remove('active');
+                        track.appendChild(clone);
+                    });
+                    initialSlides = Array.from(document.querySelectorAll('.testi-slide'));
+                }
+
                 if (initialSlides.length > 1) {
                     track.insertBefore(initialSlides[initialSlides.length - 1], initialSlides[0]);
                 }
@@ -981,9 +990,10 @@
                 // next slide
                 function moveToNextSlide() {
                     if (isAnimating) return;
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    if (currentSlides.length <= 1) return;
                     isAnimating = true;
 
-                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
                     const containerWidth = sliderContainer.clientWidth;
                     const slideWidth = currentSlides[0].offsetWidth;
                     const centerOffset = (containerWidth - slideWidth) / 2;
@@ -1011,9 +1021,10 @@
                 // prev slide
                 function moveToPrevSlide() {
                     if (isAnimating) return;
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    if (currentSlides.length <= 1) return;
                     isAnimating = true;
 
-                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
                     const containerWidth = sliderContainer.clientWidth;
                     const slideWidth = currentSlides[0].offsetWidth;
                     const centerOffset = (containerWidth - slideWidth) / 2;
@@ -1039,6 +1050,95 @@
                     rewindProgressTime = 0;
                 }
 
+                // swipe & drag support (touch, mouse drag, horizontal trackpad swipe)
+                let isPointerDown = false;
+                let isHorizontalDrag = false;
+                let dragDirectionLocked = false;
+                let dragStartX = 0;
+                let dragStartY = 0;
+                let dragDeltaX = 0;
+                let dragStartTime = 0;
+
+                function getCarouselMetrics() {
+                    const currentSlides = Array.from(track.querySelectorAll('.testi-slide'));
+                    const containerWidth = sliderContainer.clientWidth;
+                    const slideWidth = currentSlides[0] ? currentSlides[0].offsetWidth : 0;
+                    const centerOffset = (containerWidth - slideWidth) / 2;
+                    return { currentSlides, containerWidth, slideWidth, centerOffset };
+                }
+
+                function startDrag(clientX, clientY) {
+                    if (isAnimating) return;
+                    const slides = track.querySelectorAll('.testi-slide');
+                    if (slides.length <= 1) return;
+
+                    isPointerDown = true;
+                    isHorizontalDrag = false;
+                    dragDirectionLocked = false;
+                    dragStartX = clientX;
+                    dragStartY = clientY;
+                    dragDeltaX = 0;
+                    dragStartTime = performance.now();
+                }
+
+                function moveDrag(clientX, clientY, touchEvent = null) {
+                    if (!isPointerDown || isAnimating) return;
+
+                    const dx = clientX - dragStartX;
+                    const dy = clientY - dragStartY;
+
+                    if (!dragDirectionLocked) {
+                        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+                        dragDirectionLocked = true;
+                        if (Math.abs(dy) > Math.abs(dx)) {
+                            isPointerDown = false;
+                            isHorizontalDrag = false;
+                            return;
+                        }
+                        isHorizontalDrag = true;
+                        sliderContainer.classList.add('is-dragging');
+                    }
+
+                    if (!isHorizontalDrag) return;
+                    if (touchEvent && touchEvent.cancelable) {
+                        touchEvent.preventDefault();
+                    }
+
+                    const { slideWidth, centerOffset } = getCarouselMetrics();
+                    const maxDrag = slideWidth * 0.9;
+                    dragDeltaX = Math.max(-maxDrag, Math.min(maxDrag, dx));
+                    const baseTranslateX = centerOffset - slideWidth;
+
+                    track.style.transition = 'none';
+                    track.style.transform = `translate3d(${baseTranslateX + dragDeltaX}px, 0, 0)`;
+                }
+
+                function endDrag() {
+                    if (!isPointerDown) return;
+                    isPointerDown = false;
+                    sliderContainer.classList.remove('is-dragging');
+
+                    if (!isHorizontalDrag) return;
+                    isHorizontalDrag = false;
+
+                    const elapsed = performance.now() - dragStartTime;
+                    const { currentSlides, slideWidth, centerOffset } = getCarouselMetrics();
+                    const isQuickFlick = elapsed < 260 && Math.abs(dragDeltaX) > 28;
+                    const threshold = Math.min(slideWidth * 0.18, 65);
+
+                    if ((dragDeltaX < -threshold || (isQuickFlick && dragDeltaX < 0)) && currentSlides.length > 1) {
+                        moveToNextSlide();
+                    } else if ((dragDeltaX > threshold || (isQuickFlick && dragDeltaX > 0)) && currentSlides.length > 1) {
+                        moveToPrevSlide();
+                    } else {
+                        track.style.transition = 'transform 300ms ease-out';
+                        track.style.transform = `translate3d(${centerOffset - slideWidth}px, 0, 0)`;
+                    }
+
+                    dragDeltaX = 0;
+                    lastFrameTime = performance.now();
+                }
+
                 // auto play
                 function progressLoop(currentTime) {
                     if (!lastFrameTime) lastFrameTime = currentTime;
@@ -1046,7 +1146,7 @@
                     if (deltaTime > 100) deltaTime = 16;
                     lastFrameTime = currentTime;
 
-                    if (isInView && !isScrolling) {
+                    if (isInView && !isScrolling && !isHorizontalDrag) {
                         if (progressState === 'filling') {
                             currentProgressTime += deltaTime;
 
@@ -1126,6 +1226,51 @@
 
                 if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
                 if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
+
+                if (sliderContainer) {
+                    sliderContainer.addEventListener('touchstart', (e) => {
+                        if (e.touches.length !== 1) return;
+                        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+                    }, { passive: true });
+
+                    sliderContainer.addEventListener('touchmove', (e) => {
+                        if (e.touches.length !== 1) return;
+                        moveDrag(e.touches[0].clientX, e.touches[0].clientY, e);
+                    }, { passive: false });
+
+                    sliderContainer.addEventListener('touchend', endDrag);
+                    sliderContainer.addEventListener('touchcancel', endDrag);
+
+                    sliderContainer.addEventListener('mousedown', (e) => {
+                        if (e.button !== 0) return;
+                        startDrag(e.clientX, e.clientY);
+                    });
+
+                    window.addEventListener('mousemove', (e) => {
+                        moveDrag(e.clientX, e.clientY);
+                    });
+
+                    window.addEventListener('mouseup', endDrag);
+
+                    let lastWheelNavTime = 0;
+                    sliderContainer.addEventListener('wheel', (e) => {
+                        if (isAnimating) return;
+                        if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) || Math.abs(e.deltaX) < 25) return;
+                        const slides = track.querySelectorAll('.testi-slide');
+                        if (slides.length <= 1) return;
+
+                        e.preventDefault();
+                        const now = performance.now();
+                        if (now - lastWheelNavTime < 700) return;
+                        lastWheelNavTime = now;
+
+                        if (e.deltaX > 0) {
+                            moveToNextSlide();
+                        } else {
+                            moveToPrevSlide();
+                        }
+                    }, { passive: false });
+                }
             }
             initTestimonialSlider();
         });
