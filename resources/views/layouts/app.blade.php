@@ -39,7 +39,7 @@
     <meta name="twitter:description" content="@yield('description', __('site.meta_description_default'))">
     <meta name="twitter:image" content="@yield('og_image', asset('assets/images/logo.png'))">
 
-    <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('assets/images/favicon.svg') }}?v=1" />
     <link rel="apple-touch-icon" href="{{ asset('assets/images/logo.png') }}">
 
     <!-- CSS & Scripts -->
