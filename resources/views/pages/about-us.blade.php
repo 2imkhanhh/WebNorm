@@ -583,6 +583,23 @@
         document.addEventListener('DOMContentLoaded', () => {
             initHeroGalleryTrack();
 
+            const heroGallery = document.querySelector('.about-hero-gallery');
+            if (heroGallery && typeof IntersectionObserver !== 'undefined') {
+                let isGalleryInView = true;
+                const syncGalleryPlayState = () => {
+                    heroGallery.classList.toggle('is-paused', !isGalleryInView || document.hidden);
+                };
+                const galleryObserver = new IntersectionObserver((entries) => {
+                    isGalleryInView = entries.some(entry => entry.isIntersecting);
+                    syncGalleryPlayState();
+                }, {
+                    rootMargin: '80px 0px',
+                    threshold: 0
+                });
+                galleryObserver.observe(heroGallery);
+                document.addEventListener('visibilitychange', syncGalleryPlayState);
+            }
+
             document.addEventListener('click', () => {
                 const galleryItems = document.querySelectorAll('.gallery-item');
                 galleryItems.forEach(item => item.classList.remove('is-active'));
@@ -624,10 +641,14 @@
 
             if (solutionSection && solutionStickyZone && brandLine) {
                 let solutionMaxScroll = 0;
+                let cachedSolutionTop = 0;
                 let targetSolutionProgress = 0;
                 let currentSolutionProgress = 0;
+                let lastRenderedSolutionProgress = -1;
                 let solutionSnapTimeout;
                 let solutionLastScrollY = window.scrollY;
+                let solutionRafId = null;
+                let solutionScrollTicking = false;
 
                 function syncSolutionDimensions() {
                     const isMobileView = window.innerWidth <= 767;
@@ -637,11 +658,19 @@
 
                     solutionMaxScroll = animDistance;
                     solutionSection.style.height = `${stickyTop + stickyHeight + animDistance}px`;
+                    cachedSolutionTop = solutionSection.offsetTop;
                 }
 
                 syncSolutionDimensions();
                 document.fonts.ready.then(syncSolutionDimensions);
+                window.addEventListener('load', syncSolutionDimensions);
                 window.addEventListener('resize', syncSolutionDimensions, { passive: true });
+                if (typeof ResizeObserver !== 'undefined') {
+                    const solBodyObserver = new ResizeObserver(() => {
+                        cachedSolutionTop = solutionSection.offsetTop;
+                    });
+                    solBodyObserver.observe(document.body);
+                }
 
                 const textNew = brandLine.querySelector('.text-new');
                 if (textNew) {
@@ -649,27 +678,40 @@
                     textNew.style.clipPath = 'inset(100% 0 0 0)';
                 }
 
-                function renderSolutionSmooth() {
-                    currentSolutionProgress += (targetSolutionProgress - currentSolutionProgress) * 0.05;
-
-                    if (textNew) {
-                        let progress = currentSolutionProgress;
-                        if (progress < 0) progress = 0;
-                        if (progress > 1) progress = 1;
-
-                        const insetTop = (1 - progress) * 100;
-                        textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
-                        textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
-                    }
-                    requestAnimationFrame(renderSolutionSmooth);
+                function applySolutionProgress(progressVal) {
+                    if (!textNew || Math.abs(progressVal - lastRenderedSolutionProgress) < 0.0005) return;
+                    lastRenderedSolutionProgress = progressVal;
+                    const progress = Math.max(0, Math.min(1, progressVal));
+                    const insetTop = (1 - progress) * 100;
+                    textNew.style.webkitClipPath = `inset(${insetTop}% 0 0 0)`;
+                    textNew.style.clipPath = `inset(${insetTop}% 0 0 0)`;
                 }
 
-                requestAnimationFrame(renderSolutionSmooth);
+                function renderSolutionSmooth() {
+                    const diff = targetSolutionProgress - currentSolutionProgress;
+                    if (Math.abs(diff) < 0.0005) {
+                        currentSolutionProgress = targetSolutionProgress;
+                        applySolutionProgress(currentSolutionProgress);
+                        solutionRafId = null;
+                        return;
+                    }
+                    currentSolutionProgress += diff * 0.05;
+                    applySolutionProgress(currentSolutionProgress);
+                    solutionRafId = requestAnimationFrame(renderSolutionSmooth);
+                }
 
-                window.addEventListener('scroll', () => {
+                function ensureSolutionRaf() {
+                    if (solutionRafId === null && Math.abs(targetSolutionProgress - currentSolutionProgress) >= 0.0005) {
+                        solutionRafId = requestAnimationFrame(renderSolutionSmooth);
+                    }
+                }
+
+                function onSolutionScroll() {
+                    solutionScrollTicking = false;
                     const isMobileView = window.innerWidth <= 767;
                     const snapDelay = isMobileView ? 200 : 150;
                     const sectionTop = solutionSection.offsetTop;
+                    cachedSolutionTop = sectionTop;
                     const scrollY = window.scrollY;
 
                     const scrollDirection = scrollY > solutionLastScrollY ? 'down' : 'up';
@@ -677,11 +719,11 @@
 
                     let scrolledInside = scrollY - sectionTop;
                     if (scrolledInside < 0) scrolledInside = 0;
-
                     if (scrolledInside > solutionMaxScroll) scrolledInside = solutionMaxScroll;
 
                     if (solutionMaxScroll > 0) {
                         targetSolutionProgress = scrolledInside / solutionMaxScroll;
+                        ensureSolutionRaf();
                     }
 
                     clearTimeout(solutionSnapTimeout);
@@ -710,6 +752,13 @@
                             }
                         }, snapDelay);
                     }
+                }
+
+                window.addEventListener('scroll', () => {
+                    if (!solutionScrollTicking) {
+                        solutionScrollTicking = true;
+                        requestAnimationFrame(onSolutionScroll);
+                    }
                 }, {
                     passive: true
                 });
@@ -723,83 +772,129 @@
                 let isDesktop = window.innerWidth > 1024;
                 let targetWfProgress = 0;
                 let currentWfProgress = 0;
+                let lastWorkflowActiveIdx = -1;
+                let workflowRafId = null;
+
+                let cachedWfTop = 0;
+                let cachedWfMaxScroll = 0;
+                let cachedMaxTrackScroll = 0;
+                let liveSteps = Array.from(workflowTrack.querySelectorAll('.workflow-step'));
+
+                function syncWorkflowMetrics() {
+                    isDesktop = window.innerWidth > 1024;
+                    liveSteps = Array.from(workflowTrack.querySelectorAll('.workflow-step'));
+                    cachedWfTop = workflowSection.offsetTop;
+                    cachedWfMaxScroll = Math.max(0, workflowSection.offsetHeight - window.innerHeight);
+                    cachedMaxTrackScroll = Math.max(0, workflowTrack.scrollWidth - (window.innerWidth * 0.25));
+                }
 
                 function calculateActiveWorkflowStep() {
                     if (isDesktop) return;
 
-                    const liveSteps = workflowTrack.querySelectorAll('.workflow-step');
                     let activeItem = null;
                     let minDistance = Infinity;
                     const viewportCenter = window.innerHeight / 2;
 
-                    liveSteps.forEach(step => {
-                        const rect = step.getBoundingClientRect();
+                    for (let i = 0; i < liveSteps.length; i++) {
+                        const rect = liveSteps[i].getBoundingClientRect();
                         const itemCenter = rect.top + rect.height / 2;
                         const distance = Math.abs(viewportCenter - itemCenter);
-
                         if (distance < minDistance) {
                             minDistance = distance;
-                            activeItem = step;
+                            activeItem = liveSteps[i];
                         }
-                    });
+                    }
 
-                    liveSteps.forEach(step => step.classList.remove('is-active'));
-                    if (activeItem) activeItem.classList.add('is-active');
+                    for (let i = 0; i < liveSteps.length; i++) {
+                        liveSteps[i].classList.toggle('is-active', liveSteps[i] === activeItem);
+                    }
+                }
+
+                function applyWorkflowFrame(progressVal) {
+                    const sloganMove = progressVal * -200;
+                    workflowSlogan.style.transform = `translate3d(${sloganMove}%, 0, 0)`;
+                    workflowSlogan.style.opacity = Math.max(0, 1 - (progressVal * 5));
+
+                    const trackMove = progressVal * -cachedMaxTrackScroll;
+                    workflowTrack.style.transform = `translate3d(${trackMove}px, 0, 0)`;
+
+                    if (liveSteps.length > 0) {
+                        const activeIndex = Math.round(progressVal * (liveSteps.length - 1));
+                        if (activeIndex !== lastWorkflowActiveIdx) {
+                            lastWorkflowActiveIdx = activeIndex;
+                            for (let i = 0; i < liveSteps.length; i++) {
+                                liveSteps[i].classList.toggle('is-active', i === activeIndex);
+                            }
+                        }
+                    }
+                }
+
+                function renderWorkflowSmooth() {
+                    if (!isDesktop) {
+                        workflowRafId = null;
+                        return;
+                    }
+
+                    const diff = targetWfProgress - currentWfProgress;
+                    if (Math.abs(diff) < 0.0005) {
+                        currentWfProgress = targetWfProgress;
+                        applyWorkflowFrame(currentWfProgress);
+                        workflowRafId = null;
+                        return;
+                    }
+
+                    currentWfProgress += diff * 0.08;
+                    applyWorkflowFrame(currentWfProgress);
+                    workflowRafId = requestAnimationFrame(renderWorkflowSmooth);
+                }
+
+                function ensureWorkflowRaf() {
+                    if (isDesktop && workflowRafId === null && Math.abs(targetWfProgress - currentWfProgress) >= 0.0005) {
+                        workflowRafId = requestAnimationFrame(renderWorkflowSmooth);
+                    }
+                }
+
+                syncWorkflowMetrics();
+                document.fonts.ready.then(syncWorkflowMetrics);
+                window.addEventListener('load', syncWorkflowMetrics);
+
+                const teamImgEl = document.querySelector('.team-img');
+                if (teamImgEl && !teamImgEl.complete) {
+                    teamImgEl.addEventListener('load', syncWorkflowMetrics, { once: true });
+                }
+                if (typeof ResizeObserver !== 'undefined') {
+                    const wfBodyObserver = new ResizeObserver(() => {
+                        syncWorkflowMetrics();
+                    });
+                    wfBodyObserver.observe(document.body);
                 }
 
                 window.addEventListener('resize', () => {
-                    isDesktop = window.innerWidth > 1024;
+                    syncWorkflowMetrics();
                     if (!isDesktop) {
                         workflowSlogan.style.transform = '';
                         workflowSlogan.style.opacity = '';
                         workflowTrack.style.transform = '';
                         calculateActiveWorkflowStep();
+                    } else {
+                        applyWorkflowFrame(currentWfProgress);
                     }
                 }, {
                     passive: true
                 });
 
-                function renderWorkflowSmooth() {
-                    if (isDesktop) {
-                        currentWfProgress += (targetWfProgress - currentWfProgress) * 0.08;
-
-                        const sloganMove = currentWfProgress * -200;
-                        workflowSlogan.style.transform = `translateX(${sloganMove}%)`;
-                        workflowSlogan.style.opacity = 1 - (currentWfProgress * 5);
-
-                        const maxTrackScroll = workflowTrack.scrollWidth - (window.innerWidth * 0.25);
-                        const trackMove = currentWfProgress * -maxTrackScroll;
-                        workflowTrack.style.transform = `translateX(${trackMove}px)`;
-
-                        const liveSteps = workflowTrack.querySelectorAll('.workflow-step');
-                        if (liveSteps.length > 0) {
-                            let activeIndex = Math.round(currentWfProgress * (liveSteps.length - 1));
-                            liveSteps.forEach((step, index) => {
-                                step.classList.toggle('is-active', index === activeIndex);
-                            });
-                        }
-                    }
-                    requestAnimationFrame(renderWorkflowSmooth);
-                }
-
-                requestAnimationFrame(renderWorkflowSmooth);
                 let isTicking = false;
 
                 window.addEventListener('scroll', () => {
-                    if (!isDesktop) {
-                        calculateActiveWorkflowStep();
-                        return;
-                    }
                     if (!isTicking) {
                         window.requestAnimationFrame(() => {
-                            const sectionTop = workflowSection.offsetTop;
-                            const windowHeight = window.innerHeight;
-                            const scrollY = window.scrollY;
-                            const maxScroll = workflowSection.offsetHeight - windowHeight;
-                            let scrolledInside = Math.max(0, Math.min(scrollY - sectionTop,
-                                maxScroll));
-                            if (maxScroll > 0) {
-                                targetWfProgress = scrolledInside / maxScroll;
+                            if (!isDesktop) {
+                                calculateActiveWorkflowStep();
+                            } else if (cachedWfMaxScroll > 0) {
+                                cachedWfTop = workflowSection.offsetTop;
+                                const scrolledInside = Math.max(0, Math.min(window.scrollY - cachedWfTop, cachedWfMaxScroll));
+                                targetWfProgress = scrolledInside / cachedWfMaxScroll;
+                                ensureWorkflowRaf();
                             }
                             isTicking = false;
                         });

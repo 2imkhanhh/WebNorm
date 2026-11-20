@@ -55,11 +55,40 @@ revealElements.forEach(revealTextEl => {
         revealTextEl.appendChild(wordSpan);
     });
 
-    function updateChars() {
-        const windowH = window.innerHeight;
-        const scrollY = window.scrollY || window.pageYOffset;
+    let elemAbsTop = 0;
+    let windowH = window.innerHeight;
+    let lastLitCount = -1;
+    let charTicking = false;
+
+    function measureRevealBounds() {
+        windowH = window.innerHeight;
         const rect = revealTextEl.getBoundingClientRect();
-        const elemAbsTop = rect.top + scrollY;
+        elemAbsTop = rect.top + (window.scrollY || window.pageYOffset);
+    }
+
+    function applyLitCount(targetCount) {
+        const clamped = Math.max(0, Math.min(charEls.length, targetCount));
+        if (clamped === lastLitCount) return;
+
+        if (lastLitCount < 0) {
+            for (let i = 0; i < charEls.length; i++) {
+                charEls[i].classList.toggle('lit', i < clamped);
+            }
+        } else if (clamped > lastLitCount) {
+            for (let i = lastLitCount; i < clamped; i++) {
+                charEls[i].classList.add('lit');
+            }
+        } else {
+            for (let i = clamped; i < lastLitCount; i++) {
+                charEls[i].classList.remove('lit');
+            }
+        }
+        lastLitCount = clamped;
+    }
+
+    function updateChars() {
+        charTicking = false;
+        const scrollY = window.scrollY || window.pageYOffset;
 
         const rawStart = elemAbsTop - windowH + (windowH * 0.15);
         const animEnd = elemAbsTop + (windowH * -0.1);
@@ -67,66 +96,97 @@ revealElements.forEach(revealTextEl => {
         const clampedStart = Math.max(animStart, 0);
 
         if (scrollY <= clampedStart) {
-            charEls.forEach(el => el.classList.remove('lit'));
+            applyLitCount(0);
             return;
         }
 
         if (scrollY >= animEnd) {
-            charEls.forEach(el => el.classList.add('lit'));
+            applyLitCount(charEls.length);
             return;
         }
 
         const progress = (scrollY - clampedStart) / (animEnd - clampedStart);
-        const litCount = Math.round(progress * charEls.length);
-
-        charEls.forEach((el, i) => {
-            el.classList.toggle('lit', i < litCount);
-        });
+        applyLitCount(Math.round(progress * charEls.length));
     }
 
+    function onRevealScroll() {
+        if (!charTicking) {
+            charTicking = true;
+            requestAnimationFrame(updateChars);
+        }
+    }
 
-    window.addEventListener('scroll', updateChars, { passive: true });
-    window.addEventListener('resize', updateChars, { passive: true });
+    function onRevealResize() {
+        measureRevealBounds();
+        onRevealScroll();
+    }
+
+    measureRevealBounds();
+    window.addEventListener('scroll', onRevealScroll, { passive: true });
+    window.addEventListener('resize', onRevealResize, { passive: true });
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(onRevealResize);
+    }
+    if (typeof ResizeObserver !== 'undefined') {
+        const revealObserver = new ResizeObserver(onRevealResize);
+        revealObserver.observe(document.body);
+    }
 
     requestAnimationFrame(() => {
-        requestAnimationFrame(updateChars);
+        measureRevealBounds();
+        updateChars();
     });
 });
 
 // active status services
 const serviceItems = document.querySelectorAll('.service-item');
+let serviceTicking = false;
 
 function calculateActiveService() {
+    serviceTicking = false;
+    if (serviceItems.length === 0) return;
+
+    const viewportH = window.innerHeight;
+    const viewportCenter = viewportH / 2;
     let activeItem = null;
     let minDistance = Infinity;
-    const viewportCenter = window.innerHeight / 2;
+    const measurements = [];
 
-    serviceItems.forEach(item => {
-        const rect = item.getBoundingClientRect();
-        const itemCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(viewportCenter - itemCenter);
-
-        if (distance < minDistance) {
-            minDistance = distance;
-            activeItem = item;
+    for (let i = 0; i < serviceItems.length; i++) {
+        const rect = serviceItems[i].getBoundingClientRect();
+        const isVisible = rect.top < viewportH && rect.bottom > 0;
+        measurements.push(isVisible);
+        if (isVisible) {
+            const itemCenter = rect.top + rect.height / 2;
+            const distance = Math.abs(viewportCenter - itemCenter);
+            if (distance < minDistance) {
+                minDistance = distance;
+                activeItem = serviceItems[i];
+            }
         }
-    });
+    }
 
-    serviceItems.forEach(item => {
-        const rect = item.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-
-        if (item === activeItem && isVisible) {
-            item.classList.add('active');
-        } else {
-            item.classList.remove('active');
+    for (let i = 0; i < serviceItems.length; i++) {
+        const item = serviceItems[i];
+        const shouldBeActive = item === activeItem && measurements[i];
+        if (shouldBeActive !== item.classList.contains('active')) {
+            item.classList.toggle('active', shouldBeActive);
         }
-    });
+    }
 }
 
-window.addEventListener('scroll', calculateActiveService, { passive: true });
-window.addEventListener('resize', calculateActiveService, { passive: true });
-document.addEventListener('DOMContentLoaded', calculateActiveService);
+function scheduleActiveService() {
+    if (!serviceTicking) {
+        serviceTicking = true;
+        requestAnimationFrame(calculateActiveService);
+    }
+}
+
+if (serviceItems.length > 0) {
+    window.addEventListener('scroll', scheduleActiveService, { passive: true });
+    window.addEventListener('resize', scheduleActiveService, { passive: true });
+    document.addEventListener('DOMContentLoaded', calculateActiveService);
+}
 
 // footer scroll text
 function initFooterScrollText() {
@@ -136,87 +196,121 @@ function initFooterScrollText() {
 
     if (!footerSection || footerLines.length === 0) return;
 
+    const linePairs = Array.from(footerLines).map((line) => ({
+        textNew: line.querySelector('.text-new'),
+        textOld: line.querySelector('.text-old'),
+    })).filter(p => p.textNew && p.textOld);
+
     let targetFooterProgress = 0;
     let currentFooterProgress = 0;
+    let lastRenderedProgress = -1;
     let footerSnapTimeout;
     let lastScrollY = window.scrollY;
+    let footerRafId = null;
+    let footerScrollTicking = false;
 
-    function renderFooterSmooth() {
-        currentFooterProgress += (targetFooterProgress - currentFooterProgress) * 0.15;
+    let cachedFooterTop = 0;
+    let cachedFooterHeight = 0;
+    let cachedFinalFooterTop = 0;
+    let cachedWindowHeight = window.innerHeight;
+    let cachedTriggerDistance = 0;
 
-        if (currentFooterProgress > 0.6) {
+    function measureFooterMetrics() {
+        cachedWindowHeight = window.innerHeight;
+        cachedFooterTop = footerSection.offsetTop;
+        cachedFooterHeight = footerSection.offsetHeight;
+        cachedFinalFooterTop = finalFooterSection ? finalFooterSection.offsetTop : (cachedFooterTop + cachedFooterHeight);
+        cachedTriggerDistance = cachedFooterHeight * (window.innerWidth <= 1024 ? 0.25 : 0.2);
+    }
+
+    function applyFooterProgress(progressVal) {
+        if (Math.abs(progressVal - lastRenderedProgress) < 0.0005) return;
+        lastRenderedProgress = progressVal;
+
+        if (progressVal > 0.6) {
             footerSection.classList.add('is-text-revealed');
         } else {
             footerSection.classList.remove('is-text-revealed');
         }
 
-        footerLines.forEach((line) => {
-            const textNew = line.querySelector('.text-new');
-            const textOld = line.querySelector('.text-old');
+        const progress = Math.max(0, Math.min(1, progressVal * 1.25));
+        const insetTop = (1 - progress) * 100;
+        const insetBottom = progress * 100;
+        const newClip = `inset(${insetTop}% -10% -10% -10%)`;
+        const oldClip = `inset(-10% -10% ${insetBottom}% -10%)`;
 
-            if (!textNew || !textOld) return;
-
-            let progress = Math.max(0, Math.min(1, currentFooterProgress * 1.25));
-
-            const insetTop = (1 - progress) * 100;
-            textNew.style.webkitClipPath = `inset(${insetTop}% -10% -10% -10%)`;
-            textNew.style.clipPath = `inset(${insetTop}% -10% -10% -10%)`;
-
-            const insetBottom = progress * 100;
-            textOld.style.webkitClipPath = `inset(-10% -10% ${insetBottom}% -10%)`;
-            textOld.style.clipPath = `inset(-10% -10% ${insetBottom}% -10%)`;
-        });
-
-        requestAnimationFrame(renderFooterSmooth);
+        for (let i = 0; i < linePairs.length; i++) {
+            const { textNew, textOld } = linePairs[i];
+            textNew.style.webkitClipPath = newClip;
+            textNew.style.clipPath = newClip;
+            textOld.style.webkitClipPath = oldClip;
+            textOld.style.clipPath = oldClip;
+        }
     }
 
-    requestAnimationFrame(renderFooterSmooth);
+    function renderFooterSmooth() {
+        const diff = targetFooterProgress - currentFooterProgress;
+        if (Math.abs(diff) < 0.0005) {
+            currentFooterProgress = targetFooterProgress;
+            applyFooterProgress(currentFooterProgress);
+            footerRafId = null;
+            return;
+        }
 
-    window.addEventListener('scroll', () => {
-        const footerTop = footerSection.offsetTop;
+        currentFooterProgress += diff * 0.15;
+        applyFooterProgress(currentFooterProgress);
+        footerRafId = requestAnimationFrame(renderFooterSmooth);
+    }
+
+    function ensureFooterAnimation() {
+        if (footerRafId === null && Math.abs(targetFooterProgress - currentFooterProgress) >= 0.0005) {
+            footerRafId = requestAnimationFrame(renderFooterSmooth);
+        }
+    }
+
+    function onFooterScroll() {
+        footerScrollTicking = false;
         const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-
         const scrollDirection = scrollY > lastScrollY ? 'down' : 'up';
         lastScrollY = scrollY;
 
-        const scrolledIntoFooter = (scrollY + windowHeight) - footerTop;
-        const triggerDistance = footerSection.offsetHeight * (window.innerWidth <= 1024 ? 0.25 : 0.2);
+        const scrolledIntoFooter = (scrollY + cachedWindowHeight) - cachedFooterTop;
 
-        if (scrolledIntoFooter >= triggerDistance) {
-            footerSection.classList.add('dark-mode');
-            document.body.classList.add('dark-mode');
-        } else {
+        if (scrolledIntoFooter >= cachedTriggerDistance) {
+            if (!footerSection.classList.contains('dark-mode')) {
+                footerSection.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+            }
+        } else if (footerSection.classList.contains('dark-mode')) {
             footerSection.classList.remove('dark-mode');
             document.body.classList.remove('dark-mode');
         }
 
-        const finalFooterTop = finalFooterSection ? finalFooterSection.offsetTop : (footerTop + footerSection.offsetHeight);
-        if ((scrollY + windowHeight) >= finalFooterTop - 50) {
+        if ((scrollY + cachedWindowHeight) >= cachedFinalFooterTop - 50) {
             document.body.classList.add('dark-mode-instant');
         } else {
             document.body.classList.remove('dark-mode-instant');
         }
 
-        let scrolledInside = Math.max(0, scrollY - footerTop);
-        const maxScroll = footerSection.offsetHeight - windowHeight;
+        let scrolledInside = Math.max(0, scrollY - cachedFooterTop);
+        const maxScroll = cachedFooterHeight - cachedWindowHeight;
         if (scrolledInside > maxScroll) scrolledInside = maxScroll;
 
         if (maxScroll > 0) {
             targetFooterProgress = scrolledInside / maxScroll;
+            ensureFooterAnimation();
         }
 
         clearTimeout(footerSnapTimeout);
 
-        if (scrollY > footerTop && scrollY < footerTop + maxScroll) {
-
+        if (scrollY > cachedFooterTop && scrollY < cachedFooterTop + maxScroll) {
             footerSnapTimeout = setTimeout(() => {
                 let snapTargetY;
 
                 if (scrollDirection === 'down') {
-                    snapTargetY = targetFooterProgress >= 0.05 ? footerTop + maxScroll : footerTop;
+                    snapTargetY = targetFooterProgress >= 0.05 ? cachedFooterTop + maxScroll : cachedFooterTop;
                 } else {
-                    snapTargetY = targetFooterProgress <= 0.95 ? footerTop : footerTop + maxScroll;
+                    snapTargetY = targetFooterProgress <= 0.95 ? cachedFooterTop : cachedFooterTop + maxScroll;
                 }
 
                 if (Math.abs(scrollY - snapTargetY) > 5) {
@@ -226,7 +320,34 @@ function initFooterScrollText() {
                 }
             }, 50);
         }
+    }
+
+    measureFooterMetrics();
+    applyFooterProgress(0);
+
+    if (typeof ResizeObserver !== 'undefined') {
+        const footerBodyObserver = new ResizeObserver(() => {
+            measureFooterMetrics();
+        });
+        footerBodyObserver.observe(document.body);
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!footerScrollTicking) {
+            footerScrollTicking = true;
+            requestAnimationFrame(onFooterScroll);
+        }
     }, { passive: true });
+
+    window.addEventListener('resize', () => {
+        measureFooterMetrics();
+        onFooterScroll();
+    }, { passive: true });
+
+    window.addEventListener('load', () => {
+        measureFooterMetrics();
+        onFooterScroll();
+    });
 }
 
 // footer stacked-alpha WebGL background video
@@ -348,11 +469,15 @@ function initFooterBgVideo() {
                 let coverScaleX = 1;
                 let coverScaleY = 1;
 
+                const isLowCores = typeof navigator !== 'undefined' && navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+                const maxDpr = isLowCores ? 1 : 1.25;
+                const maxCanvasW = isLowCores ? 800 : 960;
+
                 resizeCanvasFn = () => {
                     const rect = canvas.getBoundingClientRect();
                     if (!rect.width || !rect.height) return;
-                    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-                    const targetW = Math.min(Math.round(rect.width * dpr), 1280);
+                    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+                    const targetW = Math.min(Math.round(rect.width * dpr), maxCanvasW);
                     const targetH = Math.round(targetW * (rect.height / rect.width));
                     if (canvas.width !== targetW || canvas.height !== targetH) {
                         canvas.width = targetW;
@@ -485,12 +610,12 @@ function initFooterBgVideo() {
                 loadVideoSource();
                 preloadObserver.disconnect();
             }
-        }, { rootMargin: '1200px 0px' });
+        }, { rootMargin: '800px 0px' });
         preloadObserver.observe(footerSection);
 
         const playbackObserver = new IntersectionObserver((entries) => {
             isInView = entries.some(e => e.isIntersecting);
-            if (isInView) {
+            if (isInView && !document.hidden) {
                 loadVideoSource();
                 resizeCanvasFn();
                 video.play().catch(() => {});
@@ -499,8 +624,18 @@ function initFooterBgVideo() {
                 video.pause();
                 stopRenderLoop();
             }
-        }, { rootMargin: '200px 0px' });
+        }, { rootMargin: '60px 0px' });
         playbackObserver.observe(footerSection);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                video.pause();
+                stopRenderLoop();
+            } else if (isInView) {
+                video.play().catch(() => {});
+                startRenderLoop();
+            }
+        });
     } else {
         loadVideoSource();
         isInView = true;
@@ -532,15 +667,33 @@ function initFooterCursorBtn() {
 
     let mouseX = 0, mouseY = 0;
     let btnX = 0, btnY = 0;
+    let cursorRafId = null;
+    let cursorVisible = false;
+    let cursorScrollTicking = false;
 
     function animateCursor() {
-        btnX += (mouseX - btnX) * 0.12;
-        btnY += (mouseY - btnY) * 0.12;
+        const dx = mouseX - btnX;
+        const dy = mouseY - btnY;
+        if (!cursorVisible || (Math.abs(dx) < 0.25 && Math.abs(dy) < 0.25)) {
+            btnX = mouseX;
+            btnY = mouseY;
+            footerCursorBtn.style.left = btnX + 'px';
+            footerCursorBtn.style.top = btnY + 'px';
+            cursorRafId = null;
+            return;
+        }
+        btnX += dx * 0.14;
+        btnY += dy * 0.14;
         footerCursorBtn.style.left = btnX + 'px';
         footerCursorBtn.style.top = btnY + 'px';
-        requestAnimationFrame(animateCursor);
+        cursorRafId = requestAnimationFrame(animateCursor);
     }
-    requestAnimationFrame(animateCursor);
+
+    function ensureCursorLoop() {
+        if (cursorRafId === null && cursorVisible) {
+            cursorRafId = requestAnimationFrame(animateCursor);
+        }
+    }
 
     function isMouseOverHeader(clientY) {
         if (!header) return false;
@@ -548,65 +701,63 @@ function initFooterCursorBtn() {
         return clientY >= headerRect.top && clientY <= headerRect.bottom;
     }
 
+    function updateFooterCursorVisibility(clientX, clientY) {
+        const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
+        if (!isTextRevealed) {
+            if (cursorVisible) {
+                cursorVisible = false;
+                footerCursorBtn.classList.remove('is-visible');
+                footerZone.classList.remove('force-hide-cursor');
+            }
+            return;
+        }
+
+        const zoneRect = footerZone.getBoundingClientRect();
+        const textWrap = document.querySelector('.footer-text-wrap');
+        const triggerTop = textWrap ? textWrap.getBoundingClientRect().top : zoneRect.top;
+
+        const isInZone = clientX >= zoneRect.left && clientX <= zoneRect.right
+            && clientY >= triggerTop && clientY <= zoneRect.bottom;
+        const overHeader = isMouseOverHeader(clientY);
+        const contactOverlay = document.getElementById('contactOverlay');
+        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
+
+        if (isInZone && !overHeader && !isContactOpen) {
+            if (!cursorVisible) {
+                cursorVisible = true;
+                btnX = clientX;
+                btnY = clientY;
+                footerCursorBtn.style.left = btnX + 'px';
+                footerCursorBtn.style.top = btnY + 'px';
+            }
+            footerCursorBtn.classList.add('is-visible');
+            footerZone.classList.add('force-hide-cursor');
+            footerCursorBtn.classList.toggle('dark', footerSection.classList.contains('dark-mode'));
+            ensureCursorLoop();
+        } else if (cursorVisible) {
+            cursorVisible = false;
+            footerCursorBtn.classList.remove('is-visible');
+            footerZone.classList.remove('force-hide-cursor');
+        }
+    }
+
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-
-        const zoneRect = footerZone.getBoundingClientRect();
-        const textWrap = document.querySelector('.footer-text-wrap');
-
-        let triggerTop = zoneRect.top;
-        if (textWrap) {
-            triggerTop = textWrap.getBoundingClientRect().top;
-        }
-
-        const isInZone = e.clientX >= zoneRect.left && e.clientX <= zoneRect.right
-            && e.clientY >= triggerTop && e.clientY <= zoneRect.bottom;
-
-        const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
-
-        const overHeader = isMouseOverHeader(e.clientY);
-        const contactOverlay = document.getElementById('contactOverlay');
-        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
-
-        if (isInZone && isTextRevealed && !overHeader && !isContactOpen) {
-            footerCursorBtn.classList.add('is-visible');
-            footerZone.classList.add('force-hide-cursor');
-
-            if (footerSection && footerSection.classList.contains('dark-mode')) {
-                footerCursorBtn.classList.add('dark');
-            } else {
-                footerCursorBtn.classList.remove('dark');
-            }
-        } else {
-            footerCursorBtn.classList.remove('is-visible');
-            footerZone.classList.remove('force-hide-cursor');
-        }
-    });
+        updateFooterCursorVisibility(mouseX, mouseY);
+    }, { passive: true });
 
     window.addEventListener('scroll', () => {
-        const zoneRect = footerZone.getBoundingClientRect();
-        const textWrap = document.querySelector('.footer-text-wrap');
-
-        let triggerTop = zoneRect.top;
-        if (textWrap) {
-            triggerTop = textWrap.getBoundingClientRect().top;
+        if (!footerSection || !footerSection.classList.contains('is-text-revealed')) {
+            if (cursorVisible) updateFooterCursorVisibility(mouseX, mouseY);
+            return;
         }
-
-        const isInZone = mouseX >= zoneRect.left && mouseX <= zoneRect.right
-            && mouseY >= triggerTop && mouseY <= zoneRect.bottom;
-
-        const isTextRevealed = footerSection && footerSection.classList.contains('is-text-revealed');
-        const overHeader = isMouseOverHeader(mouseY);
-        const contactOverlay = document.getElementById('contactOverlay');
-        const isContactOpen = contactOverlay && contactOverlay.classList.contains('active');
-
-        if (isInZone && isTextRevealed && !overHeader && !isContactOpen) {
-            footerCursorBtn.classList.add('is-visible');
-            footerZone.classList.add('force-hide-cursor');
-        } else {
-            footerCursorBtn.classList.remove('is-visible');
-            footerZone.classList.remove('force-hide-cursor');
+        if (!cursorScrollTicking) {
+            cursorScrollTicking = true;
+            requestAnimationFrame(() => {
+                cursorScrollTicking = false;
+                updateFooterCursorVisibility(mouseX, mouseY);
+            });
         }
     }, { passive: true });
 
@@ -980,10 +1131,10 @@ function initContactPopup(triggers) {
 
 // Lenis Scroll
 const lenis = new Lenis({
-    lerp: 0.05,
+    lerp: 0.09,
     smoothWheel: true,
-    syncTouch: true,
-    wheelMultiplier: 1.1,
+    syncTouch: false,
+    wheelMultiplier: 1.05,
 });
 window.lenis = lenis;
 
@@ -1001,28 +1152,41 @@ function initDynamicHeader() {
 
     if (!header || darkSections.length === 0) return;
 
+    let headerTicking = false;
+    let lastIsDark = null;
+
     function checkHeaderBackground() {
+        headerTicking = false;
         const headerRect = header.getBoundingClientRect();
         const headerCenter = headerRect.top + headerRect.height / 2;
 
-        let isDark = false;
-        darkSections.forEach(section => {
-            const rect = section.getBoundingClientRect();
-            if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
-                isDark = true;
+        let isDark = document.body.classList.contains('dark-mode');
+        if (!isDark) {
+            for (let i = 0; i < darkSections.length; i++) {
+                const rect = darkSections[i].getBoundingClientRect();
+                if (headerCenter >= rect.top && headerCenter <= rect.bottom) {
+                    isDark = true;
+                    break;
+                }
             }
-        });
+        }
 
-        if (isDark || document.body.classList.contains('dark-mode')) {
-            header.classList.add('navbar-dark');
-        } else {
-            header.classList.remove('navbar-dark');
+        if (isDark !== lastIsDark) {
+            lastIsDark = isDark;
+            header.classList.toggle('navbar-dark', isDark);
         }
     }
 
-    window.addEventListener('scroll', checkHeaderBackground, { passive: true });
-    window.addEventListener('resize', checkHeaderBackground, { passive: true });
-    
+    function scheduleHeaderCheck() {
+        if (!headerTicking) {
+            headerTicking = true;
+            requestAnimationFrame(checkHeaderBackground);
+        }
+    }
+
+    window.addEventListener('scroll', scheduleHeaderCheck, { passive: true });
+    window.addEventListener('resize', scheduleHeaderCheck, { passive: true });
+
     setTimeout(checkHeaderBackground, 100);
 }
 

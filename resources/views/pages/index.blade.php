@@ -532,6 +532,8 @@
                 let cachedItemWidth = 0;
                 let cachedItemTotalWidth = 0;
                 let cachedPaddingLeft = 0;
+                let lastRenderedScrolledInside = -1;
+                let lastRenderedActiveIndex = -1;
 
                 function calculateMetrics() {
                     const newWidth = window.innerWidth;
@@ -561,6 +563,7 @@
                     const rect = showcase.getBoundingClientRect();
                     cachedShowcaseTop = rect.top + window.scrollY;
                     cachedMaxScroll = (totalProjects - 1) * cachedWindowHeight;
+                    lastRenderedScrolledInside = -1;
                 }
 
                 calculateMetrics();
@@ -568,12 +571,17 @@
                     passive: true
                 });
 
-                function updateCarousel() {
+                function updateCarousel(forceUpdate = false) {
                     const scrollY = window.scrollY;
 
                     let scrolledInside = scrollY - cachedShowcaseTop;
                     if (scrolledInside < 0) scrolledInside = 0;
                     if (scrolledInside > cachedMaxScroll) scrolledInside = cachedMaxScroll;
+
+                    if (!forceUpdate && Math.abs(scrolledInside - lastRenderedScrolledInside) < 0.1) {
+                        return;
+                    }
+                    lastRenderedScrolledInside = scrolledInside;
 
                     let progress = cachedMaxScroll > 0 ? scrolledInside / cachedMaxScroll : 0;
 
@@ -581,7 +589,8 @@
                     const trackTranslateX = -(progress * maxTranslate);
 
                     let activeIndex = Math.round(progress * (totalProjects - 1));
-                    if (psCurrent) {
+                    if (psCurrent && activeIndex !== lastRenderedActiveIndex) {
+                        lastRenderedActiveIndex = activeIndex;
                         psCurrent.textContent = String(activeIndex + 1).padStart(2, '0');
                     }
 
@@ -594,6 +603,13 @@
                         const itemLeft = cachedPaddingLeft + i * cachedItemTotalWidth;
                         const itemCenter = itemLeft + cachedItemWidth / 2 + trackTranslateX;
                         const distance = Math.abs(viewportCenter - itemCenter);
+
+                        if (!forceUpdate && distance > cachedWindowWidth + cachedItemWidth) {
+                            if (data.isOffscreen) return;
+                            data.isOffscreen = true;
+                        } else {
+                            data.isOffscreen = false;
+                        }
 
                         let scale = 1 - (distance / maxDist) * 0.45;
                         if (scale < 0.65) scale = 0.65;
@@ -611,9 +627,9 @@
                                 data.infoWrap.style.opacity = opacity;
 
                                 if (data.title) data.title.style.transform =
-                                    `translateY(${translateY * 0.5}px)`;
+                                    `translate3d(0, ${translateY * 0.5}px, 0)`;
                                 if (data.categories) data.categories.style.transform =
-                                    `translateY(${translateY}px)`;
+                                    `translate3d(0, ${translateY}px, 0)`;
                             } else {
                                 data.infoWrap.style.opacity = '1';
                                 if (data.title) data.title.style.transform = 'none';
@@ -678,19 +694,19 @@
                 const HORIZONTAL_DRAG_SPEED = 1.45;
 
                 if (typeof lenis !== 'undefined') {
-                    lenis.on('scroll', updateCarousel);
+                    lenis.on('scroll', () => updateCarousel(false));
                 } else {
                     window.addEventListener('scroll', onPsScroll, {
                         passive: true
                     });
                 }
 
-                window.addEventListener('resize', onPsScroll, {
+                window.addEventListener('resize', () => updateCarousel(true), {
                     passive: true
                 });
                 window.addEventListener('load', () => {
                     calculateMetrics();
-                    updateCarousel();
+                    updateCarousel(true);
                 });
 
                 // Support horizontal trackpad/wheel, Shift+wheel, touch swipe, and mouse drag
@@ -1140,13 +1156,32 @@
                 }
 
                 // auto play
+                function stopProgressLoop() {
+                    if (animationFrameId !== null && animationFrameId !== undefined) {
+                        cancelAnimationFrame(animationFrameId);
+                        animationFrameId = null;
+                    }
+                }
+
+                function startProgressLoop() {
+                    if (animationFrameId !== null && animationFrameId !== undefined) return;
+                    if (!isInView || document.hidden) return;
+                    lastFrameTime = performance.now();
+                    animationFrameId = requestAnimationFrame(progressLoop);
+                }
+
                 function progressLoop(currentTime) {
+                    if (!isInView || document.hidden) {
+                        animationFrameId = null;
+                        return;
+                    }
+
                     if (!lastFrameTime) lastFrameTime = currentTime;
                     let deltaTime = currentTime - lastFrameTime;
                     if (deltaTime > 100) deltaTime = 16;
                     lastFrameTime = currentTime;
 
-                    if (isInView && !isScrolling && !isHorizontalDrag) {
+                    if (!isScrolling && !isHorizontalDrag) {
                         if (progressState === 'filling') {
                             currentProgressTime += deltaTime;
 
@@ -1189,6 +1224,7 @@
                 }
 
                 window.addEventListener('scroll', () => {
+                    if (!isInView) return;
                     isScrolling = true;
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(() => {
@@ -1205,12 +1241,14 @@
                     passive: true
                 });
 
-                if (testimonialSection) {
+                if (testimonialSection && typeof IntersectionObserver !== 'undefined') {
                     const observer = new IntersectionObserver((entries) => {
                         entries.forEach(entry => {
                             isInView = entry.isIntersecting;
                             if (isInView) {
-                                lastFrameTime = performance.now();
+                                startProgressLoop();
+                            } else {
+                                stopProgressLoop();
                             }
                         });
                     }, {
@@ -1219,10 +1257,18 @@
                     observer.observe(testimonialSection);
                 } else {
                     isInView = true;
+                    startProgressLoop();
                 }
 
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        stopProgressLoop();
+                    } else if (isInView) {
+                        startProgressLoop();
+                    }
+                });
+
                 updateCarousel(true);
-                animationFrameId = requestAnimationFrame(progressLoop);
 
                 if (prevBtn) prevBtn.addEventListener('click', moveToPrevSlide);
                 if (nextBtn) nextBtn.addEventListener('click', moveToNextSlide);
@@ -1280,9 +1326,29 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const modelViewer = document.querySelector('.hero-3d-model');
+            const heroSection = document.querySelector('.hero-section');
             if (!modelViewer) return;
 
             let isCtrlPressed = false;
+            let isHeroInView = true;
+
+            function syncModelViewerVisibility() {
+                const shouldShow = isHeroInView && !document.hidden;
+                modelViewer.style.visibility = shouldShow ? 'visible' : 'hidden';
+            }
+
+            if (heroSection && typeof IntersectionObserver !== 'undefined') {
+                const heroObserver = new IntersectionObserver((entries) => {
+                    isHeroInView = entries.some(entry => entry.isIntersecting);
+                    syncModelViewerVisibility();
+                }, {
+                    rootMargin: '120px 0px',
+                    threshold: 0
+                });
+                heroObserver.observe(heroSection);
+            }
+
+            document.addEventListener('visibilitychange', syncModelViewerVisibility);
 
             window.addEventListener('keydown', (e) => {
                 if (e.key === 'Control' && !isCtrlPressed) {

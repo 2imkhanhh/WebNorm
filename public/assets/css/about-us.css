@@ -73,6 +73,11 @@ body.about-page {
     transition: flex 1.2s ease-in-out;
 }
 
+.about-hero-gallery.is-paused .gallery-track,
+.about-hero-gallery.is-paused .gallery-track .gallery-item {
+    animation-play-state: paused;
+}
+
 @media (hover: hover) and (pointer: fine) {
     .gallery-track:has(.gallery-item:hover) {
         animation-play-state: paused;
