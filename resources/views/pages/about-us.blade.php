@@ -15,7 +15,7 @@
 
         /* Section wrapper */
         .solution-section-wrapper {
-            height: 150vh !important;
+            height: 140vh;
             margin-top: 5% !important;
             position: relative !important;
         }
@@ -119,7 +119,7 @@
         /* Responsive Tablet (768px - 1024px) */
         @media (max-width: 1024px) and (min-width: 768px) {
             .solution-section-wrapper {
-                height: 140vh !important;
+                height: 135vh;
                 margin-top: 15vw !important;
             }
 
@@ -161,7 +161,7 @@
         @media (max-width: 767px) {
             .solution-section-wrapper {
                 margin-top: 20vw !important;
-                height: 120vh !important;
+                height: 115vh;
             }
 
             .solution-sticky-zone {
@@ -619,16 +619,29 @@
             });
 
             const solutionSection = document.getElementById('solutionSection');
+            const solutionStickyZone = solutionSection ? solutionSection.querySelector('.solution-sticky-zone') : null;
             const brandLine = document.querySelector('.brand-line');
 
-            if (solutionSection && brandLine) {
-                const isMobile = window.innerWidth <= 765;
-                const snapDelay = isMobile ? 200 : 150;
-
+            if (solutionSection && solutionStickyZone && brandLine) {
+                let solutionMaxScroll = 0;
                 let targetSolutionProgress = 0;
                 let currentSolutionProgress = 0;
                 let solutionSnapTimeout;
                 let solutionLastScrollY = window.scrollY;
+
+                function syncSolutionDimensions() {
+                    const isMobileView = window.innerWidth <= 767;
+                    const stickyTop = parseFloat(window.getComputedStyle(solutionStickyZone).top) || 0;
+                    const stickyHeight = solutionStickyZone.offsetHeight || 0;
+                    const animDistance = Math.max(180, Math.round(window.innerHeight * (isMobileView ? 0.35 : 0.45)));
+
+                    solutionMaxScroll = animDistance;
+                    solutionSection.style.height = `${stickyTop + stickyHeight + animDistance}px`;
+                }
+
+                syncSolutionDimensions();
+                document.fonts.ready.then(syncSolutionDimensions);
+                window.addEventListener('resize', syncSolutionDimensions, { passive: true });
 
                 const textNew = brandLine.querySelector('.text-new');
                 if (textNew) {
@@ -654,9 +667,10 @@
                 requestAnimationFrame(renderSolutionSmooth);
 
                 window.addEventListener('scroll', () => {
+                    const isMobileView = window.innerWidth <= 767;
+                    const snapDelay = isMobileView ? 200 : 150;
                     const sectionTop = solutionSection.offsetTop;
                     const scrollY = window.scrollY;
-                    const windowHeight = window.innerHeight;
 
                     const scrollDirection = scrollY > solutionLastScrollY ? 'down' : 'up';
                     solutionLastScrollY = scrollY;
@@ -664,24 +678,23 @@
                     let scrolledInside = scrollY - sectionTop;
                     if (scrolledInside < 0) scrolledInside = 0;
 
-                    const maxScroll = solutionSection.offsetHeight - windowHeight;
-                    if (scrolledInside > maxScroll) scrolledInside = maxScroll;
+                    if (scrolledInside > solutionMaxScroll) scrolledInside = solutionMaxScroll;
 
-                    if (maxScroll > 0) {
-                        targetSolutionProgress = scrolledInside / maxScroll;
+                    if (solutionMaxScroll > 0) {
+                        targetSolutionProgress = scrolledInside / solutionMaxScroll;
                     }
 
                     clearTimeout(solutionSnapTimeout);
 
-                    if (scrollY > sectionTop && scrollY < sectionTop + maxScroll) {
+                    if (scrollY > sectionTop && scrollY < sectionTop + solutionMaxScroll) {
                         solutionSnapTimeout = setTimeout(() => {
                             let snapTargetY;
                             if (scrollDirection === 'down') {
                                 snapTargetY = targetSolutionProgress >= 0.1 ? sectionTop +
-                                    maxScroll : sectionTop;
+                                    solutionMaxScroll : sectionTop;
                             } else {
                                 snapTargetY = targetSolutionProgress <= 0.9 ? sectionTop :
-                                    sectionTop + maxScroll;
+                                    sectionTop + solutionMaxScroll;
                             }
                             if (Math.abs(scrollY - snapTargetY) > 5) {
                                 if (typeof lenis !== 'undefined') {
