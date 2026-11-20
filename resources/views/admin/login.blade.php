@@ -264,7 +264,7 @@
         @elseif (request()->boolean('timeout'))
             <div class="alert-status">
                 <i class='bx bx-time-five'></i>
-                <span>Phiên đăng nhập đã tự động đăng xuất do không có thao tác trong 30 phút. Vui lòng đăng nhập lại.</span>
+                <span>Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.</span>
             </div>
         @endif
 
@@ -275,8 +275,8 @@
                 <label for="email" class="form-label">Email</label>
                 <div class="input-wrap">
                     <i class='bx bx-envelope input-icon-left'></i>
-                    <input type="email" id="email" name="email" class="form-control"
-                        value="{{ old('email') }}" required autofocus autocomplete="off" placeholder="Nhập email">
+                    <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}"
+                        required autofocus autocomplete="off" placeholder="Nhập email">
                 </div>
             </div>
 
@@ -286,7 +286,8 @@
                     <i class='bx bx-lock-alt input-icon-left'></i>
                     <input type="password" id="password" name="password" class="form-control" required
                         autocomplete="new-password" placeholder="Nhập mật khẩu">
-                    <button type="button" class="toggle-password-btn" id="togglePassword" aria-label="Hiện/ẩn mật khẩu">
+                    <button type="button" class="toggle-password-btn" id="togglePassword"
+                        aria-label="Hiện/ẩn mật khẩu">
                         <i class='bx bx-hide' id="eyeIcon"></i>
                     </button>
                 </div>

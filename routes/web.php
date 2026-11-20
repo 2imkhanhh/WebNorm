@@ -159,7 +159,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/settings/draft', [SettingController::class, 'saveDraft'])->name('admin.settings.draft');
         Route::post('/settings/discard-draft', [SettingController::class, 'discardDraft'])->name('admin.settings.discard-draft');
         Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
-        Route::post('/settings/test-mail', [SettingController::class, 'testMail'])->name('admin.settings.test-mail');
 
         // Redirect old studio route
         Route::get('/studio/{any?}', function () {

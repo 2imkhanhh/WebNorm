@@ -2,7 +2,6 @@
   <Layout>
     <div class="settings-workspace-view" :key="renderKey">
       <div class="settings-container">
-        <!-- Header Card -->
         <div class="settings-header-card">
           <div class="settings-header-main">
             <div class="settings-title-area">
@@ -17,7 +16,6 @@
           </div>
         </div>
 
-        <!-- Unsaved / Draft Status Banner -->
         <DraftStatusBanner :has-draft="hasDraft" preview-path="/" @discard="handleDiscardDraft" />
 
         <form @submit.prevent="saveSettings" class="settings-form-layout">
@@ -120,7 +118,6 @@
                   placeholder="©2026 All Rights Reserved" />
               </div>
 
-              <!-- Tiêu đề Mạng xã hội VI -->
               <div class="form-group-custom">
                 <label>
                   <span>Tiêu đề Mạng xã hội</span>
@@ -130,7 +127,6 @@
                   placeholder="Mạng xã hội" />
               </div>
 
-              <!-- Tiêu đề Mạng xã hội EN -->
               <div class="form-group-custom">
                 <label>
                   <span>Tiêu đề Mạng xã hội</span>
@@ -147,7 +143,6 @@
               </label>
 
               <div class="d-flex flex-column gap-3">
-                <!-- Dòng 1 -->
                 <div class="words-row-box">
                   <div class="words-row-title">
                     <span>Dòng 1</span>
@@ -176,7 +171,6 @@
                   </div>
                 </div>
 
-                <!-- Dòng 2 -->
                 <div class="words-row-box">
                   <div class="words-row-title">
                     <span>Dòng 2</span>
@@ -205,7 +199,6 @@
                   </div>
                 </div>
 
-                <!-- Dòng 3 -->
                 <div class="words-row-box">
                   <div class="words-row-title">
                     <span>Dòng 3</span>
@@ -309,7 +302,6 @@
             </div>
           </div>
 
-          <!-- 3b. Cấu hình Email & SMTP -->
           <div class="settings-card">
             <div class="settings-card-header">
               <div>
@@ -393,20 +385,8 @@
                   placeholder="Norm Studio" />
               </div>
             </div>
-
-            <div class="mail-test-row">
-              <button type="button" class="btn-test-mail" :disabled="isTestingMail" @click="sendTestMail">
-                <i class="bx" :class="isTestingMail ? 'bx-loader-alt bx-spin' : 'bx-send'"></i>
-                <span>{{ isTestingMail ? 'Đang gửi email thử...' : 'Gửi email thử nghiệm' }}</span>
-              </button>
-              <span v-if="testMailResult" class="mail-test-feedback"
-                :class="testMailResult.success ? 'success' : 'error'">
-                {{ testMailResult.message }}
-              </span>
-            </div>
           </div>
 
-          <!-- Bottom Submit Bar -->
           <div class="settings-bottom-bar">
             <button type="submit" class="btn-save-settings-main" :disabled="isSaving">
               <i class="bx" :class="isSaving ? 'bx-loader-alt bx-spin' : 'bx-save'"></i>
@@ -417,10 +397,8 @@
       </div>
     </div>
 
-    <!-- Hidden native file input for 3D GLB upload -->
     <input type="file" ref="file3DInputRef" style="display: none;" accept=".glb" @change="handle3DUploadSelected" />
 
-    <!-- Hidden native file input for Logo upload -->
     <input type="file" ref="fileLogoInputRef" style="display: none;" accept="image/*"
       @change="handleLogoUploadSelected" />
   </Layout>
@@ -566,8 +544,6 @@ const handleSmtpHostPresetChange = () => {
 
 const mailPasswordSet = ref(Boolean(props.settings.mail_password_set));
 const showMailPassword = ref(false);
-const isTestingMail = ref(false);
-const testMailResult = ref(null);
 
 const renderKey = ref(0);
 let isInitialized = false;
@@ -841,49 +817,6 @@ const saveSettings = () => {
       notifyError('Lỗi lưu cài đặt: ' + extractErrorMessage(err));
     },
   });
-};
-
-const sendTestMail = async () => {
-  isTestingMail.value = true;
-  testMailResult.value = null;
-
-  const csrfToken =
-    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-  try {
-    const response = await fetch('/admin/settings/test-mail', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN': csrfToken,
-      },
-      body: JSON.stringify({
-        mail_host: form.mail_host,
-        mail_port: form.mail_port ? Number(form.mail_port) : 587,
-        mail_encryption: form.mail_encryption,
-        mail_username: form.mail_username,
-        mail_password: form.mail_password,
-        mail_from_address: form.mail_from_address,
-        mail_from_name: form.mail_from_name,
-        mail_to_address: form.mail_to_address || form.email,
-      }),
-    });
-
-    const data = await response.json();
-    testMailResult.value = {
-      success: Boolean(data.success),
-      message: data.message || (data.success ? 'Gửi email thử thành công!' : 'Gửi email thử thất bại.'),
-    };
-  } catch (err) {
-    testMailResult.value = {
-      success: false,
-      message: 'Lỗi kết nối: ' + err.message,
-    };
-  } finally {
-    isTestingMail.value = false;
-  }
 };
 
 onMounted(() => {
