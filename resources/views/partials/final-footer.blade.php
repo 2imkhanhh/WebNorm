@@ -44,9 +44,14 @@
         <div class="row h-100">
 
             <div class="col-12 col-md-6 d-flex flex-column justify-content-between final-left-col">
+                @php
+                    $hotlineText = (string) \App\Helpers\NormHelper::setting('hotline', '(+84)816 656718');
+                    $hotlineHref = preg_replace('/[^\d+]/', '', $hotlineText);
+                    $emailText = trim((string) \App\Helpers\NormHelper::setting('email', 'info@norm.vn'));
+                @endphp
                 <div class="contact-info">
-                    <p data-studio-setting="hotline">@normSetting('hotline', '(+84)816 656718')</p>
-                    <p data-studio-setting="email">@normSetting('email', 'info@norm.vn')</p>
+                    <p><a href="tel:{{ $hotlineHref }}" class="footer-contact-link" data-studio-setting="hotline">{{ $hotlineText }}</a></p>
+                    <p><a href="mailto:{{ $emailText }}" class="footer-contact-link" data-studio-setting="email">{{ $emailText }}</a></p>
                     <p data-studio-setting="address">{!! nl2br(e(\App\Helpers\NormHelper::setting('address', "No. 110 Nguyen Ngoc Nai street,\nPhuong Liet ward, Ha Noi city, Vietnam"))) !!}</p>
                 </div>
                 <div class="copyright">

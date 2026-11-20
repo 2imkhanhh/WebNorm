@@ -1602,6 +1602,18 @@ header.navbar {
   color: #e0e0e0;
 }
 
+.contact-info .footer-contact-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.contact-info .footer-contact-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .copyright p {
   font-size: clamp(16px, 1.4vw, 22px);
   color: #757575;
