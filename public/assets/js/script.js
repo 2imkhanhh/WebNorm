@@ -191,7 +191,6 @@ if (serviceItems.length > 0) {
 // footer scroll text
 function initFooterScrollText() {
     const footerSection = document.getElementById('footerSection');
-    const finalFooterSection = document.querySelector('.final-footer-section');
     const footerLines = document.querySelectorAll('.footer-line');
 
     if (!footerSection || footerLines.length === 0) return;
@@ -211,7 +210,6 @@ function initFooterScrollText() {
 
     let cachedFooterTop = 0;
     let cachedFooterHeight = 0;
-    let cachedFinalFooterTop = 0;
     let cachedWindowHeight = window.innerHeight;
     let cachedTriggerDistance = 0;
 
@@ -219,7 +217,6 @@ function initFooterScrollText() {
         cachedWindowHeight = window.innerHeight;
         cachedFooterTop = footerSection.offsetTop;
         cachedFooterHeight = footerSection.offsetHeight;
-        cachedFinalFooterTop = finalFooterSection ? finalFooterSection.offsetTop : (cachedFooterTop + cachedFooterHeight);
         cachedTriggerDistance = cachedFooterHeight * (window.innerWidth <= 1024 ? 0.25 : 0.2);
     }
 
@@ -284,12 +281,6 @@ function initFooterScrollText() {
         } else if (footerSection.classList.contains('dark-mode')) {
             footerSection.classList.remove('dark-mode');
             document.body.classList.remove('dark-mode');
-        }
-
-        if ((scrollY + cachedWindowHeight) >= cachedFinalFooterTop - 50) {
-            document.body.classList.add('dark-mode-instant');
-        } else {
-            document.body.classList.remove('dark-mode-instant');
         }
 
         let scrolledInside = Math.max(0, scrollY - cachedFooterTop);

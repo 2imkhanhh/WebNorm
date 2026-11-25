@@ -1401,7 +1401,7 @@ header.navbar {
   height: 200vh;
   position: relative;
   z-index: 20;
-  transition: background-color 0.6s ease, color 0.6s ease;
+  transition: background-color 1.6s cubic-bezier(0.22, 1, 0.36, 1), color 1.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .footer-sticky {
@@ -1442,7 +1442,7 @@ header.navbar {
   color: #ffffff;
   justify-content: flex-start !important;
   text-align: left;
-  transition: color 0.6s ease;
+  transition: color 1.4s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: clip-path;
 }
 
@@ -1461,7 +1461,7 @@ header.navbar {
   clip-path: inset(100% 0 0 0);
   justify-content: flex-start !important;
   text-align: left;
-  transition: background-color 0.6s ease, color 0.6s ease;
+  transition: background-color 1.4s cubic-bezier(0.22, 1, 0.36, 1), color 1.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .footer-line span {
@@ -1579,7 +1579,7 @@ header.navbar {
 } */
 
 .final-footer-section {
-  background-color: #111111;
+  background-color: transparent;
   color: #ffffff;
   position: relative;
   padding-top: 100px;
@@ -2947,16 +2947,11 @@ body::before {
   opacity: 0;
   pointer-events: none;
   z-index: -1;
-  transition: opacity 0.6s ease;
+  transition: opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.dark-mode::before {
   opacity: 1;
-}
-
-body.dark-mode.dark-mode-instant::before {
-  opacity: 1;
-  transition: none !important;
 }
 
 body.dark-mode .si-desc,
@@ -2982,22 +2977,22 @@ body.dark-mode .ps-num-current,
 body.dark-mode .ps-num-total,
 body.dark-mode .social-title {
   color: #ffffff;
-  transition: color 0.6s ease;
+  transition: color 1.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.dark-mode .social-list a {
   color: #ffffff;
-  transition: color 0.6s ease, transform 0.4s ease;
+  transition: color 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 0.4s ease;
 }
 
 body.dark-mode .nav-btn {
   border-color: #ffffff;
-  transition: border-color 0.6s ease;
+  transition: border-color 1.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.dark-mode .progress-ring-circle {
   stroke: #ffffff;
-  transition: stroke 0.6s ease;
+  transition: stroke 1.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body.dark-mode .blog-slider-section,
