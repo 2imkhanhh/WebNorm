@@ -234,7 +234,7 @@
                             : asset(ltrim($img, '/')))
                         : asset('assets/images/gallery' . (($idx % 9) + 1) . '.jpg');
                 @endphp
-                <div class="gallery-item"><img src="{{ $imgSrc }}" alt="Gallery {{ $idx + 1 }}"></div>
+                <div class="gallery-item"><img src="{{ $imgSrc }}" alt="Gallery {{ $idx + 1 }}" decoding="async"></div>
             @endforeach
         </div>
     </section>
@@ -529,6 +529,7 @@
 @push('scripts')
     <script>
         function initHeroGalleryTrack() {
+            const heroGallery = document.querySelector('.about-hero-gallery');
             const track = document.getElementById('galleryTrack');
             if (!track) return;
 
@@ -548,6 +549,11 @@
                 track.appendChild(clone);
             });
 
+            const syncActiveState = () => {
+                if (!heroGallery) return;
+                heroGallery.classList.toggle('has-active', track.querySelector('.gallery-item.is-active') !== null);
+            };
+
             const allItems = track.querySelectorAll('.gallery-item');
             allItems.forEach(item => {
                 item.onclick = (e) => {
@@ -558,8 +564,36 @@
                         allItems.forEach(el => el.classList.remove('is-active'));
                         item.classList.add('is-active');
                     }
+                    syncActiveState();
                 };
             });
+
+            if (heroGallery && !track.dataset.hoverBound) {
+                track.dataset.hoverBound = '1';
+                let hoverLeaveTimer = null;
+                const canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+                if (canHover) {
+                    track.addEventListener('pointerover', (e) => {
+                        if (e.pointerType === 'touch') return;
+                        if (e.target.closest('.gallery-item')) {
+                            clearTimeout(hoverLeaveTimer);
+                            heroGallery.classList.add('is-hovering');
+                        }
+                    });
+
+                    track.addEventListener('pointerout', (e) => {
+                        if (e.pointerType === 'touch') return;
+                        if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.gallery-item')) {
+                            return;
+                        }
+                        clearTimeout(hoverLeaveTimer);
+                        hoverLeaveTimer = setTimeout(() => {
+                            heroGallery.classList.remove('is-hovering');
+                        }, 140);
+                    });
+                }
+            }
         }
 
         window.addEventListener('message', (event) => {
@@ -572,7 +606,7 @@
                         const url = img.startsWith('http') ? img : '/' + img.replace(/^\//, '');
                         const div = document.createElement('div');
                         div.className = 'gallery-item';
-                        div.innerHTML = `<img src="${url}" alt="Gallery ${idx + 1}" loading="lazy">`;
+                        div.innerHTML = `<img src="${url}" alt="Gallery ${idx + 1}" loading="lazy" decoding="async">`;
                         track.appendChild(div);
                     });
                     initHeroGalleryTrack();
@@ -603,6 +637,7 @@
             document.addEventListener('click', () => {
                 const galleryItems = document.querySelectorAll('.gallery-item');
                 galleryItems.forEach(item => item.classList.remove('is-active'));
+                if (heroGallery) heroGallery.classList.remove('has-active');
             });
 
             let hasScrolled = false;

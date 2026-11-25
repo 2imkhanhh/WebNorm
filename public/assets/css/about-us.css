@@ -6,6 +6,7 @@ body.about-page {
 :root {
     --total-items: 9;
     --item-width: 10vw;
+    --item-expanded-width: 30vw;
     --item-height: calc(var(--item-width) * 2);
     --item-gap: 1.5vw;
     --cycle-time: 30s;
@@ -20,6 +21,7 @@ body.about-page {
     display: flex;
     justify-content: flex-start;
     overflow: hidden;
+    contain: layout style;
 }
 
 .gallery-track {
@@ -40,72 +42,53 @@ body.about-page {
     cursor: pointer;
     animation: waveY var(--wave-time) ease-in-out infinite;
     animation-delay: calc(((9.5 - var(--i)) * var(--shift-time)) - (var(--wave-time) * 10));
-    transition: flex 1s ease-in-out;
-    transform: translateZ(0);
+    transition: flex-basis 0.75s ease-in-out;
+    contain: layout style paint;
+    will-change: transform, flex-basis;
     z-index: 1;
 }
 
 .gallery-item img {
-    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--item-expanded-width);
     height: 100%;
+    max-width: none;
     display: block;
     object-fit: cover;
-    transform: translateZ(0);
+    transform: translate3d(-50%, 0, 0);
     backface-visibility: hidden;
 }
 
-.gallery-track:has(.gallery-item.is-active) {
-    animation-play-state: paused;
-}
-
-.gallery-track:has(.gallery-item.is-active) .gallery-item {
-    animation-play-state: paused;
-}
-
-.gallery-track:has(.gallery-item.is-active) .gallery-item:not(.is-active) {
-    flex: 0 0 var(--item-width);
-    transition: flex 1s ease-in-out;
-}
-
-.gallery-item.is-active {
-    flex: 0 0 30vw;
-    z-index: 10;
-    transition: flex 1.2s ease-in-out;
-}
-
+.about-hero-gallery.has-active .gallery-track,
+.about-hero-gallery.has-active .gallery-item,
+.about-hero-gallery.is-hovering .gallery-track,
+.about-hero-gallery.is-hovering .gallery-item,
 .about-hero-gallery.is-paused .gallery-track,
 .about-hero-gallery.is-paused .gallery-track .gallery-item {
     animation-play-state: paused;
 }
 
+.gallery-item.is-active {
+    flex: 0 0 var(--item-expanded-width);
+    z-index: 10;
+}
+
 @media (hover: hover) and (pointer: fine) {
-    .gallery-track:has(.gallery-item:hover) {
-        animation-play-state: paused;
-    }
-
-    .gallery-track:has(.gallery-item:hover) .gallery-item {
-        animation-play-state: paused;
-    }
-
-    .gallery-track:has(.gallery-item:hover) .gallery-item:not(:hover) {
-        flex: 0 0 var(--item-width);
-        transition: flex 1s ease-in-out;
-    }
-
     .gallery-item:hover {
-        flex: 0 0 30vw;
+        flex: 0 0 var(--item-expanded-width);
         z-index: 10;
-        transition: flex 1.2s ease-in-out;
     }
 }
 
 @keyframes scrollX {
     from {
-        transform: translateX(calc(-1 * var(--total-items) * (var(--item-width) + var(--item-gap))));
+        transform: translate3d(calc(-1 * var(--total-items) * (var(--item-width) + var(--item-gap))), 0, 0);
     }
 
     to {
-        transform: translateX(0);
+        transform: translate3d(0, 0, 0);
     }
 }
 
@@ -113,11 +96,11 @@ body.about-page {
 
     0%,
     100% {
-        transform: translateY(18vw);
+        transform: translate3d(0, 18vw, 0);
     }
 
     50% {
-        transform: translateY(-8vw);
+        transform: translate3d(0, -8vw, 0);
     }
 }
 
@@ -415,17 +398,8 @@ body.dark-mode .members-section .member-role {
 @media (max-width: 1024px) and (min-width: 768px) {
     :root {
         --item-width: 15vw;
+        --item-expanded-width: 45vw;
         --item-gap: 2vw;
-    }
-
-    .gallery-item.is-active {
-        flex: 0 0 45vw;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-        .gallery-item:hover {
-            flex: 0 0 45vw;
-        }
     }
 
     .solution-section-wrapper {
@@ -514,22 +488,13 @@ body.dark-mode .members-section .member-role {
 @media (max-width: 767.98px) {
     :root {
         --item-width: 25vw;
+        --item-expanded-width: 76vw;
         --item-gap: 3vw;
     }
 
     .about-hero-gallery {
         padding-top: 30vw;
         padding-bottom: 30vw;
-    }
-
-    .gallery-item.is-active {
-        flex: 0 0 76vw;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-        .gallery-item:hover {
-            flex: 0 0 76vw;
-        }
     }
 
     .solution-section-wrapper {
@@ -609,11 +574,11 @@ body.dark-mode .members-section .member-role {
 
         0%,
         100% {
-            transform: translateY(25vw);
+            transform: translate3d(0, 25vw, 0);
         }
 
         50% {
-            transform: translateY(-12vw);
+            transform: translate3d(0, -12vw, 0);
         }
     }
 }
